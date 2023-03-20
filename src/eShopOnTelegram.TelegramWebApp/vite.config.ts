@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   publicDir: "./public",
   plugins: [react()],
+  css: {
+    modules:{
+      localsConvention: 'camelCaseOnly'
+    }
+  },
   build: {
     outDir: "build",
     sourcemap: true,
