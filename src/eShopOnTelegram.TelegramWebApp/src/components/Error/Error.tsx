@@ -1,4 +1,3 @@
-import { Container, Typography } from "@mui/material";
 import classNames from "classnames";
 import React from "react";
 import css from "./Error.module.scss";
@@ -22,15 +21,12 @@ export default function Error() {
           <div className={css.lips}></div>
         </div>
       </div>
-
-      <Container>
-        <Typography align="justify">
-          Unfortunately, we're unable to fulfill your request. Rest assured we
-          have been notified and are looking into the issue. Please refresh your
-          browser. If the error continues, please contact our{" "}
-          <a href="#">support team</a>.
-        </Typography>
-      </Container>
+      <div>
+        Unfortunately, we're unable to fulfill your request. Rest assured we
+        have been notified and are looking into the issue. Please refresh your
+        browser. If the error continues, please contact our{" "}
+        <a href="#">support team</a>.
+      </div>
     </>
   );
 }

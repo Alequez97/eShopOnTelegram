@@ -4,13 +4,10 @@ import Card from './components/Card/Card'
 import Loader from './components/Loader/Loader';
 import Error from './components/Error/Error';
 import { getCartItemsAsJsonString } from './helpers'
-import { addProduct, removeProduct } from './store/cartItems';
-import { useAppDispatch } from './store/store';
 import { useCartItems } from './hooks/cartItems';
 import Product from './types/Product';
 import { useTelegramWebApp } from './hooks/telegram';
 import { useProductsMock } from './hooks/productsMock';
-import { ClassNames } from '@emotion/react';
 
 function App() {
   const { telegramWebApp } = useTelegramWebApp()
@@ -20,8 +17,7 @@ function App() {
     // eslint-disable-next-line
   }, []);
 
-  const dispatch = useAppDispatch();
-  const { cartItems } = useCartItems();
+  const { cartItems, addProductToState, removeProductFromState } = useCartItems();
   const { products, error, loading } = useProductsMock();
   const [ filteredProducts, setFilteredProducts ] = useState<Product[] | undefined>(undefined);
 
@@ -49,11 +45,11 @@ function App() {
   }, [sendDataToTelegram])
 
   const onAdd = (product: Product) => {
-    dispatch(addProduct(product))
+    addProductToState(product)
   };
 
   const onRemove = (product: Product) => {
-    dispatch(removeProduct(product))
+    removeProductFromState(product)
   };
 
   if (loading) {
@@ -82,7 +78,7 @@ function App() {
 
   return (
     <>
-      <h2 className={classes.heading}>Royal MMXXI</h2>
+      <h2 className={classes.heading}>eShopOnTelegram</h2>
 
       {products.length === 0 && <span>No available products at this moment</span>}
 
