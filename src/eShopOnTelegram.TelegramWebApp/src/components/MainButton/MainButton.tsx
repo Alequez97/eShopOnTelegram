@@ -1,4 +1,4 @@
-import './MainButton.scss'
+import classes from './MainButton.module.scss'
 
 interface MainButtonProps {
     text: string;
@@ -7,8 +7,8 @@ interface MainButtonProps {
 
 export default function MainButton({ text, onClick }: MainButtonProps) {
   return (
-    <div className="wrap">
-      <button className="custom-main-button" onClick={onClick}>{text}</button>
+    <div className={classes.wrap}>
+      <button className={classes.customMainButton} onClick={onClick}>{text}</button>
     </div>
   )
 }

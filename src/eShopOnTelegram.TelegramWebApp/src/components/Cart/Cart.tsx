@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from "react";
-import "./Cart.scss";
+import classes from "./Cart.module.scss";
 import Button from "../Button/Button";
 import ICartItem from "../../types/CartItem";
 
@@ -10,7 +10,7 @@ interface CartProps {
 
 function Cart({ cartItems, onCheckout }: CartProps) {
   return (
-    <div className="cart__container">
+    <div className={classes.cartContainer}>
       <Button
         title={"Checkout"}
         type={"checkout"}

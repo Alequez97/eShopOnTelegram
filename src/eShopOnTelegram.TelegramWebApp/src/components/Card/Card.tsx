@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./Card.scss";
+import classes from "./Card.module.scss";
 import Button from "../Button/Button";
 import Product from "../../types/Product";
 
@@ -25,14 +25,14 @@ function Card({ product, onAdd, onRemove }: CardProps) {
   };
 
   return (
-    <div className="card">
-      <div className="image__container">
+    <div className={classes.card}>
+      <div className={classes.imageContainer}>
         <img src={image} alt={productName} />
       </div>
-      <h4 className="card__title">
+      <h4 className={classes.cardTitle}>
         {productName}
         <br />
-        <span className="card__price">{originalPrice} €</span>
+        <span className={classes.cardPrice}>{originalPrice} €</span>
         <br />
         <i>
           Available: {product.quantityLeft < 20 ? product.quantityLeft : '20+'}
@@ -40,12 +40,12 @@ function Card({ product, onAdd, onRemove }: CardProps) {
       </h4>
 
 
-      <div className="btn-container">
+      <div className={classes.btnContainer}>
         {productQuantityAddedInCart === 0 && <Button title={"Add"} type={"add"} onClick={handleIncrement} disabled={false} />}
 
         {productQuantityAddedInCart !== 0 && <Button title={"-"} type={"remove"} onClick={handleDecrement} disabled={false} />}
         <span
-          className={`${productQuantityAddedInCart !== 0 ? "card__badge" : "card__badge--hidden"}`}
+          className={`${productQuantityAddedInCart !== 0 ? classes.cardBadge : classes.cardBadgeHidden}`}
         >
           {productQuantityAddedInCart}
         </span>

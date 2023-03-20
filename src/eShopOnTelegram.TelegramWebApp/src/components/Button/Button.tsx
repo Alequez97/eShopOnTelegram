@@ -1,5 +1,5 @@
 import React, { MouseEventHandler } from 'react'
-import './Button.scss'
+import classes from './Button.module.scss'
 
 interface ButtonProps {
     type: string,
@@ -11,10 +11,10 @@ interface ButtonProps {
 function Button(props: ButtonProps) {
   return (
     <button 
-        className={`btn ${
-            (props.type === 'add' && 'add') || 
-            (props.type === 'remove' && 'remove') ||
-            (props.type === 'checkout' && 'checkout')
+        className={`${classes.btn} ${
+            (props.type === 'add' && `${classes.add}`) || 
+            (props.type === 'remove' && `${classes.remove}`) ||
+            (props.type === 'checkout' && `${classes.checkout}`)
         }`}
         disabled={props.disabled}
         onClick={props.onClick}

@@ -20,12 +20,12 @@ body {
   color: var(--primary-color);
 }
 
-#product-categories-wrapper {
+.product-categories-wrapper {
   display: flex;
   justify-content: center;
 }
 
-#product-categories-select {
+.product-categories-select {
   background-color: var(--background-color);
   color: var(--primary-color);
   border-color: var(--primary-color);
@@ -36,11 +36,11 @@ body {
   height: 30px;
 }
 
-#product-categories-select:focus {
+.product-categories-select:focus {
   border-color: var(--primary-color);
 }
 
-.cards__container {
+.cards-container {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;

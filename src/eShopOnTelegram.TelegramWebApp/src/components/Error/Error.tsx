@@ -1,5 +1,5 @@
 import React from 'react'
-import './Error.scss'
+import classes from './Error.module.scss'
 
 interface ErrorProps {
     message: string
@@ -7,6 +7,6 @@ interface ErrorProps {
 
 export default function Error({ message }: ErrorProps) {
   return (
-    <div id="error-text">{message}</div>
+    <div className={classes.errorText}>{message}</div>
   )
 }

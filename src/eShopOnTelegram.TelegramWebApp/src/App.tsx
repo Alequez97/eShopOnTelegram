@@ -1,5 +1,5 @@
 import { ChangeEvent, useCallback, useEffect, useState } from 'react'
-import './App.css'
+import classes from './App.module.scss'
 import Card from './components/Card/Card'
 import Loader from './components/Loader/Loader';
 import Error from './components/Error/Error';
@@ -10,6 +10,7 @@ import { useCartItems } from './hooks/cartItems';
 import Product from './types/Product';
 import { useTelegramWebApp } from './hooks/telegram';
 import { useProductsMock } from './hooks/productsMock';
+import { ClassNames } from '@emotion/react';
 
 function App() {
   const { telegramWebApp } = useTelegramWebApp()
@@ -81,20 +82,20 @@ function App() {
 
   return (
     <>
-      <h2 className="heading">Royal MMXXI</h2>
+      <h2 className={classes.heading}>Royal MMXXI</h2>
 
       {products.length === 0 && <span>No available products at this moment</span>}
 
       {products.length !== 0 &&
-        <div id="product-categories-wrapper">
-          <select name="product-categories" id="product-categories-select" defaultValue={DEFAULT_SELECTOR_VALUE} onChange={selectOnChangeHandler}>
+        <div className={classes.productCategoriesWrapper}>
+          <select name="product-categories" className={classes.productCategoriesSelect} defaultValue={DEFAULT_SELECTOR_VALUE} onChange={selectOnChangeHandler}>
             <option value={DEFAULT_SELECTOR_VALUE}>{DEFAULT_SELECTOR_VALUE}</option>
             {/* {productCategories?.map(category => (<option value={category}>{category}</option>))} */}
           </select>
         </div>
       }
 
-      <div className="cards__container">
+      <div className={classes.cardsContainer}>
         {filteredProducts === undefined && products.map(product => <Card product={product} key={product.id} onAdd={onAdd} onRemove={onRemove} />)}
         {filteredProducts !== undefined && filteredProducts.map(product => <Card product={product} key={product.id} onAdd={onAdd} onRemove={onRemove} />)}
       </div>

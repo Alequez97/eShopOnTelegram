@@ -12,16 +12,16 @@
   border-radius: 5px;
 }
 
-.card__title {
+.card-title {
   font-weight: 400;
   text-align: center;
 
-  .card__price {
+  .card-price {
     font-weight: bold;
   }
 }
 
-.image__container {
+.image-container {
   width: 100px;
   height: 100px;
   margin: 0 auto;
@@ -42,12 +42,12 @@
   }
 }
 
-.card__price {
+.card-price {
   text-align: center;
   display: inline-block;
 }
 
-.card__badge {
+.card-badge {
   position: relative;
   top: 3px;
   width: 90px;
@@ -61,6 +61,6 @@
   font-size: 20px;
 }
 
-.card__badge--hidden {
+.card-badge-hidden {
   display: none;
 }

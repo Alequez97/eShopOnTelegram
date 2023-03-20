@@ -1,4 +1,4 @@
-import './Footer.scss'
+import classes from './Footer.module.scss'
 import MainButton from '../MainButton/MainButton'
 
 interface FooterProps {
@@ -8,7 +8,7 @@ interface FooterProps {
 }
 
 export default function Footer({ mainButtonText, mainButtonOnClick, visible }: FooterProps) {
-  const styles = visible ? '' : 'hidden';
+  const styles = visible ? '' : classes.hidden;
 
   return (
     <footer className={styles}>
