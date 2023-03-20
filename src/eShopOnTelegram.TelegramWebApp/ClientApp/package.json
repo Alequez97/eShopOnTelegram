@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "typed-scss-modules src && vite --open",
-    "watch": "typed-scss-modules src && vite build --mode dev --watch",
-    "start:dev": "typed-scss-modules src && vite --mode dev",
-    "build:dev": "typed-scss-modules src && tsc && vite build --mode dev",
-    "build:stage": "typed-scss-modules src && tsc && vite build --mode stage",
+    "start": "npm run scss-types && vite --open",
+    "watch": "npm run scss-types && vite build --mode dev --watch",
+    "start:dev": "npm run scss-types && vite --mode dev",
+    "build:dev": "npm run scss-types && tsc && vite build --mode dev",
+    "build:stage": "npm run scss-types && tsc && vite build --mode stage",
     "scss-types": "typed-scss-modules src",
     "preview": "vite preview",
     "lint": "eslint ./src/"
@@ -38,6 +38,7 @@
     "sass": "^1.58.0",
     "typed-scss-modules": "^7.0.2",
     "typescript": "^4.9.3",
-    "vite": "^4.0.0"
+    "vite": "^4.0.0",
+    "vite-plugin-mkcert": "^1.13.3"
   }
 }
