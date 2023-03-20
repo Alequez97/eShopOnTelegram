@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "vite --open",
-    "watch": "vite build --mode dev --watch",
-    "start:dev": "vite --mode dev",
-    "build:dev": "tsc && vite build --mode dev",
-    "build:stage": "tsc && vite build --mode stage",
-    "scss-types": "npx typed-scss-modules src",
+    "start": "typed-scss-modules src && vite --open",
+    "watch": "typed-scss-modules src && vite build --mode dev --watch",
+    "start:dev": "typed-scss-modules src && vite --mode dev",
+    "build:dev": "typed-scss-modules src && tsc && vite build --mode dev",
+    "build:stage": "typed-scss-modules src && tsc && vite build --mode stage",
+    "scss-types": "typed-scss-modules src",
     "preview": "vite preview",
     "lint": "eslint ./src/"
   },
