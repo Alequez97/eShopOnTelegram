@@ -1,0 +1,52 @@
+:root {
+  --background-color: var(--tg-theme-bg-color);
+  --primary-color: var(--tg-theme-text-color);
+
+  --add-button-color: rgb(75, 226, 75);
+  --add-button-color-hover: #ad9a1c;
+  --add-button-color-active: #83730b;
+
+  --remove-button-color: tomato;
+  --remove-button-color-hover: rgb(209, 83, 61);
+  --remove-button-color-active: rgb(189, 83, 61);
+
+  --checkout-button-color: rgb(41, 141, 41);
+  --checkout-button-color-hover: rgb(41, 121, 41);
+  --checkout-button-color-active: rgb(41, 101, 41);
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+}
+
+#product-categories-wrapper {
+  display: flex;
+  justify-content: center;
+}
+
+#product-categories-select {
+  background-color: var(--background-color);
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  border-radius: 10px;
+  font-size: 16px;
+  text-align: center;
+  width: 250px;
+  height: 30px;
+}
+
+#product-categories-select:focus {
+  border-color: var(--primary-color);
+}
+
+.cards__container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  padding-bottom: 100px;
+}
+
+.heading {
+  text-align: center;
+}

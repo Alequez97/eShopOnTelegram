@@ -1,0 +1,22 @@
+# dependencies
+/node_modules
+package-lock.json
+.yarn
+
+# testing
+/coverage
+
+# sonar-scanner results
+/.scannerwork
+
+# production
+/build
+/bin
+
+# misc
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Auto-generated scss typing files
+*.module.scss.d.ts
