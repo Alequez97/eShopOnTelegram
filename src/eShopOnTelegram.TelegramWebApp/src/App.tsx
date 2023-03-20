@@ -64,7 +64,7 @@ function App() {
 
   if (error) {
     return (
-      <Error message={error} />
+      <Error />
     )
   }
 
