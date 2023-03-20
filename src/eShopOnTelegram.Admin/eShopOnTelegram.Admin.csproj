@@ -8,7 +8,7 @@
     <IsPackable>false</IsPackable>
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
-    <SpaProxyServerUrl>https://localhost:3399</SpaProxyServerUrl>
+    <SpaProxyServerUrl>https://localhost:3400</SpaProxyServerUrl>
     <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
     <RootNamespace>eShopOnTelegram.Admin</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>

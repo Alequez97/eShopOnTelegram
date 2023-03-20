@@ -18,12 +18,12 @@ export default defineConfig({
     minify: true,
   },
   server: {
-    port: 3399,
+    port: 3400,
     https: true,
     strictPort: true,
     proxy: {
       "/api": {
-        target: "https://localhost:7223",
+        target: "https://localhost:7224",
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, "/api"),
