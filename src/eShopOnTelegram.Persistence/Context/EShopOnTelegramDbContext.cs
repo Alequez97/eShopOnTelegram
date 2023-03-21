@@ -1,4 +1,6 @@
-﻿namespace eShopOnTelegram.Persistence.Context;
+﻿using eShopOnTelegram.Persistence.Constraints;
+
+namespace eShopOnTelegram.Persistence.Context;
 
 public class EShopOnTelegramDbContext : DbContext
 {
@@ -10,11 +12,20 @@ public class EShopOnTelegramDbContext : DbContext
 
     public DbSet<Order> Orders { get; set; }
 
+    public DbSet<Basket> Baskets { get; set; }
+
     public DbSet<CartItem> CartItems { get; set; }
 
     public EShopOnTelegramDbContext(DbContextOptions<EShopOnTelegramDbContext> options)
     : base(options)
     {
 
+    }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder
+            .AddCustomerConstraints()
+            .AddOrderConstraints();
     }
 }
