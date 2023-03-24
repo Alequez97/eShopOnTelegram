@@ -3,5 +3,5 @@
 public class EntityBase
 {
     [Key]
-    public Guid Id { get; set; } = Guid.NewGuid();
+    public long Id { get; set; }
 }
