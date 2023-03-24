@@ -1,5 +1,8 @@
-﻿namespace eShopOnTelegram.Persistence.Entities;
+﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
+namespace eShopOnTelegram.Persistence.Entities;
+
+[Index(nameof(OrderNumber), IsUnique = true)]
 public class Order : EntityBase
 {
     public string OrderNumber { get; set; }
