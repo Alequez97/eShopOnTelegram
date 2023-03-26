@@ -24,6 +24,7 @@ public class ProductService : IProductService
         try
         {
             var products = await _dbContext.Products
+                .Include(product => product.Category)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
@@ -35,11 +36,12 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                Image = product.ImageName
+                //Image = product.ImageName
             });
 
             response.Status = ResponseStatus.Success;
             response.Data = getProductsResponse;
+            response.TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken);
         }
         catch (Exception exception)
         {
@@ -87,25 +89,32 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<Response> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
+    public async Task<Response> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var response = new Response();
 
         try
         {
-            //var storedImageName = await _productImagesRepository.SaveAsync(createProductRequest.ProductImage, CancellationToken.None);
+            var existingProductCategory = await _dbContext.ProductCategories
+                .FirstOrDefaultAsync(category => category.Id == request.ProductCategoryId, cancellationToken);
+
+            if (existingProductCategory == null)
+            {
+                response.Status = ResponseStatus.NotFound;
+                return response;
+            }
 
             var product = new Product()
             {
-                Name = createProductRequest.ProductName,
-                OriginalPrice = createProductRequest.OriginalPrice,
-                PriceWithDiscount = createProductRequest.PriceWithDiscount,
-                QuantityLeft = createProductRequest.QuantityLeft,
-                //product.ImageName = storedImageName
+                Name = request.ProductName,
+                OriginalPrice = request.OriginalPrice,
+                PriceWithDiscount = request.PriceWithDiscount,
+                QuantityLeft = request.QuantityLeft,
+                Category = existingProductCategory
             };
 
             var productCategory = await _dbContext.ProductCategories
-                .FirstOrDefaultAsync(productCategory => productCategory.Id == createProductRequest.ProductCategoryId, cancellationToken);
+                .FirstOrDefaultAsync(productCategory => productCategory.Id == request.ProductCategoryId, cancellationToken);
 
             if (productCategory == null)
             {

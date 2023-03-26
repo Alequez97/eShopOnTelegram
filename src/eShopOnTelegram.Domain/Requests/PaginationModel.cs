@@ -6,7 +6,7 @@ public class PaginationModel
 
     public int To { get; set; }
 
-    public string SortPropertyName { get; set; }
+    public string? SortPropertyName { get; set; }
 
-    public string SortBy { get; set; }
+    public string? SortBy { get; set; }
 }

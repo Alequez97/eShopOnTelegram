@@ -1,11 +1,10 @@
 import React from "react";
-import { List, Datagrid, TextField, ReferenceField } from "react-admin";
+import { List, Datagrid, TextField } from "react-admin";
 
-export default function ProductCategoriesList(props: any) {
+export default function ProductCategoriesList() {
   return (
-    <List {...props}>
+    <List>
       <Datagrid>
-        {/* <ReferenceField source="id" reference="users" label="Name"> */}
         <TextField source="name" sortable={true} />
       </Datagrid>
     </List>

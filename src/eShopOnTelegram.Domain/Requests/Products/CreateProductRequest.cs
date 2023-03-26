@@ -17,5 +17,5 @@ public class CreateProductRequest
     public int QuantityLeft { get; set; }
 
     [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
-    public IFormFile ProductImage { get; set; }
+    public IFormFile? ProductImage { get; set; }
 }
