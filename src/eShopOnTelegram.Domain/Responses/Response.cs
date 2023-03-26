@@ -8,7 +8,7 @@ public class Response
 
     public string Message { get; set; }
 
-    public List<string> ValidationErrors { get; protected set; }
+    public List<string> ValidationErrors { get; set; }
 }
 
 public class Response<T> : Response where T : class

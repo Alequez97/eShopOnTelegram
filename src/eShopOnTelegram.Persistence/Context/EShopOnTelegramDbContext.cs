@@ -1,6 +1,4 @@
-﻿using eShopOnTelegram.Persistence.Constraints;
-
-namespace eShopOnTelegram.Persistence.Context;
+﻿namespace eShopOnTelegram.Persistence.Context;
 
 public class EShopOnTelegramDbContext : DbContext
 {
@@ -20,12 +18,5 @@ public class EShopOnTelegramDbContext : DbContext
     : base(options)
     {
 
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder
-            .AddCustomerConstraints()
-            .AddOrderConstraints();
     }
 }
