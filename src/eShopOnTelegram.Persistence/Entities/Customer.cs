@@ -1,16 +1,15 @@
 ﻿namespace eShopOnTelegram.Persistence.Entities;
 
+[Index(nameof(TelegramUserUID), IsUnique = true)]
 public class Customer : EntityBase
 {
-    [MaxLength(100)]
     public string? Username { get; set; }
 
     [MaxLength(100)]
-    public string FirstName { get; set; }
+    public required string FirstName { get; set; }
 
     [MaxLength(100)]
-    public string LastName { get; set; }
+    public string? LastName { get; set; }
 
-    [MaxLength(100)]
-    public string TelegramId { get; set; }
+    public required long TelegramUserUID { get; set; }
 }

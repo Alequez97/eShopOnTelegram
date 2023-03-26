@@ -10,9 +10,9 @@ public class UpdateProductRequest
 
     public string ProductName { get; set; }
 
-    public double OriginalPrice { get; set; }
+    public decimal OriginalPrice { get; set; }
 
-    public double? PriceWithDiscount { get; set; }
+    public decimal? PriceWithDiscount { get; set; }
 
     public int QuantityLeft { get; set; }
 

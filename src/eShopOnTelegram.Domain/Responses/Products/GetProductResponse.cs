@@ -2,15 +2,15 @@
 
 public class GetProductResponse : Response
 {
-    public string ProductName { get; set; }
+    public required string ProductName { get; set; }
 
-    public string ProductCategoryName { get; set; }
+    public required string ProductCategoryName { get; set; }
 
-    public double OriginalPrice { get; set; }
+    public required decimal OriginalPrice { get; set; }
 
-    public double? PriceWithDiscount { get; set; }
+    public decimal? PriceWithDiscount { get; set; }
 
-    public int QuantityLeft { get; set; }
+    public required int QuantityLeft { get; set; }
 
     public string Image { get; set; }
 }
