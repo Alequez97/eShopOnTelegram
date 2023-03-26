@@ -2,7 +2,6 @@
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.ProductCategories;
 using eShopOnTelegram.Domain.Responses.ProductCategories;
-using eShopOnTelegram.Domain.Responses.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -36,6 +35,7 @@ public class ProductCategoryService : IProductCategoryService
 
             response.Status = ResponseStatus.Success;
             response.Data = getProductCategoriesResponse;
+            response.TotalItemsInDatabase = await _dbContext.ProductCategories.CountAsync(cancellationToken);
         }
         catch (Exception exception)
         {
@@ -46,9 +46,9 @@ public class ProductCategoryService : IProductCategoryService
         return response;
     }
 
-    public async Task<CreateResponse> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<Response> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
     {
-        var response = new CreateResponse();
+        var response = new Response();
 
         try
         {
@@ -91,6 +91,7 @@ public class ProductCategoryService : IProductCategoryService
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             response.Status = ResponseStatus.Success;
+            response.Id = existingCategory.Id;
         }
         catch (Exception exception)
         {

@@ -87,9 +87,9 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<CreateResponse> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
+    public async Task<Response> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
     {
-        var response = new CreateResponse();
+        var response = new Response();
 
         try
         {

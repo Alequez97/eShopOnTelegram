@@ -16,21 +16,6 @@ public static class ResponseExtensions
             return new StatusCodeResult(500);
         }
 
-        return new OkResult();
-    }
-
-    public static ActionResult AsActionResult(this CreateResponse response)
-    {
-        if (response.Status == ResponseStatus.ValidationFailed)
-        {
-            return new BadRequestResult();
-        }
-
-        if (response.Status == ResponseStatus.Exception)
-        {
-            return new StatusCodeResult(500);
-        }
-
         return new OkObjectResult(response);
     }
 

@@ -10,7 +10,7 @@ public interface IProductService
 
     Task<Response<IEnumerable<GetProductResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
 
-    Task<CreateResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
+    Task<Response> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
 
     Task<Response> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken);
 

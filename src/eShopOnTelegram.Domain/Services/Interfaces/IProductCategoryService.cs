@@ -8,7 +8,7 @@ public interface IProductCategoryService
 {
     Task<Response<IEnumerable<GetProductCategoryResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
 
-    Task<CreateResponse> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken);
+    Task<Response> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken);
 
     Task<Response> DeleteAsync(long id, CancellationToken cancellationToken);
 }

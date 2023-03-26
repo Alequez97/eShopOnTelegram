@@ -7,7 +7,7 @@ namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class CreateProductCategory : EndpointBaseAsync
     .WithRequest<CreateProductCategoryRequest>
-    .WithActionResult<CreateResponse>
+    .WithActionResult<Response>
 {
     private readonly IProductCategoryService _productCategoryService;
 
@@ -18,7 +18,7 @@ public class CreateProductCategory : EndpointBaseAsync
 
     [HttpPost("/api/productCategories")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
-    public override async Task<ActionResult<CreateResponse>> HandleAsync([FromBody] CreateProductCategoryRequest request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<Response>> HandleAsync([FromBody] CreateProductCategoryRequest request, CancellationToken cancellationToken = default)
     {
         var response = await _productCategoryService.CreateAsync(request, cancellationToken);
         return response.AsActionResult();
