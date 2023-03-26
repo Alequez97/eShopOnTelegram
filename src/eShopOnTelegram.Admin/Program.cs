@@ -1,10 +1,26 @@
+using eShopOnTelegram.Domain.Services;
+using eShopOnTelegram.Persistence.Context;
+
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
+
+builder.Services.AddDbContext<EShopOnTelegramDbContext>(
+    options => options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
 
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
+    db.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -17,11 +33,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-app.MapFallbackToFile("index.html"); ;
+app.MapFallbackToFile("index.html");
 
 app.Run();
