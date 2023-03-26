@@ -6,9 +6,9 @@ public class Product : EntityBase
 
     public ProductCategory Category { get; set; }
 
-    public double OriginalPrice { get; set; }
+    public decimal OriginalPrice { get; set; }
 
-    public double? PriceWithDiscount { get; set; }
+    public decimal? PriceWithDiscount { get; set; }
 
     public int QuantityLeft { get; set; }
 

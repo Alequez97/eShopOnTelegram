@@ -6,4 +6,8 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\eShopOnTelegram.Persistence\eShopOnTelegram.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
