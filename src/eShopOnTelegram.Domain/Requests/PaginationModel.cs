@@ -2,9 +2,9 @@
 
 public class PaginationModel
 {
-    public int From { get; set; }
+    public int? From { get; set; }
 
-    public int To { get; set; }
+    public int? To { get; set; }
 
     public string? SortPropertyName { get; set; }
 

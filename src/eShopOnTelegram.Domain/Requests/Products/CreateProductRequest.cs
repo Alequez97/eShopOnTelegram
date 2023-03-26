@@ -6,15 +6,15 @@ namespace eShopOnTelegram.Domain.Requests.Products;
 
 public class CreateProductRequest
 {
-    public string ProductName { get; set; }
+    public required string ProductName { get; set; }
 
-    public long ProductCategoryId { get; set; }
+    public required long ProductCategoryId { get; set; }
 
-    public decimal OriginalPrice { get; set; }
+    public required decimal OriginalPrice { get; set; }
 
     public decimal? PriceWithDiscount { get; set; }
 
-    public int QuantityLeft { get; set; }
+    public required int QuantityLeft { get; set; }
 
     [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
     public IFormFile? ProductImage { get; set; }
