@@ -2,11 +2,11 @@
 
 public class GetRequest
 {
-    public string Filter { get; set; }
+    public string? Filter { get; set; }
 
-    public string Range { get; set; }
+    public string? Range { get; set; }
 
-    public string Sort { get; set; }
+    public string? Sort { get; set; }
 
     public PaginationModel PaginationModel
     {
