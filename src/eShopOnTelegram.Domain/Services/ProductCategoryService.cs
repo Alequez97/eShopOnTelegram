@@ -24,13 +24,14 @@ public class ProductCategoryService : IProductCategoryService
 
         try
         {
-            var products = await _dbContext.ProductCategories
+            var productCategory = await _dbContext.ProductCategories
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getProductCategoriesResponse = products.Select(product => new GetProductCategoryResponse
+            var getProductCategoriesResponse = productCategory.Select(productCategory => new GetProductCategoryResponse
             {
-                Name = product.Name,
+                Id = productCategory.Id,
+                Name = productCategory.Name,
             });
 
             response.Status = ResponseStatus.Success;

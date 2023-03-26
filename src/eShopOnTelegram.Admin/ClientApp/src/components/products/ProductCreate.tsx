@@ -27,10 +27,10 @@ function ProductCreate(props: any) {
   const validateInitialWorth = [required(), number(), minValue(1)];
 
   return (
-    <Create title="Add new product categories" {...props}>
+    <Create title="Add new product" {...props}>
       <SimpleForm>
         <TextInput source="productName" validate={validateCardNumber} />
-        <TextInput source="productCategory" validate={validateCvc} />
+        <TextInput source="productCategories" validate={validateCvc} />
         <TextInput source="originalPrice" validate={validateExpirationDate} />
         <NumberInput source="priceWithDiscount" validate={validateInitialWorth} />
         <NumberInput source="quantityLeft" validate={validateInitialWorth} />

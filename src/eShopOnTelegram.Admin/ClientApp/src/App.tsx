@@ -1,5 +1,7 @@
 import restProvider from "ra-data-simple-rest";
-import { Admin, Resource, ListGuesser } from "react-admin";
+import { Admin, ListGuesser, Resource } from "react-admin";
+import ProductCategoriesList from "./components/product-categories/ProductCategoriesList";
+import ProductCategoriesCreate from "./components/product-categories/ProductCategoriesCreate";
 import ProductCreate from "./components/products/ProductCreate";
 import ProductsList from "./components/products/ProductsList";
 
@@ -14,6 +16,11 @@ function App() {
         name="products"
         list={ProductsList}
         create={ProductCreate}
+      />
+      <Resource
+        name="productCategories"
+        list={ProductCategoriesList}
+        create={ProductCategoriesCreate}
       />
     </Admin>
   );
