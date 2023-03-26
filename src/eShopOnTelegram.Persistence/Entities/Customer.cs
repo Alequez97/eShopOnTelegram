@@ -3,6 +3,8 @@
 [Index(nameof(TelegramUserUID), IsUnique = true)]
 public class Customer : EntityBase
 {
+    public required long TelegramUserUID { get; set; }
+
     public string? Username { get; set; }
 
     [MaxLength(100)]
@@ -10,6 +12,4 @@ public class Customer : EntityBase
 
     [MaxLength(100)]
     public string? LastName { get; set; }
-
-    public required long TelegramUserUID { get; set; }
 }

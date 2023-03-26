@@ -5,18 +5,18 @@ namespace eShopOnTelegram.Persistence.Entities;
 [Index(nameof(OrderNumber), IsUnique = true)]
 public class Order : EntityBase
 {
-    public string OrderNumber { get; set; }
+    public required string OrderNumber { get; set; }
 
-    public long CustomerId { get; set; }
+    public required long CustomerId { get; set; }
     public Customer Customer { get; set; }
 
-    public IList<CartItem> CartItems { get; set; }
+    public required IList<CartItem> CartItems { get; set; }
 
     public DateTime CreationDate { get; set; }
 
     public DateTime? PaymentDate { get; set; }
 
-    public OrderStatus Status { get; set; }
+    public required OrderStatus Status { get; set; }
 
     [MaxLength(2)]
     public string? CountryIso2Code { get; set; }
