@@ -13,5 +13,5 @@ public class Product : EntityBase
     public int QuantityLeft { get; set; }
 
     [MaxLength(200)]
-    public string ImageName { get; set; }
+    public string? ImageName { get; set; }
 }
