@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Persistence.Context;
+﻿using eShopOnTelegram.Domain.Services;
+using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -19,8 +21,13 @@ public class Startup
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>));
 
-        services.AddTransient<IBasketService, BasketService>();
-        services.AddTransient<ICatalogService, CatalogService>();
-        services.AddTransient<IOrderService, OrderService>();
+        //using (var scope = services.CreateScope())
+        //{
+        //    var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
+        //    db.Database.Migrate();
+        //}
+
+        services.AddTransient<IProductService, ProductService>();
+        services.AddTransient<IProductCategoryService, ProductCategoryService>();
     }
 }
