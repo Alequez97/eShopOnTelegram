@@ -18,7 +18,7 @@ public class CustomerService : ICustomerService
         try
         {
             // todo maybe it would be better to create a new method that checks whether user exists or not. After, we could reuse it in order service.
-            if (!await _ctx.Customers.AnyAsync(c => c.TelegramUserUID == request.TelegramUserUID))
+            if (await _ctx.Customers.AnyAsync(c => c.TelegramUserUID == request.TelegramUserUID))
             {
                 return new Response()
                 {

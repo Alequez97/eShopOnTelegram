@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using eShopOnTelegram.Persistence.Context;
 
@@ -11,9 +12,11 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    partial class EShopOnTelegramDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230327140435_SomeChanges")]
+    partial class SomeChanges
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
