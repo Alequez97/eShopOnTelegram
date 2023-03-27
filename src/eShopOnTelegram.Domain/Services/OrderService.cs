@@ -38,6 +38,7 @@ public class OrderService : IOrderService
                 Status = OrderStatus.New
             };
 
+            _ctx.Add(order);
             await _ctx.SaveChangesAsync();
 
             return new Response()

@@ -55,12 +55,12 @@ public class WebAppCommand : ITelegramCommand
             Guard.Against.Null(update.Message.WebAppData);
             Guard.Against.Null(update.Message.WebAppData.Data);
 
-            var cartItems = JsonConvert.DeserializeObject<List<CartItem>>(update.Message.WebAppData.Data);
+            var webAppData = JsonConvert.DeserializeObject<WebAppCommandData>(update.Message.WebAppData.Data);
 
             var createOrderRequest = new CreateOrderRequest()
             {
                 TelegramUserUID = update.Message.From.Id,
-                CartItems = cartItems,
+                CartItems = webAppData.CartItems,
             };
 
             var createOrderResponse = await _orderService.CreateOrder(createOrderRequest);
