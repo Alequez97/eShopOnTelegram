@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Extensions;
+﻿using Azure.Core;
+
+using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses.Products;
@@ -50,6 +52,42 @@ public class ProductService : IProductService
         }
 
         return response;
+    }
+
+    public async Task<Response<IEnumerable<GetProductResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var products = await _dbContext.Products
+                .Include(product => product.Category)
+                .ToListAsync(cancellationToken);
+
+            var getProductsResponse = products.Select(product => new GetProductResponse
+            {
+                Id = product.Id,
+                ProductName = product.Name,
+                ProductCategoryName = product.Category.Name,
+                OriginalPrice = product.OriginalPrice,
+                PriceWithDiscount = product.PriceWithDiscount,
+                QuantityLeft = product.QuantityLeft,
+                //Image = product.ImageName
+            });
+
+            return new Response<IEnumerable<GetProductResponse>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductsResponse,
+                TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+            return new Response<IEnumerable<GetProductResponse>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
     public async Task<Response<GetProductResponse>> GetByIdAsync(long id, CancellationToken cancellationToken)
