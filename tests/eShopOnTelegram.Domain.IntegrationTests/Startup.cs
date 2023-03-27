@@ -19,15 +19,12 @@ public class Startup
         services
             .AddDbContext<EShopOnTelegramDbContext>(options => options.UseSqlite($"Data Source={dbPath}"))
             .AddSingleton<ILoggerFactory, LoggerFactory>()
-            .AddTransient(typeof(ILogger<>), typeof(Logger<>));
+            .AddTransient(typeof(ILogger<>), typeof(Logger<>))
+            .AddTransient<IProductService, ProductService>()
+            .AddTransient<IProductCategoryService, ProductCategoryService>();
 
-        //using (var scope = services.CreateScope())
-        //{
-        //    var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
-        //    db.Database.Migrate();
-        //}
-
-        services.AddTransient<IProductService, ProductService>();
-        services.AddTransient<IProductCategoryService, ProductCategoryService>();
+        var serviceProvider = services.BuildServiceProvider();
+        var dbContext = serviceProvider.GetRequiredService<EShopOnTelegramDbContext>();
+        dbContext.Database.Migrate();
     }
 }

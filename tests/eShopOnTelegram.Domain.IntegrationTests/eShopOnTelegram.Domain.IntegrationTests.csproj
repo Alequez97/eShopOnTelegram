@@ -28,4 +28,8 @@
     <ProjectReference Include="..\..\src\eShopOnTelegram.Domain\eShopOnTelegram.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\ProductCategories\" />
+  </ItemGroup>
+
 </Project>

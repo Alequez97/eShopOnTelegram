@@ -89,8 +89,6 @@ public class ProductService : IProductService
 
     public async Task<Response> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             //var storedImageName = await _productImagesRepository.SaveAsync(createProductRequest.ProductImage, CancellationToken.None);
@@ -109,23 +107,30 @@ public class ProductService : IProductService
 
             if (productCategory == null)
             {
-                response.Status = ResponseStatus.NotFound;
+                return new Response()
+                {
+                    Status = ResponseStatus.NotFound
+                };
             }
 
             _dbContext.Products.Add(product);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
-            response.Id = product.Id;
+            return new Response()
+            {
+                Status = ResponseStatus.Success,
+                Id = product.Id
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to create product");
-            response.Status = ResponseStatus.Exception;
+            return new Response()
+            {
+                Status = ResponseStatus.Exception,
+            };
         }
-
-        return response;
     }
 
     public async Task<Response> UpdateAsync(UpdateProductRequest updateProductRequest, CancellationToken cancellationToken)

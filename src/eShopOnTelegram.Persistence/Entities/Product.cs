@@ -2,6 +2,7 @@
 
 public class Product : EntityBase
 {
+    [MaxLength(200)]
     public string Name { get; set; }
 
     public ProductCategory Category { get; set; }
