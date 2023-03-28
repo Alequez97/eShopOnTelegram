@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "npm run scss-types && vite --open",
+    "start": "npm run scss-types && vite",
     "watch": "npm run scss-types && vite build --mode dev --watch",
     "start:dev": "npm run scss-types && vite --mode dev",
     "build:dev": "npm run scss-types && tsc && vite build --mode dev",

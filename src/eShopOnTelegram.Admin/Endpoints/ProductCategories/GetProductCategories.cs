@@ -2,6 +2,7 @@
 using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Responses.ProductCategories;
+using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 

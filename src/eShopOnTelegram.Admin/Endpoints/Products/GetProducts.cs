@@ -2,7 +2,7 @@
 using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Requests;
 
-namespace VirtualCards.Admin.Endpoints.Customers;
+namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class GetProducts : EndpointBaseAsync
     .WithRequest<GetRequest>
