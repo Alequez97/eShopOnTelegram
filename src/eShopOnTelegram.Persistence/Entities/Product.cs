@@ -1,5 +1,6 @@
 ﻿namespace eShopOnTelegram.Persistence.Entities;
 
+[Index(nameof(Name), IsUnique = true)]
 public class Product : EntityBase
 {
     public required string Name { get; set; }

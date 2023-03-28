@@ -10,7 +10,7 @@ public class Order : EntityBase
 
     public required IList<CartItem> CartItems { get; set; }
 
-    public DateTime CreationDate { get; set; }
+    public DateTime CreationDate { get; set; } = DateTime.UtcNow;
 
     public DateTime? PaymentDate { get; set; }
 
