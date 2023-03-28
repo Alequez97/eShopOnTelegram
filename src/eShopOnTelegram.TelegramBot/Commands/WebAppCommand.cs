@@ -65,7 +65,7 @@ public class WebAppCommand : ITelegramCommand
 
             var createOrderResponse = await _orderService.CreateAsync(createOrderRequest);
 
-            if(createOrderResponse.Status != ResponseStatus.Success)
+            if (createOrderResponse.Status != ResponseStatus.Success)
             {
                 _logger.LogError("Unable to handle order.");
                 await _telegramBotClient.SendTextMessageAsync(
