@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20230328155002_Initial")]
+    [Migration("20230328161646_Initial")]
     partial class Initial
     {
         /// <inheritdoc />

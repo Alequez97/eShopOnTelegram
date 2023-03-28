@@ -2,5 +2,5 @@
 
 public static class SwaggerGroup
 {
-    public const string Weather = "Weather";
+    public const string Products = "Products";
 }

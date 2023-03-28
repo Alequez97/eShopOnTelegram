@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Extensions;
+﻿using Azure.Core;
+
+using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses.Products;
@@ -24,6 +26,7 @@ public class ProductService : IProductService
         try
         {
             var products = await _dbContext.Products
+                .Include(product => product.Category)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
@@ -35,11 +38,12 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                Image = product.ImageName
+                //Image = product.ImageName
             });
 
             response.Status = ResponseStatus.Success;
             response.Data = getProductsResponse;
+            response.TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken);
         }
         catch (Exception exception)
         {
@@ -48,6 +52,42 @@ public class ProductService : IProductService
         }
 
         return response;
+    }
+
+    public async Task<Response<IEnumerable<GetProductResponse>>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            var products = await _dbContext.Products
+                .Include(product => product.Category)
+                .ToListAsync(cancellationToken);
+
+            var getProductsResponse = products.Select(product => new GetProductResponse
+            {
+                Id = product.Id,
+                ProductName = product.Name,
+                ProductCategoryName = product.Category.Name,
+                OriginalPrice = product.OriginalPrice,
+                PriceWithDiscount = product.PriceWithDiscount,
+                QuantityLeft = product.QuantityLeft,
+                //Image = product.ImageName
+            });
+
+            return new Response<IEnumerable<GetProductResponse>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductsResponse,
+                TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+            return new Response<IEnumerable<GetProductResponse>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
     public async Task<Response<GetProductResponse>> GetByIdAsync(long id, CancellationToken cancellationToken)
@@ -87,25 +127,32 @@ public class ProductService : IProductService
         return response;
     }
 
-    public async Task<Response> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
+    public async Task<Response> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken)
     {
         var response = new Response();
 
         try
         {
-            //var storedImageName = await _productImagesRepository.SaveAsync(createProductRequest.ProductImage, CancellationToken.None);
+            var existingProductCategory = await _dbContext.ProductCategories
+                .FirstOrDefaultAsync(category => category.Id == request.ProductCategoryId, cancellationToken);
+
+            if (existingProductCategory == null)
+            {
+                response.Status = ResponseStatus.NotFound;
+                return response;
+            }
 
             var product = new Product()
             {
-                Name = createProductRequest.ProductName,
-                OriginalPrice = createProductRequest.OriginalPrice,
-                PriceWithDiscount = createProductRequest.PriceWithDiscount,
-                QuantityLeft = createProductRequest.QuantityLeft,
-                //product.ImageName = storedImageName
+                Name = request.ProductName,
+                OriginalPrice = request.OriginalPrice,
+                PriceWithDiscount = request.PriceWithDiscount,
+                QuantityLeft = request.QuantityLeft,
+                Category = existingProductCategory
             };
 
             var productCategory = await _dbContext.ProductCategories
-                .FirstOrDefaultAsync(productCategory => productCategory.Id == createProductRequest.ProductCategoryId, cancellationToken);
+                .FirstOrDefaultAsync(productCategory => productCategory.Id == request.ProductCategoryId, cancellationToken);
 
             if (productCategory == null)
             {

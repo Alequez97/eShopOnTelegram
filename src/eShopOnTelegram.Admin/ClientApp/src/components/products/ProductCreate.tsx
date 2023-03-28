@@ -1,39 +1,29 @@
 import {
   Create,
   FileInput,
-  maxLength,
-  minLength,
-  minValue,
   number,
   NumberInput,
-  regex,
+  ReferenceInput,
   required,
+  SelectInput,
   SimpleForm,
   TextInput,
 } from "react-admin";
 
-function ProductCreate(props: any) {
-  const validateCardNumber = [
-    required(),
-    number(),
-    minLength(16),
-    maxLength(16),
-  ];
-  const validateCvc = [required(), number(), minLength(3), maxLength(3)];
-  const validateExpirationDate = regex(
-    /^(0[1-9]|1[0-2])\/(\d{2})$/,
-    "Invalid value or date format. Must be MM/YY"
-  );
-  const validateInitialWorth = [required(), number(), minValue(1)];
-
+function ProductCreate() {
   return (
-    <Create title="Add new product" {...props}>
+    <Create title="Add new product">
       <SimpleForm>
-        <TextInput source="productName" validate={validateCardNumber} />
-        <TextInput source="productCategories" validate={validateCvc} />
-        <TextInput source="originalPrice" validate={validateExpirationDate} />
-        <NumberInput source="priceWithDiscount" validate={validateInitialWorth} />
-        <NumberInput source="quantityLeft" validate={validateInitialWorth} />
+        <TextInput source="productName" validate={[required()]} />
+        <ReferenceInput
+          source="productCategoryId"
+          reference="productCategories"
+        >
+          <SelectInput optionText="name" validate={[required()]} />
+        </ReferenceInput>
+        <NumberInput source="originalPrice" validate={[required(), number()]} />
+        <NumberInput source="priceWithDiscount" validate={[number()]} />
+        <NumberInput source="quantityLeft" validate={[required(), number()]} />
         <FileInput source="productImage" accept="image/*" />
       </SimpleForm>
     </Create>

@@ -5,9 +5,9 @@ import Loader from "../../components/Loader/Loader";
 import Error from "../../components/Error/Error";
 import { getCartItemsAsJsonString } from "../../utilities/cartItems";
 import { useCartItems } from "../../hooks/cartItems";
-import { useProductsMock } from "../../hooks/productsMock";
 import { useTelegramWebApp } from "../../hooks/telegram";
 import Product from "../../types/Product";
+import { useProducts } from "../../hooks/products";
 
 export default function Products() {
   const { telegramWebApp } = useTelegramWebApp();
@@ -19,7 +19,7 @@ export default function Products() {
 
   const { cartItems, addProductToState, removeProductFromState } =
     useCartItems();
-  const { products, error, loading } = useProductsMock();
+  const { products, productCategories, error, loading } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<
     Product[] | undefined
   >(undefined);
@@ -98,7 +98,9 @@ export default function Products() {
             <option value={DEFAULT_SELECTOR_VALUE}>
               {DEFAULT_SELECTOR_VALUE}
             </option>
-            {/* {productCategories?.map(category => (<option value={category}>{category}</option>))} */}
+            {productCategories?.map((category) => (
+              <option value={category}>{category}</option>
+            ))}
           </select>
         </div>
       )}

@@ -1,8 +1,8 @@
 ﻿namespace eShopOnTelegram.Domain.Responses.ProductCategories;
 
-public class GetProductCategoryResponse : Response
+public class GetProductCategoryResponse
 {
-    public long Id { get; set; }
+    public required long Id { get; set; }
 
-    public string Name { get; set; }
+    public required string Name { get; set; }
 }
