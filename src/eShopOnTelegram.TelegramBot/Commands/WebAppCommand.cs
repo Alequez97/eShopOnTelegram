@@ -63,7 +63,7 @@ public class WebAppCommand : ITelegramCommand
                 CartItems = webAppData.CartItems,
             };
 
-            var createOrderResponse = await _orderService.CreateOrder(createOrderRequest);
+            var createOrderResponse = await _orderService.CreateAsync(createOrderRequest);
 
             if(createOrderResponse.Status != ResponseStatus.Success)
             {

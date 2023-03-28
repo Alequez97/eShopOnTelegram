@@ -5,6 +5,7 @@ public class Customer : EntityBase
 {
     public required long TelegramUserUID { get; set; }
 
+    [MaxLength(100)]
     public string? Username { get; set; }
 
     [MaxLength(100)]

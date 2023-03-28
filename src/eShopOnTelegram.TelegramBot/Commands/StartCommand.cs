@@ -44,7 +44,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                     LastName = update.Message.From.LastName
                 };
 
-                var createCustomerResponse = await _customerService.CreateUserIfNotPresent(createCustomerRequest);
+                var createCustomerResponse = await _customerService.CreateUserIfNotPresentAsync(createCustomerRequest);
                 var chatId = update.Message.Chat.Id;
 
                 if (createCustomerResponse.Status != Domain.Responses.ResponseStatus.Success)

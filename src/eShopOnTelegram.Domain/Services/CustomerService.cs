@@ -46,7 +46,7 @@ public class CustomerService : ICustomerService
         return response;
     }
 
-    public async Task<Response> CreateUserIfNotPresent(CreateCustomerRequest request)
+    public async Task<Response> CreateUserIfNotPresentAsync(CreateCustomerRequest request)
     {
         try
         {

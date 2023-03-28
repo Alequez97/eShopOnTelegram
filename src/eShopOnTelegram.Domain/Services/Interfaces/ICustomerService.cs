@@ -7,5 +7,5 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 public interface ICustomerService
 {
     public Task<Response<IEnumerable<GetCustomersResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
-    public Task<Response> CreateUserIfNotPresent(CreateCustomerRequest request);
+    public Task<Response> CreateUserIfNotPresentAsync(CreateCustomerRequest request);
 }

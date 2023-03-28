@@ -68,7 +68,7 @@ public class OrderService : IOrderService
         return response;
     }
 
-    public async Task<Response> CreateOrder(CreateOrderRequest request)
+    public async Task<Response> CreateAsync(CreateOrderRequest request)
     {
         try
         {
