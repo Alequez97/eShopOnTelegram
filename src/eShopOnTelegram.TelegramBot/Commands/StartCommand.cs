@@ -1,6 +1,7 @@
 ﻿using Ardalis.GuardClauses;
 
 using eShopOnTelegram.Domain.Requests.Customers;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Interfaces;
@@ -47,7 +48,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 var createCustomerResponse = await _customerService.CreateUserIfNotPresentAsync(createCustomerRequest);
                 var chatId = update.Message.Chat.Id;
 
-                if (createCustomerResponse.Status != Domain.Responses.ResponseStatus.Success)
+                if (createCustomerResponse.Status != ResponseStatus.Success)
                 {
                     _logger.LogError("Unable to persist new customer.");
                     await _telegramBotClient.SendTextMessageAsync(
