@@ -1,24 +1,78 @@
-﻿using eShopOnTelegram.Domain.Requests.Orders;
+﻿using eShopOnTelegram.Domain.Extensions;
+using eShopOnTelegram.Domain.Requests;
+using eShopOnTelegram.Domain.Requests.Orders;
+using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
 
 public class OrderService : IOrderService
 {
-    private readonly EShopOnTelegramDbContext _ctx;
+    private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<OrderService> _logger;
 
-    public OrderService(EShopOnTelegramDbContext ctx, ILogger<OrderService> logger)
+    public OrderService(EShopOnTelegramDbContext dbContext, ILogger<OrderService> logger)
     {
-        _ctx = ctx;
+        _dbContext = dbContext;
         _logger = logger;
+    }
+
+    public async Task<Response<IEnumerable<GetOrdersResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
+    {
+        var response = new Response<IEnumerable<GetOrdersResponse>>();
+
+        try
+        {
+            var orders = await _dbContext.Orders
+                .WithPagination(request.PaginationModel)
+                .ToListAsync(cancellationToken);
+
+            var getOrdersResponse = orders.Select(order => new GetOrdersResponse
+            {
+                OrderNumber = order.OrderNumber,
+                CustomerId = order.CustomerId,
+                TelegramUserUID = order.Customer.TelegramUserUID,
+                Username = order.Customer.Username,
+                FirstName = order.Customer.FirstName,
+                LastName = order.Customer.LastName,
+                CartItems = order.CartItems.Select(cartItem => new CartItemDto()
+                {
+                    ProductId = cartItem.ProductId,
+                    Name = cartItem.Product.Name,
+                    CategoryName = cartItem.Product.Category.Name,
+                    OriginalPrice = cartItem.Product.OriginalPrice,
+                    PriceWithDiscount = cartItem.Product.PriceWithDiscount,
+                    QuantityLeft = cartItem.Product.QuantityLeft, // probably we dont need this
+                    ImageName = cartItem.Product.ImageName,
+                    Quantity = cartItem.Quantity
+                }).ToList(),
+                CreationDate = order.CreationDate,
+                PaymentDate = order.PaymentDate,
+                Status = order.Status,
+                CountryIso2Code = order.CountryIso2Code,
+                City = order.City,
+                StreetLine1 = order.StreetLine1,
+                StreetLine2 = order.StreetLine2,
+                PostCode = order.PostCode,
+            });
+
+            response.Status = ResponseStatus.Success;
+            response.Data = getOrdersResponse;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+            response.Status = ResponseStatus.Exception;
+        }
+
+        return response;
     }
 
     public async Task<Response> CreateOrder(CreateOrderRequest request)
     {
         try
         {
-            var customer = await _ctx.Customers.FirstOrDefaultAsync(c => c.TelegramUserUID == request.TelegramUserUID);
+            var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.TelegramUserUID == request.TelegramUserUID);
             if (customer == null)
             {
                 return new Response()
@@ -38,8 +92,8 @@ public class OrderService : IOrderService
                 Status = OrderStatus.New
             };
 
-            _ctx.Add(order);
-            await _ctx.SaveChangesAsync();
+            _dbContext.Add(order);
+            await _dbContext.SaveChangesAsync();
 
             return new Response()
             {

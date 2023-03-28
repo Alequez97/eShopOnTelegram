@@ -15,8 +15,4 @@
     <ProjectReference Include="..\eShopOnTelegram.Persistence\eShopOnTelegram.Persistence.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Responses\Orders\" />
-  </ItemGroup>
-
 </Project>

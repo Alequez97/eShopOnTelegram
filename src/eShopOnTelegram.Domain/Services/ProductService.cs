@@ -143,7 +143,7 @@ public class ProductService : IProductService
             }
 
             existingProduct.Name = updateProductRequest.ProductName;
-            existingProduct.OriginalPrice = updateProductRequest.OriginalPrice;
+            existingProduct.OriginalPrice = updateProductRequest.OriginalPrice; // todo if we want to update price here then we should save price when place order, otherwise lost reference
             existingProduct.PriceWithDiscount = updateProductRequest.PriceWithDiscount;
             existingProduct.QuantityLeft = updateProductRequest.QuantityLeft;
 
