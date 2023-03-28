@@ -1,5 +1,10 @@
+using eShopOnTelegram.Domain.Services;
+using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Workers;
+
+using Microsoft.EntityFrameworkCore;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices(services =>
@@ -11,6 +16,9 @@ IHost host = Host.CreateDefaultBuilder(args)
             hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
         });
 
+        services.AddDbContext<EShopOnTelegramDbContext>(
+            options => options.UseSqlServer(configuration.GetConnectionString("Sql")));
+
         services.AddSingleton<ITelegramBotClient>(_ =>
         {
             var telegramToken = configuration!["Telegram:Token"];
@@ -21,6 +29,9 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddTelegramCommandServices();
 
         services.AddHostedService<TelegramBot>();
+
+        services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IOrderService, OrderService>();
     })
     .Build();
 

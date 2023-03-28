@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20230326185153_Initial")]
+    [Migration("20230328162919_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -98,7 +98,8 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     b.Property<string>("Username")
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
 
@@ -179,7 +180,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
@@ -193,6 +194,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CategoryId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("Products");
                 });
@@ -211,6 +215,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
 
                     b.ToTable("ProductCategories");
                 });

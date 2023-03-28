@@ -4,6 +4,8 @@ using eShopOnTelegram.Domain.Requests.ProductCategories;
 using eShopOnTelegram.Domain.Responses.ProductCategories;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
+using Microsoft.Data.SqlClient;
+
 namespace eShopOnTelegram.Domain.Services;
 
 public class ProductCategoryService : IProductCategoryService
@@ -48,8 +50,6 @@ public class ProductCategoryService : IProductCategoryService
 
     public async Task<Response> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             var category = new ProductCategory()
@@ -61,16 +61,28 @@ public class ProductCategoryService : IProductCategoryService
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
-            response.Id = category.Id;
+            return new Response()
+            {
+                Status = ResponseStatus.Success,
+                Id = category.Id
+            };
+        }
+        catch (DbUpdateException e)
+            when (e?.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+        {
+            return new Response()
+            {
+                Status = ResponseStatus.ValidationFailed
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to create product category");
-            response.Status = ResponseStatus.Exception;
+            return new Response()
+            {
+                Status = ResponseStatus.Exception
+            };
         }
-
-        return response;
     }
 
     public async Task<Response> DeleteAsync(long id, CancellationToken cancellationToken)

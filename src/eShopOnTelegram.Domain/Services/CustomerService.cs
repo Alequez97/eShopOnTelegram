@@ -1,23 +1,57 @@
-﻿using eShopOnTelegram.Domain.Requests.Customers;
+﻿using eShopOnTelegram.Domain.Extensions;
+using eShopOnTelegram.Domain.Requests;
+using eShopOnTelegram.Domain.Requests.Customers;
+using eShopOnTelegram.Domain.Responses.Customers;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
 public class CustomerService : ICustomerService
 {
-    private readonly EShopOnTelegramDbContext _ctx;
+    private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<CustomerService> _logger;
 
-    public CustomerService(EShopOnTelegramDbContext ctx, ILogger<CustomerService> logger)
+    public CustomerService(EShopOnTelegramDbContext dbContext, ILogger<CustomerService> logger)
     {
-        _ctx = ctx;
+        _dbContext = dbContext;
         _logger = logger;
     }
 
-    public async Task<Response> CreateUserIfNotPresent(CreateCustomerRequest request)
+    public async Task<Response<IEnumerable<GetCustomersResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
+    {
+        var response = new Response<IEnumerable<GetCustomersResponse>>();
+
+        try
+        {
+            var products = await _dbContext.Customers
+                .WithPagination(request.PaginationModel)
+                .ToListAsync(cancellationToken);
+
+            var getCustomersResponse = products.Select(customer => new GetCustomersResponse
+            {
+                TelegramUserUID = customer.TelegramUserUID,
+                Username = customer.Username,
+                FirstName = customer.FirstName,
+                LastName = customer.LastName,
+            });
+
+            response.Status = ResponseStatus.Success;
+            response.Data = getCustomersResponse;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+            response.Status = ResponseStatus.Exception;
+        }
+
+        return response;
+    }
+
+    public async Task<Response> CreateIfNotPresentAsync(CreateCustomerRequest request)
     {
         try
         {
-            if (!await _ctx.Customers.AnyAsync(c => c.TelegramUserUID == request.TelegramUserUID))
+            // todo maybe it would be better to create a new method that checks whether user exists or not. After, we could reuse it in order service.
+            if (await _dbContext.Customers.AnyAsync(c => c.TelegramUserUID == request.TelegramUserUID))
             {
                 return new Response()
                 {
@@ -32,8 +66,8 @@ public class CustomerService : ICustomerService
                 FirstName = request.FirstName,
                 Username = request.Username
             };
-            _ctx.Customers.Add(customer);
-            await _ctx.SaveChangesAsync();
+            _dbContext.Customers.Add(customer);
+            await _dbContext.SaveChangesAsync();
 
             return new Response()
             {
