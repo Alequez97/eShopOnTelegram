@@ -10,8 +10,6 @@ public class EShopOnTelegramDbContext : DbContext
 
     public DbSet<Order> Orders { get; set; }
 
-    public DbSet<Basket> Baskets { get; set; }
-
     public DbSet<CartItem> CartItems { get; set; }
 
     public EShopOnTelegramDbContext(DbContextOptions<EShopOnTelegramDbContext> options)
