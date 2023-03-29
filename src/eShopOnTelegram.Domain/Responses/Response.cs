@@ -1,9 +1,9 @@
-﻿namespace eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.Domain.Dto;
+
+namespace eShopOnTelegram.Domain.Responses;
 
 public class Response
 {
-    public long Id { get; set; }
-
     public ResponseStatus Status { get; set; }
 
     public string? Message { get; set; }
@@ -11,7 +11,7 @@ public class Response
     public List<string>? ValidationErrors { get; set; }
 }
 
-public class Response<T> : Response where T : class
+public class Response<T> : Response where T : IEnumerable<DtoBase>
 {
     public T Data { get; set; }
 

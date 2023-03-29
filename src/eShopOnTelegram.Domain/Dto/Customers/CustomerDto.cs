@@ -1,6 +1,6 @@
-﻿namespace eShopOnTelegram.Domain.Responses.Customers;
+﻿namespace eShopOnTelegram.Domain.Dto.Customers;
 
-public class GetCustomersResponse : Response
+public class CustomerDto : DtoBase
 {
     public required long TelegramUserUID { get; set; }
 

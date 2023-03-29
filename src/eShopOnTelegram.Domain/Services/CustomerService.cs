@@ -1,7 +1,7 @@
-﻿using eShopOnTelegram.Domain.Extensions;
+﻿using eShopOnTelegram.Domain.Dto.Customers;
+using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Customers;
-using eShopOnTelegram.Domain.Responses.Customers;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -16,9 +16,9 @@ public class CustomerService : ICustomerService
         _logger = logger;
     }
 
-    public async Task<Response<IEnumerable<GetCustomersResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
+    public async Task<Response<IEnumerable<CustomerDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response<IEnumerable<GetCustomersResponse>>();
+        var response = new Response<IEnumerable<CustomerDto>>();
 
         try
         {
@@ -26,8 +26,9 @@ public class CustomerService : ICustomerService
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getCustomersResponse = products.Select(customer => new GetCustomersResponse
+            var getCustomersResponse = products.Select(customer => new CustomerDto()
             {
+                Id = customer.Id,
                 TelegramUserUID = customer.TelegramUserUID,
                 Username = customer.Username,
                 FirstName = customer.FirstName,
