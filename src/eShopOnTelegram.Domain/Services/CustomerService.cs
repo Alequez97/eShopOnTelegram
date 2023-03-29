@@ -36,6 +36,7 @@ public class CustomerService : ICustomerService
 
             response.Status = ResponseStatus.Success;
             response.Data = getCustomersResponse;
+            response.TotalItemsInDatabase = await _dbContext.Customers.CountAsync(cancellationToken);
         }
         catch (Exception exception)
         {

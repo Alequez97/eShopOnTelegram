@@ -23,7 +23,7 @@ public class GetOrdersResponse : Response
 
     public DateTime? PaymentDate { get; set; }
 
-    public required OrderStatus Status { get; set; }
+    public required string Status { get; set; }
 
     public string? CountryIso2Code { get; set; }
 

@@ -24,6 +24,10 @@ public class OrderService : IOrderService
         try
         {
             var orders = await _dbContext.Orders
+                .Include(order => order.CartItems)
+                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(product => product.Category)
+                .Include(order => order.Customer)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
@@ -48,7 +52,7 @@ public class OrderService : IOrderService
                 }).ToList(),
                 CreationDate = order.CreationDate,
                 PaymentDate = order.PaymentDate,
-                Status = order.Status,
+                Status = order.Status.ToString(),
                 CountryIso2Code = order.CountryIso2Code,
                 City = order.City,
                 StreetLine1 = order.StreetLine1,
@@ -58,6 +62,7 @@ public class OrderService : IOrderService
 
             response.Status = ResponseStatus.Success;
             response.Data = getOrdersResponse;
+            response.TotalItemsInDatabase = await _dbContext.Orders.CountAsync(cancellationToken);
         }
         catch (Exception exception)
         {
