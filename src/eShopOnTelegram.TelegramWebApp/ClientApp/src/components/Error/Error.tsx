@@ -23,9 +23,8 @@ export default function Error() {
       </div>
       <div className={css.errorMessage}>
         <p>
-          Unfortunately, we're unable to fulfill your request. Rest assured we
-          have been notified and are looking into the issue. Please refresh your
-          browser. If the error continues, please contact our <a href="#">support team</a>.
+          Unfortunately, we're unable to fulfill your request. Try your request again
+          and if the error continues, please contact <a href="#">support team</a>.
         </p>
       </div>
     </>
