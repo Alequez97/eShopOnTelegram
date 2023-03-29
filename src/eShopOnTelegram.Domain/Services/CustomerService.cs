@@ -48,14 +48,14 @@ public class CustomerService : ICustomerService
         return response;
     }
 
-    public async Task<Response> CreateIfNotPresentAsync(CreateCustomerRequest request)
+    public async Task<ActionResponse> CreateIfNotPresentAsync(CreateCustomerRequest request)
     {
         try
         {
             // todo maybe it would be better to create a new method that checks whether user exists or not. After, we could reuse it in order service.
             if (await _dbContext.Customers.AnyAsync(c => c.TelegramUserUID == request.TelegramUserUID))
             {
-                return new Response()
+                return new ActionResponse()
                 {
                     Status = ResponseStatus.Success,
                 };
@@ -71,7 +71,7 @@ public class CustomerService : ICustomerService
             _dbContext.Customers.Add(customer);
             await _dbContext.SaveChangesAsync();
 
-            return new Response()
+            return new ActionResponse()
             {
                 Status = ResponseStatus.Success,
             };
@@ -79,7 +79,11 @@ public class CustomerService : ICustomerService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create new user.");
-            return new Response() { Status = ResponseStatus.Exception };
+            
+            return new ActionResponse()
+            { 
+                Status = ResponseStatus.Exception 
+            };
         }
     }
 }

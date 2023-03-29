@@ -8,7 +8,7 @@ public class GetRequest
 
     public string? Sort { get; set; }
 
-    public PaginationModel? PaginationModel
+    public PaginationModel PaginationModel
     {
         get
         {
