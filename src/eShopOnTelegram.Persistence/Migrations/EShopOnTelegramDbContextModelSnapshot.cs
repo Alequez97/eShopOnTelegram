@@ -22,27 +22,6 @@ namespace eShopOnTelegram.Persistence.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Basket", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<long>("CustomerId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CustomerId");
-
-                    b.ToTable("Baskets");
-                });
-
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.CartItem", b =>
                 {
                     b.Property<long>("Id")
@@ -50,9 +29,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasColumnType("bigint");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("BasketId")
-                        .HasColumnType("bigint");
 
                     b.Property<long?>("OrderId")
                         .HasColumnType("bigint");
@@ -64,8 +40,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("BasketId");
 
                     b.HasIndex("OrderId");
 
@@ -206,36 +180,29 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
+
+                    b.Property<long?>("PreviousVersionId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("PreviousVersionId");
+
                     b.ToTable("ProductCategories");
-                });
-
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Basket", b =>
-                {
-                    b.HasOne("eShopOnTelegram.Persistence.Entities.Customer", "Customer")
-                        .WithMany()
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.CartItem", b =>
                 {
-                    b.HasOne("eShopOnTelegram.Persistence.Entities.Basket", null)
-                        .WithMany("CartItems")
-                        .HasForeignKey("BasketId");
-
                     b.HasOne("eShopOnTelegram.Persistence.Entities.Order", null)
                         .WithMany("CartItems")
                         .HasForeignKey("OrderId");
@@ -271,9 +238,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Basket", b =>
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductCategory", b =>
                 {
-                    b.Navigation("CartItems");
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.ProductCategory", "PreviousVersion")
+                        .WithMany()
+                        .HasForeignKey("PreviousVersionId");
+
+                    b.Navigation("PreviousVersion");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Order", b =>

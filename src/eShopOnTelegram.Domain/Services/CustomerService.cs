@@ -18,8 +18,6 @@ public class CustomerService : ICustomerService
 
     public async Task<Response<IEnumerable<CustomerDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response<IEnumerable<CustomerDto>>();
-
         try
         {
             var products = await _dbContext.Customers
@@ -35,17 +33,23 @@ public class CustomerService : ICustomerService
                 LastName = customer.LastName,
             });
 
-            response.Status = ResponseStatus.Success;
-            response.Data = getCustomersResponse;
-            response.TotalItemsInDatabase = await _dbContext.Customers.CountAsync(cancellationToken);
+            return new Response<IEnumerable<CustomerDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getCustomersResponse,
+                TotalItemsInDatabase = await _dbContext.Customers.CountAsync(cancellationToken)
+            };
+
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to get all products");
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new Response<IEnumerable<CustomerDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
     public async Task<ActionResponse> CreateIfNotPresentAsync(CreateCustomerRequest request)
@@ -79,10 +83,10 @@ public class CustomerService : ICustomerService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Failed to create new user.");
-            
+
             return new ActionResponse()
-            { 
-                Status = ResponseStatus.Exception 
+            {
+                Status = ResponseStatus.Exception
             };
         }
     }

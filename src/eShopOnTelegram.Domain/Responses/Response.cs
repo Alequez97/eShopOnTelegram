@@ -2,7 +2,7 @@
 
 public abstract class Response
 {
-    public ResponseStatus Status { get; set; }
+    public required ResponseStatus Status { get; set; }
 
     public string? Message { get; set; }
 

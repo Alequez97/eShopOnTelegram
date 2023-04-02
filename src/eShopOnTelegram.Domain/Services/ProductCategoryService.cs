@@ -19,15 +19,55 @@ public class ProductCategoryService : IProductCategoryService
         _logger = logger;
     }
 
+    public async Task<Response<ProductCategoryDto>> GetAsync(long id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingProductCategory = await _dbContext.ProductCategories
+                .FirstOrDefaultAsync(productCategory => productCategory.Id == id);
+
+            if (existingProductCategory == null)
+            {
+                return new Response<ProductCategoryDto>
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            var getProductCategoryDto = new ProductCategoryDto()
+            {
+                Id = existingProductCategory.Id,
+                Name = existingProductCategory.Name,
+            };
+
+            return new Response<ProductCategoryDto>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductCategoryDto,
+            };
+
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+
+            return new Response<ProductCategoryDto>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
     public async Task<Response<IEnumerable<ProductCategoryDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
         try
         {
             var productCategory = await _dbContext.ProductCategories
+                .Where(productCategory => productCategory.IsDeleted == false)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getProductCategoriesResponse = productCategory.Select(productCategory => new ProductCategoryDto
+            var getProductCategoriesDtoList = productCategory.Select(productCategory => new ProductCategoryDto
             {
                 Id = productCategory.Id,
                 Name = productCategory.Name,
@@ -36,10 +76,9 @@ public class ProductCategoryService : IProductCategoryService
             return new Response<IEnumerable<ProductCategoryDto>>()
             {
                 Status = ResponseStatus.Success,
-                Data = getProductCategoriesResponse,
+                Data = getProductCategoriesDtoList,
                 TotalItemsInDatabase = await _dbContext.ProductCategories.CountAsync(cancellationToken)
             };
-
         }
         catch (Exception exception)
         {
@@ -59,6 +98,7 @@ public class ProductCategoryService : IProductCategoryService
             var category = new ProductCategory()
             {
                 Name = request.Name,
+                IsDeleted = false,
             };
 
             _dbContext.ProductCategories.Add(category);
@@ -90,6 +130,49 @@ public class ProductCategoryService : IProductCategoryService
         }
     }
 
+    public async Task<ActionResponse> UpdateAsync(UpdateProductCategoryRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingProductCategory = _dbContext.ProductCategories.FirstOrDefault(category => category.Id == request.Id);
+
+            if (existingProductCategory == null)
+            {
+                return new ActionResponse
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            existingProductCategory.IsDeleted = true;
+
+            var updatedProductCategory = new ProductCategory()
+            {
+                Name = request.Name,
+                IsDeleted = false,
+                PreviousVersion = existingProductCategory
+            };
+
+            _dbContext.ProductCategories.Add(updatedProductCategory);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new ActionResponse()
+            {
+                Id = updatedProductCategory.Id,
+                Status = ResponseStatus.Success
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception during product category update");
+
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
     public async Task<ActionResponse> DeleteAsync(long id, CancellationToken cancellationToken)
     {
         try
@@ -104,7 +187,7 @@ public class ProductCategoryService : IProductCategoryService
                 };
             }
 
-            _dbContext.ProductCategories.Remove(existingCategory);
+            existingCategory.IsDeleted = true;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
