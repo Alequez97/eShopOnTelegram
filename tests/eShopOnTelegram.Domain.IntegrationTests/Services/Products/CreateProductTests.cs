@@ -3,9 +3,6 @@ using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
 
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
-
 namespace eShopOnTelegram.Domain.IntegrationTests.Services.Products;
 
 public class CreateProductTests

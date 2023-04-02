@@ -3,6 +3,7 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
@@ -12,12 +13,14 @@ public class Startup
 {
     public void ConfigureServices(IServiceCollection services)
     {
-        var folder = Environment.SpecialFolder.LocalApplicationData;
-        var path = Environment.GetFolderPath(folder);
-        var dbPath = Path.Join(path, "eShopOnTelegramTest.db");
+        var config = new ConfigurationBuilder()
+            .AddJsonFile("appsettings.json")
+            .AddUserSecrets(typeof(Startup).Assembly)
+            .AddEnvironmentVariables()
+            .Build();
 
         services
-            .AddDbContext<EShopOnTelegramDbContext>(options => options.UseSqlite($"Data Source={dbPath}"))
+            .AddDbContext<EShopOnTelegramDbContext>(options => options.UseSqlServer(config.GetConnectionString("Sql")))
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>))
             .AddTransient<IProductService, ProductService>()
