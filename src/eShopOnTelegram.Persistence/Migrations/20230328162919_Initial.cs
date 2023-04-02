@@ -5,8 +5,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eShopOnTelegram.Persistence.Migrations
 {
+    /// <inheritdoc />
     public partial class Initial : Migration
     {
+        /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
@@ -15,10 +17,10 @@ namespace eShopOnTelegram.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    TelegramUserUID = table.Column<long>(type: "bigint", nullable: false),
                     Username = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
-                    TelegramId = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false)
+                    LastName = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -92,10 +94,10 @@ namespace eShopOnTelegram.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    OriginalPrice = table.Column<double>(type: "float", nullable: false),
-                    PriceWithDiscount = table.Column<double>(type: "float", nullable: true),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PriceWithDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     QuantityLeft = table.Column<int>(type: "int", nullable: false),
                     ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
                 },
@@ -163,17 +165,10 @@ namespace eShopOnTelegram.Persistence.Migrations
                 column: "ProductId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Customers_TelegramId",
+                name: "IX_Customers_TelegramUserUID",
                 table: "Customers",
-                column: "TelegramId",
+                column: "TelegramUserUID",
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Customers_Username",
-                table: "Customers",
-                column: "Username",
-                unique: true,
-                filter: "[Username] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Orders_CustomerId",
@@ -187,11 +182,24 @@ namespace eShopOnTelegram.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_ProductCategories_Name",
+                table: "ProductCategories",
+                column: "Name",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
                 table: "Products",
                 column: "CategoryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_Name",
+                table: "Products",
+                column: "Name",
+                unique: true);
         }
 
+        /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(

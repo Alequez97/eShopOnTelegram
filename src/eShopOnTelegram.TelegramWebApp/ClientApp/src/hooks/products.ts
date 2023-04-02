@@ -1,7 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
 import Product from "../types/Product";
-import Response from '../Response'
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -12,8 +11,8 @@ export function useProducts() {
   async function fetchProducts() {
     try {
       setLoading(true);
-      const response = await axios.get<Response<Product[]>>('/products');
-      setProducts(response.data.responseObject);
+      const response = await axios.get<Product[]>("/products");
+      setProducts(response.data);
       setLoading(false);
     } catch (e: unknown) {
       const error = e as AxiosError;
@@ -27,7 +26,17 @@ export function useProducts() {
   }, []);
 
   useEffect(() => {
-    setProductCategories(products.map(product => product.productCategoryName).filter(categoryName => categoryName !== undefined && categoryName !== null && categoryName !== ''))
+    setProductCategories(
+      products
+        .map((product) => product.productCategoryName)
+        .filter(
+          (categoryName) =>
+            categoryName !== undefined &&
+            categoryName !== null &&
+            categoryName !== ""
+        )
+        .filter((value, index, array) => array.indexOf(value) === index)
+    );
   }, [products]);
 
   return { products, productCategories, error, loading };

@@ -1,18 +1,20 @@
-﻿using eShopOnTelegram.Domain.Requests;
+﻿using eShopOnTelegram.Domain.Dto.Products;
+using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
-using eShopOnTelegram.Domain.Responses.Products;
 
 namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface IProductService
 {
-    Task<Response<GetProductResponse>> GetByIdAsync(long id, CancellationToken cancellationToken);
+    Task<Response<ProductDto>> GetByIdAsync(long id, CancellationToken cancellationToken);
 
-    Task<Response<IEnumerable<GetProductResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
+    Task<Response<IEnumerable<ProductDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
 
-    Task<Response> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
+    Task<Response<IEnumerable<ProductDto>>> GetAllAsync(CancellationToken cancellationToken);
 
-    Task<Response> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken);
+    Task<ActionResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
 
-    Task<Response> DeleteAsync(long id, CancellationToken cancellationToken);
+    Task<ActionResponse> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken);
+
+    Task<ActionResponse> DeleteAsync(long id, CancellationToken cancellationToken);
 }

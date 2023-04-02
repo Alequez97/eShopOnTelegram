@@ -1,7 +1,7 @@
-﻿using eShopOnTelegram.Domain.Extensions;
+﻿using eShopOnTelegram.Domain.Dto.Products;
+using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
-using eShopOnTelegram.Domain.Responses.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -17,17 +17,16 @@ public class ProductService : IProductService
         _logger = logger;
     }
 
-    public async Task<Response<IEnumerable<GetProductResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
+    public async Task<Response<IEnumerable<ProductDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response<IEnumerable<GetProductResponse>>();
-
         try
         {
             var products = await _dbContext.Products
+                .Include(product => product.Category)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getProductsResponse = products.Select(product => new GetProductResponse
+            var getProductsResponse = products.Select(product => new ProductDto
             {
                 Id = product.Id,
                 ProductName = product.Name,
@@ -35,36 +34,78 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                Image = product.ImageName
+                //Image = product.ImageName
             });
 
-            response.Status = ResponseStatus.Success;
-            response.Data = getProductsResponse;
+            return new Response<IEnumerable<ProductDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductsResponse,
+                TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to get all products");
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new Response<IEnumerable<ProductDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
-    public async Task<Response<GetProductResponse>> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<Response<IEnumerable<ProductDto>>> GetAllAsync(CancellationToken cancellationToken)
     {
-        var response = new Response<GetProductResponse>();
+        try
+        {
+            var products = await _dbContext.Products
+                .Include(product => product.Category)
+                .ToListAsync(cancellationToken);
 
+            var getProductsResponse = products.Select(product => new ProductDto
+            {
+                Id = product.Id,
+                ProductName = product.Name,
+                ProductCategoryName = product.Category.Name,
+                OriginalPrice = product.OriginalPrice,
+                PriceWithDiscount = product.PriceWithDiscount,
+                QuantityLeft = product.QuantityLeft,
+                //Image = product.ImageName
+            });
+
+            return new Response<IEnumerable<ProductDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductsResponse,
+                TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, "Exception: Unable to get all products");
+            return new Response<IEnumerable<ProductDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
+    public async Task<Response<ProductDto>> GetByIdAsync(long id, CancellationToken cancellationToken)
+    {
         try
         {
             var product = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
 
             if (product == null)
             {
-                response.Status = ResponseStatus.NotFound;
-                return response;
+                return new Response<ProductDto>()
+                {
+                    Status = ResponseStatus.NotFound
+                };
             }
 
-            var getProductResponse = new GetProductResponse()
+            var getProductResponse = new ProductDto()
             {
                 Id = product.Id,
                 ProductName = product.Name,
@@ -75,49 +116,53 @@ public class ProductService : IProductService
                 Image = product.ImageName
             };
 
-            response.Status = ResponseStatus.Success;
-            response.Data = getProductResponse;
+            return new Response<ProductDto>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductResponse
+            };
+
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to get product with id - {Id}", id);
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new Response<ProductDto>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
-    public async Task<Response> CreateAsync(CreateProductRequest createProductRequest, CancellationToken cancellationToken)
+    public async Task<ActionResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken)
     {
         try
         {
-            //var storedImageName = await _productImagesRepository.SaveAsync(createProductRequest.ProductImage, CancellationToken.None);
+            var existingProductCategory = await _dbContext.ProductCategories
+                .FirstOrDefaultAsync(category => category.Id == request.ProductCategoryId, cancellationToken);
 
-            var product = new Product()
+            if (existingProductCategory == null)
             {
-                Name = createProductRequest.ProductName,
-                OriginalPrice = createProductRequest.OriginalPrice,
-                PriceWithDiscount = createProductRequest.PriceWithDiscount,
-                QuantityLeft = createProductRequest.QuantityLeft,
-                //product.ImageName = storedImageName
-            };
-
-            var productCategory = await _dbContext.ProductCategories
-                .FirstOrDefaultAsync(productCategory => productCategory.Id == createProductRequest.ProductCategoryId, cancellationToken);
-
-            if (productCategory == null)
-            {
-                return new Response()
+                return new ActionResponse()
                 {
                     Status = ResponseStatus.NotFound
                 };
             }
 
+            var product = new Product()
+            {
+                Name = request.ProductName,
+                OriginalPrice = request.OriginalPrice,
+                PriceWithDiscount = request.PriceWithDiscount,
+                QuantityLeft = request.QuantityLeft,
+                Category = existingProductCategory
+            };
+
             _dbContext.Products.Add(product);
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            return new Response()
+            return new ActionResponse()
             {
                 Status = ResponseStatus.Success,
                 Id = product.Id
@@ -126,29 +171,30 @@ public class ProductService : IProductService
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to create product");
-            return new Response()
+
+            return new ActionResponse()
             {
-                Status = ResponseStatus.Exception,
+                Status = ResponseStatus.Exception
             };
         }
     }
 
-    public async Task<Response> UpdateAsync(UpdateProductRequest updateProductRequest, CancellationToken cancellationToken)
+    public async Task<ActionResponse> UpdateAsync(UpdateProductRequest updateProductRequest, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == updateProductRequest.Id);
 
             if (existingProduct == null)
             {
-                response.Status = ResponseStatus.NotFound;
-                return response;
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
             }
 
             existingProduct.Name = updateProductRequest.ProductName;
-            existingProduct.OriginalPrice = updateProductRequest.OriginalPrice;
+            existingProduct.OriginalPrice = updateProductRequest.OriginalPrice; // todo if we want to update price here then we should save price when place order, otherwise lost reference
             existingProduct.PriceWithDiscount = updateProductRequest.PriceWithDiscount;
             existingProduct.QuantityLeft = updateProductRequest.QuantityLeft;
 
@@ -161,42 +207,52 @@ public class ProductService : IProductService
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Success
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to update product with id - {Id}", updateProductRequest.Id);
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
-    public async Task<Response> DeleteAsync(long id, CancellationToken cancellationToken)
+    public async Task<ActionResponse> DeleteAsync(long id, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id);
 
             if (existingProduct == null)
             {
-                response.Status = ResponseStatus.NotFound;
-                return response;
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
             }
 
             _dbContext.Products.Remove(existingProduct);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Success
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception.Message);
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 }

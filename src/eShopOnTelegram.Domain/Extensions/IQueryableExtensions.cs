@@ -14,11 +14,11 @@ public static class IQueryableExtensions
                .OrderBy($"{paginationModel.SortPropertyName} {sortingStrategy}");
         }
 
-        if (paginationModel.To - paginationModel.From > 0)
+        if (paginationModel.To.HasValue && paginationModel.From.HasValue && paginationModel.To - paginationModel.From > 0)
         {
             query = query
-               .Skip(paginationModel.From)
-               .Take(paginationModel.To - paginationModel.From + 1);
+               .Skip(paginationModel.From.Value)
+               .Take(paginationModel.To.Value - paginationModel.From.Value + 1);
         }
 
         return query;

@@ -1,14 +1,17 @@
 ﻿namespace eShopOnTelegram.Domain.Responses;
 
-public class Response
+public abstract class Response
 {
-    public long Id { get; set; }
-
     public ResponseStatus Status { get; set; }
 
-    public string Message { get; set; }
+    public string? Message { get; set; }
 
-    public List<string> ValidationErrors { get; set; }
+    public List<string>? ValidationErrors { get; set; }
+}
+
+public class ActionResponse : Response
+{
+    public long Id { get; set; }
 }
 
 public class Response<T> : Response where T : class

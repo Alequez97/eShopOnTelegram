@@ -1,8 +1,10 @@
-﻿using eShopOnTelegram.Domain.Extensions;
+﻿using eShopOnTelegram.Domain.Dto.ProductsCategories;
+using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.ProductCategories;
-using eShopOnTelegram.Domain.Responses.ProductCategories;
 using eShopOnTelegram.Domain.Services.Interfaces;
+
+using Microsoft.Data.SqlClient;
 
 namespace eShopOnTelegram.Domain.Services;
 
@@ -17,39 +19,41 @@ public class ProductCategoryService : IProductCategoryService
         _logger = logger;
     }
 
-    public async Task<Response<IEnumerable<GetProductCategoryResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
+    public async Task<Response<IEnumerable<ProductCategoryDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response<IEnumerable<GetProductCategoryResponse>>();
-
         try
         {
             var productCategory = await _dbContext.ProductCategories
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getProductCategoriesResponse = productCategory.Select(productCategory => new GetProductCategoryResponse
+            var getProductCategoriesResponse = productCategory.Select(productCategory => new ProductCategoryDto
             {
                 Id = productCategory.Id,
                 Name = productCategory.Name,
             });
 
-            response.Status = ResponseStatus.Success;
-            response.Data = getProductCategoriesResponse;
-            response.TotalItemsInDatabase = await _dbContext.ProductCategories.CountAsync(cancellationToken);
+            return new Response<IEnumerable<ProductCategoryDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getProductCategoriesResponse,
+                TotalItemsInDatabase = await _dbContext.ProductCategories.CountAsync(cancellationToken)
+            };
+
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to get all products");
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new Response<IEnumerable<ProductCategoryDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
-    public async Task<Response> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
+    public async Task<ActionResponse> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             var category = new ProductCategory()
@@ -61,44 +65,62 @@ public class ProductCategoryService : IProductCategoryService
 
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
-            response.Id = category.Id;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Success,
+                Id = category.Id
+            };
+        }
+        catch (DbUpdateException e)
+            when (e?.InnerException is SqlException sqlEx && (sqlEx.Number == 2601 || sqlEx.Number == 2627))
+        {
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.ValidationFailed
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to create product category");
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
-    public async Task<Response> DeleteAsync(long id, CancellationToken cancellationToken)
+    public async Task<ActionResponse> DeleteAsync(long id, CancellationToken cancellationToken)
     {
-        var response = new Response();
-
         try
         {
             var existingCategory = await _dbContext.ProductCategories.FirstOrDefaultAsync(category => category.Id == id);
 
             if (existingCategory == null)
             {
-                response.Status = ResponseStatus.NotFound;
-                return response;
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
             }
 
             _dbContext.ProductCategories.Remove(existingCategory);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            response.Status = ResponseStatus.Success;
-            response.Id = existingCategory.Id;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Success,
+                Id = existingCategory.Id
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception.Message);
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 }

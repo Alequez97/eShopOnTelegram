@@ -6,8 +6,10 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddTransient<IProductService, ProductService>();
-builder.Services.AddTransient<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddDbContext<EShopOnTelegramDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));

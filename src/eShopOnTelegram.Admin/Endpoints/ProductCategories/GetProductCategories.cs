@@ -1,13 +1,13 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
+using eShopOnTelegram.Domain.Dto.ProductsCategories;
 using eShopOnTelegram.Domain.Requests;
-using eShopOnTelegram.Domain.Responses.ProductCategories;
 
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class GetProductCategories : EndpointBaseAsync
     .WithRequest<GetRequest>
-    .WithActionResult<IEnumerable<GetProductCategoryResponse>>
+    .WithActionResult<IEnumerable<ProductCategoryDto>>
 {
     private readonly IProductCategoryService _productCategoryService;
 
@@ -18,7 +18,7 @@ public class GetProductCategories : EndpointBaseAsync
 
     [HttpGet("/api/productCategories")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
-    public override async Task<ActionResult<IEnumerable<GetProductCategoryResponse>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<IEnumerable<ProductCategoryDto>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
     {
         var response = await _productCategoryService.GetMultipleAsync(request, cancellationToken);
 
