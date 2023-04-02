@@ -1,13 +1,13 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
+using eShopOnTelegram.Domain.Dto.Customers;
 using eShopOnTelegram.Domain.Requests;
-using eShopOnTelegram.Domain.Responses.Customers;
 
 namespace eShopOnTelegram.Admin.Endpoints.Customers;
 
 public class GetCustomers : EndpointBaseAsync
     .WithRequest<GetRequest>
-    .WithActionResult<IEnumerable<GetCustomersResponse>>
+    .WithActionResult<IEnumerable<CustomerDto>>
 {
     private readonly ICustomerService _customerService;
 
@@ -18,7 +18,7 @@ public class GetCustomers : EndpointBaseAsync
 
     [HttpGet("/api/customers")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Customers})]
-    public override async Task<ActionResult<IEnumerable<GetCustomersResponse>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<IEnumerable<CustomerDto>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
     {
         var response = await _customerService.GetMultipleAsync(request, cancellationToken);
 

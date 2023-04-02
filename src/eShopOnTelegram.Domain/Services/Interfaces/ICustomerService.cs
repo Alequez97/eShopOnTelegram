@@ -1,11 +1,11 @@
-﻿using eShopOnTelegram.Domain.Requests;
+﻿using eShopOnTelegram.Domain.Dto.Customers;
+using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Customers;
-using eShopOnTelegram.Domain.Responses.Customers;
 
 namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface ICustomerService
 {
-    public Task<Response<IEnumerable<GetCustomersResponse>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
-    public Task<Response> CreateIfNotPresentAsync(CreateCustomerRequest request);
+    public Task<Response<IEnumerable<CustomerDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
+    public Task<ActionResponse> CreateIfNotPresentAsync(CreateCustomerRequest request);
 }

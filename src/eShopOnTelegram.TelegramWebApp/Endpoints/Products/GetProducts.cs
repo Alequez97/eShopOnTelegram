@@ -1,4 +1,4 @@
-﻿using eShopOnTelegram.Domain.Requests;
+﻿using eShopOnTelegram.Domain.Dto.Products;
 using eShopOnTelegram.TelegramWebApp.Constants;
 using eShopOnTelegram.TelegramWebApp.Extensions;
 
@@ -6,7 +6,7 @@ namespace eShopOnTelegram.TelegramWebApp.Endpoints.Products;
 
 public class GetProducts : EndpointBaseAsync
     .WithoutRequest
-    .WithActionResult<IEnumerable<GetProductResponse>>
+    .WithActionResult<IEnumerable<ProductDto>>
 {
     private readonly IProductService _productService;
 
@@ -17,7 +17,7 @@ public class GetProducts : EndpointBaseAsync
 
     [HttpGet("/api/products")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
-    public async override Task<ActionResult<IEnumerable<GetProductResponse>>> HandleAsync(CancellationToken cancellationToken = default)
+    public async override Task<ActionResult<IEnumerable<ProductDto>>> HandleAsync(CancellationToken cancellationToken = default)
     {
         var response = await _productService.GetAllAsync(cancellationToken);
         return response.AsActionResult();

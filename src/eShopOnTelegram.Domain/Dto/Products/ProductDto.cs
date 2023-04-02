@@ -1,9 +1,7 @@
-﻿namespace eShopOnTelegram.Domain.Responses.Products;
+﻿namespace eShopOnTelegram.Domain.Dto.Products; 
 
-public class GetProductResponse
+public class ProductDto : DtoBase
 {
-    public required long Id { get; set; }
-
     public required string ProductName { get; set; }
 
     public required string ProductCategoryName { get; set; }
@@ -14,5 +12,5 @@ public class GetProductResponse
 
     public required int QuantityLeft { get; set; }
 
-    public string Image { get; set; }
+    public string? Image { get; set; }
 }

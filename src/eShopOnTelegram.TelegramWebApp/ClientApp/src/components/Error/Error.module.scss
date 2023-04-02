@@ -1,134 +1,150 @@
 @mixin lips($num) {
-    @for $i from 1 through $num {
-      &:nth-child(n + #{$i + 1}) {
-        margin-left: #{$i * 31px};
-      }
+  @for $i from 1 through $num {
+    &:nth-child(n + #{$i + 1}) {
+      margin-left: #{$i * 31px};
     }
   }
-  
-  .logo {
-    margin: 40px auto;
-    display: block;
-  }
-  
-  .browser {
-    width: 300px;
-    min-width: 200px;
-    min-height: 264px;
-    background: var(--tg-theme-secondary-bg-color);
-    box-shadow: 0 40px 80px 0 rgba(0, 0, 0, 0.25);
-    border-radius: px;
-    animation: bobble 1.8s ease-in-out infinite;
-    position: relative;
-    left: 50%;
-    margin-left: -150px;
-    .controls {
-      width: 100%;
-      height: 32px;
-      background: #e8ecef;
-      border-radius: 3px 3px 0 0;
-      box-sizing: border-box;
-      padding: 10px 12px;
-      .browserButton {
-        height: 12px;
-        width: 12px;
-        border-radius: 100%;
-        display: block;
-        float: left;
-        margin-right: 8px;
-  
-        &.browserClose {
-          background: rgb(222, 20, 20);
-        }
-  
-        &.browserMinimize {
-          background: rgb(221, 221, 8);
-        }
-  
-        &.browserMaximize {
-          background: rgb(22, 206, 22);
-        }
-      }
-    }
-  }
-  
-  .eye {
-    position: absolute;
-    left: 34%;
-    top: 80px;
-    width: 32px;
+}
+
+.logo {
+  margin: 40px auto;
+  display: block;
+}
+
+.browser {
+  width: 300px;
+  min-width: 200px;
+  min-height: 264px;
+  background: var(--tg-theme-secondary-bg-color);
+  box-shadow: 0 40px 80px 0 rgba(0, 0, 0, 0.25);
+  border-radius: px;
+  animation: bobble 1.8s ease-in-out infinite;
+  position: relative;
+  left: 50%;
+  margin-left: -150px;
+  .controls {
+    width: 100%;
     height: 32px;
-    opacity: 1;
-    + .eye {
-      right: 34%;
-      left: auto;
-    }
-    &:before,
-    &:after {
-      position: absolute;
-      left: 15px;
-      content: " ";
-      height: 40px;
-      width: 3px;
-      border-radius: 2px;
-      background-color: #ff5e5b;
-    }
-    &:before {
-      transform: rotate(45deg);
-    }
-    &:after {
-      transform: rotate(-45deg);
+    background: #e8ecef;
+    border-radius: 3px 3px 0 0;
+    box-sizing: border-box;
+    padding: 10px 12px;
+    .browserButton {
+      height: 12px;
+      width: 12px;
+      border-radius: 100%;
+      display: block;
+      float: left;
+      margin-right: 8px;
+
+      &.browserClose {
+        background: rgb(222, 20, 20);
+      }
+
+      &.browserMinimize {
+        background: rgb(221, 221, 8);
+      }
+
+      &.browserMaximize {
+        background: rgb(22, 206, 22);
+      }
     }
   }
-  
-  .mouth {
+}
+
+.eye {
+  position: absolute;
+  left: 34%;
+  top: 80px;
+  width: 32px;
+  height: 32px;
+  opacity: 1;
+  + .eye {
+    right: 34%;
+    left: auto;
+  }
+  &:before,
+  &:after {
     position: absolute;
-    width: 125px;
-    top: 178px;
-    left: 50%;
-    margin-left: -62.5px;
+    left: 15px;
+    content: " ";
     height: 40px;
-    .lips {
-      position: absolute;
-      left: 15px;
-      content: " ";
-      height: 40px;
-      width: 3px;
-      border-radius: 2px;
-      background-color: #ff5e5b;
-      transform: rotate(-54deg);
-      &:nth-child(odd) {
-        transform: rotate(54deg);
+    width: 3px;
+    border-radius: 2px;
+    background-color: #ff5e5b;
+  }
+  &:before {
+    transform: rotate(45deg);
+  }
+  &:after {
+    transform: rotate(-45deg);
+  }
+}
+
+.mouth {
+  position: absolute;
+  width: 125px;
+  top: 178px;
+  left: 50%;
+  margin-left: -62.5px;
+  height: 40px;
+  .lips {
+    position: absolute;
+    left: 15px;
+    content: " ";
+    height: 40px;
+    width: 3px;
+    border-radius: 2px;
+    background-color: #ff5e5b;
+    transform: rotate(-54deg);
+    &:nth-child(odd) {
+      transform: rotate(54deg);
+    }
+    @include lips(8);
+  }
+}
+
+@keyframes bobble {
+  0%,
+  100% {
+    margin-top: 40px;
+    margin-bottom: 48px;
+    box-shadow: 0 40px 80px rgba(0, 0, 0, 0.24);
+  }
+  50% {
+    margin-top: 54px;
+    margin-bottom: 34px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
+  }
+}
+
+@media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
+  .browser {
+    width: 240px;
+    margin-left: -120px;
+    .eye {
+      left: 30%;
+      + .eye {
+        left: auto;
+        right: 30%;
       }
-      @include lips(8);
     }
   }
-  
-  @keyframes bobble {
-    0%,
-    100% {
-      margin-top: 40px;
-      margin-bottom: 48px;
-      box-shadow: 0 40px 80px rgba(0, 0, 0, 0.24);
-    }
-    50% {
-      margin-top: 54px;
-      margin-bottom: 34px;
-      box-shadow: 0 24px 64px rgba(0, 0, 0, 0.4);
-    }
-  }
-  
-  @media only screen and (min-device-width: 320px) and (max-device-width: 480px) {
-    .browser {
-      width: 240px;
-      margin-left: -120px;
-      .eye {
-        left: 30%;
-        + .eye {
-          left: auto;
-          right: 30%;
-        }
-      }
+}
+
+.error-message {
+  text-align: center;
+  margin: 20px;
+
+  p {
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+    text-justify: auto; 
+
+    a {
+      color: #007bff;
+      text-decoration: none;
     }
   }
-  
+}

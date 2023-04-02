@@ -1,8 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿namespace eShopOnTelegram.Domain.Dto.Orders;
 
-namespace eShopOnTelegram.Domain.Responses.Orders;
-
-public class GetOrdersResponse : Response
+public class OrderDto : DtoBase
 {
     public required string OrderNumber { get; set; }
 
@@ -23,7 +21,7 @@ public class GetOrdersResponse : Response
 
     public DateTime? PaymentDate { get; set; }
 
-    public required OrderStatus Status { get; set; }
+    public required string Status { get; set; }
 
     public string? CountryIso2Code { get; set; }
 
@@ -34,26 +32,4 @@ public class GetOrdersResponse : Response
     public string? StreetLine2 { get; set; }
 
     public string? PostCode { get; set; }
-}
-
-public class CartItemDto
-{
-    public required long ProductId { get; set; }
-    // Product
-    public string Name { get; set; }
-
-    //Category
-    public string CategoryName { get; set; }
-    //
-
-    public decimal OriginalPrice { get; set; }
-
-    public decimal? PriceWithDiscount { get; set; }
-
-    public int QuantityLeft { get; set; }
-
-    [MaxLength(200)]
-    public string? ImageName { get; set; }
-    //
-    public required int Quantity { get; set; }
 }
