@@ -19,8 +19,6 @@ public class OrderService : IOrderService
 
     public async Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
-        var response = new Response<IEnumerable<OrderDto>>();
-
         try
         {
             var orders = await _dbContext.Orders
@@ -61,17 +59,23 @@ public class OrderService : IOrderService
                 PostCode = order.PostCode,
             });
 
-            response.Status = ResponseStatus.Success;
-            response.Data = getOrdersResponse;
-            response.TotalItemsInDatabase = await _dbContext.Orders.CountAsync(cancellationToken);
+
+            return new Response<IEnumerable<OrderDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = getOrdersResponse,
+                TotalItemsInDatabase = await _dbContext.Orders.CountAsync(cancellationToken)
+            };
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, "Exception: Unable to get all products");
-            response.Status = ResponseStatus.Exception;
-        }
 
-        return response;
+            return new Response<IEnumerable<OrderDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
     }
 
     public async Task<ActionResponse> CreateAsync(CreateOrderRequest request)
