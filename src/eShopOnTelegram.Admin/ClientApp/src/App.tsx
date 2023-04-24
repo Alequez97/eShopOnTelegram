@@ -6,7 +6,8 @@ import ProductCreate from "./components/products/ProductCreate";
 import ProductsList from "./components/products/ProductsList";
 import CustomersList from "./components/customers/CustomersList";
 import OrdersList from "./components/orders/OrdersList";
-import ProductCategoriesEdit from "./components/product-categories/ProductCategoriesEdit";
+import { ProductCategoriesEdit } from "./components/product-categories/ProductCategoriesEdit";
+import { ProductEdit } from "./components/products/ProductEdit";
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? "";
 const dataProvider = restProvider(apiBaseUrl);
@@ -14,7 +15,12 @@ const dataProvider = restProvider(apiBaseUrl);
 function App() {
   return (
     <Admin dataProvider={dataProvider}>
-      <Resource name="products" list={ProductsList} create={ProductCreate} />
+      <Resource
+        name="products"
+        list={ProductsList}
+        create={ProductCreate}
+        edit={ProductEdit}
+      />
       <Resource
         name="productCategories"
         options={{ label: "Product categories" }}

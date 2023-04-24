@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20230424161455_Initial")]
+    [Migration("20230424164511_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -175,8 +175,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("Name");
 
                     b.HasIndex("PreviousVersionId");
 

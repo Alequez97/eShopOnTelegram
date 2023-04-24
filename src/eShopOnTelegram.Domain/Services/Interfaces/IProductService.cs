@@ -6,7 +6,7 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface IProductService
 {
-    Task<Response<ProductDto>> GetByIdAsync(long id, CancellationToken cancellationToken);
+    Task<Response<ProductDto>> GetAsync(long id, CancellationToken cancellationToken);
 
     Task<Response<IEnumerable<ProductDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
 

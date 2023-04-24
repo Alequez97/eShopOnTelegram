@@ -1,6 +1,6 @@
 import { Edit, required, SimpleForm, TextInput } from "react-admin";
 
-export default function ProductCategoriesEdit() {
+export function ProductCategoriesEdit() {
   return (
     <Edit title="Edit product category">
       <SimpleForm>

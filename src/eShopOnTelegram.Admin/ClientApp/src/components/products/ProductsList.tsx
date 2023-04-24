@@ -1,4 +1,4 @@
-import { List, Datagrid, TextField } from "react-admin";
+import { List, Datagrid, TextField, EditButton } from "react-admin";
 
 export default function ProductsList() {
   return (
@@ -13,6 +13,7 @@ export default function ProductsList() {
           emptyText={"-"}
         />
         <TextField source="quantityLeft" sortable={false} />
+        <EditButton />
       </Datagrid>
     </List>
   );

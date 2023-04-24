@@ -178,8 +178,7 @@ namespace eShopOnTelegram.Persistence.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Products_Name",
                 table: "Products",
-                column: "Name",
-                unique: true);
+                column: "Name");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_PreviousVersionId",

@@ -93,11 +93,12 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<Response<ProductDto>> GetByIdAsync(long id, CancellationToken cancellationToken)
+    public async Task<Response<ProductDto>> GetAsync(long id, CancellationToken cancellationToken)
     {
         try
         {
             var product = await _dbContext.Products
+                .Include(product => product.Category)
                 .FirstOrDefaultAsync(product => product.Id == id && product.IsDeleted == false, cancellationToken);
 
             if (product == null)
@@ -203,10 +204,10 @@ public class ProductService : IProductService
                 OriginalPrice = updateProductRequest.OriginalPrice,
                 PriceWithDiscount = updateProductRequest.PriceWithDiscount,
                 QuantityLeft = updateProductRequest.QuantityLeft,
-                IsDeleted = false
+                IsDeleted = false,
+                PreviousVersion = existingProduct
             };
 
-            existingProduct.PreviousVersion = updatedProduct;
             existingProduct.IsDeleted = true;
 
             _dbContext.Products.Add(updatedProduct);

@@ -172,8 +172,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("CategoryId");
 
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasIndex("Name");
 
                     b.HasIndex("PreviousVersionId");
 
