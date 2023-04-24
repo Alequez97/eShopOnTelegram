@@ -22,6 +22,7 @@ public class ProductService : IProductService
         try
         {
             var products = await _dbContext.Products
+                .Where(product => product.IsDeleted == false)
                 .Include(product => product.Category)
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
@@ -60,6 +61,7 @@ public class ProductService : IProductService
         try
         {
             var products = await _dbContext.Products
+                .Where(product => product.IsDeleted == false)
                 .Include(product => product.Category)
                 .ToListAsync(cancellationToken);
 
@@ -95,7 +97,8 @@ public class ProductService : IProductService
     {
         try
         {
-            var product = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id, cancellationToken);
+            var product = await _dbContext.Products
+                .FirstOrDefaultAsync(product => product.Id == id && product.IsDeleted == false, cancellationToken);
 
             if (product == null)
             {
@@ -155,7 +158,8 @@ public class ProductService : IProductService
                 OriginalPrice = request.OriginalPrice,
                 PriceWithDiscount = request.PriceWithDiscount,
                 QuantityLeft = request.QuantityLeft,
-                Category = existingProductCategory
+                Category = existingProductCategory,
+                IsDeleted = false
             };
 
             _dbContext.Products.Add(product);
@@ -193,10 +197,20 @@ public class ProductService : IProductService
                 };
             }
 
-            existingProduct.Name = updateProductRequest.ProductName;
-            existingProduct.OriginalPrice = updateProductRequest.OriginalPrice; // todo if we want to update price here then we should save price when place order, otherwise lost reference
-            existingProduct.PriceWithDiscount = updateProductRequest.PriceWithDiscount;
-            existingProduct.QuantityLeft = updateProductRequest.QuantityLeft;
+            var updatedProduct = new Product()
+            {
+                Name = updateProductRequest.ProductName,
+                OriginalPrice = updateProductRequest.OriginalPrice,
+                PriceWithDiscount = updateProductRequest.PriceWithDiscount,
+                QuantityLeft = updateProductRequest.QuantityLeft,
+                IsDeleted = false
+            };
+
+            existingProduct.PreviousVersion = updatedProduct;
+            existingProduct.IsDeleted = true;
+
+            _dbContext.Products.Add(updatedProduct);
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             //if (updateProductRequest.ProductImage != null)
             //{
@@ -204,8 +218,6 @@ public class ProductService : IProductService
             //    var newImageName = await _productImagesRepository.SaveAsync(updateProductRequest.ProductImage, CancellationToken.None);
             //    existingProduct.ImageName = newImageName;
             //}
-
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
             {
@@ -237,7 +249,7 @@ public class ProductService : IProductService
                 };
             }
 
-            _dbContext.Products.Remove(existingProduct);
+            existingProduct.IsDeleted = true;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
