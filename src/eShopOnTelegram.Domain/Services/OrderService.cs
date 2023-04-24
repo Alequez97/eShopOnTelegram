@@ -87,18 +87,55 @@ public class OrderService : IOrderService
             {
                 return new ActionResponse()
                 {
-                    Status = ResponseStatus.ValidationFailed,
-                    Message = "User not found."
+                    Status = ResponseStatus.NotFound,
                 };
             }
 
-            // foreach cart item decrease quantity => Update product
+            foreach (var requestCartItem in request.CartItems)
+            {
+                var product = _dbContext.Products.FirstOrDefault(product => product.Id == requestCartItem.ProductId);
+
+                if (product == null)
+                {
+                    return new ActionResponse()
+                    {
+                        Status = ResponseStatus.NotFound,
+                        Message = $"Product with id {requestCartItem.ProductId} not found"
+                    };
+                }
+
+                if (product.IsDeleted == true)
+                {
+                    return new ActionResponse()
+                    {
+                        Status = ResponseStatus.Exception,
+                        Message = $"Product was updated while request was processed"
+                    };
+                }
+
+                if (product.QuantityLeft < requestCartItem.Quantity)
+                {
+                    return new ActionResponse()
+                    {
+                        Status = ResponseStatus.ValidationFailed,
+                        Message = $"Requested {requestCartItem.Quantity} amount of product with id {requestCartItem.ProductId}, but only {product.QuantityLeft} is available"
+                    };
+                }
+
+                product.QuantityLeft -= requestCartItem.Quantity;
+            }
+
+            var orderCartItems = request.CartItems.Select(requestedCartItem => new CartItem() 
+            { 
+                ProductId = requestedCartItem.ProductId,
+                Quantity = requestedCartItem.Quantity 
+            }).ToList();
 
             var order = new Order()
             {
                 OrderNumber = Guid.NewGuid().ToString()[..18],
-                CustomerId = customer.Id, // todo replace with real Id
-                CartItems = request.CartItems,
+                CustomerId = customer.Id,
+                CartItems = orderCartItems,
                 Status = OrderStatus.New
             };
 
