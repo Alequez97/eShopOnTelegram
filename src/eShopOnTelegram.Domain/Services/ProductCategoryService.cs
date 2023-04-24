@@ -144,21 +144,12 @@ public class ProductCategoryService : IProductCategoryService
                 };
             }
 
-            existingProductCategory.IsDeleted = true;
-
-            var updatedProductCategory = new ProductCategory()
-            {
-                Name = request.Name,
-                IsDeleted = false,
-                PreviousVersion = existingProductCategory
-            };
-
-            _dbContext.ProductCategories.Add(updatedProductCategory);
+            existingProductCategory.Name = request.Name;
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
             {
-                Id = updatedProductCategory.Id,
+                Id = existingProductCategory.Id,
                 Status = ResponseStatus.Success
             };
         }
