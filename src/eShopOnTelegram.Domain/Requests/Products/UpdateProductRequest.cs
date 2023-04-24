@@ -10,6 +10,8 @@ public class UpdateProductRequest
 
     public string ProductName { get; set; }
 
+    public required long ProductCategoryId { get; set; }
+
     public decimal OriginalPrice { get; set; }
 
     public decimal? PriceWithDiscount { get; set; }

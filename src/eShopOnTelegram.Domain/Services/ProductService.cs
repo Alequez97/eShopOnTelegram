@@ -201,6 +201,7 @@ public class ProductService : IProductService
             var updatedProduct = new Product()
             {
                 Name = updateProductRequest.ProductName,
+                Category = existingProduct.Category,
                 OriginalPrice = updateProductRequest.OriginalPrice,
                 PriceWithDiscount = updateProductRequest.PriceWithDiscount,
                 QuantityLeft = updateProductRequest.QuantityLeft,
