@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20230402113424_Initial")]
+    [Migration("20230424161455_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -152,12 +152,18 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<decimal>("OriginalPrice")
                         .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("PreviousVersionId")
+                        .HasColumnType("bigint");
 
                     b.Property<decimal?>("PriceWithDiscount")
                         .HasColumnType("decimal(18,2)");
@@ -171,6 +177,8 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("Name")
                         .IsUnique();
+
+                    b.HasIndex("PreviousVersionId");
 
                     b.ToTable("Products");
                 });
@@ -238,7 +246,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.Product", "PreviousVersion")
+                        .WithMany()
+                        .HasForeignKey("PreviousVersionId");
+
                     b.Navigation("Category");
+
+                    b.Navigation("PreviousVersion");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductCategory", b =>

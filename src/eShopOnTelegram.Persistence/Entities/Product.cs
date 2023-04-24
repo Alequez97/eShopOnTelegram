@@ -15,4 +15,8 @@ public class Product : EntityBase
 
     [MaxLength(200)]
     public string? ImageName { get; set; }
+
+    public required bool IsDeleted { get; set; }
+
+    public Product? PreviousVersion { get; set; }
 }

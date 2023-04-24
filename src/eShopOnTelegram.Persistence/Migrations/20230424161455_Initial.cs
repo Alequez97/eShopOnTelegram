@@ -86,7 +86,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                     OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PriceWithDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     QuantityLeft = table.Column<int>(type: "int", nullable: false),
-                    ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true)
+                    ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    PreviousVersionId = table.Column<long>(type: "bigint", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -97,6 +99,11 @@ namespace eShopOnTelegram.Persistence.Migrations
                         principalTable: "ProductCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Products_Products_PreviousVersionId",
+                        column: x => x.PreviousVersionId,
+                        principalTable: "Products",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +180,11 @@ namespace eShopOnTelegram.Persistence.Migrations
                 table: "Products",
                 column: "Name",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_PreviousVersionId",
+                table: "Products",
+                column: "PreviousVersionId");
         }
 
         /// <inheritdoc />
