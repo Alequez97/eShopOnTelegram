@@ -4,11 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "start": "npm run scss-types && vite",
-    "watch": "npm run scss-types && vite build --mode dev --watch",
-    "start:dev": "npm run scss-types && vite --mode dev",
-    "build:dev": "npm run scss-types && tsc && vite build --mode dev",
-    "build:stage": "npm run scss-types && tsc && vite build --mode stage",
+    "start": "pnpm scss-types && vite",
+    "watch": "pnpm scss-types && vite build --mode dev --watch",
+    "start:dev": "pnpm scss-types && vite --mode dev",
+    "build:dev": "pnpm scss-types && tsc && vite build --mode dev",
+    "build:stage": "pnpm scss-types && tsc && vite build --mode stage",
     "scss-types": "typed-scss-modules src",
     "preview": "vite preview",
     "lint": "eslint ./src/"
