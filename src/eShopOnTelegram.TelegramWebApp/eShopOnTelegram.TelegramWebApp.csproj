@@ -9,7 +9,7 @@
     <SpaRoot>ClientApp\</SpaRoot>
     <DefaultItemExcludes>$(DefaultItemExcludes);$(SpaRoot)node_modules\**</DefaultItemExcludes>
     <SpaProxyServerUrl>http://localhost:3399</SpaProxyServerUrl>
-    <SpaProxyLaunchCommand>npm start</SpaProxyLaunchCommand>
+    <SpaProxyLaunchCommand>pnpm start</SpaProxyLaunchCommand>
     <RootNamespace>eShopOnTelegram.TelegramWebApp</RootNamespace>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>0f4dcbd5-62a0-4d9c-ba18-e6a403bf7c7c</UserSecretsId>
