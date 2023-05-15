@@ -6,11 +6,7 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Interfaces;
 
-using Microsoft.EntityFrameworkCore.Metadata.Conventions;
-
 using Newtonsoft.Json;
-
-
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
@@ -63,7 +59,7 @@ public class WebAppCommand : ITelegramCommand
                 CartItems = webAppData.CartItems,
             };
 
-            var createOrderResponse = await _orderService.CreateAsync(createOrderRequest);
+            var createOrderResponse = await _orderService.CreateAsync(createOrderRequest, cancellationToken: CancellationToken.None);
 
             if (createOrderResponse.Status != ResponseStatus.Success)
             {
@@ -109,5 +105,5 @@ public class WebAppCommand : ITelegramCommand
 
 public class WebAppCommandData
 {
-    public required IList<CartItem> CartItems { get; set; }
+    public required IList<CreateCartItemRequest> CartItems { get; set; }
 }

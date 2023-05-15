@@ -24,6 +24,8 @@ public class Startup
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>))
             .AddTransient<IProductService, ProductService>()
+            .AddTransient<IOrderService, OrderService>()
+            .AddTransient<ICustomerService, CustomerService>()
             .AddTransient<IProductCategoryService, ProductCategoryService>();
 
         var serviceProvider = services.BuildServiceProvider();

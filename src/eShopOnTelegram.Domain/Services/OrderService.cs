@@ -78,7 +78,7 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<ActionResponse> CreateAsync(CreateOrderRequest request)
+    public async Task<ActionResponse> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         try
         {
@@ -88,6 +88,15 @@ public class OrderService : IOrderService
                 return new ActionResponse()
                 {
                     Status = ResponseStatus.NotFound,
+                };
+            }
+
+            if (request.CartItems.Count == 0)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.ValidationFailed,
+                    Message = "Cart items cannot be empty during order creation"
                 };
             }
 
@@ -125,10 +134,10 @@ public class OrderService : IOrderService
                 product.QuantityLeft -= requestCartItem.Quantity;
             }
 
-            var orderCartItems = request.CartItems.Select(requestedCartItem => new CartItem() 
-            { 
+            var orderCartItems = request.CartItems.Select(requestedCartItem => new CartItem()
+            {
                 ProductId = requestedCartItem.ProductId,
-                Quantity = requestedCartItem.Quantity 
+                Quantity = requestedCartItem.Quantity
             }).ToList();
 
             var order = new Order()

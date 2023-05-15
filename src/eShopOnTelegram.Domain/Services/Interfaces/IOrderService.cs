@@ -7,5 +7,5 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 public interface IOrderService
 {
     public Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
-    public Task<ActionResponse> CreateAsync(CreateOrderRequest request);
+    public Task<ActionResponse> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken);
 }
