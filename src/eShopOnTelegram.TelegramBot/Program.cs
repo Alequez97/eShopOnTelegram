@@ -1,5 +1,7 @@
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.ExternalServices.Extensions;
+using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Workers;
@@ -32,6 +34,15 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddScoped<ICustomerService, CustomerService>();
         services.AddScoped<IOrderService, OrderService>();
+
+        services
+            .AddPolicyRegistry()
+            .AddHttpRetryPolicy();
+
+        services.AddRefitServiceWithDefaultRetryPolicy<IPlicioClient>((_, httpClient) =>
+        {
+            httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
+        });
     })
     .Build();
 
