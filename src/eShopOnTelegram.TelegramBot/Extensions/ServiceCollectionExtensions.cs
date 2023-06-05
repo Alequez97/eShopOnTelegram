@@ -4,6 +4,7 @@ using eShopOnTelegram.TelegramBot.Commands.Payment;
 using eShopOnTelegram.TelegramBot.Services;
 
 using TelegramBot.Commands.Interfaces;
+using TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {
@@ -26,8 +27,8 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             services.AddScoped<ITelegramCommand, SuccessfulPaymentCommand>();
 
             //Command services
-            services.AddScoped<TelegramCommandResolver>();
-            services.AddScoped<TelegramUpdateExecutor>();
+            services.AddScoped<CommandResolver>();
+            services.AddScoped<UpdateExecutor>();
 
             // Common telegram helper services
             services.AddSingleton<EmojiProvider>();

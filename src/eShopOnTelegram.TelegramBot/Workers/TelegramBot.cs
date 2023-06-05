@@ -1,4 +1,4 @@
-using eShopOnTelegram.TelegramBot.Services;
+using TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Workers
 {
@@ -50,7 +50,7 @@ namespace eShopOnTelegram.TelegramBot.Workers
             CancellationToken cancellationToken)
         {
             using IServiceScope scope = _serviceProvider.CreateScope();
-            var telegramUpdateExecutor = scope.ServiceProvider.GetRequiredService<TelegramUpdateExecutor>();
+            var telegramUpdateExecutor = scope.ServiceProvider.GetRequiredService<UpdateExecutor>();
 
             await telegramUpdateExecutor.ExecuteAsync(update);
         }

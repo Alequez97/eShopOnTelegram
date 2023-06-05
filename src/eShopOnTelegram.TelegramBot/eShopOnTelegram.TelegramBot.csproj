@@ -19,4 +19,8 @@
     <ProjectReference Include="..\..\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Domain\eShopOnTelegram.Domain.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\InvoiceSender\" />
+  </ItemGroup>
 </Project>

@@ -1,26 +1,26 @@
 ﻿using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.TelegramBot.Services
+namespace TelegramBot.Services.Telegram
 {
-    public class TelegramKeyboardButtonsMarkupBuilder
+    public class KeyboardButtonsMarkupBuilder
     {
         private List<KeyboardButton> _currentKeyboardMarkupRow;
         private readonly List<List<KeyboardButton>> _replyKeyboardMarkup;
 
 
-        public TelegramKeyboardButtonsMarkupBuilder()
+        public KeyboardButtonsMarkupBuilder()
         {
             _currentKeyboardMarkupRow = new List<KeyboardButton>();
             _replyKeyboardMarkup = new List<List<KeyboardButton>>();
         }
 
-        public TelegramKeyboardButtonsMarkupBuilder AddButtonToCurrentRow(string text, WebAppInfo webAppInfo = null)
+        public KeyboardButtonsMarkupBuilder AddButtonToCurrentRow(string text, WebAppInfo webAppInfo = null)
         {
             _currentKeyboardMarkupRow.Add(new KeyboardButton(text) { WebApp = webAppInfo });
             return this;
         }
 
-        public TelegramKeyboardButtonsMarkupBuilder StartNewRow()
+        public KeyboardButtonsMarkupBuilder StartNewRow()
         {
             _replyKeyboardMarkup.Add(_currentKeyboardMarkupRow);
             _currentKeyboardMarkupRow = new List<KeyboardButton>();

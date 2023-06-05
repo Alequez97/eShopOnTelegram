@@ -1,10 +1,10 @@
-﻿namespace eShopOnTelegram.TelegramBot.Services
+﻿namespace TelegramBot.Services.Telegram
 {
-    public class TelegramUpdateExecutor
+    public class UpdateExecutor
     {
-        private readonly TelegramCommandResolver _commandResolver;
+        private readonly CommandResolver _commandResolver;
 
-        public TelegramUpdateExecutor(TelegramCommandResolver commandResolver)
+        public UpdateExecutor(CommandResolver commandResolver)
         {
             _commandResolver = commandResolver;
         }

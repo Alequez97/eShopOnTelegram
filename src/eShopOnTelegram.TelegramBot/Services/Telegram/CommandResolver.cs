@@ -2,14 +2,14 @@
 
 using TelegramBot.Commands.Interfaces;
 
-namespace eShopOnTelegram.TelegramBot.Services
+namespace TelegramBot.Services.Telegram
 {
-    public class TelegramCommandResolver
+    public class CommandResolver
     {
         private readonly IEnumerable<ITelegramCommand> _commands;
         private readonly UnknownCommand _unknownCommand;
 
-        public TelegramCommandResolver(IEnumerable<ITelegramCommand> commands, UnknownCommand unknownCommand)
+        public CommandResolver(IEnumerable<ITelegramCommand> commands, UnknownCommand unknownCommand)
         {
             _commands = commands;
             _unknownCommand = unknownCommand;
