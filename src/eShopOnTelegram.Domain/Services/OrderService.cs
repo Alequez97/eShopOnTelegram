@@ -153,6 +153,7 @@ public class OrderService : IOrderService
 
             return new ActionResponse()
             {
+                Id = order.Id,
                 Status = ResponseStatus.Success,
                 Message = $"Order {order.OrderNumber} created successfully!"
             };

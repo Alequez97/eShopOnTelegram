@@ -2,9 +2,14 @@
 
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Requests.Orders;
+using eShopOnTelegram.Domain.Requests.ProductCategories;
+using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.Persistence.Entities;
+
+using Microsoft.EntityFrameworkCore;
 
 namespace eShopOnTelegram.Domain.IntegrationTests.Services.Orders;
 
@@ -12,13 +17,21 @@ public class CreateOrderTests
 {
     private readonly IOrderService _orderService;
     private readonly ICustomerService _customerService;
+    private readonly IProductService _productService;
+    private readonly IProductCategoryService _productCategoryService;
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly Random _random = new(DateTime.Now.Millisecond);
 
-    public CreateOrderTests(IOrderService orderService, ICustomerService customerService, EShopOnTelegramDbContext dbContext)
+    public CreateOrderTests(IOrderService orderService,
+        ICustomerService customerService,
+        IProductService productService,
+        IProductCategoryService productCategoryService,
+        EShopOnTelegramDbContext dbContext)
     {
         _orderService = orderService;
         _customerService = customerService;
+        _productService = productService;
+        _productCategoryService = productCategoryService;
         _dbContext = dbContext;
     }
 
@@ -70,6 +83,59 @@ public class CreateOrderTests
         response.Status.Should().Be(ResponseStatus.ValidationFailed);
     }
 
+    [Fact]
+    public async Task CreateOrder_WithValidCartItem_ProductItemsCountShouldBeDecreased()
+    {
+        // Arrange
+        var existingCustomer = _dbContext.Customers.FirstOrDefault();
+        if (existingCustomer == null)
+        {
+            await CreateCustomerAsync();
+            existingCustomer = _dbContext.Customers.First();
+        }
+
+        var existingProduct = _dbContext.Products.FirstOrDefault();
+        if (existingProduct == null)
+        {
+            await CreateProductAsync();
+            existingProduct = _dbContext.Products.First();
+        }
+
+        var orderItemsAmount = 10;
+        existingProduct.QuantityLeft += orderItemsAmount;
+        await _dbContext.SaveChangesAsync();
+
+        var request = new CreateOrderRequest()
+        {
+            TelegramUserUID = existingCustomer.TelegramUserUID,
+            CartItems = new List<CreateCartItemRequest>()
+            {
+                new CreateCartItemRequest()
+                {
+                    ProductId = existingProduct.Id,
+                    Quantity = orderItemsAmount
+                }
+            }
+        };
+
+        // Act
+        var productLeftAmountBeforeOrder = existingProduct.QuantityLeft;
+        var response = await _orderService.CreateAsync(request, CancellationToken.None);
+
+        // Assert
+        response.Status.Should().Be(ResponseStatus.Success);
+        
+        var createdOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.Id == response.Id);
+        createdOrder.Should().NotBeNull();
+        createdOrder!.Status.Should().Be(OrderStatus.New);
+        createdOrder!.CartItems.Count().Should().Be(1);
+        createdOrder!.CartItems[0].ProductId.Should().Be(existingProduct.Id);
+        createdOrder!.CartItems[0].Quantity.Should().Be(orderItemsAmount);
+
+        var orderedProduct = await _dbContext.Products.FirstAsync(product => product.Id == existingProduct.Id);
+        orderedProduct.QuantityLeft.Should().Be(productLeftAmountBeforeOrder - orderItemsAmount);
+    }
+
     private async Task CreateCustomerAsync()
     {
         var createCustomerRequest = new Faker<CreateCustomerRequest>()
@@ -79,6 +145,34 @@ public class CreateOrderTests
                 .Generate();
 
         var response = await _customerService.CreateIfNotPresentAsync(createCustomerRequest);
+
+        response.Should().NotBeNull();
+        response.Status.Should().Be(ResponseStatus.Success);
+    }
+
+    private async Task CreateProductAsync()
+    {
+        var existingProductCategory = _dbContext.ProductCategories.FirstOrDefault();
+        if (existingProductCategory == null)
+        {
+            var createProductCategoryRequest = new Faker<CreateProductCategoryRequest>()
+               .RuleFor(request => request.Name, faker => faker.Commerce.ProductAdjective())
+               .Generate();
+
+            var createProductCategoryResponse = await _productCategoryService.CreateAsync(createProductCategoryRequest, CancellationToken.None);
+            createProductCategoryResponse.Status.Should().Be(ResponseStatus.Success);
+
+            existingProductCategory = _dbContext.ProductCategories.First();
+        }
+
+        var createProductRequest = new Faker<CreateProductRequest>()
+                .RuleFor(request => request.ProductName, faker => faker.Commerce.ProductName())
+                .RuleFor(request => request.ProductCategoryId, existingProductCategory.Id)
+                .RuleFor(request => request.OriginalPrice, 20)
+                .RuleFor(request => request.QuantityLeft, 100)
+                .Generate();
+
+        var response = await _productService.CreateAsync(createProductRequest, CancellationToken.None);
 
         response.Should().NotBeNull();
         response.Status.Should().Be(ResponseStatus.Success);
