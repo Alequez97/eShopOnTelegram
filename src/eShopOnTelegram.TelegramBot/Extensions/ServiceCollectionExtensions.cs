@@ -1,8 +1,9 @@
 ﻿using eShopOnTelegram.TelegramBot.Commands;
 using eShopOnTelegram.TelegramBot.Commands.Groups;
 using eShopOnTelegram.TelegramBot.Commands.Payment;
-using eShopOnTelegram.TelegramBot.Interfaces;
 using eShopOnTelegram.TelegramBot.Services;
+
+using TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {

@@ -4,10 +4,11 @@ using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Interfaces;
 using eShopOnTelegram.TelegramBot.Services;
 
 using Telegram.Bot.Types.ReplyMarkups;
+
+using TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands
 {

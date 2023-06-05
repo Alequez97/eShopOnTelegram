@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.TelegramBot.Commands;
-using eShopOnTelegram.TelegramBot.Interfaces;
+
+using TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Services
 {

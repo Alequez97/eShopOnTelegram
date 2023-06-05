@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Interfaces
+﻿namespace TelegramBot.Commands.Interfaces
 {
     public interface ITelegramCommand
     {

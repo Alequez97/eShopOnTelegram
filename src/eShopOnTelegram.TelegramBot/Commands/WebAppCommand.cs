@@ -3,10 +3,11 @@
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.Persistence.Entities;
-using eShopOnTelegram.TelegramBot.Interfaces;
+using eShopOnTelegram.TelegramBot.Configuration;
 
 using Newtonsoft.Json;
+
+using TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
@@ -17,7 +18,6 @@ public class WebAppCommand : ITelegramCommand
     private readonly ITelegramBotClient _telegramBotClient;
     private readonly IOrderService _orderService;
 
-    //private readonly IBasketService _basketService;
     //private readonly EmojiProvider _emojiProvider;
     //private readonly TelegramInvoiceSender _invoiceSender;
 
@@ -26,7 +26,6 @@ public class WebAppCommand : ITelegramCommand
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBotClient,
         IOrderService orderService)
-        //IBasketService basketService,
         //EmojiProvider emojiProvider,
         //TelegramInvoiceSender invoiceSender)
     {
@@ -35,7 +34,6 @@ public class WebAppCommand : ITelegramCommand
         _telegramBotClient = telegramBotClient;
         _orderService = orderService;
 
-        //_basketService = basketService;
         //_emojiProvider = emojiProvider;
         //_invoiceSender = invoiceSender;
     }
@@ -69,6 +67,17 @@ public class WebAppCommand : ITelegramCommand
                     $"Unable to handle your order. Sorry!!!",
                     ParseMode.MarkdownV2
                 );
+            }
+
+            var paymentsConfiguration = _configuration.GetSection("Payment").Get<PaymentConfiguration>();
+
+            if (!paymentsConfiguration.AllPaymentsDisabled)
+            {
+
+            }
+            else
+            {
+
             }
 
             // todo generate invoice
