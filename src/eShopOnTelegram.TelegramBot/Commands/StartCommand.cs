@@ -59,19 +59,19 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 }
 
                 var keyboardMarkup = new TelegramKeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(ButtonConstants.OpenShop, new WebAppInfo() { Url = _configuration["Telegram:WebAppUrl"] })
+                    .AddButtonToCurrentRow(_configuration["BotContent:OpenShopButtonText"], new WebAppInfo() { Url = _configuration["Telegram:WebAppUrl"] })
                     .Build(resizeKeyboard: true);
 
                 await _telegramBotClient.SendTextMessageAsync(
                     chatId,
-                    $"Welcome to eShopOnTelegram",
+                    _configuration["BotContent:WelcomeText"],
                     ParseMode.MarkdownV2,
                     replyMarkup: keyboardMarkup
                 );
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-
+                _logger.LogError(exception, exception.Message);
             }
         }
 
