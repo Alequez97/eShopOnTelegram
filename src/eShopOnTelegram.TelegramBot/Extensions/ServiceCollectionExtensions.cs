@@ -1,10 +1,9 @@
 ﻿using eShopOnTelegram.TelegramBot.Commands;
 using eShopOnTelegram.TelegramBot.Commands.Groups;
+using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Commands.Payment;
 using eShopOnTelegram.TelegramBot.Services;
-
-using TelegramBot.Commands.Interfaces;
-using TelegramBot.Services.Telegram;
+using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {
@@ -12,25 +11,24 @@ namespace eShopOnTelegram.TelegramBot.Extensions
     {
         public static IServiceCollection AddTelegramCommandServices(this IServiceCollection services)
         {
-            //Common commands
+            // Common commands
             services.AddScoped<UnknownCommand>();
             services.AddScoped<ITelegramCommand, StartCommand>();
             services.AddScoped<ITelegramCommand, WebAppCommand>();
 
-            //Telegram groups commands
+            // Telegram groups commands
             services.AddScoped<ITelegramCommand, MyChatMemberCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberAddedCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberLeftCommand>();
 
-            //Payment commands
+            // Payment commands
             services.AddScoped<ITelegramCommand, PreCheckoutQueryCommand>();
             services.AddScoped<ITelegramCommand, SuccessfulPaymentCommand>();
 
-            //Command services
+            // Telegram services
             services.AddScoped<CommandResolver>();
             services.AddScoped<UpdateExecutor>();
-
-            // Common telegram helper services
+            services.AddScoped<InvoiceSender>();
             services.AddSingleton<EmojiProvider>();
 
             return services;

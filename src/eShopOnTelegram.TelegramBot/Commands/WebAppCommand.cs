@@ -3,11 +3,11 @@
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Configuration;
+using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 using Newtonsoft.Json;
-
-using TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
@@ -17,9 +17,9 @@ public class WebAppCommand : ITelegramCommand
     private readonly ILogger<WebAppCommand> _logger;
     private readonly ITelegramBotClient _telegramBotClient;
     private readonly IOrderService _orderService;
+    private readonly InvoiceSender _invoiceSender;
 
     //private readonly EmojiProvider _emojiProvider;
-    //private readonly TelegramInvoiceSender _invoiceSender;
 
     public WebAppCommand(
         IConfiguration configuration,

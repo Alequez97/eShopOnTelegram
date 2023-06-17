@@ -1,4 +1,4 @@
-﻿using TelegramBot.Commands.Interfaces;
+﻿using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
