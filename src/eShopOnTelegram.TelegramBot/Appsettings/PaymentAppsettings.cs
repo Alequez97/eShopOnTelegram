@@ -1,6 +1,6 @@
-﻿namespace eShopOnTelegram.TelegramBot.Configuration;
+﻿namespace eShopOnTelegram.TelegramBot.Appsettings;
 
-public class PaymentConfiguration
+public class PaymentAppsettings
 {
     public Card? Card { get; set; }
 

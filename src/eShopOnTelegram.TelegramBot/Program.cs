@@ -1,8 +1,11 @@
+using eshopOnTelegram.TelegramBot.Appsettings;
+
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Extensions;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Workers;
 
@@ -27,6 +30,10 @@ IHost host = Host.CreateDefaultBuilder(args)
 
             return new TelegramBotClient(telegramToken);
         });
+
+        services.AddSingleton(configuration.GetSection("Telegram").Get<TelegramAppsettings>());
+        services.AddSingleton(configuration.GetSection("BotContent").Get<BotContentAppsettings>());
+        services.AddSingleton(configuration.GetSection("Payment").Get<PaymentAppsettings>());
 
         services.AddTelegramCommandServices();
 

@@ -4,7 +4,6 @@ using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Configuration;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 using Newtonsoft.Json;
@@ -19,23 +18,18 @@ public class WebAppCommand : ITelegramCommand
     private readonly IOrderService _orderService;
     private readonly InvoiceSender _invoiceSender;
 
-    //private readonly EmojiProvider _emojiProvider;
-
     public WebAppCommand(
         IConfiguration configuration,
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBotClient,
-        IOrderService orderService)
-        //EmojiProvider emojiProvider,
-        //TelegramInvoiceSender invoiceSender)
+        IOrderService orderService,
+        InvoiceSender invoiceSender)
     {
         _configuration = configuration;
         _logger = logger;
         _telegramBotClient = telegramBotClient;
         _orderService = orderService;
-
-        //_emojiProvider = emojiProvider;
-        //_invoiceSender = invoiceSender;
+        _invoiceSender = invoiceSender;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -69,30 +63,7 @@ public class WebAppCommand : ITelegramCommand
                 );
             }
 
-            var paymentsConfiguration = _configuration.GetSection("Payment").Get<PaymentConfiguration>();
-
-            if (!paymentsConfiguration.AllPaymentsDisabled)
-            {
-
-            }
-            else
-            {
-
-            }
-
-            // todo generate invoice
-            // todo send email with generated invoice
-
-            //var addItemsToBasketRequest = JsonConvert.DeserializeObject<AddItemsToBasketRequest>(update.Message.WebAppData.Data);
-            //addItemsToBasketRequest.TelegramId = chatId.ToString();
-
-            //var createOrderResponse = await _basketService.AddItemsAsync(addItemsToBasketRequest);
-
-            //if (createOrderResponse.Status == ResponseStatus.Success)
-            //{
-            //    await _invoiceSender.SendConfiguredInvoice(chatId, addItemsToBasketRequest.BasketItems);
-            //    return;
-            //}
+            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems);
         }
         catch (Exception exception)
         {

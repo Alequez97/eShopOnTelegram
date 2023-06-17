@@ -1,8 +1,11 @@
 ﻿using Ardalis.GuardClauses;
 
+using eshopOnTelegram.TelegramBot.Appsettings;
+
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
@@ -13,18 +16,21 @@ namespace eShopOnTelegram.TelegramBot.Commands
     {
         private readonly ITelegramBotClient _telegramBotClient;
         private readonly ILogger<StartCommand> _logger;
-        private readonly IConfiguration _configuration;
+        private readonly TelegramAppsettings _telegramAppsettings;
+        private readonly BotContentAppsettings _botContentAppsettings;
         private readonly ICustomerService _customerService;
 
         public StartCommand(
             ITelegramBotClient telegramBotClient,
             ILogger<StartCommand> logger,
-            IConfiguration configuration,
+            TelegramAppsettings telegramAppsettings,
+            BotContentAppsettings botContentAppsettings,
             ICustomerService customerService)
         {
             _telegramBotClient = telegramBotClient;
             _logger = logger;
-            _configuration = configuration;
+            _telegramAppsettings = telegramAppsettings;
+            _botContentAppsettings = botContentAppsettings;
             _customerService = customerService;
         }
 
@@ -57,12 +63,12 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 }
 
                 var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(_configuration["BotContent:OpenShopButtonText"], new WebAppInfo() { Url = _configuration["Telegram:WebAppUrl"] })
+                    .AddButtonToCurrentRow(_botContentAppsettings.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
                     .Build(resizeKeyboard: true);
 
                 await _telegramBotClient.SendTextMessageAsync(
                     chatId,
-                    _configuration["BotContent:WelcomeText"],
+                    _botContentAppsettings.WelcomeText,
                     ParseMode.MarkdownV2,
                     replyMarkup: keyboardMarkup
                 );
