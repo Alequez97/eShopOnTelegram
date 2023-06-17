@@ -40,6 +40,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddHostedService<TelegramBot>();
 
         services.AddScoped<ICustomerService, CustomerService>();
+        services.AddScoped<IProductService, ProductService>();
         services.AddScoped<IOrderService, OrderService>();
 
         services

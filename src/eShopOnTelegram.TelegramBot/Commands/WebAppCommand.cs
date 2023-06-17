@@ -63,7 +63,7 @@ public class WebAppCommand : ITelegramCommand
                 );
             }
 
-            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems);
+            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems, chatId, CancellationToken.None);
         }
         catch (Exception exception)
         {

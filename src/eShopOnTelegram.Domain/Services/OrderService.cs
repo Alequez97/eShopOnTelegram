@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Dto.Orders;
+﻿using System;
+
+using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Orders;
@@ -10,6 +12,7 @@ public class OrderService : IOrderService
 {
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<OrderService> _logger;
+    private readonly Random _random = new(DateTime.Now.Millisecond);
 
     public OrderService(EShopOnTelegramDbContext dbContext, ILogger<OrderService> logger)
     {
@@ -142,7 +145,7 @@ public class OrderService : IOrderService
 
             var order = new Order()
             {
-                OrderNumber = Guid.NewGuid().ToString()[..18],
+                OrderNumber = GenerateOrderNumber(),
                 CustomerId = customer.Id,
                 CartItems = orderCartItems,
                 Status = OrderStatus.New
@@ -167,5 +170,10 @@ public class OrderService : IOrderService
                 Status = ResponseStatus.Exception
             };
         }
+    }
+
+    private string GenerateOrderNumber()
+    {
+        return $"{DateTime.UtcNow.ToString("yyyyMMddHHmmss")}{_random.Next(1000, 9999)}";
     }
 }
