@@ -1,33 +1,32 @@
-﻿using TelegramBot.Commands.Interfaces;
+﻿using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
-namespace eShopOnTelegram.TelegramBot.Commands
+namespace eShopOnTelegram.TelegramBot.Commands;
+
+public class UnknownCommand : ITelegramCommand
 {
-    public class UnknownCommand : ITelegramCommand
+    private readonly ITelegramBotClient _telegramBotClient;
+
+    public UnknownCommand(ITelegramBotClient telegramBotClient)
     {
-        private readonly ITelegramBotClient _telegramBotClient;
+        _telegramBotClient = telegramBotClient;
+    }
 
-        public UnknownCommand(ITelegramBotClient telegramBotClient)
+    public async Task SendResponseAsync(Update update)
+    {
+        var chatId = update?.Message?.Chat?.Id;
+
+        if (chatId != null)
         {
-            _telegramBotClient = telegramBotClient;
+            await _telegramBotClient.SendTextMessageAsync(
+                chatId,
+                $"Unknown command was sent",
+                ParseMode.MarkdownV2
+            );
         }
+    }
 
-        public async Task SendResponseAsync(Update update)
-        {
-            var chatId = update?.Message?.Chat?.Id;
-
-            if (chatId != null)
-            {
-                await _telegramBotClient.SendTextMessageAsync(
-                    chatId,
-                    $"Unknown command was sent",
-                    ParseMode.MarkdownV2
-                );
-            }
-        }
-
-        public bool IsResponsibleForUpdate(Update update)
-        {
-            return false;
-        }
+    public bool IsResponsibleForUpdate(Update update)
+    {
+        return false;
     }
 }

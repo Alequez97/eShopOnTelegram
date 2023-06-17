@@ -3,12 +3,9 @@
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Services;
-
-using Telegram.Bot.Types.ReplyMarkups;
-
-using TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Commands
 {
@@ -59,7 +56,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                     );
                 }
 
-                var keyboardMarkup = new TelegramKeyboardButtonsMarkupBuilder()
+                var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
                     .AddButtonToCurrentRow(_configuration["BotContent:OpenShopButtonText"], new WebAppInfo() { Url = _configuration["Telegram:WebAppUrl"] })
                     .Build(resizeKeyboard: true);
 

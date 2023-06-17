@@ -1,9 +1,8 @@
-﻿namespace TelegramBot.Commands.Interfaces
-{
-    public interface ITelegramCommand
-    {
-        Task SendResponseAsync(Update update);
+﻿namespace eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
-        bool IsResponsibleForUpdate(Update update);
-    }
+public interface ITelegramCommand
+{
+    Task SendResponseAsync(Update update);
+
+    bool IsResponsibleForUpdate(Update update);
 }
