@@ -1,9 +1,8 @@
-﻿using System;
-
-using eShopOnTelegram.Domain.Dto.Orders;
+﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Orders;
+using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -20,6 +19,37 @@ public class OrderService : IOrderService
         _logger = logger;
     }
 
+    public async Task<Response<OrderDto>> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+
+            if (existingOrder == null)
+            {
+                return new Response<OrderDto>()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            return new Response<OrderDto>
+            {
+                Status = ResponseStatus.Success,
+                Data = existingOrder.ToOrderDto()
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new Response<OrderDto>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
     public async Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
         try
@@ -32,35 +62,7 @@ public class OrderService : IOrderService
                 .WithPagination(request.PaginationModel)
                 .ToListAsync(cancellationToken);
 
-            var getOrdersResponse = orders.Select(order => new OrderDto
-            {
-                Id = order.Id,
-                OrderNumber = order.OrderNumber,
-                CustomerId = order.CustomerId,
-                TelegramUserUID = order.Customer.TelegramUserUID,
-                Username = order.Customer.Username,
-                FirstName = order.Customer.FirstName,
-                LastName = order.Customer.LastName,
-                CartItems = order.CartItems.Select(cartItem => new CartItemDto()
-                {
-                    ProductId = cartItem.ProductId,
-                    Name = cartItem.Product.Name,
-                    CategoryName = cartItem.Product.Category.Name,
-                    OriginalPrice = cartItem.Product.OriginalPrice,
-                    PriceWithDiscount = cartItem.Product.PriceWithDiscount,
-                    QuantityLeft = cartItem.Product.QuantityLeft, // probably we dont need this
-                    ImageName = cartItem.Product.ImageName,
-                    Quantity = cartItem.Quantity
-                }).ToList(),
-                CreationDate = order.CreationDate,
-                PaymentDate = order.PaymentDate,
-                Status = order.Status.ToString(),
-                CountryIso2Code = order.CountryIso2Code,
-                City = order.City,
-                StreetLine1 = order.StreetLine1,
-                StreetLine2 = order.StreetLine2,
-                PostCode = order.PostCode,
-            });
+            var getOrdersResponse = orders.Select(order => order.ToOrderDto());
 
 
             return new Response<IEnumerable<OrderDto>>()
@@ -81,14 +83,14 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<ActionResponse> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken)
+    public async Task<CreateOrderResponse> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken)
     {
         try
         {
             var customer = await _dbContext.Customers.FirstOrDefaultAsync(c => c.TelegramUserUID == request.TelegramUserUID);
             if (customer == null)
             {
-                return new ActionResponse()
+                return new CreateOrderResponse()
                 {
                     Status = ResponseStatus.NotFound,
                 };
@@ -96,7 +98,7 @@ public class OrderService : IOrderService
 
             if (request.CartItems.Count == 0)
             {
-                return new ActionResponse()
+                return new CreateOrderResponse()
                 {
                     Status = ResponseStatus.ValidationFailed,
                     Message = "Cart items cannot be empty during order creation"
@@ -109,7 +111,7 @@ public class OrderService : IOrderService
 
                 if (product == null)
                 {
-                    return new ActionResponse()
+                    return new CreateOrderResponse()
                     {
                         Status = ResponseStatus.NotFound,
                         Message = $"Product with id {requestCartItem.ProductId} not found"
@@ -118,7 +120,7 @@ public class OrderService : IOrderService
 
                 if (product.IsDeleted == true)
                 {
-                    return new ActionResponse()
+                    return new CreateOrderResponse()
                     {
                         Status = ResponseStatus.Exception,
                         Message = $"Product was updated while request was processed"
@@ -127,7 +129,7 @@ public class OrderService : IOrderService
 
                 if (product.QuantityLeft < requestCartItem.Quantity)
                 {
-                    return new ActionResponse()
+                    return new CreateOrderResponse()
                     {
                         Status = ResponseStatus.ValidationFailed,
                         Message = $"Requested {requestCartItem.Quantity} amount of product with id {requestCartItem.ProductId}, but only {product.QuantityLeft} is available"
@@ -154,9 +156,10 @@ public class OrderService : IOrderService
             _dbContext.Add(order);
             await _dbContext.SaveChangesAsync();
 
-            return new ActionResponse()
+            return new CreateOrderResponse()
             {
                 Id = order.Id,
+                OrderNumber = order.OrderNumber,
                 Status = ResponseStatus.Success,
                 Message = $"Order {order.OrderNumber} created successfully!"
             };
@@ -164,6 +167,39 @@ public class OrderService : IOrderService
         catch (Exception ex)
         {
             _logger.LogError(ex, "Unable to create order.");
+
+            return new CreateOrderResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
+    public async Task<ActionResponse> UpdateStatusAsync(string orderNumber, OrderStatus orderStatus, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+
+            if (existingOrder == null)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            existingOrder.Status = orderStatus;
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new ActionResponse
+            { 
+                Status = ResponseStatus.Success
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
 
             return new ActionResponse()
             {

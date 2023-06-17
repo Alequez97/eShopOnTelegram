@@ -24,7 +24,7 @@ public class InvoiceSender
         _paymentAppsettings = paymentAppsettings;
     }
 
-    public async Task SendInvoiceAsync(IEnumerable<CreateCartItemRequest> cartItems, long chatId, CancellationToken cancellationToken)
+    public async Task SendInvoiceAsync(IEnumerable<CreateCartItemRequest> cartItems, long chatId, string orderNumber, CancellationToken cancellationToken)
     {
         await Console.Out.WriteLineAsync(cartItems.ToString());
 
@@ -36,11 +36,11 @@ public class InvoiceSender
 
         await _telegramBot.SendInvoiceAsync(
             chatId,
-            $"Заказ номер 1",
+            $"Заказ номер {orderNumber}",
             "Описание",
-            "data that can be used to check payment later",
+            orderNumber,
             _paymentAppsettings.Card.ApiToken,
-            "EUR",
+            _paymentAppsettings.Card.Currency,
             await cartItems.GetPaymentLabeledPricesAsync(_productService, cancellationToken),
             needShippingAddress: true,
             needPhoneNumber: true,

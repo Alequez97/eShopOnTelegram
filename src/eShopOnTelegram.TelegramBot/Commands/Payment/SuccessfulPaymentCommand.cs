@@ -1,44 +1,45 @@
-﻿using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+﻿using eShopOnTelegram.Domain.Responses;
+using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
 public class SuccessfulPaymentCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBotClient;
-    //private readonly IOrderService _orderService;
+    private readonly IOrderService _orderService;
 
     public SuccessfulPaymentCommand(
-        ITelegramBotClient telegramBotClient
-        /*IOrderService orderService*/)
+        ITelegramBotClient telegramBotClient,
+        IOrderService orderService)
     {
         _telegramBotClient = telegramBotClient;
-        //_orderService = orderService;
+        _orderService = orderService;
     }
 
     public async Task SendResponseAsync(Update update)
     {
         var chatId = update.Message.Chat.Id;
+        var orderNumber = update.Message.SuccessfulPayment.InvoicePayload;
 
-        //var request = new CreateOrderRequest() { TelegramId = chatId.ToString() };
+        var response = await _orderService.UpdateStatusAsync(orderNumber, OrderStatus.Paid, CancellationToken.None);
 
-        //var response = await _orderService.CreateAsync(request);
-
-        //if (response.Status == ResponseStatus.Success)
-        //{
-        //    await _telegramBotClient.SendTextMessageAsync(
-        //        chatId,
-        //        "Спасибо за покупку, перейдите в раздел мои товары, чтобы просмотреть свои покупки",
-        //        ParseMode.MarkdownV2
-        //    );
-        //} 
-        //else
-        //{
-        //    await _telegramBotClient.SendTextMessageAsync(
-        //        chatId,
-        //        "Ошибка при обработке заказа\\. Обратитесь в команду поддержки",
-        //        ParseMode.MarkdownV2
-        //    );
-        //}
+        if (response.Status == ResponseStatus.Success)
+        {
+            await _telegramBotClient.SendTextMessageAsync(
+                chatId,
+                "Thank you for purchase. We will contact you soon"
+            );
+        }
+        else
+        {
+            await _telegramBotClient.SendTextMessageAsync(
+                chatId,
+                "Error during order confirmation. Please contact support",
+                ParseMode.MarkdownV2
+            );
+        }
     }
 
     public bool IsResponsibleForUpdate(Update update)

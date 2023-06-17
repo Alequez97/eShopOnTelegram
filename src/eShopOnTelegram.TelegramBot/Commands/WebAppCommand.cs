@@ -61,9 +61,10 @@ public class WebAppCommand : ITelegramCommand
                     $"Unable to handle your order. Sorry!!!",
                     ParseMode.MarkdownV2
                 );
+                return;
             }
 
-            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems, chatId, CancellationToken.None);
+            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems, chatId, createOrderResponse.OrderNumber, CancellationToken.None);
         }
         catch (Exception exception)
         {
