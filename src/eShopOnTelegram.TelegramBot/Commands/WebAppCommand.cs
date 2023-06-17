@@ -16,20 +16,20 @@ public class WebAppCommand : ITelegramCommand
     private readonly ILogger<WebAppCommand> _logger;
     private readonly ITelegramBotClient _telegramBotClient;
     private readonly IOrderService _orderService;
-    private readonly InvoiceSender _invoiceSender;
+    private readonly PaymentMethodsSender _paymentMethodsSender;
 
     public WebAppCommand(
         IConfiguration configuration,
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBotClient,
         IOrderService orderService,
-        InvoiceSender invoiceSender)
+        PaymentMethodsSender invoiceSender)
     {
         _configuration = configuration;
         _logger = logger;
         _telegramBotClient = telegramBotClient;
         _orderService = orderService;
-        _invoiceSender = invoiceSender;
+        _paymentMethodsSender = invoiceSender;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -64,7 +64,7 @@ public class WebAppCommand : ITelegramCommand
                 return;
             }
 
-            await _invoiceSender.SendInvoiceAsync(createOrderRequest.CartItems, chatId, createOrderResponse.OrderNumber, CancellationToken.None);
+            await _paymentMethodsSender.SendEnabledPaymentMethodsAsync(chatId, CancellationToken.None);
         }
         catch (Exception exception)
         {

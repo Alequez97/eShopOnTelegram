@@ -6,5 +6,7 @@ public class BotContentAppsettings
 
     public required string OpenShopButtonText { get; set; }
 
-    public required string SendInvoiceText { get; set; }
+    public required string NoEnabledPayments { get; set; }
+
+    public required string ChoosePaymentMethod { get; set; }
 }

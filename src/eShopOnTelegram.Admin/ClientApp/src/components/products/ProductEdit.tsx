@@ -9,7 +9,7 @@ export function ProductEdit() {
         <TextInput source="originalPrice" validate={[required(), number()]} />
         <TextInput
           source="priceWithDiscount"
-          validate={[required(), number()]}
+          validate={[number()]}
         />
         <TextInput source="quantityLeft" validate={[required(), number()]} />
       </SimpleForm>
