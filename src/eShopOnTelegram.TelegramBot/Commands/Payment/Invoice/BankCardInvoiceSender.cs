@@ -70,7 +70,7 @@ public class BankCardInvoiceSender : ITelegramCommand
             await _telegramBot.SendInvoiceAsync(
                 chatId,
                 _botContentAppsettings.Order.OrderNumberTitle.Replace("{orderNumber}", activeOrder.OrderNumber).OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderNumberTitle(activeOrder.OrderNumber)),
-                "", // Description - maybe worth to add list of purchasing products
+                "Description", // Description - maybe worth to add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Card.ApiToken,
                 _paymentAppsettings.MainCurrency,
