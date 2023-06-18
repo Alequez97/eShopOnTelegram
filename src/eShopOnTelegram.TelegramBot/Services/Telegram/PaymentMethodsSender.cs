@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Appsettings;
+using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -32,7 +33,7 @@ public class PaymentMethodsSender
     {
         if (_paymentAppsettings.AllPaymentsDisabled)
         {
-            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.NoEnabledPayments);
+            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Payment.NoEnabledPayments ?? BotContentDefaultMessageConstants.NoEnabledPayments);
             return;
         }
 
@@ -44,7 +45,7 @@ public class PaymentMethodsSender
 
         await _telegramBot.SendTextMessageAsync(
             chatId: chatId,
-            text: _botContentAppsettings.ChoosePaymentMethod,
+            text: _botContentAppsettings.Payment.ChoosePaymentMethod ?? BotContentDefaultMessageConstants.ChoosePaymentMethod,
             replyMarkup: inlineKeyboard,
             cancellationToken: cancellationToken);
     }

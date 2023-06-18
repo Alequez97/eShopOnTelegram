@@ -11,11 +11,6 @@ public class PreCheckoutQueryCommand : ITelegramCommand
         _telegramBotClient = telegramBotClient;
     }
 
-    public bool IsResponsibleForUpdate(Update update)
-    {
-        return update.PreCheckoutQuery != null;
-    }
-
     public async Task SendResponseAsync(Update update)
     {
         var preCheckoutQuery = update.PreCheckoutQuery;
@@ -24,5 +19,10 @@ public class PreCheckoutQueryCommand : ITelegramCommand
         // In our case this should be done in WebAppData command since it sends invoice
 
         await _telegramBotClient.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id);
+    }
+
+    public bool IsResponsibleForUpdate(Update update)
+    {
+        return update.PreCheckoutQuery != null;
     }
 }

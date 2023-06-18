@@ -1,56 +1,71 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Constants;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
 public class SuccessfulPaymentCommand : ITelegramCommand
 {
-    private readonly ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
+    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly ILogger<SuccessfulPaymentCommand> _logger;
 
     public SuccessfulPaymentCommand(
-        ITelegramBotClient telegramBotClient,
-        IOrderService orderService)
+        ITelegramBotClient telegramBot,
+        IOrderService orderService,
+        BotContentAppsettings botContentAppsettings,
+        ILogger<SuccessfulPaymentCommand> logger)
     {
-        _telegramBotClient = telegramBotClient;
+        _telegramBot = telegramBot;
         _orderService = orderService;
+        _botContentAppsettings = botContentAppsettings;
+        _logger = logger;
     }
 
     public async Task SendResponseAsync(Update update)
     {
         var chatId = update.Message.Chat.Id;
-        var orderNumber = update.Message.SuccessfulPayment.InvoicePayload;
 
-        var response = await _orderService.UpdateStatusAsync(orderNumber, OrderStatus.Paid, CancellationToken.None);
-
-        if (response.Status == ResponseStatus.Success)
+        try
         {
-            await _telegramBotClient.SendTextMessageAsync(
-                chatId,
-                "Thank you for purchase. We will contact you soon"
-            );
+            var orderNumber = update.Message.SuccessfulPayment.InvoicePayload;
 
-            // TODO: Send notification to shop owner, that new order received
+            var response = await _orderService.UpdateStatusAsync(orderNumber, OrderStatus.Paid, CancellationToken.None);
+
+            if (response.Status == ResponseStatus.Success)
+            {
+                await _telegramBot.SendTextMessageAsync(
+                    chatId,
+                    "Thank you for purchase. We will contact you soon"
+                );
+
+                // TODO: Send notification to shop owner, that new order received
+            }
+            else
+            {
+                await _telegramBot.SendTextMessageAsync(
+                    chatId,
+                    "Error during order confirmation. Please contact support",
+                    ParseMode.MarkdownV2
+                );
+            }
         }
-        else
+        catch (Exception exception)
         {
-            await _telegramBotClient.SendTextMessageAsync(
-                chatId,
-                "Error during order confirmation. Please contact support",
-                ParseMode.MarkdownV2
-            );
+            _logger.LogError(exception, exception.Message);
+            await _telegramBot.SendTextMessageAsync(
+                chatId: chatId,
+                text: _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage,
+                cancellationToken: CancellationToken.None);
         }
     }
 
     public bool IsResponsibleForUpdate(Update update)
     {
         return update.Message?.Type == MessageType.SuccessfulPayment;
-    }
-
-    private string ReturnNullIfStringNullOrEmpty(string str)
-    {
-        return string.IsNullOrWhiteSpace(str) ? null : str;
     }
 }

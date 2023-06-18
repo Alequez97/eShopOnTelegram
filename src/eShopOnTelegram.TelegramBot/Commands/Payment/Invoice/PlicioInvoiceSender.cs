@@ -17,6 +17,7 @@ public class PlicioInvoiceSender : ITelegramCommand
     private readonly IOrderService _orderService;
     private readonly IProductService _productService;
     private readonly PaymentAppsettings _paymentAppsettings;
+    private readonly BotContentAppsettings _botContentAppsettings;
     private readonly ILogger<PlicioInvoiceSender> _logger;
 
     public PlicioInvoiceSender(
@@ -25,6 +26,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         IOrderService orderService,
         IProductService productService,
         PaymentAppsettings paymentAppsettings,
+        BotContentAppsettings botContentAppsettings,
         ILogger<PlicioInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
@@ -32,6 +34,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         _orderService = orderService;
         _productService = productService;
         _paymentAppsettings = paymentAppsettings;
+        _botContentAppsettings = botContentAppsettings;
         _logger = logger;
     }
 
@@ -39,43 +42,45 @@ public class PlicioInvoiceSender : ITelegramCommand
     {
         var chatId = update.CallbackQuery.From.Id;
 
-        var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
-
-        if (getOrdersResponse.Status != ResponseStatus.Success)
+        try
         {
-            await _telegramBot.SendTextMessageAsync(chatId, "Something went wrong during invoice generation");
-            return;
-        }
+            var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
 
-        var customerOrders = getOrdersResponse.Data
-            .Where(order => order.Status == OrderStatus.New.ToString() || order.Status == OrderStatus.InvoiceSent.ToString())
-            .ToList();
+            if (getOrdersResponse.Status != ResponseStatus.Success)
+            {
+                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage);
+                return;
+            }
 
-        if (customerOrders.Count > 1)
-        {
-            var errorMessage = "Error. For every customer should be only one active order";
+            var customerOrders = getOrdersResponse.Data
+                .Where(order => order.Status == OrderStatus.New.ToString() || order.Status == OrderStatus.InvoiceSent.ToString())
+                .ToList();
 
-            _logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
-        }
+            if (customerOrders.Count > 1)
+            {
+                var errorMessage = "Error. For every customer should be only one active order";
 
-        if (customerOrders.Count == 0)
-        {
-            _logger.LogError("Error. No active order found for customer with telegramId = {telegramId}", chatId);
-            throw new Exception($"Error. No active order found for customer with telegramId = {chatId}");
-        }
+                _logger.LogError(errorMessage);
+                throw new Exception(errorMessage);
+            }
 
-        var activeOrder = customerOrders.First();
+            if (customerOrders.Count == 0)
+            {
+                _logger.LogError("Error. No active order found for customer with telegramId = {telegramId}", chatId);
+                throw new Exception($"Error. No active order found for customer with telegramId = {chatId}");
+            }
 
-        var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
-            _paymentAppsettings.Plisio.ApiToken,
-            _paymentAppsettings.MainCurrency,
-            (int)Math.Ceiling(activeOrder.TotalPrice),
-            activeOrder.OrderNumber,
-            _paymentAppsettings.Plisio.CryptoCurrency);
+            var activeOrder = customerOrders.First();
 
-        InlineKeyboardMarkup inlineKeyboard = new(new[]
-        {
+            var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
+                _paymentAppsettings.Plisio.ApiToken,
+                _paymentAppsettings.MainCurrency,
+                (int)Math.Ceiling(activeOrder.TotalPrice),
+                activeOrder.OrderNumber,
+                _paymentAppsettings.Plisio.CryptoCurrency);
+
+            InlineKeyboardMarkup inlineKeyboard = new(new[]
+            {
             // first row
             new []
             {
@@ -83,12 +88,22 @@ public class PlicioInvoiceSender : ITelegramCommand
             },
         });
 
-        await _telegramBot.SendTextMessageAsync(
-            chatId: chatId,
-            text: "Please receive your invoice",
-            replyMarkup: inlineKeyboard,
-            cancellationToken: CancellationToken.None);
+            await _telegramBot.SendTextMessageAsync(
+                chatId: chatId,
+                text: "Please receive your invoice",
+                replyMarkup: inlineKeyboard,
+                cancellationToken: CancellationToken.None);
         }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            await _telegramBot.SendTextMessageAsync(
+                chatId: chatId,
+                text: _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage,
+                cancellationToken: CancellationToken.None);
+        }
+    }
 
     public bool IsResponsibleForUpdate(Update update)
     {

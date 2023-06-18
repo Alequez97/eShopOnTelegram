@@ -63,12 +63,12 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 }
 
                 var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(_botContentAppsettings.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
+                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText ?? BotContentDefaultMessageConstants.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
                     .Build(resizeKeyboard: true);
 
                 await _telegramBotClient.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.WelcomeText,
+                    _botContentAppsettings.Common.WelcomeText ?? BotContentDefaultMessageConstants.WelcomeText,
                     ParseMode.MarkdownV2,
                     replyMarkup: keyboardMarkup
                 );
