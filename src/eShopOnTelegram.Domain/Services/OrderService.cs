@@ -50,6 +50,42 @@ public class OrderService : IOrderService
         }
     }
 
+    public async Task<Response<IEnumerable<OrderDto>>> GetByTelegramIdAsync(long telegramId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var customerOrders = _dbContext.Orders
+                .Include(order => order.CartItems)
+                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(product => product.Category)
+                .Include(order => order.Customer)
+                .Where(order => order.Customer.TelegramUserUID == telegramId);
+
+            if (!customerOrders.Any())
+            {
+                return new Response<IEnumerable<OrderDto>>()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            return await Task.FromResult(new Response<IEnumerable<OrderDto>>()
+            {
+                Status = ResponseStatus.Success,
+                Data = customerOrders.Select(order => order.ToOrderDto())
+            });
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new Response<IEnumerable<OrderDto>>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
     public async Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {
         try

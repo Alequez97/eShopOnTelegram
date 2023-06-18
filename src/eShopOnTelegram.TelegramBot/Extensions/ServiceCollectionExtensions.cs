@@ -2,9 +2,10 @@
 using eShopOnTelegram.TelegramBot.Commands.Groups;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Commands.Payment;
+using eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
 using eShopOnTelegram.TelegramBot.Services;
-using eShopOnTelegram.TelegramBot.Services.Payment;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
+using eShopOnTelegram.TelegramBot.Services.Payment.TelegramButtonProviders;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
@@ -26,6 +27,10 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             // Payment commands
             services.AddScoped<ITelegramCommand, PreCheckoutQueryCommand>();
             services.AddScoped<ITelegramCommand, SuccessfulPaymentCommand>();
+
+            // Invoice generation commands
+            services.AddScoped<ITelegramCommand, BankCardInvoiceSender>();
+            services.AddScoped<ITelegramCommand, PlicioInvoiceSender>();
 
             // Payment telegram buttons generators
             services.AddSingleton<IPaymentTelegramButtonProvider, BankCardPaymentTelegramButtonProvider>();

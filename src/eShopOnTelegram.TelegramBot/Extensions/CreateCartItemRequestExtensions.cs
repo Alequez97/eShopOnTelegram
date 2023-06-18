@@ -1,4 +1,4 @@
-﻿using eShopOnTelegram.Domain.Requests.Orders;
+﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
@@ -8,7 +8,7 @@ namespace eShopOnTelegram.TelegramBot.Extensions;
 
 public static class CreateCartItemRequestExtensions
 {
-    public static async Task<IEnumerable<LabeledPrice>> GetPaymentLabeledPricesAsync(this IEnumerable<CreateCartItemRequest> cartItems, IProductService productService, CancellationToken cancellationToken)
+    public static async Task<IEnumerable<LabeledPrice>> GetPaymentLabeledPricesAsync(this IEnumerable<CartItemDto> cartItems, IProductService productService, CancellationToken cancellationToken)
     {
         var labeledPrices = new List<LabeledPrice>();
 

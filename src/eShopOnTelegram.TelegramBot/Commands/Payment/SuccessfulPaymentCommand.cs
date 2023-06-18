@@ -31,6 +31,8 @@ public class SuccessfulPaymentCommand : ITelegramCommand
                 chatId,
                 "Thank you for purchase. We will contact you soon"
             );
+
+            // TODO: Send notification to shop owner, that new order received
         }
         else
         {

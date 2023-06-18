@@ -1,9 +1,7 @@
-﻿using eShopOnTelegram.Domain.Requests.Orders;
-using eShopOnTelegram.Domain.Services.Interfaces;
+﻿using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 
-using Telegram.Bot;
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.TelegramBot.Services.Telegram;
@@ -49,19 +47,5 @@ public class PaymentMethodsSender
             text: _botContentAppsettings.ChoosePaymentMethod,
             replyMarkup: inlineKeyboard,
             cancellationToken: cancellationToken);
-
-        //await _telegramBot.SendInvoiceAsync(
-        //    chatId,
-        //    $"Заказ номер {orderNumber}",
-        //    "Описание",
-        //    orderNumber,
-        //    _paymentAppsettings.Card.ApiToken,
-        //    _paymentAppsettings.Card.Currency,
-        //    await cartItems.GetPaymentLabeledPricesAsync(_productService, cancellationToken),
-        //    needShippingAddress: true,
-        //    needPhoneNumber: true,
-        //    needName: true,
-        //    cancellationToken: cancellationToken
-        //);
     }
 }
