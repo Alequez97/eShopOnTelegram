@@ -85,13 +85,13 @@ public class PlicioInvoiceSender : ITelegramCommand
                 // first row
                 new []
                 {
-                    InlineKeyboardButton.WithUrl("Proceed to payment", createPlicioInvoiceResponse.Data.InvoiceUrl),
+                    InlineKeyboardButton.WithUrl(_botContentAppsettings.Payment.ProceedToPayment ?? BotContentDefaultConstants.Payment.ProceedToPayment, createPlicioInvoiceResponse.Data.InvoiceUrl),
                 },
             });
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,
-                text: "Please receive your invoice",
+                text: _botContentAppsettings.Payment.InvoiceReceiveMessage ?? BotContentDefaultConstants.Payment.InvoiceReceiveMessage,
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
         }

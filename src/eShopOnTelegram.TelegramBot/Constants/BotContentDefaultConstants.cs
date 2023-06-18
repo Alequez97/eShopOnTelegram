@@ -22,6 +22,8 @@ public static class BotContentDefaultConstants
     {
         public const string NoEnabledPayments = "Thank you for your purchase";
         public const string ChoosePaymentMethod = "Please select payment method";
+        public const string ProceedToPayment = "Proceed to payment";
+        public const string InvoiceReceiveMessage = "Please receive your invoice";
         public const string SuccessfullPayment = "Thank you for purchase";
         public const string ErrorDuringPaymentConfirmation = "Error during order confirmation";
     }

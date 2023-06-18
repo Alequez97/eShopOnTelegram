@@ -6,12 +6,12 @@ namespace eShopOnTelegram.TelegramBot.Commands;
 
 public class UnknownCommand : ITelegramCommand
 {
-    private readonly ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBot;
     private readonly BotContentAppsettings _botContentAppsettings;
 
-    public UnknownCommand(ITelegramBotClient telegramBotClient, BotContentAppsettings botContentAppsettings)
+    public UnknownCommand(ITelegramBotClient telegramBot, BotContentAppsettings botContentAppsettings)
     {
-        _telegramBotClient = telegramBotClient;
+        _telegramBot = telegramBot;
         _botContentAppsettings = botContentAppsettings;
     }
 
@@ -21,7 +21,7 @@ public class UnknownCommand : ITelegramCommand
 
         if (chatId != null)
         {
-            await _telegramBotClient.SendTextMessageAsync(
+            await _telegramBot.SendTextMessageAsync(
                 chatId,
                 _botContentAppsettings.Common.UnknownCommandText ?? BotContentDefaultConstants.Common.UnknownCommandText,
                 ParseMode.MarkdownV2

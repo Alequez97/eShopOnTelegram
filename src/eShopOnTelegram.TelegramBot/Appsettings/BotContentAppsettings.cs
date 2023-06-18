@@ -29,6 +29,8 @@ public class BotPaymentContent
 {
     public string? ChoosePaymentMethod { get; set; }
     public string? NoEnabledPayments { get; set; }
+    public string? ProceedToPayment { get; set; }
+    public string? InvoiceReceiveMessage { get; set; }
     public string? SuccessfullPayment { get; set; }
     public string? ErrorDuringPaymentConfirmation { get; set; }
 }

@@ -4,17 +4,17 @@ namespace eShopOnTelegram.TelegramBot.Workers;
 
 public class TelegramBot : BackgroundService
 {
-    private readonly ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBot;
     private readonly IServiceProvider _serviceProvider;
     private readonly ILogger<TelegramBot> _logger;
 
     public TelegramBot(
-        ITelegramBotClient telegramBotClient,
+        ITelegramBotClient telegramBot,
         IServiceProvider serviceProvider,
         ILogger<TelegramBot> logger
     )
     {
-        _telegramBotClient = telegramBotClient;
+        _telegramBot = telegramBot;
         _serviceProvider = serviceProvider;
         _logger = logger;
     }
@@ -32,7 +32,7 @@ public class TelegramBot : BackgroundService
             AllowedUpdates = Array.Empty<UpdateType>() // receive all update types
         };
 
-        _telegramBotClient.StartReceiving(
+        _telegramBot.StartReceiving(
             updateHandler: HandleUpdateAsync,
             pollingErrorHandler: HandlePollingErrorAsync,
             receiverOptions: receiverOptions,

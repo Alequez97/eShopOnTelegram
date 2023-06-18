@@ -4,11 +4,11 @@ namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
 public class PreCheckoutQueryCommand : ITelegramCommand
 {
-    private readonly ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBot;
 
-    public PreCheckoutQueryCommand(ITelegramBotClient telegramBotClient)
+    public PreCheckoutQueryCommand(ITelegramBotClient telegramBot)
     {
-        _telegramBotClient = telegramBotClient;
+        _telegramBot = telegramBot;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -18,7 +18,7 @@ public class PreCheckoutQueryCommand : ITelegramCommand
         // Here data can be validated and desicion can be made if order can processed
         // In our case this should be done in WebAppData command since it sends invoice
 
-        await _telegramBotClient.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id);
+        await _telegramBot.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id);
     }
 
     public bool IsResponsibleForUpdate(Update update)
