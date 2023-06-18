@@ -49,7 +49,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultConstants.Common.DefaultErrorMessage);
+                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage ?? BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage);
                 return;
             }
 

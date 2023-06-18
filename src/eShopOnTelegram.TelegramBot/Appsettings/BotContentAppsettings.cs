@@ -4,6 +4,8 @@ public class BotContentAppsettings
 {
     public required BotCommonContent Common { get; set; }
 
+    public required BotOrderContent Order { get; set; }
+
     public required BotPaymentContent Payment { get; set; }
 }
 
@@ -14,8 +16,13 @@ public class BotCommonContent
     public string? OpenShopButtonText { get; set; }
     public string? UnknownCommandText { get; set; }
     public string? DefaultErrorMessage { get; set; }
-    public string? CreateOrderErrorMessage { get; set; }
+}
 
+public class BotOrderContent
+{
+    public string? CreateErrorMessage { get; set; }
+    public string? InvoiceGenerationFailedErrorMessage { get; set; }
+    public string? OrderNumberTitle { get; set; }
 }
 
 public class BotPaymentContent
