@@ -41,7 +41,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Payment.SuccessfullPayment ?? BotContentDefaultConstants.Payment.SuccessfullPayment
+                    _botContentAppsettings.Payment.SuccessfullPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.SuccessfullPayment)
                 );
 
                 // TODO: Send notification to shop owner, that new order received
@@ -50,7 +50,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Payment.ErrorDuringPaymentConfirmation ?? BotContentDefaultConstants.Payment.ErrorDuringPaymentConfirmation,
+                    _botContentAppsettings.Payment.ErrorDuringPaymentConfirmation.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ErrorDuringPaymentConfirmation),
                     ParseMode.MarkdownV2
                 );
             }

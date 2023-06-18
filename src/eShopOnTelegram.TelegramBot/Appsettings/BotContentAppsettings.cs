@@ -11,26 +11,26 @@ public class BotContentAppsettings
 
 public class BotCommonContent
 {
-    public string? StartError { get; set; }
-    public string? WelcomeText { get; set; }
-    public string? OpenShopButtonText { get; set; }
-    public string? UnknownCommandText { get; set; }
-    public string? DefaultErrorMessage { get; set; }
+    public required string StartError { get; set; }
+    public required string WelcomeText { get; set; }
+    public required string OpenShopButtonText { get; set; }
+    public required string UnknownCommandText { get; set; }
+    public required string DefaultErrorMessage { get; set; }
 }
 
 public class BotOrderContent
 {
-    public string? CreateErrorMessage { get; set; }
-    public string? InvoiceGenerationFailedErrorMessage { get; set; }
-    public string? OrderNumberTitle { get; set; }
+    public required string CreateErrorMessage { get; set; }
+    public required string InvoiceGenerationFailedErrorMessage { get; set; }
+    public required string OrderNumberTitle { get; set; }
 }
 
 public class BotPaymentContent
 {
-    public string? ChoosePaymentMethod { get; set; }
-    public string? NoEnabledPayments { get; set; }
-    public string? ProceedToPayment { get; set; }
-    public string? InvoiceReceiveMessage { get; set; }
-    public string? SuccessfullPayment { get; set; }
-    public string? ErrorDuringPaymentConfirmation { get; set; }
+    public required string ChoosePaymentMethod { get; set; }
+    public required string NoEnabledPayments { get; set; }
+    public required string ProceedToPayment { get; set; }
+    public required string InvoiceReceiveMessage { get; set; }
+    public required string SuccessfullPayment { get; set; }
+    public required string ErrorDuringPaymentConfirmation { get; set; }
 }

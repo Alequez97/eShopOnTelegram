@@ -49,7 +49,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage ?? BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage);
+                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage));
                 return;
             }
 
@@ -80,18 +80,20 @@ public class PlicioInvoiceSender : ITelegramCommand
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Plisio.CryptoCurrency);
 
+            var message = _botContentAppsettings.Payment.ProceedToPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ProceedToPayment);
+
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
                 // first row
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(_botContentAppsettings.Payment.ProceedToPayment ?? BotContentDefaultConstants.Payment.ProceedToPayment, createPlicioInvoiceResponse.Data.InvoiceUrl),
+                    InlineKeyboardButton.WithUrl(_botContentAppsettings.Payment.ProceedToPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ProceedToPayment), createPlicioInvoiceResponse.Data.InvoiceUrl),
                 },
             });
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,
-                text: _botContentAppsettings.Payment.InvoiceReceiveMessage ?? BotContentDefaultConstants.Payment.InvoiceReceiveMessage,
+                text: _botContentAppsettings.Payment.InvoiceReceiveMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.InvoiceReceiveMessage),
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
         }

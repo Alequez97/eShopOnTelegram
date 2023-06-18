@@ -1,6 +1,7 @@
 ﻿using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
+using eShopOnTelegram.TelegramBot.Extensions;
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
@@ -23,7 +24,7 @@ public class UnknownCommand : ITelegramCommand
         {
             await _telegramBot.SendTextMessageAsync(
                 chatId,
-                _botContentAppsettings.Common.UnknownCommandText ?? BotContentDefaultConstants.Common.UnknownCommandText,
+                _botContentAppsettings.Common.UnknownCommandText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.UnknownCommandText),
                 ParseMode.MarkdownV2
             );
         }

@@ -43,7 +43,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage ?? BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage);
+                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage));
                 return;
             }
 
@@ -69,7 +69,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,
-                _botContentAppsettings.Order.OrderNumberTitle?.Replace("{orderNumber}", activeOrder.OrderNumber) ?? BotContentDefaultConstants.Order.OrderNumberTitle(activeOrder.OrderNumber),
+                _botContentAppsettings.Order.OrderNumberTitle.Replace("{orderNumber}", activeOrder.OrderNumber).OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderNumberTitle(activeOrder.OrderNumber)),
                 "", // Description - maybe worth to add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Card.ApiToken,

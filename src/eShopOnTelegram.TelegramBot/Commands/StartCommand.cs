@@ -59,18 +59,18 @@ namespace eShopOnTelegram.TelegramBot.Commands
 
                     await _telegramBot.SendTextMessageAsync(
                         chatId,
-                        _botContentAppsettings.Common.StartError ?? BotContentDefaultConstants.Common.StartError,
+                        _botContentAppsettings.Common.StartError.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.StartError),
                         ParseMode.MarkdownV2
                     );
                 }
 
                 var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText ?? BotContentDefaultConstants.Common.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
+                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.OpenShopButtonText), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
                     .Build(resizeKeyboard: true);
 
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Common.WelcomeText ?? BotContentDefaultConstants.Common.WelcomeText,
+                    _botContentAppsettings.Common.WelcomeText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.WelcomeText),
                     ParseMode.MarkdownV2,
                     replyMarkup: keyboardMarkup
                 );
