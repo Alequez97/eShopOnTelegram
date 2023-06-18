@@ -22,4 +22,6 @@ public class CartItemDto
     public string? ImageName { get; set; }
     //
     public required int Quantity { get; set; }
+
+    public decimal TotalPrice => (PriceWithDiscount ?? OriginalPrice) * Quantity;
 }

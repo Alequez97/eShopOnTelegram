@@ -13,8 +13,8 @@ public class OrderDto : DtoBase
     public required string FirstName { get; set; }
 
     public string? LastName { get; set; }
-    //
 
+    //
     public required IList<CartItemDto> CartItems { get; set; }
 
     public DateTime CreationDate { get; set; }
@@ -32,4 +32,6 @@ public class OrderDto : DtoBase
     public string? StreetLine2 { get; set; }
 
     public string? PostCode { get; set; }
+
+    public decimal TotalPrice => CartItems.Sum(cartItem => cartItem.TotalPrice);
 }

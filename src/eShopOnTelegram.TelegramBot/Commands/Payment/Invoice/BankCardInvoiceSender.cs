@@ -1,6 +1,4 @@
-﻿using eShopOnTelegram.Domain.Requests.Orders;
-using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services;
+﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Appsettings;
@@ -67,10 +65,10 @@ public class BankCardInvoiceSender : ITelegramCommand
         await _telegramBot.SendInvoiceAsync(
             chatId,
             $"Заказ номер {activeOrder.OrderNumber}",
-            "Описание",
+            "", // Description - maybe worth to add list of purchasing products
             activeOrder.OrderNumber,
             _paymentAppsettings.Card.ApiToken,
-            _paymentAppsettings.Card.Currency,
+            _paymentAppsettings.MainCurrency,
             await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productService, CancellationToken.None),
             needShippingAddress: true,
             needPhoneNumber: true,
