@@ -53,7 +53,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
         if (customerOrders.Count > 1)
         {
-            var errorMessage = "Error. For every customer should be only one order with status new";
+            var errorMessage = "Error. For every customer should be only one active order";
 
             _logger.LogError(errorMessage);
             throw new Exception(errorMessage);
@@ -70,8 +70,8 @@ public class PlicioInvoiceSender : ITelegramCommand
         var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
             _paymentAppsettings.Plisio.ApiToken,
             _paymentAppsettings.MainCurrency,
-            createOrderRequest.Price,
-            createOrderResponse.OrderNumber,
+            (int)Math.Ceiling(activeOrder.TotalPrice),
+            activeOrder.OrderNumber,
             _paymentAppsettings.Plisio.CryptoCurrency);
 
         InlineKeyboardMarkup inlineKeyboard = new(new[]
@@ -83,8 +83,12 @@ public class PlicioInvoiceSender : ITelegramCommand
             },
         });
 
-        await _telegramBot.SendTextMessageAsync(chatId, "Method not implemented yet");
-    }
+        await _telegramBot.SendTextMessageAsync(
+            chatId: chatId,
+            text: "Please receive your invoice",
+            replyMarkup: inlineKeyboard,
+            cancellationToken: CancellationToken.None);
+        }
 
     public bool IsResponsibleForUpdate(Update update)
     {
