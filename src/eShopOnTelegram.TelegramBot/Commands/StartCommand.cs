@@ -10,6 +10,7 @@ using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
+using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Commands
 {
@@ -20,19 +21,28 @@ namespace eShopOnTelegram.TelegramBot.Commands
         private readonly TelegramAppsettings _telegramAppsettings;
         private readonly BotContentAppsettings _botContentAppsettings;
         private readonly ICustomerService _customerService;
+        private readonly IOrderService _orderService;
+        private readonly OrderDtoValidator _orderDtoValidator;
+        private readonly PaymentMethodsSender _paymentMethodsSender;
 
         public StartCommand(
             ITelegramBotClient telegramBot,
             ILogger<StartCommand> logger,
             TelegramAppsettings telegramAppsettings,
             BotContentAppsettings botContentAppsettings,
-            ICustomerService customerService)
+            ICustomerService customerService,
+            IOrderService orderService,
+            OrderDtoValidator orderDtoValidator,
+            PaymentMethodsSender paymentMethodsSender)
         {
             _telegramBot = telegramBot;
             _logger = logger;
             _telegramAppsettings = telegramAppsettings;
             _botContentAppsettings = botContentAppsettings;
             _customerService = customerService;
+            _orderService = orderService;
+            _orderDtoValidator = orderDtoValidator;
+            _paymentMethodsSender = paymentMethodsSender;
         }
 
         public async Task SendResponseAsync(Update update)
@@ -64,15 +74,26 @@ namespace eShopOnTelegram.TelegramBot.Commands
                     );
                 }
 
-                var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.OpenShopButtonText), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
-                    .Build(resizeKeyboard: true);
+                var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
+                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.OpenShopButtonText), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
+
+                var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
+                if (getOrdersResponse.Status == ResponseStatus.Success)
+                {
+                    var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: false);
+                    if (activeOrder != null)
+                    {
+                        keyboardMarkupBuilder
+                            .StartNewRow()
+                            .AddButtonToCurrentRow(_botContentAppsettings.Order.ShowUnpaidOrder.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.ShowUnpaidOrder));
+                    }
+                }
 
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
                     _botContentAppsettings.Common.WelcomeText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.WelcomeText),
                     ParseMode.MarkdownV2,
-                    replyMarkup: keyboardMarkup
+                    replyMarkup: keyboardMarkupBuilder.Build(resizeKeyboard: true)
                 );
             }
             catch (Exception exception)

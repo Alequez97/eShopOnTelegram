@@ -5,6 +5,7 @@ using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
+using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
 
@@ -16,6 +17,7 @@ public class BankCardInvoiceSender : ITelegramCommand
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly BotContentAppsettings _botContentAppsettings;
     private readonly ILogger<BankCardInvoiceSender> _logger;
+    private readonly OrderDtoValidator _orderDtoValidator;
 
     public BankCardInvoiceSender(
         ITelegramBotClient telegramBot,
@@ -23,7 +25,8 @@ public class BankCardInvoiceSender : ITelegramCommand
         IOrderService orderService,
         PaymentAppsettings paymentAppsettings,
         BotContentAppsettings botContentAppsettings,
-        ILogger<BankCardInvoiceSender> logger)
+        ILogger<BankCardInvoiceSender> logger,
+        OrderDtoValidator orderDtoValidator)
     {
         _telegramBot = telegramBot;
         _productService = productService;
@@ -31,6 +34,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         _paymentAppsettings = paymentAppsettings;
         _botContentAppsettings = botContentAppsettings;
         _logger = logger;
+        _orderDtoValidator = orderDtoValidator;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -47,30 +51,12 @@ public class BankCardInvoiceSender : ITelegramCommand
                 return;
             }
 
-            var customerOrders = getOrdersResponse.Data
-                .Where(order => order.Status == OrderStatus.New.ToString() || order.Status == OrderStatus.InvoiceSent.ToString())
-                .ToList();
-
-            if (customerOrders.Count > 1)
-            {
-                var errorMessage = "Error. For every customer should be only one order with status new";
-
-                _logger.LogError(errorMessage);
-                throw new Exception(errorMessage);
-            }
-
-            if (customerOrders.Count == 0)
-            {
-                _logger.LogError("Error. No active order found for customer with telegramId = {telegramId}", chatId);
-                throw new Exception($"Error. No active order found for customer with telegramId = {chatId}");
-            }
-
-            var activeOrder = customerOrders.First();
+            var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: true);
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,
                 _botContentAppsettings.Order.OrderNumberTitle.Replace("{orderNumber}", activeOrder.OrderNumber).OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderNumberTitle(activeOrder.OrderNumber)),
-                "Description", // Description - maybe worth to add list of purchasing products
+                "Description", // TODO: Add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Card.ApiToken,
                 _paymentAppsettings.MainCurrency,

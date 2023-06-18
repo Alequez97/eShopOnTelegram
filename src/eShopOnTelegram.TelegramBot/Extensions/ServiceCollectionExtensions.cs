@@ -1,12 +1,15 @@
 ﻿using eShopOnTelegram.TelegramBot.Commands;
 using eShopOnTelegram.TelegramBot.Commands.Groups;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Commands.Order;
+using eShopOnTelegram.TelegramBot.Commands.Orders;
 using eShopOnTelegram.TelegramBot.Commands.Payment;
 using eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
 using eShopOnTelegram.TelegramBot.Services;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 using eShopOnTelegram.TelegramBot.Services.Payment.TelegramButtonProviders;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
+using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {
@@ -17,12 +20,15 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             // Common commands
             services.AddScoped<UnknownCommand>();
             services.AddScoped<ITelegramCommand, StartCommand>();
-            services.AddScoped<ITelegramCommand, WebAppCommand>();
 
             // Telegram groups commands
             services.AddScoped<ITelegramCommand, MyChatMemberCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberAddedCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberLeftCommand>();
+
+            // Order commands
+            services.AddScoped<ITelegramCommand, WebAppCommand>();
+            services.AddScoped<ITelegramCommand, ShowActiveOrderCommand>();
 
             // Payment commands
             services.AddScoped<ITelegramCommand, PreCheckoutQueryCommand>();
@@ -41,6 +47,9 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             services.AddScoped<UpdateExecutor>();
             services.AddScoped<PaymentMethodsSender>();
             services.AddSingleton<EmojiProvider>();
+
+            // Validators
+            services.AddSingleton<OrderDtoValidator>();
 
             return services;
         }

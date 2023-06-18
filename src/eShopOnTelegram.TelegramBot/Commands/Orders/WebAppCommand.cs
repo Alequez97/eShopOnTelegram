@@ -11,7 +11,7 @@ using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 using Newtonsoft.Json;
 
-namespace eShopOnTelegram.TelegramBot.Commands;
+namespace eShopOnTelegram.TelegramBot.Commands.Order;
 
 public class WebAppCommand : ITelegramCommand
 {
@@ -25,13 +25,13 @@ public class WebAppCommand : ITelegramCommand
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBot,
         IOrderService orderService,
-        PaymentMethodsSender invoiceSender,
+        PaymentMethodsSender paymentMethodsSender,
         BotContentAppsettings botContentAppsettings)
     {
         _logger = logger;
         _telegramBot = telegramBot;
         _orderService = orderService;
-        _paymentMethodsSender = invoiceSender;
+        _paymentMethodsSender = paymentMethodsSender;
         _botContentAppsettings = botContentAppsettings;
     }
 
@@ -68,6 +68,7 @@ public class WebAppCommand : ITelegramCommand
                 return;
             }
 
+            // TODO: Send formatted order cart items
             await _paymentMethodsSender.SendEnabledPaymentMethodsAsync(chatId, CancellationToken.None);
         }
         catch (Exception exception)

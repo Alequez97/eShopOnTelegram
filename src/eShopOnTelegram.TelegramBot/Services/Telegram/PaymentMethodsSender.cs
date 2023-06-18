@@ -1,5 +1,4 @@
-﻿using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.Appsettings;
+﻿using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
@@ -11,20 +10,17 @@ namespace eShopOnTelegram.TelegramBot.Services.Telegram;
 public class PaymentMethodsSender
 {
     private readonly ITelegramBotClient _telegramBot;
-    private readonly IProductService _productService;
     private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
     private readonly BotContentAppsettings _botContentAppsettings;
     private readonly PaymentAppsettings _paymentAppsettings;
 
     public PaymentMethodsSender(
         ITelegramBotClient telegramBot,
-        IProductService productService,
         IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
         BotContentAppsettings botContentAppsettings,
         PaymentAppsettings paymentAppsettings)
     {
         _telegramBot = telegramBot;
-        _productService = productService;
         _paymentTelegramButtonGenerators = paymentTelegramButtonGenerators;
         _botContentAppsettings = botContentAppsettings;
         _paymentAppsettings = paymentAppsettings;

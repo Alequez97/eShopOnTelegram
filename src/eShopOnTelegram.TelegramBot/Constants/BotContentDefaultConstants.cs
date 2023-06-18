@@ -13,6 +13,8 @@ public static class BotContentDefaultConstants
 
     public static class Order
     {
+        public const string ShowUnpaidOrder = "Show unpaid order";
+        public const string NoUnpaidOrderFound = "You don't have unpaid orders";
         public const string CreateErrorMessage = "Error during order creation";
         public const string InvoiceGenerationFailedErrorMessage = "Error during invoice generation. Try again later";
         public static string OrderNumberTitle(string orderNumber) => $"Order number {orderNumber}";

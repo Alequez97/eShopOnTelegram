@@ -1,11 +1,11 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
-using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
+using eShopOnTelegram.TelegramBot.Services.Validators;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -20,6 +20,7 @@ public class PlicioInvoiceSender : ITelegramCommand
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly BotContentAppsettings _botContentAppsettings;
     private readonly ILogger<PlicioInvoiceSender> _logger;
+    private readonly OrderDtoValidator _orderDtoValidator;
 
     public PlicioInvoiceSender(
         ITelegramBotClient telegramBot,
@@ -28,7 +29,8 @@ public class PlicioInvoiceSender : ITelegramCommand
         IProductService productService,
         PaymentAppsettings paymentAppsettings,
         BotContentAppsettings botContentAppsettings,
-        ILogger<PlicioInvoiceSender> logger)
+        ILogger<PlicioInvoiceSender> logger,
+        OrderDtoValidator orderDtoValidator)
     {
         _telegramBot = telegramBot;
         _plicioClient = plicioClient;
@@ -37,6 +39,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         _paymentAppsettings = paymentAppsettings;
         _botContentAppsettings = botContentAppsettings;
         _logger = logger;
+        _orderDtoValidator = orderDtoValidator;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -53,25 +56,7 @@ public class PlicioInvoiceSender : ITelegramCommand
                 return;
             }
 
-            var customerOrders = getOrdersResponse.Data
-                .Where(order => order.Status == OrderStatus.New.ToString() || order.Status == OrderStatus.InvoiceSent.ToString())
-                .ToList();
-
-            if (customerOrders.Count > 1)
-            {
-                var errorMessage = "Error. For every customer should be only one active order";
-
-                _logger.LogError(errorMessage);
-                throw new Exception(errorMessage);
-            }
-
-            if (customerOrders.Count == 0)
-            {
-                _logger.LogError("Error. No active order found for customer with telegramId = {telegramId}", chatId);
-                throw new Exception($"Error. No active order found for customer with telegramId = {chatId}");
-            }
-
-            var activeOrder = customerOrders.First();
+            var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: true);
 
             var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
                 _paymentAppsettings.Plisio.ApiToken,
