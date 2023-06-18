@@ -5,6 +5,7 @@ using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
+using eShopOnTelegram.TelegramBot.Extensions;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -48,7 +49,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage);
+                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultConstants.Common.DefaultErrorMessage);
                 return;
             }
 
@@ -81,12 +82,12 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
-            // first row
-            new []
-            {
-                InlineKeyboardButton.WithUrl("Proceed to payment", createPlicioInvoiceResponse.Data.InvoiceUrl),
-            },
-        });
+                // first row
+                new []
+                {
+                    InlineKeyboardButton.WithUrl("Proceed to payment", createPlicioInvoiceResponse.Data.InvoiceUrl),
+                },
+            });
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,
@@ -97,11 +98,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-
-            await _telegramBot.SendTextMessageAsync(
-                chatId: chatId,
-                text: _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage,
-                cancellationToken: CancellationToken.None);
+            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
         }
     }
 

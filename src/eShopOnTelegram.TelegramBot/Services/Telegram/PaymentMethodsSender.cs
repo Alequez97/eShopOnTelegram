@@ -33,7 +33,7 @@ public class PaymentMethodsSender
     {
         if (_paymentAppsettings.AllPaymentsDisabled)
         {
-            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Payment.NoEnabledPayments ?? BotContentDefaultMessageConstants.NoEnabledPayments);
+            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Payment.NoEnabledPayments ?? BotContentDefaultConstants.NoEnabledPayments);
             return;
         }
 
@@ -45,7 +45,7 @@ public class PaymentMethodsSender
 
         await _telegramBot.SendTextMessageAsync(
             chatId: chatId,
-            text: _botContentAppsettings.Payment.ChoosePaymentMethod ?? BotContentDefaultMessageConstants.ChoosePaymentMethod,
+            text: _botContentAppsettings.Payment.ChoosePaymentMethod ?? BotContentDefaultConstants.ChoosePaymentMethod,
             replyMarkup: inlineKeyboard,
             cancellationToken: cancellationToken);
     }

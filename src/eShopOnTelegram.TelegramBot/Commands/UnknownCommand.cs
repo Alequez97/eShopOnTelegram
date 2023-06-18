@@ -1,14 +1,18 @@
-﻿using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+﻿using eShopOnTelegram.TelegramBot.Appsettings;
+using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Constants;
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
 public class UnknownCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBotClient;
+    private readonly BotContentAppsettings _botContentAppsettings;
 
-    public UnknownCommand(ITelegramBotClient telegramBotClient)
+    public UnknownCommand(ITelegramBotClient telegramBotClient, BotContentAppsettings botContentAppsettings)
     {
         _telegramBotClient = telegramBotClient;
+        _botContentAppsettings = botContentAppsettings;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -19,7 +23,7 @@ public class UnknownCommand : ITelegramCommand
         {
             await _telegramBotClient.SendTextMessageAsync(
                 chatId,
-                $"Unknown command was sent",
+                _botContentAppsettings.Common.UnknownCommandText ?? BotContentDefaultConstants.Common.UnknownCommandText,
                 ParseMode.MarkdownV2
             );
         }

@@ -4,6 +4,7 @@ using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
+using eShopOnTelegram.TelegramBot.Extensions;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
@@ -40,7 +41,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    "Thank you for purchase. We will contact you soon"
+                    _botContentAppsettings.Payment.SuccessfullPayment ?? BotContentDefaultConstants.Payment.SuccessfullPayment
                 );
 
                 // TODO: Send notification to shop owner, that new order received
@@ -49,7 +50,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    "Error during order confirmation. Please contact support",
+                    _botContentAppsettings.Payment.ErrorDuringPaymentConfirmation ?? BotContentDefaultConstants.Payment.ErrorDuringPaymentConfirmation,
                     ParseMode.MarkdownV2
                 );
             }
@@ -57,10 +58,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendTextMessageAsync(
-                chatId: chatId,
-                text: _botContentAppsettings.Common.DefaultErrorMessage ?? BotContentDefaultMessageConstants.DefaultErrorMessage,
-                cancellationToken: CancellationToken.None);
+            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
         }
     }
 

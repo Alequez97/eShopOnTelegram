@@ -3,7 +3,10 @@
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Constants;
+using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 using Newtonsoft.Json;
@@ -12,24 +15,24 @@ namespace eShopOnTelegram.TelegramBot.Commands;
 
 public class WebAppCommand : ITelegramCommand
 {
-    private readonly IConfiguration _configuration;
     private readonly ILogger<WebAppCommand> _logger;
-    private readonly ITelegramBotClient _telegramBotClient;
+    private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
     private readonly PaymentMethodsSender _paymentMethodsSender;
+    private readonly BotContentAppsettings _botContentAppsettings;
 
     public WebAppCommand(
-        IConfiguration configuration,
         ILogger<WebAppCommand> logger,
-        ITelegramBotClient telegramBotClient,
+        ITelegramBotClient telegramBot,
         IOrderService orderService,
-        PaymentMethodsSender invoiceSender)
+        PaymentMethodsSender invoiceSender,
+        BotContentAppsettings botContentAppsettings)
     {
-        _configuration = configuration;
         _logger = logger;
-        _telegramBotClient = telegramBotClient;
+        _telegramBot = telegramBot;
         _orderService = orderService;
         _paymentMethodsSender = invoiceSender;
+        _botContentAppsettings = botContentAppsettings;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -55,10 +58,11 @@ public class WebAppCommand : ITelegramCommand
 
             if (createOrderResponse.Status != ResponseStatus.Success)
             {
-                _logger.LogError("Unable to handle order.");
-                await _telegramBotClient.SendTextMessageAsync(
+                _logger.LogError("Unable to create order. {createOrderResponse}", createOrderResponse);
+
+                await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    $"Unable to handle your order. Sorry!!!",
+                    _botContentAppsettings.Common.CreateOrderErrorMessage ?? BotContentDefaultConstants.Common.CreateOrderErrorMessage,
                     ParseMode.MarkdownV2
                 );
                 return;
@@ -68,13 +72,8 @@ public class WebAppCommand : ITelegramCommand
         }
         catch (Exception exception)
         {
-            _logger.LogError(exception, "Exception in web app telegram command");
-
-            await _telegramBotClient.SendTextMessageAsync(
-                chatId,
-                "Ошибка! Пожалуйста, обратитесь в команду поддержки.",
-                ParseMode.MarkdownV2
-            );
+            _logger.LogError(exception, exception.Message);
+            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
         }
     }
 

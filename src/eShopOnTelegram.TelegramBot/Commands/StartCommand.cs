@@ -8,26 +8,27 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
+using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Commands
 {
     public class StartCommand : ITelegramCommand
     {
-        private readonly ITelegramBotClient _telegramBotClient;
+        private readonly ITelegramBotClient _telegramBot;
         private readonly ILogger<StartCommand> _logger;
         private readonly TelegramAppsettings _telegramAppsettings;
         private readonly BotContentAppsettings _botContentAppsettings;
         private readonly ICustomerService _customerService;
 
         public StartCommand(
-            ITelegramBotClient telegramBotClient,
+            ITelegramBotClient telegramBot,
             ILogger<StartCommand> logger,
             TelegramAppsettings telegramAppsettings,
             BotContentAppsettings botContentAppsettings,
             ICustomerService customerService)
         {
-            _telegramBotClient = telegramBotClient;
+            _telegramBot = telegramBot;
             _logger = logger;
             _telegramAppsettings = telegramAppsettings;
             _botContentAppsettings = botContentAppsettings;
@@ -55,27 +56,31 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 if (createCustomerResponse.Status != ResponseStatus.Success)
                 {
                     _logger.LogError("Unable to persist new customer.");
-                    await _telegramBotClient.SendTextMessageAsync(
+
+                    await _telegramBot.SendTextMessageAsync(
                         chatId,
-                        $"Unable to register at this moment. Sorry!!!",
+                        _botContentAppsettings.Common.StartError ?? BotContentDefaultConstants.Common.StartError,
                         ParseMode.MarkdownV2
                     );
                 }
 
                 var keyboardMarkup = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText ?? BotContentDefaultMessageConstants.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
+                    .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText ?? BotContentDefaultConstants.Common.OpenShopButtonText, new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl })
                     .Build(resizeKeyboard: true);
 
-                await _telegramBotClient.SendTextMessageAsync(
+                await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Common.WelcomeText ?? BotContentDefaultMessageConstants.WelcomeText,
+                    _botContentAppsettings.Common.WelcomeText ?? BotContentDefaultConstants.Common.WelcomeText,
                     ParseMode.MarkdownV2,
                     replyMarkup: keyboardMarkup
                 );
             }
             catch (Exception exception)
             {
+                var chatId = update.Message.Chat.Id;
+
                 _logger.LogError(exception, exception.Message);
+                await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
             }
         }
 
