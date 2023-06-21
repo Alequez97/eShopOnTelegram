@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace eShopOnTelegram.TelegramBot.Services;
+namespace TelegramBot.Services.Mappers;
 
-public class EmojiProvider
+public class EmojiKeyToUnicodeMapper
 {
     private readonly Dictionary<string, string> _emojiMap = new Dictionary<string, string>()
 {

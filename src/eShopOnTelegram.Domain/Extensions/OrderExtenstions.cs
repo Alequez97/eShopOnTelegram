@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-using eShopOnTelegram.Domain.Dto.Orders;
+﻿using eShopOnTelegram.Domain.Dto.Orders;
 
 namespace eShopOnTelegram.Domain.Extensions;
 
@@ -24,7 +22,6 @@ public static class OrderExtenstions
                 CategoryName = cartItem.Product.Category.Name,
                 OriginalPrice = cartItem.Product.OriginalPrice,
                 PriceWithDiscount = cartItem.Product.PriceWithDiscount,
-                QuantityLeft = cartItem.Product.QuantityLeft, // probably we dont need this
                 ImageName = cartItem.Product.ImageName,
                 Quantity = cartItem.Quantity
             }).ToList(),

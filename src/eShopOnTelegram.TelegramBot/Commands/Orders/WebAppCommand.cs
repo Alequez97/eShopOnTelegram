@@ -18,14 +18,14 @@ public class WebAppCommand : ITelegramCommand
     private readonly ILogger<WebAppCommand> _logger;
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
-    private readonly PaymentMethodsSender _paymentMethodsSender;
+    private readonly PaymentProceedMessageSender _paymentMethodsSender;
     private readonly BotContentAppsettings _botContentAppsettings;
 
     public WebAppCommand(
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBot,
         IOrderService orderService,
-        PaymentMethodsSender paymentMethodsSender,
+        PaymentProceedMessageSender paymentMethodsSender,
         BotContentAppsettings botContentAppsettings)
     {
         _logger = logger;
@@ -68,8 +68,7 @@ public class WebAppCommand : ITelegramCommand
                 return;
             }
 
-            // TODO: Send formatted order cart items
-            await _paymentMethodsSender.SendEnabledPaymentMethodsAsync(chatId, CancellationToken.None);
+            await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, CancellationToken.None);
         }
         catch (Exception exception)
         {

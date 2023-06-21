@@ -21,7 +21,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
         private readonly BotContentAppsettings _botContentAppsettings;
         private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
-        private readonly PaymentMethodsSender _paymentMethodsSender;
+        private readonly PaymentProceedMessageSender _paymentMethodsSender;
 
         public StartCommand(
             ITelegramBotClient telegramBot,
@@ -30,7 +30,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
             BotContentAppsettings botContentAppsettings,
             ICustomerService customerService,
             IOrderService orderService,
-            PaymentMethodsSender paymentMethodsSender)
+            PaymentProceedMessageSender paymentMethodsSender)
         {
             _telegramBot = telegramBot;
             _logger = logger;
