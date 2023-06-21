@@ -22,6 +22,7 @@ public class BotOrderContent
 {
     public required string ShowUnpaidOrder { get; set; }
     public required string NoUnpaidOrderFound { get; set; }
+    public required string AlreadyPaidOrExpired { get; set; }
     public required string CreateErrorMessage { get; set; }
     public required string InvoiceGenerationFailedErrorMessage { get; set; }
     public required string OrderNumberTitle { get; set; }

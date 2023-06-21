@@ -44,7 +44,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
         try
         {
-            var getOrdersResponse = await _orderService.GetUnpaidOrdersByTelegramId(chatId, CancellationToken.None);
+            var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramId(chatId, CancellationToken.None);
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {

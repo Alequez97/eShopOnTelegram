@@ -30,7 +30,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
     {
         var chatId = update.Message.Chat.Id;
 
-        var getOrdersResponse = await _orderService.GetUnpaidOrdersByTelegramId(chatId, CancellationToken.None);
+        var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramId(chatId, CancellationToken.None);
 
         if (getOrdersResponse.Data != null)
         {

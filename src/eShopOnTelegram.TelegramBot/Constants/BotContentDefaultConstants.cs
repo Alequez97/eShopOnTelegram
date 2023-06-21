@@ -15,6 +15,7 @@ public static class BotContentDefaultConstants
     {
         public const string ShowUnpaidOrder = "Show unpaid order";
         public const string NoUnpaidOrderFound = "You don't have unpaid orders";
+        public const string AlreadyPaidOrExpired = "You already paid for this order, or time to accomplish expired. Try again to create new order";
         public const string CreateErrorMessage = "Error during order creation";
         public const string InvoiceGenerationFailedErrorMessage = "Error during invoice generation. Try again later";
         public static string OrderNumberTitle(string orderNumber) => $"Order number {orderNumber}";
