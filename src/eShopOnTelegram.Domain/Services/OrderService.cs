@@ -85,6 +85,61 @@ public class OrderService : IOrderService
             };
         }
     }
+    public async Task<Response<OrderDto>> GetUnpaidOrdersByTelegramId(long telegramId, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var customerOrders = await _dbContext.Orders
+                .Include(order => order.CartItems)
+                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(product => product.Category)
+                .Include(order => order.Customer)
+                .Where(order => order.Customer.TelegramUserUID == telegramId)
+                .Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
+                .ToListAsync(cancellationToken);
+
+            if (!customerOrders.Any())
+            {
+                return new Response<OrderDto>()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            if (customerOrders.Count > 1)
+            {
+                return new Response<OrderDto>()
+                { 
+                    Status = ResponseStatus.ValidationFailed,
+                    Message = "Error. For every customer should be only one order with status new"
+                };
+            }
+
+            if (customerOrders.Count == 0)
+            {
+                return new Response<OrderDto>()
+                {
+                    Status = ResponseStatus.ValidationFailed,
+                    Message = "Error. For every customer should be only one order with status new"
+                }; ;
+            }
+
+            return new Response<OrderDto>()
+            {
+                Status = ResponseStatus.Success,
+                Data = customerOrders.First().ToOrderDto()
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new Response<OrderDto>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
 
     public async Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken)
     {

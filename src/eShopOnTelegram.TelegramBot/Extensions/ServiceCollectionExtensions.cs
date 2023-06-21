@@ -9,7 +9,6 @@ using eShopOnTelegram.TelegramBot.Services;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 using eShopOnTelegram.TelegramBot.Services.Payment.TelegramButtonProviders;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
-using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {
@@ -47,9 +46,6 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             services.AddScoped<UpdateExecutor>();
             services.AddScoped<PaymentMethodsSender>();
             services.AddSingleton<EmojiProvider>();
-
-            // Validators
-            services.AddSingleton<OrderDtoValidator>();
 
             return services;
         }

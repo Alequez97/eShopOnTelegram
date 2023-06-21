@@ -11,6 +11,8 @@ public interface IOrderService
 {
     public Task<Response<OrderDto>> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken);
     public Task<Response<IEnumerable<OrderDto>>> GetByTelegramIdAsync(long telegramId, CancellationToken cancellationToken);
+
+    public Task<Response<OrderDto>> GetUnpaidOrdersByTelegramId(long  telegramId, CancellationToken cancellationToken);
     public Task<Response<IEnumerable<OrderDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
     public Task<CreateOrderResponse> CreateAsync(CreateOrderRequest request, CancellationToken cancellationToken);
     public Task<ActionResponse> UpdateStatusAsync(string orderNumber, OrderStatus orderStatus, CancellationToken cancellationToken);

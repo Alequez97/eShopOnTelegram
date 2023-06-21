@@ -5,7 +5,6 @@ using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
-using eShopOnTelegram.TelegramBot.Services.Validators;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -20,7 +19,6 @@ public class PlicioInvoiceSender : ITelegramCommand
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly BotContentAppsettings _botContentAppsettings;
     private readonly ILogger<PlicioInvoiceSender> _logger;
-    private readonly OrderDtoValidator _orderDtoValidator;
 
     public PlicioInvoiceSender(
         ITelegramBotClient telegramBot,
@@ -29,8 +27,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         IProductService productService,
         PaymentAppsettings paymentAppsettings,
         BotContentAppsettings botContentAppsettings,
-        ILogger<PlicioInvoiceSender> logger,
-        OrderDtoValidator orderDtoValidator)
+        ILogger<PlicioInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
         _plicioClient = plicioClient;
@@ -39,7 +36,6 @@ public class PlicioInvoiceSender : ITelegramCommand
         _paymentAppsettings = paymentAppsettings;
         _botContentAppsettings = botContentAppsettings;
         _logger = logger;
-        _orderDtoValidator = orderDtoValidator;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -48,7 +44,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
         try
         {
-            var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
+            var getOrdersResponse = await _orderService.GetUnpaidOrdersByTelegramId(chatId, CancellationToken.None);
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
@@ -56,7 +52,7 @@ public class PlicioInvoiceSender : ITelegramCommand
                 return;
             }
 
-            var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: true);
+            var activeOrder = getOrdersResponse.Data;
 
             var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
                 _paymentAppsettings.Plisio.ApiToken,

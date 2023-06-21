@@ -5,7 +5,6 @@ using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
-using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
 
@@ -17,7 +16,6 @@ public class BankCardInvoiceSender : ITelegramCommand
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly BotContentAppsettings _botContentAppsettings;
     private readonly ILogger<BankCardInvoiceSender> _logger;
-    private readonly OrderDtoValidator _orderDtoValidator;
 
     public BankCardInvoiceSender(
         ITelegramBotClient telegramBot,
@@ -25,8 +23,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         IOrderService orderService,
         PaymentAppsettings paymentAppsettings,
         BotContentAppsettings botContentAppsettings,
-        ILogger<BankCardInvoiceSender> logger,
-        OrderDtoValidator orderDtoValidator)
+        ILogger<BankCardInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
         _productService = productService;
@@ -34,7 +31,6 @@ public class BankCardInvoiceSender : ITelegramCommand
         _paymentAppsettings = paymentAppsettings;
         _botContentAppsettings = botContentAppsettings;
         _logger = logger;
-        _orderDtoValidator = orderDtoValidator;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -43,7 +39,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
         try
         {
-            var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
+            var getOrdersResponse = await _orderService.GetUnpaidOrdersByTelegramId(chatId, CancellationToken.None);
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
@@ -51,7 +47,7 @@ public class BankCardInvoiceSender : ITelegramCommand
                 return;
             }
 
-            var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: true);
+            var activeOrder = getOrdersResponse.Data;
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,

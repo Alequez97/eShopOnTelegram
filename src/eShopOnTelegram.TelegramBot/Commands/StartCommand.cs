@@ -10,7 +10,6 @@ using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
-using eShopOnTelegram.TelegramBot.Services.Validators;
 
 namespace eShopOnTelegram.TelegramBot.Commands
 {
@@ -22,7 +21,6 @@ namespace eShopOnTelegram.TelegramBot.Commands
         private readonly BotContentAppsettings _botContentAppsettings;
         private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
-        private readonly OrderDtoValidator _orderDtoValidator;
         private readonly PaymentMethodsSender _paymentMethodsSender;
 
         public StartCommand(
@@ -32,7 +30,6 @@ namespace eShopOnTelegram.TelegramBot.Commands
             BotContentAppsettings botContentAppsettings,
             ICustomerService customerService,
             IOrderService orderService,
-            OrderDtoValidator orderDtoValidator,
             PaymentMethodsSender paymentMethodsSender)
         {
             _telegramBot = telegramBot;
@@ -41,7 +38,6 @@ namespace eShopOnTelegram.TelegramBot.Commands
             _botContentAppsettings = botContentAppsettings;
             _customerService = customerService;
             _orderService = orderService;
-            _orderDtoValidator = orderDtoValidator;
             _paymentMethodsSender = paymentMethodsSender;
         }
 
@@ -77,10 +73,11 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
                     .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.OpenShopButtonText), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
 
-                var getOrdersResponse = await _orderService.GetByTelegramIdAsync(chatId, CancellationToken.None);
+                var getOrdersResponse = await _orderService.GetUnpaidOrdersByTelegramId(chatId, CancellationToken.None);
                 if (getOrdersResponse.Status == ResponseStatus.Success)
                 {
-                    var activeOrder = _orderDtoValidator.ValidateContainsSingleUnpaidOrder(getOrdersResponse.Data, _logger, throwException: false);
+                    var activeOrder = getOrdersResponse.Data;
+
                     if (activeOrder != null)
                     {
                         keyboardMarkupBuilder

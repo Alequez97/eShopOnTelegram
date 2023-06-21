@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.TelegramBot.Appsettings;
+﻿using System.Text;
+
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
@@ -40,9 +42,25 @@ public class PaymentMethodsSender
 
         InlineKeyboardMarkup inlineKeyboard = new(paymentMethodButtons);
 
+        var message = new StringBuilder();
+
+        message
+            .AppendLine("Your order:")
+            .AppendLine();
+
+        // TODO: Send active order data to current user
+        message
+            .AppendLine("Item 1")
+            .AppendLine("Item 2")
+            .AppendLine("Item 3")
+            .AppendLine();
+
+        message
+            .AppendLine(_botContentAppsettings.Payment.ChoosePaymentMethod.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ChoosePaymentMethod));
+
         await _telegramBot.SendTextMessageAsync(
             chatId: chatId,
-            text: _botContentAppsettings.Payment.ChoosePaymentMethod.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ChoosePaymentMethod),
+            text: message.ToString(),
             replyMarkup: inlineKeyboard,
             cancellationToken: cancellationToken);
     }
