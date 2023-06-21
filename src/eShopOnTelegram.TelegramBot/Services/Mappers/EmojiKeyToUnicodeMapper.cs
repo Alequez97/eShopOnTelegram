@@ -1,16 +1,18 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-namespace TelegramBot.Services.Mappers;
+using eShopOnTelegram.TelegramBot.Services.Mappers.Enums;
+
+namespace eShopOnTelegram.TelegramBot.Services.Mappers;
 
 public class EmojiKeyToUnicodeMapper
 {
-    private readonly Dictionary<string, string> _emojiMap = new Dictionary<string, string>()
-{
-    { "EU-Flag", "\xF0\x9F\x87\xAA\xF0\x9F\x87\xBA" },
-};
+    private readonly Dictionary<EmojiKey, string> _emojiMap = new()
+    {
+        { EmojiKey.EU_Flag, "\xF0\x9F\x87\xAA\xF0\x9F\x87\xBA" },
+    };
 
-    public string GetEmoji(string key)
+    public string GetEmojiUnicode(EmojiKey key)
     {
         if (_emojiMap.TryGetValue(key, out var emojiUtf8Code))
         {

@@ -51,7 +51,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
                     _botContentAppsettings.Payment.ErrorDuringPaymentConfirmation.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ErrorDuringPaymentConfirmation),
-                    ParseMode.MarkdownV2
+                    ParseMode.Html
                 );
             }
         }

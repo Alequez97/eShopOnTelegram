@@ -66,7 +66,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                     await _telegramBot.SendTextMessageAsync(
                         chatId,
                         _botContentAppsettings.Common.StartError.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.StartError),
-                        ParseMode.MarkdownV2
+                        ParseMode.Html
                     );
                 }
 
@@ -89,7 +89,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
                     _botContentAppsettings.Common.WelcomeText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.WelcomeText),
-                    ParseMode.MarkdownV2,
+                    ParseMode.Html,
                     replyMarkup: keyboardMarkupBuilder.Build(resizeKeyboard: true)
                 );
             }

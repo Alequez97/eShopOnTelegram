@@ -5,11 +5,10 @@ using eShopOnTelegram.TelegramBot.Commands.Order;
 using eShopOnTelegram.TelegramBot.Commands.Orders;
 using eShopOnTelegram.TelegramBot.Commands.Payment;
 using eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
+using eShopOnTelegram.TelegramBot.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 using eShopOnTelegram.TelegramBot.Services.Payment.TelegramButtonProviders;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
-
-using TelegramBot.Services.Mappers;
 
 namespace eShopOnTelegram.TelegramBot.Extensions
 {
@@ -46,7 +45,10 @@ namespace eShopOnTelegram.TelegramBot.Extensions
             services.AddScoped<CommandResolver>();
             services.AddScoped<UpdateExecutor>();
             services.AddScoped<PaymentProceedMessageSender>();
+
+            // Mappers
             services.AddSingleton<EmojiKeyToUnicodeMapper>();
+            services.AddSingleton<CurrencyCodeToSymbolMapper>();
 
             return services;
         }
