@@ -6,20 +6,20 @@ namespace eShopOnTelegram.TelegramBot.Services.Mappers;
 
 public class CurrencyCodeToSymbolMapper
 {
-    private readonly Dictionary<CurrencyCode, string> _currencyCodesMap = new()
+    private readonly Dictionary<string, char> _currencyCodesMap = new()
     {
-        { CurrencyCode.EUR, "€" },
-        { CurrencyCode.USD, "$" },
-        { CurrencyCode.RUB, "₽" },
+        { "EUR", '€' },
+        { "USD", '$' },
+        { "RUB", '₽' },
     };
 
-    public string GetEmojiUnicode(CurrencyCode key)
+    public char GetCurrencySymbol(string key)
     {
         if (_currencyCodesMap.TryGetValue(key, out var currencySymbol))
         {
-            return Encoding.UTF8.GetString(Array.ConvertAll(Regex.Unescape(currencySymbol).ToCharArray(), c => (byte)c));
+            return currencySymbol;
         }
 
-        return string.Empty;
+        return ' ';
     }
 }
