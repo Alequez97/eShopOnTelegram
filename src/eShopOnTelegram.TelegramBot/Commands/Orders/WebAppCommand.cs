@@ -63,7 +63,7 @@ public class WebAppCommand : ITelegramCommand
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
                     _botContentAppsettings.Order.CreateErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.CreateErrorMessage),
-                    ParseMode.Html
+                    parseMode: ParseMode.Html
                 );
                 return;
             }

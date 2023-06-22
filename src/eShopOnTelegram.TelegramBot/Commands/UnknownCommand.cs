@@ -25,7 +25,7 @@ public class UnknownCommand : ITelegramCommand
             await _telegramBot.SendTextMessageAsync(
                 chatId,
                 _botContentAppsettings.Common.UnknownCommandText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.UnknownCommandText),
-                ParseMode.Html
+                parseMode: ParseMode.Html
             );
         }
     }

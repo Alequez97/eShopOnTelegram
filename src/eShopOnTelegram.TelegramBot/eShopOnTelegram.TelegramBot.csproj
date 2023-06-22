@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Worker">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
@@ -12,11 +12,11 @@
     <PackageReference Include="Ardalis.GuardClauses" Version="4.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="7.0.1" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Systemd" Version="7.0.0" />
-    <PackageReference Include="Telegram.Bot" Version="18.0.0" />
+    <PackageReference Include="Telegram.Bot" Version="19.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj" />
+    <ProjectReference Include="..\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Domain\eShopOnTelegram.Domain.csproj" />
   </ItemGroup>
 </Project>
