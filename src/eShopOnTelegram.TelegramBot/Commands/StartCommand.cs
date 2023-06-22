@@ -73,7 +73,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
                     .AddButtonToCurrentRow(_botContentAppsettings.Common.OpenShopButtonText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.OpenShopButtonText), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
 
-                var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramId(chatId, CancellationToken.None);
+                var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
                 if (getOrdersResponse.Status == ResponseStatus.Success)
                 {
                     var activeOrder = getOrdersResponse.Data;

@@ -23,7 +23,12 @@ public class OrderService : IOrderService
     {
         try
         {
-            var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+            var existingOrder = await _dbContext.Orders
+                .Include(order => order.CartItems)
+                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(product => product.Category)
+                .Include(order => order.Customer)
+                .FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
 
             if (existingOrder == null)
             {
@@ -86,7 +91,7 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<Response<OrderDto>> GetUnpaidOrderByTelegramId(long telegramId, CancellationToken cancellationToken)
+    public async Task<Response<OrderDto>> GetUnpaidOrderByTelegramIdAsync(long telegramId, CancellationToken cancellationToken)
     {
         try
         {
@@ -110,7 +115,7 @@ public class OrderService : IOrderService
             if (customerOrders.Count > 1)
             {
                 return new Response<OrderDto>()
-                { 
+                {
                     Status = ResponseStatus.ValidationFailed,
                     Message = "Error. For every customer should be only one order with status new"
                 };
@@ -133,7 +138,7 @@ public class OrderService : IOrderService
         }
     }
 
-    public async Task<Response<OrderDto>> GetUnpaidOrderByOrderNumber(string orderNumber, CancellationToken cancellationToken)
+    public async Task<Response<OrderDto>> GetUnpaidOrderByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
     {
         try
         {
@@ -286,10 +291,12 @@ public class OrderService : IOrderService
             _dbContext.Add(order);
             await _dbContext.SaveChangesAsync();
 
+            var createdOrder = await GetByOrderNumberAsync(order.OrderNumber, cancellationToken);
+
             return new CreateOrderResponse()
             {
                 Id = order.Id,
-                OrderNumber = order.OrderNumber,
+                CreatedOrder = createdOrder.Data,
                 Status = ResponseStatus.Success,
                 Message = $"Order {order.OrderNumber} created successfully!"
             };
@@ -320,10 +327,15 @@ public class OrderService : IOrderService
             }
 
             existingOrder.Status = orderStatus;
+            if (orderStatus == OrderStatus.Paid)
+            {
+                existingOrder.PaymentDate = DateTime.UtcNow;
+            }
+
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse
-            { 
+            {
                 Status = ResponseStatus.Success
             };
         }

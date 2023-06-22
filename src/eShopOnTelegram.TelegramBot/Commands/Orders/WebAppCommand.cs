@@ -68,7 +68,7 @@ public class WebAppCommand : ITelegramCommand
                 return;
             }
 
-            await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, CancellationToken.None);
+            await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
         }
         catch (Exception exception)
         {

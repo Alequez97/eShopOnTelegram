@@ -28,7 +28,7 @@ public class PreCheckoutQueryCommand : ITelegramCommand
     {
         var preCheckoutQuery = update.PreCheckoutQuery;
 
-        var getOrderResponse = await _orderService.GetUnpaidOrderByTelegramId(preCheckoutQuery.From.Id, CancellationToken.None);
+        var getOrderResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(preCheckoutQuery.From.Id, CancellationToken.None);
         if (getOrderResponse.Status == ResponseStatus.Success) 
         {
             await _telegramBot.AnswerPreCheckoutQueryAsync(preCheckoutQuery.Id);

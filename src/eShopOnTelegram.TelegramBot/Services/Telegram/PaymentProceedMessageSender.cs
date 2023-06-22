@@ -1,11 +1,11 @@
 ﻿using System.Text;
 
+using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Mappers;
-using eShopOnTelegram.TelegramBot.Services.Mappers.Enums;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -37,7 +37,7 @@ public class PaymentProceedMessageSender
         _paymentAppsettings = paymentAppsettings;
     }
 
-    public async Task SendProceedToPaymentAsync(long chatId, CancellationToken cancellationToken)
+    public async Task SendProceedToPaymentAsync(long chatId, OrderDto order, CancellationToken cancellationToken)
     {
         if (_paymentAppsettings.AllPaymentsDisabled)
         {
@@ -51,41 +51,32 @@ public class PaymentProceedMessageSender
 
         InlineKeyboardMarkup inlineKeyboard = new(paymentMethodButtons);
 
-        var getOrderResponse = await _orderService.GetUnpaidOrderByTelegramId(chatId, cancellationToken);
+        var message = new StringBuilder();
+        var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
 
-        if (getOrderResponse.Data != null)
+        message
+            .AppendLine($"<b>{_botContentAppsettings.Order.OrderSummaryTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderSummaryTitle)}</b>")
+            .AppendLine(new string('~', 20));
+
+        foreach (var orderCartItem in order.CartItems)
         {
-            var message = new StringBuilder();
-            var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
-
             message
-                .AppendLine($"<b>{_botContentAppsettings.Order.OrderSummaryTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderSummaryTitle)}</b>")
-                .AppendLine(new string('~', 20));
+            .AppendLine($"{orderCartItem.Name} (x{orderCartItem.Quantity}) {orderCartItem.TotalPrice}{currencySymbol}");
+        };
 
-            foreach (var orderCartItem in getOrderResponse.Data.CartItems)
-            {
-                message
-                .AppendLine($"{orderCartItem.Name} (x{orderCartItem.Quantity}) {orderCartItem.TotalPrice}{currencySymbol}");
-            };
-            
-            message
-                .AppendLine()
-                .AppendLine($"{_botContentAppsettings.Order.TotalPriceTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.TotalPriceTitle)}: <b>{getOrderResponse.Data.TotalPrice}{currencySymbol}</b>")
-                .AppendLine(new string('~', 20));
+        message
+            .AppendLine()
+            .AppendLine($"{_botContentAppsettings.Order.TotalPriceTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.TotalPriceTitle)}: <b>{order.TotalPrice}{currencySymbol}</b>")
+            .AppendLine(new string('~', 20));
 
-            message
-                .AppendLine(_botContentAppsettings.Payment.ChoosePaymentMethod.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ChoosePaymentMethod));
+        message
+            .AppendLine(_botContentAppsettings.Payment.ChoosePaymentMethod.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ChoosePaymentMethod));
 
-            await _telegramBot.SendTextMessageAsync(
-                chatId: chatId,
-                text: message.ToString(),
-                parseMode: ParseMode.Html,
-                replyMarkup: inlineKeyboard,
-                cancellationToken: cancellationToken);
-        }
-        else
-        {
-            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.NoUnpaidOrderFound.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.NoUnpaidOrderFound));
-        }
+        await _telegramBot.SendTextMessageAsync(
+            chatId: chatId,
+            text: message.ToString(),
+            parseMode: ParseMode.Html,
+            replyMarkup: inlineKeyboard,
+            cancellationToken: cancellationToken);
     }
 }

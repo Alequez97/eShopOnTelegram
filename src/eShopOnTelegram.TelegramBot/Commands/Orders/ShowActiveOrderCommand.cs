@@ -11,18 +11,18 @@ public class ShowActiveOrderCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
-    private readonly PaymentProceedMessageSender _paymentMethodsSender;
+    private readonly PaymentProceedMessageSender _paymentProceedMessage;
     private readonly BotContentAppsettings _botContentAppsettings;
 
     public ShowActiveOrderCommand(
         ITelegramBotClient telegramBot,
         IOrderService orderService,
-        PaymentProceedMessageSender paymentMethodsSender,
+        PaymentProceedMessageSender paymentProceedMessageSender,
         BotContentAppsettings botContentAppsettings)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
-        _paymentMethodsSender = paymentMethodsSender;
+        _paymentProceedMessage = paymentProceedMessageSender;
         _botContentAppsettings = botContentAppsettings;
     }
 
@@ -30,12 +30,11 @@ public class ShowActiveOrderCommand : ITelegramCommand
     {
         var chatId = update.Message.Chat.Id;
 
-        var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramId(chatId, CancellationToken.None);
+        var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 
         if (getOrdersResponse.Data != null)
         {
-            // TODO: Send formatted order cart items
-            await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, CancellationToken.None);
+            await _paymentProceedMessage.SendProceedToPaymentAsync(chatId, getOrdersResponse.Data, CancellationToken.None);
         }
         else
         {
