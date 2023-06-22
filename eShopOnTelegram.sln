@@ -24,7 +24,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{874E042E
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.Domain.IntegrationTests", "tests\eShopOnTelegram.Domain.IntegrationTests\eShopOnTelegram.Domain.IntegrationTests.csproj", "{FB856734-FB6D-44C8-9A97-121716A34C61}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.ExternalServices", "eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj", "{A5CB223B-08A7-4D68-93FF-0D1206BA73F4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.ExternalServices", "src\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj", "{A5CB223B-08A7-4D68-93FF-0D1206BA73F4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
