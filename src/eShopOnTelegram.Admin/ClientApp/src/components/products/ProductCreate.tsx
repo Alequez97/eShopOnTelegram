@@ -9,6 +9,7 @@ import {
   SimpleForm,
   TextInput,
 } from "react-admin";
+import { shouldBeLessThanOriginalPrice } from "./validations/PriceWithDiscounts";
 
 function ProductCreate() {
   return (
@@ -22,7 +23,7 @@ function ProductCreate() {
           <SelectInput optionText="name" validate={[required()]} />
         </ReferenceInput>
         <NumberInput source="originalPrice" validate={[required(), number()]} />
-        <NumberInput source="priceWithDiscount" validate={[number()]} />
+        <NumberInput source="priceWithDiscount" validate={[number(), shouldBeLessThanOriginalPrice]} />
         <NumberInput source="quantityLeft" validate={[required(), number()]} />
         <FileInput source="productImage" accept="image/*" />
       </SimpleForm>
