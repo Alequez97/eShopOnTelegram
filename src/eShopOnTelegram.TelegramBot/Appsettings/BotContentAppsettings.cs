@@ -26,6 +26,8 @@ public class BotOrderContent
     public required string CreateErrorMessage { get; set; }
     public required string InvoiceGenerationFailedErrorMessage { get; set; }
     public required string OrderNumberTitle { get; set; }
+    public required string OrderSummaryTitle { get; set; }
+    public required string TotalPriceTitle { get; set; }
 }
 
 public class BotPaymentContent

@@ -19,6 +19,8 @@ public static class BotContentDefaultConstants
         public const string CreateErrorMessage = "Error during order creation";
         public const string InvoiceGenerationFailedErrorMessage = "Error during invoice generation. Try again later";
         public static string OrderNumberTitle(string orderNumber) => $"Order number {orderNumber}";
+        public const string OrderSummaryTitle = "Your order summary";
+        public const string TotalPriceTitle = "Total price";
     }
 
     public static class Payment

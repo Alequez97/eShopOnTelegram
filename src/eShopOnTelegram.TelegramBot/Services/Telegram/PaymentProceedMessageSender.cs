@@ -59,7 +59,7 @@ public class PaymentProceedMessageSender
             var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
 
             message
-                .AppendLine("<b>Your order summary</b>")
+                .AppendLine($"<b>{_botContentAppsettings.Order.OrderSummaryTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderSummaryTitle)}</b>")
                 .AppendLine(new string('~', 20));
 
             foreach (var orderCartItem in getOrderResponse.Data.CartItems)
@@ -70,7 +70,7 @@ public class PaymentProceedMessageSender
             
             message
                 .AppendLine()
-                .AppendLine($"Total price: <b>{getOrderResponse.Data.TotalPrice}{currencySymbol}</b>")
+                .AppendLine($"{_botContentAppsettings.Order.TotalPriceTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.TotalPriceTitle)}: <b>{getOrderResponse.Data.TotalPrice}{currencySymbol}</b>")
                 .AppendLine(new string('~', 20));
 
             message
