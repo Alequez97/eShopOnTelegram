@@ -1,0 +1,27 @@
+{
+  "Common": {
+    "StartError": "Error. Try again later",
+    "WelcomeText": "Welcome to our shop",
+    "OpenShopButtonText": "*** Click here to open shop ***",
+    "UnknownCommandText": "Unknown command was sent",
+    "DefaultErrorMessage": "Error. Something went wrong. Please try again later"
+  },
+  "Order": {
+    "ShowUnpaidOrder": "Show unpaid order",
+    "NoUnpaidOrderFound": "You don't have unpaid orders",
+    "AlreadyPaidOrExpired": "You already paid for this order, or time to accomplish expired. Try again to create new order",
+    "CreateErrorMessage": "Error during order creation",
+    "InvoiceGenerationFailedErrorMessage": "Error during invoice generation. Try again later",
+    "OrderNumberTitle": "Order number {orderNumber}",
+    "OrderSummaryTitle": "Your order summary",
+    "TotalPriceTitle": "Total price"
+  },
+  "Payment": {
+    "NoEnabledPayments": "Thank you for your purchase",
+    "ChoosePaymentMethod": "Please select payment method",
+    "ProceedToPayment": "Proceed to payment",
+    "InvoiceReceiveMessage": "Please receive your invoice",
+    "SuccessfullPayment": "Thank you for purchase",
+    "ErrorDuringPaymentConfirmation": "Error during order confirmation"
+  }
+}
