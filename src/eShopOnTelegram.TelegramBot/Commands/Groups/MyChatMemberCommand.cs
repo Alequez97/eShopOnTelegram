@@ -27,7 +27,12 @@ public class MyChatMemberCommand : ITelegramCommand
         {
             // TODO: Persist id of the chat where notifications will be send
 
-            await _telegramBot.SendTextMessageAsync(update.MyChatMember.Chat.Id, "You are owner of the bot");
+            var welcomeMessage = $"Hello. If you see this message, that means you are owner of this group and bot @{update.MyChatMember.NewChatMember.User.Username}. \nYou will get notification when you will receive new payments for orders. Be aware and check that notifications are turned on for this group \nGood luck and in case of some problems please contact developer of this bot - @Alequez97";
+
+            await _telegramBot.SendTextMessageAsync(
+                update.MyChatMember.Chat.Id,
+                welcomeMessage,
+                parseMode: ParseMode.Html);
         }
     }
 
