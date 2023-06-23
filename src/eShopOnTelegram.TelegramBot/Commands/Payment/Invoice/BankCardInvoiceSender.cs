@@ -70,7 +70,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
         }
     }
 

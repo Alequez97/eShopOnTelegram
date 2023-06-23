@@ -11,7 +11,7 @@ public class UpdateExecutor
 
     public async Task ExecuteAsync(Update update)
     {
-        var command = _commandResolver.Resolve(update);
+        var command = await _commandResolver.ResolveAsync(update);
 
         await command.SendResponseAsync(update);
     }

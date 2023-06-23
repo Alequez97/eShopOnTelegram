@@ -99,7 +99,7 @@ namespace eShopOnTelegram.TelegramBot.Commands
                 var chatId = update.Message.Chat.Id;
 
                 _logger.LogError(exception, exception.Message);
-                await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
+                await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
             }
         }
 

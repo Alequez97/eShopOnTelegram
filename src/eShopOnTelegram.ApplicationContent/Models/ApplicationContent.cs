@@ -1,4 +1,6 @@
-﻿namespace eShopOnTelegram.ApplicationContent.Models;
+﻿using Newtonsoft.Json;
+
+namespace eShopOnTelegram.ApplicationContent.Models;
 
 public class ApplicationContentModel
 {

@@ -6,24 +6,52 @@ using eShopOnTelegram.ApplicationContent.Models;
 using Microsoft.Extensions.Configuration;
 
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace eShopOnTelegram.ApplicationContent.Providers;
+namespace eShopOnTelegram.ApplicationContent.Stores;
 
 public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 {
     private readonly BlobContainerClient _blobContainerClient;
-    private const string _applicationContentFileName = "application-content.jsonAsString";
+    private const string _applicationContentFileName = "application-content.json";
+    private readonly IApplicationDefaultContentStore _applicationDefaultContentStore;
 
-    public AzureBlobStorageApplicationContentStore(IConfiguration configuration)
+    public AzureBlobStorageApplicationContentStore(
+        IConfiguration configuration,
+        IApplicationDefaultContentStore applicationDefaultContentStore
+        )
     {
         var connectionString = configuration["Azure:StorageAccountConnectionString"];
         var blobContainerName = configuration["Azure:ApplicationContentBlobContainerName"];
 
         var blobServiceClient = new BlobServiceClient(connectionString);
         _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
+        _applicationDefaultContentStore = applicationDefaultContentStore;
     }
 
     public async Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken)
+    {
+        var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+
+        return JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentJsonAsString);
+    }
+
+    public async Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken)
+    {
+        var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+
+        var data = JObject.Parse(applicationContentJsonAsString);
+        var value = data.SelectToken(key)?.ToString();
+
+        return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetApplicationDefaultValueAsync(key, cancellationToken);
+    }
+
+    public Task UpdateContentAsync(List<KeyValuePair<string, string>> keyValues, CancellationToken cancellationToken)
+    {
+        throw new NotImplementedException();
+    }
+
+    private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
     {
         var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
 
@@ -34,18 +62,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
         using var reader = new StreamReader(memoryStream);
         var jsonAsString = await reader.ReadToEndAsync(cancellationToken);
-        var applicationContent = JsonConvert.DeserializeObject<ApplicationContentModel>(jsonAsString);
 
-        return applicationContent;
-    }
-
-    public Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateContentAsync(List<KeyValuePair<string, string>> keyValues, CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
+        return jsonAsString;
     }
 }

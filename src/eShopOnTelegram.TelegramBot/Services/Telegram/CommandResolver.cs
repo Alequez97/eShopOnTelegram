@@ -14,15 +14,16 @@ public class CommandResolver
         _unknownCommand = unknownCommand;
     }
 
-    public ITelegramCommand Resolve(Update update)
+    public async Task<ITelegramCommand> ResolveAsync(Update update)
     {
-        var command = _commands.FirstOrDefault(command => command.IsResponsibleForUpdateAsync(update).Result);
-
-        if (command == null)
+        foreach (var command in _commands)
         {
-            return _unknownCommand;
+            if (await command.IsResponsibleForUpdateAsync(update))
+            {
+                return command;
+            }
         }
 
-        return command;
+        return _unknownCommand;
     }
 }

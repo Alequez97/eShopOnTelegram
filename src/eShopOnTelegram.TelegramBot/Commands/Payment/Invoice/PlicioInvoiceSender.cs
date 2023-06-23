@@ -60,8 +60,6 @@ public class PlicioInvoiceSender : ITelegramCommand
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Plisio.CryptoCurrency);
 
-            var message = await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None);
-
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
                 // first row
@@ -80,7 +78,7 @@ public class PlicioInvoiceSender : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
         }
     }
 
