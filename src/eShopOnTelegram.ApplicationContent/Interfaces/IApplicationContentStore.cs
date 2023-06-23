@@ -6,7 +6,7 @@ public interface IApplicationContentStore
 {
     Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken);
 
-    Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken);
+    Task<string> GetValueAsync(string key, CancellationToken cancellationToken);
 
-    Task UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken);
+    Task<bool> UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken);
 }

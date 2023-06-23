@@ -23,7 +23,7 @@ public class UnknownCommand : ITelegramCommand
         {
             await _telegramBot.SendTextMessageAsync(
                 chatId,
-                await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.UnknownCommandText, CancellationToken.None),
+                await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.UnknownCommandText, CancellationToken.None),
                 parseMode: ParseMode.Html
             );
         }

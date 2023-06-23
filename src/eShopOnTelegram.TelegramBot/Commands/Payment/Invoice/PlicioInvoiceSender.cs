@@ -47,7 +47,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
                 return;
             }
 
@@ -65,13 +65,13 @@ public class PlicioInvoiceSender : ITelegramCommand
                 // first row
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlicioInvoiceResponse.Data.InvoiceUrl),
+                    InlineKeyboardButton.WithUrl(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlicioInvoiceResponse.Data.InvoiceUrl),
                 },
             });
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,
-                text: await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
+                text: await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
         }

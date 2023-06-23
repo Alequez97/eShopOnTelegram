@@ -37,12 +37,12 @@ public class ShowActiveOrderCommand : ITelegramCommand
         }
         else
         {
-            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
+            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
         }
     }
 
     public async Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Text?.Contains(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None)) ?? false;
+        return update.Message?.Text?.Contains(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None)) ?? false;
     }
 }

@@ -34,7 +34,7 @@ public class PreCheckoutQueryCommand : ITelegramCommand
             return;
         }
 
-        await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.AlreadyPaidOrExpired, CancellationToken.None));
+        await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.AlreadyPaidOrExpired, CancellationToken.None));
     }
 
     public Task<bool> IsResponsibleForUpdateAsync(Update update)

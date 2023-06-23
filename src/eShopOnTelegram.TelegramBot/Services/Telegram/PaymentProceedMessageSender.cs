@@ -41,7 +41,7 @@ public class PaymentProceedMessageSender
     {
         if (_paymentAppsettings.AllPaymentsDisabled)
         {
-            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.NoEnabledPayments, CancellationToken.None));
+            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.NoEnabledPayments, CancellationToken.None));
             return;
         }
 
@@ -55,7 +55,7 @@ public class PaymentProceedMessageSender
         var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
 
         message
-            .AppendLine($"<b>{await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}</b>")
+            .AppendLine($"<b>{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}</b>")
             .AppendLine(new string('~', 20));
 
         foreach (var orderCartItem in order.CartItems)
@@ -66,11 +66,11 @@ public class PaymentProceedMessageSender
 
         message
             .AppendLine()
-            .AppendLine($"{await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: <b>{order.TotalPrice}{currencySymbol}</b>")
+            .AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: <b>{order.TotalPrice}{currencySymbol}</b>")
             .AppendLine(new string('~', 20));
 
         message
-            .AppendLine(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ChoosePaymentMethod, CancellationToken.None));
+            .AppendLine(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ChoosePaymentMethod, CancellationToken.None));
 
         await _telegramBot.SendTextMessageAsync(
             chatId: chatId,

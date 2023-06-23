@@ -6,6 +6,7 @@ using eShopOnTelegram.ApplicationContent.Interfaces;
 using eShopOnTelegram.ApplicationContent.Models;
 
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -14,13 +15,16 @@ namespace eShopOnTelegram.ApplicationContent.Stores;
 
 public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 {
-    private readonly BlobContainerClient _blobContainerClient;
     private const string _applicationContentFileName = "application-content.json";
+
+    private readonly BlobContainerClient _blobContainerClient;
     private readonly IApplicationDefaultContentStore _applicationDefaultContentStore;
+    private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageApplicationContentStore(
         IConfiguration configuration,
-        IApplicationDefaultContentStore applicationDefaultContentStore
+        IApplicationDefaultContentStore applicationDefaultContentStore,
+        ILogger<AzureBlobStorageApplicationContentStore> logger
         )
     {
         var connectionString = configuration["Azure:StorageAccountConnectionString"];
@@ -29,49 +33,71 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         var blobServiceClient = new BlobServiceClient(connectionString);
         _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
         _applicationDefaultContentStore = applicationDefaultContentStore;
+        _logger = logger;
     }
 
     public async Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken)
     {
-        // TODO: Implement exception handling mechanism
-
-        var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-
-        return JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentJsonAsString);
-    }
-
-    public async Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken)
-    {
-        // TODO: Implement exception handling mechanism
-
-        var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-
-        var data = JObject.Parse(applicationContentJsonAsString);
-        var value = data.SelectToken(key)?.ToString();
-
-        return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetApplicationDefaultValueAsync(key, cancellationToken);
-    }
-
-    public async Task UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken)
-    {
-        // TODO: Implement exception handling mechanism
-
-        var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-        var data = JObject.Parse(applicationContentJson);
-
-        foreach (var keyValue in keyValues)
+        try
         {
-            var tokenProperty = data.SelectToken(keyValue.Key);
+            var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
-            if (tokenProperty != null && tokenProperty is JValue keyToUpdate)
-            {
-                keyToUpdate.Value = keyValue.Value;
-            }
+            return JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentJsonAsString);
         }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
 
-        await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);
+            return await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
+        }
+    }
 
-        await Task.CompletedTask;
+    public async Task<string> GetValueAsync(string key, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+
+            var data = JObject.Parse(applicationContentJsonAsString);
+            var value = data.SelectToken(key)?.ToString();
+
+            return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetDefaultValueAsync(key, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return await _applicationDefaultContentStore.GetDefaultValueAsync(key, cancellationToken);
+        }
+    }
+
+    public async Task<bool> UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+            var data = JObject.Parse(applicationContentJson);
+
+            foreach (var keyValue in keyValues)
+            {
+                var jsonToken = data.SelectToken(keyValue.Key);
+
+                if (jsonToken != null && jsonToken is JValue keyToUpdate)
+                {
+                    keyToUpdate.Value = keyValue.Value;
+                }
+            }
+
+            await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);
+
+            return true;
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return false;
+        }
     }
 
     private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)

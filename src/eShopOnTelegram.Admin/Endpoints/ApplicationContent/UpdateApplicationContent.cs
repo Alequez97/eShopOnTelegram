@@ -18,8 +18,8 @@ public class UpdateApplicationContent : EndpointBaseAsync
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ApplicationContent })]
     public override async Task<ActionResult> HandleAsync(Dictionary<string, string> request, CancellationToken cancellationToken = default)
     {
-        await _applicationContentStore.UpdateContentAsync(request, cancellationToken);
+        var uploadSuccessfull = await _applicationContentStore.UpdateContentAsync(request, cancellationToken);
 
-        return Ok();
+        return uploadSuccessfull ? Ok() : StatusCode(503);
     }
 }

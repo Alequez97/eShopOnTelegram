@@ -9,7 +9,7 @@ public static class TelegramBotClientExtensions
     {
         try
         {
-            var defaultErrorMessage = await applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.DefaultErrorMessage, CancellationToken.None);
+            var defaultErrorMessage = await applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.DefaultErrorMessage, CancellationToken.None);
 
             await telegramBot.SendTextMessageAsync(
                 chatId: chatId,

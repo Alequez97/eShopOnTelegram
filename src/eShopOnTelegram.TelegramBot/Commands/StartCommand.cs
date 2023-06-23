@@ -66,13 +66,13 @@ namespace eShopOnTelegram.TelegramBot.Commands
 
                     await _telegramBot.SendTextMessageAsync(
                         chatId,
-                        await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.StartError, CancellationToken.None),
+                        await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.StartError, CancellationToken.None),
                         parseMode: ParseMode.Html
                     );
                 }
 
                 var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
+                    .AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
 
                 var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
                 if (getOrdersResponse.Status == ResponseStatus.Success)
@@ -83,13 +83,13 @@ namespace eShopOnTelegram.TelegramBot.Commands
                     {
                         keyboardMarkupBuilder
                             .StartNewRow()
-                            .AddButtonToCurrentRow(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
+                            .AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
                     }
                 }
 
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.WelcomeText, CancellationToken.None),
+                    await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.WelcomeText, CancellationToken.None),
                     parseMode: ParseMode.Html,
                     replyMarkup: keyboardMarkupBuilder.Build(resizeKeyboard: true)
                 );
