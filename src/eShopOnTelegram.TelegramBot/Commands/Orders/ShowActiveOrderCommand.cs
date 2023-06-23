@@ -1,8 +1,7 @@
-﻿using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.Appsettings;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
+using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Orders;
@@ -12,18 +11,18 @@ public class ShowActiveOrderCommand : ITelegramCommand
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
     private readonly PaymentProceedMessageSender _paymentProceedMessage;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
 
     public ShowActiveOrderCommand(
         ITelegramBotClient telegramBot,
         IOrderService orderService,
         PaymentProceedMessageSender paymentProceedMessageSender,
-        BotContentAppsettings botContentAppsettings)
+        IApplicationContentStore applicationContentStore)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
         _paymentProceedMessage = paymentProceedMessageSender;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -38,12 +37,12 @@ public class ShowActiveOrderCommand : ITelegramCommand
         }
         else
         {
-            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.NoUnpaidOrderFound.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.NoUnpaidOrderFound));
+            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public async Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Text?.Contains(_botContentAppsettings.Order.ShowUnpaidOrder.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.ShowUnpaidOrder)) ?? false;
+        return update.Message?.Text?.Contains(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None)) ?? false;
     }
 }

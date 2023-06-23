@@ -1,9 +1,8 @@
-﻿using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Extensions;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
@@ -11,17 +10,17 @@ public class PreCheckoutQueryCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
 
     public PreCheckoutQueryCommand(
         ITelegramBotClient telegramBot,
         IOrderService orderService,
-        BotContentAppsettings botContentAppsettings
+        IApplicationContentStore applicationContentStore
         )
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -35,11 +34,11 @@ public class PreCheckoutQueryCommand : ITelegramCommand
             return;
         }
 
-        await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, _botContentAppsettings.Order.AlreadyPaidOrExpired.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.AlreadyPaidOrExpired));
+        await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.AlreadyPaidOrExpired, CancellationToken.None));
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.PreCheckoutQuery != null;
+        return Task.FromResult(update.PreCheckoutQuery != null);
     }
 }

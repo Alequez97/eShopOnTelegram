@@ -1,15 +1,15 @@
-﻿namespace eShopOnTelegram.TelegramBot.Appsettings;
+﻿namespace eShopOnTelegram.ApplicationContent.Models;
 
-public class BotContentAppsettings
+public class ApplicationContentModel
 {
-    public required BotCommonContent Common { get; set; }
+    public required TelegramBotContent TelegramBot { get; set; }
 
-    public required BotOrderContent Order { get; set; }
+    public required OrderContent Order { get; set; }
 
-    public required BotPaymentContent Payment { get; set; }
+    public required PaymentContent Payment { get; set; }
 }
 
-public class BotCommonContent
+public class TelegramBotContent
 {
     public required string StartError { get; set; }
     public required string WelcomeText { get; set; }
@@ -18,7 +18,7 @@ public class BotCommonContent
     public required string DefaultErrorMessage { get; set; }
 }
 
-public class BotOrderContent
+public class OrderContent
 {
     public required string ShowUnpaidOrder { get; set; }
     public required string NoUnpaidOrderFound { get; set; }
@@ -30,7 +30,7 @@ public class BotOrderContent
     public required string TotalPriceTitle { get; set; }
 }
 
-public class BotPaymentContent
+public class PaymentContent
 {
     public required string ChoosePaymentMethod { get; set; }
     public required string NoEnabledPayments { get; set; }

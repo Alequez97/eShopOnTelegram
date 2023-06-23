@@ -51,8 +51,8 @@ public class ChatMemberAddedCommand : ITelegramCommand
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Type == MessageType.ChatMembersAdded;
+        return Task.FromResult(update.Message?.Type == MessageType.ChatMembersAdded);
     }
 }

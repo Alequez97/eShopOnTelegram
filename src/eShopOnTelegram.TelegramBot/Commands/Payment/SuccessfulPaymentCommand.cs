@@ -1,9 +1,9 @@
-﻿using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
@@ -12,18 +12,18 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<SuccessfulPaymentCommand> _logger;
 
     public SuccessfulPaymentCommand(
         ITelegramBotClient telegramBot,
         IOrderService orderService,
-        BotContentAppsettings botContentAppsettings,
+        IApplicationContentStore applicationContentStore,
         ILogger<SuccessfulPaymentCommand> logger)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
         _logger = logger;
     }
 
@@ -41,7 +41,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Payment.SuccessfullPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.SuccessfullPayment)
+                    await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.SuccessfullPayment, CancellationToken.None)
                 );
 
                 // TODO: Send notification to shop owner, that new order received
@@ -50,7 +50,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             {
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Payment.ErrorDuringPaymentConfirmation.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ErrorDuringPaymentConfirmation),
+                    await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ErrorDuringPaymentConfirmation, CancellationToken.None),
                     parseMode: ParseMode.Html
                 );
             }
@@ -58,12 +58,12 @@ public class SuccessfulPaymentCommand : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Type == MessageType.SuccessfulPayment;
+        return Task.FromResult(update.Message?.Type == MessageType.SuccessfulPayment);
     }
 }

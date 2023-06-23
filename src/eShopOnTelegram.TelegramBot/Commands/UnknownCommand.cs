@@ -1,19 +1,18 @@
-﻿using eShopOnTelegram.TelegramBot.Appsettings;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Extensions;
 
 namespace eShopOnTelegram.TelegramBot.Commands;
 
 public class UnknownCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
 
-    public UnknownCommand(ITelegramBotClient telegramBot, BotContentAppsettings botContentAppsettings)
+    public UnknownCommand(ITelegramBotClient telegramBot, IApplicationContentStore applicationContentStore)
     {
         _telegramBot = telegramBot;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -24,14 +23,14 @@ public class UnknownCommand : ITelegramCommand
         {
             await _telegramBot.SendTextMessageAsync(
                 chatId,
-                _botContentAppsettings.Common.UnknownCommandText.OrNextIfNullOrEmpty(BotContentDefaultConstants.Common.UnknownCommandText),
+                await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.TelegramBot.UnknownCommandText, CancellationToken.None),
                 parseMode: ParseMode.Html
             );
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return false;
+        return Task.FromResult(false);
     }
 }

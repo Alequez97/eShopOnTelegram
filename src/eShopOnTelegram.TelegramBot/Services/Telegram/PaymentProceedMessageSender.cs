@@ -1,10 +1,10 @@
 ﻿using System.Text;
 
+using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.TelegramBot.Appsettings;
-using eShopOnTelegram.TelegramBot.Constants;
-using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
 
@@ -18,7 +18,7 @@ public class PaymentProceedMessageSender
     private readonly IOrderService _orderService;
     private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
     private readonly CurrencyCodeToSymbolMapper _currencyCodeToSymbolMapper;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
     private readonly PaymentAppsettings _paymentAppsettings;
 
     public PaymentProceedMessageSender(
@@ -26,14 +26,14 @@ public class PaymentProceedMessageSender
         IOrderService orderService,
         IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
         CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
-        BotContentAppsettings botContentAppsettings,
+        IApplicationContentStore applicationContentStore,
         PaymentAppsettings paymentAppsettings)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
         _paymentTelegramButtonGenerators = paymentTelegramButtonGenerators;
         _currencyCodeToSymbolMapper = currencyCodeToSymbolMapper;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
         _paymentAppsettings = paymentAppsettings;
     }
 
@@ -41,7 +41,7 @@ public class PaymentProceedMessageSender
     {
         if (_paymentAppsettings.AllPaymentsDisabled)
         {
-            await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Payment.NoEnabledPayments.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.NoEnabledPayments));
+            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.NoEnabledPayments, CancellationToken.None));
             return;
         }
 
@@ -55,7 +55,7 @@ public class PaymentProceedMessageSender
         var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
 
         message
-            .AppendLine($"<b>{_botContentAppsettings.Order.OrderSummaryTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderSummaryTitle)}</b>")
+            .AppendLine($"<b>{await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}</b>")
             .AppendLine(new string('~', 20));
 
         foreach (var orderCartItem in order.CartItems)
@@ -66,11 +66,11 @@ public class PaymentProceedMessageSender
 
         message
             .AppendLine()
-            .AppendLine($"{_botContentAppsettings.Order.TotalPriceTitle.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.TotalPriceTitle)}: <b>{order.TotalPrice}{currencySymbol}</b>")
+            .AppendLine($"{await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: <b>{order.TotalPrice}{currencySymbol}</b>")
             .AppendLine(new string('~', 20));
 
         message
-            .AppendLine(_botContentAppsettings.Payment.ChoosePaymentMethod.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ChoosePaymentMethod));
+            .AppendLine(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ChoosePaymentMethod, CancellationToken.None));
 
         await _telegramBot.SendTextMessageAsync(
             chatId: chatId,

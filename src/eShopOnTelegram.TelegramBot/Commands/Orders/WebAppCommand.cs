@@ -1,11 +1,11 @@
 ﻿using Ardalis.GuardClauses;
 
+using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Services.Telegram;
 
@@ -19,20 +19,20 @@ public class WebAppCommand : ITelegramCommand
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
     private readonly PaymentProceedMessageSender _paymentMethodsSender;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
 
     public WebAppCommand(
         ILogger<WebAppCommand> logger,
         ITelegramBotClient telegramBot,
         IOrderService orderService,
         PaymentProceedMessageSender paymentMethodsSender,
-        BotContentAppsettings botContentAppsettings)
+        IApplicationContentStore applicationContentStore)
     {
         _logger = logger;
         _telegramBot = telegramBot;
         _orderService = orderService;
         _paymentMethodsSender = paymentMethodsSender;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
     }
 
     public async Task SendResponseAsync(Update update)
@@ -62,7 +62,7 @@ public class WebAppCommand : ITelegramCommand
 
                 await _telegramBot.SendTextMessageAsync(
                     chatId,
-                    _botContentAppsettings.Order.CreateErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.CreateErrorMessage),
+                    await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.CreateErrorMessage, CancellationToken.None),
                     parseMode: ParseMode.Html
                 );
                 return;
@@ -73,13 +73,13 @@ public class WebAppCommand : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Type == MessageType.WebAppData;
+        return Task.FromResult(update.Message?.Type == MessageType.WebAppData);
     }
 }
 

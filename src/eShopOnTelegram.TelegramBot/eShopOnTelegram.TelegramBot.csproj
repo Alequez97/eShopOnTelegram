@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\eShopOnTelegram.ApplicationContent\eShopOnTelegram.ApplicationContent.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Domain\eShopOnTelegram.Domain.csproj" />
   </ItemGroup>

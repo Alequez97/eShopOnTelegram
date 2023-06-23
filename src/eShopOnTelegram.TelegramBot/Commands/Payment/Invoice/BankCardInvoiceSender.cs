@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.TelegramBot.Appsettings;
@@ -14,7 +16,7 @@ public class BankCardInvoiceSender : ITelegramCommand
     private readonly IProductService _productService;
     private readonly IOrderService _orderService;
     private readonly PaymentAppsettings _paymentAppsettings;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<BankCardInvoiceSender> _logger;
 
     public BankCardInvoiceSender(
@@ -22,14 +24,14 @@ public class BankCardInvoiceSender : ITelegramCommand
         IProductService productService,
         IOrderService orderService,
         PaymentAppsettings paymentAppsettings,
-        BotContentAppsettings botContentAppsettings,
+        IApplicationContentStore applicationContentStore,
         ILogger<BankCardInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
         _productService = productService;
         _orderService = orderService;
         _paymentAppsettings = paymentAppsettings;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
         _logger = logger;
     }
 
@@ -43,7 +45,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage));
+                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
                 return;
             }
 
@@ -51,7 +53,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,
-                _botContentAppsettings.Order.OrderNumberTitle.Replace("{orderNumber}", activeOrder.OrderNumber).OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.OrderNumberTitle(activeOrder.OrderNumber)),
+                await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None),
                 "Description", // TODO: Add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Card.ApiToken,
@@ -68,12 +70,12 @@ public class BankCardInvoiceSender : ITelegramCommand
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.BankCard);
+        return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.BankCard));
     }
 }

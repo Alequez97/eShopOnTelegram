@@ -2,13 +2,13 @@
 
 public static class ApplicationContentKey
 {
-    public static class Common
+    public static class TelegramBot
     {
-        public const string StartError = "Common:StartError";
-        public const string WelcomeText = "Common:WelcomeText";
-        public const string OpenShopButtonText = "Common:OpenShopButtonText";
-        public const string UnknownCommandText = "Common:UnknownCommandText";
-        public const string DefaultErrorMessage = "Common:DefaultErrorMessage";
+        public const string StartError = "TelegramBot:StartError";
+        public const string WelcomeText = "TelegramBot:WelcomeText";
+        public const string OpenShopButtonText = "TelegramBot:OpenShopButtonText";
+        public const string UnknownCommandText = "TelegramBot:UnknownCommandText";
+        public const string DefaultErrorMessage = "TelegramBot:DefaultErrorMessage";
     }
 
     public static class Order

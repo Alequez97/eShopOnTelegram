@@ -16,7 +16,7 @@ public class CommandResolver
 
     public ITelegramCommand Resolve(Update update)
     {
-        var command = _commands.FirstOrDefault(command => command.IsResponsibleForUpdate(update));
+        var command = _commands.FirstOrDefault(command => command.IsResponsibleForUpdateAsync(update).Result);
 
         if (command == null)
         {

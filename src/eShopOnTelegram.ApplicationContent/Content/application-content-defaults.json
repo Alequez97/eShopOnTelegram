@@ -1,5 +1,5 @@
 {
-  "Common": {
+  "TelegramBot": {
     "StartError": "Error. Try again later",
     "WelcomeText": "Welcome to our shop",
     "OpenShopButtonText": "*** Click here to open shop ***",

@@ -9,8 +9,8 @@ public class ChatMemberLeftCommand : ITelegramCommand
         return Task.CompletedTask;
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Message?.Type == MessageType.ChatMemberLeft;
+        return Task.FromResult(update.Message?.Type == MessageType.ChatMemberLeft);
     }
 }

@@ -1,5 +1,7 @@
 using eshopOnTelegram.TelegramBot.Appsettings;
 
+using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Providers;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Extensions;
@@ -26,14 +28,15 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddSingleton<ITelegramBotClient>(_ =>
         {
-            var telegramToken = configuration!["Telegram:Token"];
+            var telegramAppsettings = configuration.GetSection<TelegramAppsettings>("Telegram");
 
-            return new TelegramBotClient(telegramToken);
+            return new TelegramBotClient(telegramAppsettings.Token);
         });
 
-        services.AddSingleton(configuration.GetSection("Telegram").Get<TelegramAppsettings>());
-        services.AddSingleton(configuration.GetSection("BotContent").Get<BotContentAppsettings>());
-        services.AddSingleton(configuration.GetSection("Payment").Get<PaymentAppsettings>());
+        services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
+
+        services.AddSingleton(configuration.GetSection<TelegramAppsettings>("Telegram"));
+        services.AddSingleton(configuration.GetSection<PaymentAppsettings>("Payment"));
 
         services.AddTelegramCommandServices();
 

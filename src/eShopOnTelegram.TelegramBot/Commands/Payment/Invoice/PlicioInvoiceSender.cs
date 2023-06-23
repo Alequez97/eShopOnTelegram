@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Keys;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.TelegramBot.Appsettings;
@@ -15,26 +17,23 @@ public class PlicioInvoiceSender : ITelegramCommand
     private readonly ITelegramBotClient _telegramBot;
     private readonly IPlicioClient _plicioClient;
     private readonly IOrderService _orderService;
-    private readonly IProductService _productService;
     private readonly PaymentAppsettings _paymentAppsettings;
-    private readonly BotContentAppsettings _botContentAppsettings;
+    private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<PlicioInvoiceSender> _logger;
 
     public PlicioInvoiceSender(
         ITelegramBotClient telegramBot,
         IPlicioClient plicioClient,
         IOrderService orderService,
-        IProductService productService,
         PaymentAppsettings paymentAppsettings,
-        BotContentAppsettings botContentAppsettings,
+        IApplicationContentStore applicationContentStore,
         ILogger<PlicioInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
         _plicioClient = plicioClient;
         _orderService = orderService;
-        _productService = productService;
         _paymentAppsettings = paymentAppsettings;
-        _botContentAppsettings = botContentAppsettings;
+        _applicationContentStore = applicationContentStore;
         _logger = logger;
     }
 
@@ -48,7 +47,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
             {
-                await _telegramBot.SendTextMessageAsync(chatId, _botContentAppsettings.Order.InvoiceGenerationFailedErrorMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Order.InvoiceGenerationFailedErrorMessage));
+                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
                 return;
             }
 
@@ -61,32 +60,32 @@ public class PlicioInvoiceSender : ITelegramCommand
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Plisio.CryptoCurrency);
 
-            var message = _botContentAppsettings.Payment.ProceedToPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ProceedToPayment);
+            var message = await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None);
 
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
                 // first row
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(_botContentAppsettings.Payment.ProceedToPayment.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.ProceedToPayment), createPlicioInvoiceResponse.Data.InvoiceUrl),
+                    InlineKeyboardButton.WithUrl(await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlicioInvoiceResponse.Data.InvoiceUrl),
                 },
             });
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,
-                text: _botContentAppsettings.Payment.InvoiceReceiveMessage.OrNextIfNullOrEmpty(BotContentDefaultConstants.Payment.InvoiceReceiveMessage),
+                text: await _applicationContentStore.GetSingleValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendCommonErrorMessageAsync(chatId, _botContentAppsettings, CancellationToken.None);
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, CancellationToken.None);
         }
     }
 
-    public bool IsResponsibleForUpdate(Update update)
+    public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.Plicio);
+        return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.Plicio));
     }
 }
