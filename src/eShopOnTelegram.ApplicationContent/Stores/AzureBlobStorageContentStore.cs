@@ -1,4 +1,6 @@
-﻿using Azure.Storage.Blobs;
+﻿using System.Text;
+
+using Azure.Storage.Blobs;
 
 using eShopOnTelegram.ApplicationContent.Interfaces;
 using eShopOnTelegram.ApplicationContent.Models;
@@ -31,6 +33,8 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
     public async Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken)
     {
+        // TODO: Implement exception handling mechanism
+
         var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
         return JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentJsonAsString);
@@ -38,6 +42,8 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
     public async Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken)
     {
+        // TODO: Implement exception handling mechanism
+
         var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
         var data = JObject.Parse(applicationContentJsonAsString);
@@ -46,9 +52,26 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetApplicationDefaultValueAsync(key, cancellationToken);
     }
 
-    public Task UpdateContentAsync(List<KeyValuePair<string, string>> keyValues, CancellationToken cancellationToken)
+    public async Task UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        // TODO: Implement exception handling mechanism
+
+        var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+        var data = JObject.Parse(applicationContentJson);
+
+        foreach (var keyValue in keyValues)
+        {
+            var tokenProperty = data.SelectToken(keyValue.Key);
+
+            if (tokenProperty != null && tokenProperty is JValue keyToUpdate)
+            {
+                keyToUpdate.Value = keyValue.Value;
+            }
+        }
+
+        await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);
+
+        await Task.CompletedTask;
     }
 
     private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
@@ -64,5 +87,13 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         var jsonAsString = await reader.ReadToEndAsync(cancellationToken);
 
         return jsonAsString;
+    }
+
+    private async Task UploadApplicationContentToBlobContainerAsync(string contentJson, CancellationToken cancellationToken)
+    {
+        var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
+
+        using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(contentJson));
+        await blobClient.UploadAsync(memoryStream, overwrite: true, cancellationToken: cancellationToken);
     }
 }

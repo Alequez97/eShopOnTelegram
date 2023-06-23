@@ -8,5 +8,5 @@ public interface IApplicationContentStore
 
     Task<string> GetSingleValueAsync(string key, CancellationToken cancellationToken);
 
-    Task UpdateContentAsync(List<KeyValuePair<string, string>> keyValues, CancellationToken cancellationToken);
+    Task UpdateContentAsync(Dictionary<string, string> keyValues, CancellationToken cancellationToken);
 }

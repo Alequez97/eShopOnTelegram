@@ -1,9 +1,14 @@
+using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.ApplicationContent.Stores;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
 
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
+builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemApplicationDefaultValueContentStore>();
 
 // Add services to the container.
 builder.Services.AddScoped<IProductService, ProductService>();
