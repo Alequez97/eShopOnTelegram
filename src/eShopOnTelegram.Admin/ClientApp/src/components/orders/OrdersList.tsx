@@ -1,12 +1,12 @@
-import { List, Datagrid, TextField } from "react-admin";
+import { List, Datagrid, TextField, DateField } from "react-admin";
 
 export default function OrdersList() {
   return (
     <List>
       <Datagrid>
         <TextField source="orderNumber" sortable={false} />
-        <TextField source="creationDate" sortable={false} />
-        <TextField source="paymentDate" sortable={false} emptyText={"-"} />
+        <DateField source="creationDate" sortable={false} showTime={true} />
+        <DateField source="paymentDate" sortable={false} showTime={true} emptyText={"-"}/>
         <TextField source="status" sortable={false} />
       </Datagrid>
     </List>
