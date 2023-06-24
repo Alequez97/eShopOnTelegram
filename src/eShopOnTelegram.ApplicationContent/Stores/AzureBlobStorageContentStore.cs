@@ -59,7 +59,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
             var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
             var data = JObject.Parse(applicationContentJsonAsString);
-            var value = data.SelectToken(key)?.ToString();
+            var value = data[key]?.ToString();
 
             return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetDefaultValueAsync(key, cancellationToken);
         }

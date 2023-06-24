@@ -22,7 +22,7 @@ public class FileSystemApplicationDefaultValueContentStore : IApplicationDefault
         var jsonAsString = await GetDefaultContentJsonStringAsync(cancellationToken);
 
         var data = JObject.Parse(jsonAsString);
-        var value = data.SelectToken(key)?.ToString();
+        var value = data[key]?.ToString();
 
         return value;
     }

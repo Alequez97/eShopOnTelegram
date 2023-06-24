@@ -16,7 +16,7 @@ public class UpdateApplicationContent : EndpointBaseAsync
 
     [HttpPatch("/api/applicationContent")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ApplicationContent })]
-    public override async Task<ActionResult> HandleAsync(Dictionary<string, string> request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult> HandleAsync(Dictionary<string, string> request, CancellationToken cancellationToken)
     {
         var uploadSuccessfull = await _applicationContentStore.UpdateContentAsync(request, cancellationToken);
 

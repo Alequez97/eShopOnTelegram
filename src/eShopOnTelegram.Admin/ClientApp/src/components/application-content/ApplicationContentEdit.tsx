@@ -17,7 +17,7 @@ const ApplicationContentEdit: React.FC = () => {
         const { data } = await axios.get("/applicationContent");
         setApplicationContent(data);
       } catch (error) {
-        notify("Error fetching localization data", { type: "error" });
+        notify("Error saving application content data", { type: "error" });
       }
     };
 
@@ -28,12 +28,13 @@ const ApplicationContentEdit: React.FC = () => {
     console.log("save");
     try {
       if (applicationContent) {
-        axios.patch("/applicationContent");
+        const { data } = await axios.patch("/applicationContent", applicationContent);
+        console.log(data);
         notify("Application content data saved", { type: "success" });
         refresh();
       }
     } catch (error) {
-      notify("Error saving localization data", { type: "error" });
+      notify("Error saving application content data", { type: "error" });
     }
   };
 
