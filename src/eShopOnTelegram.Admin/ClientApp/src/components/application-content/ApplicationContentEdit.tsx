@@ -1,56 +1,57 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { useNotify, TextInput, SaveButton, SimpleForm } from "react-admin";
+import { useNotify, TextInput, SimpleForm, useRefresh } from "react-admin";
 
-type LocalizationData = Record<string, string>;
+type ApplicationContent = Record<string, string>;
 
 const ApplicationContentEdit: React.FC = () => {
-  const [localizationData, setLocalizationData] =
-    useState<LocalizationData | null>(null);
+  const [applicationContent, setApplicationContent] =
+    useState<ApplicationContent | null>(null);
 
   const notify = useNotify();
+  const refresh = useRefresh();
 
   useEffect(() => {
-    const fetchLocalizationData = async () => {
+    const fetchApplicationContent = async () => {
       try {
-        const { data } = await axios.get("/api/applicationContent"); // Adjust the endpoint URL according to your backend API
-        setLocalizationData(data);
+        const { data } = await axios.get("/applicationContent");
+        setApplicationContent(data);
       } catch (error) {
         notify("Error fetching localization data", { type: "error" });
       }
     };
 
-    fetchLocalizationData();
+    fetchApplicationContent();
   }, [notify]);
 
   const handleSave = async () => {
     console.log("save");
-    // try {
-    //   if (localizationData) {
-    //     await dataProvider.updateLocalization(localizationData);
-    //     notify('Localization data saved');
-    //     refresh(); // Refresh the data on the page to reflect the changes
-    //   }
-    // } catch (error) {
-    //   notify('Error saving localization data', {type: 'error'});
-    // }
+    try {
+      if (applicationContent) {
+        axios.patch("/applicationContent");
+        notify("Application content data saved", { type: "success" });
+        refresh();
+      }
+    } catch (error) {
+      notify("Error saving localization data", { type: "error" });
+    }
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
-    setLocalizationData((prevData) => ({
-      ...(prevData as LocalizationData),
+    setApplicationContent((prevData) => ({
+      ...(prevData as ApplicationContent),
       [name]: value,
     }));
   };
 
-  if (!localizationData) {
+  if (!applicationContent) {
     return <div>Loading...</div>;
   }
 
   return (
-    <SimpleForm onSubmit={() => console.log("on submit callback")}>
-      {Object.entries(localizationData).map(([key, value], index, array) => {
+    <SimpleForm onSubmit={handleSave}>
+      {Object.entries(applicationContent).map(([key, value], index, array) => {
         if (
           index === 0 ||
           key.split(".")[0] !== array[index - 1][0].split(".")[0]

@@ -80,11 +80,10 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
             foreach (var keyValue in keyValues)
             {
-                var jsonToken = data.SelectToken(keyValue.Key);
-
-                if (jsonToken != null && jsonToken is JValue keyToUpdate)
+                var value = data[keyValue.Key];
+                if (value != null)
                 {
-                    keyToUpdate.Value = keyValue.Value;
+                    data[keyValue.Key] = keyValue.Value;
                 }
             }
 
