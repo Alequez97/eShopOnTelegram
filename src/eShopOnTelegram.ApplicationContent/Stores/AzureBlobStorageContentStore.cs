@@ -104,6 +104,14 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
 
         using var memoryStream = new MemoryStream();
+
+        var blobExists = await blobClient.ExistsAsync(cancellationToken);
+        if (!blobExists)
+        {
+            var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
+            await UploadApplicationContentToBlobContainerAsync(JsonConvert.SerializeObject(defaultApplicatonContent), cancellationToken);
+        }
+
         await blobClient.DownloadToAsync(memoryStream, cancellationToken);
 
         memoryStream.Position = 0;

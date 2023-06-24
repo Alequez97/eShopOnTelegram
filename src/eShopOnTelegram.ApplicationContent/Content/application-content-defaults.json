@@ -10,7 +10,7 @@
   "Order.AlreadyPaidOrExpired": "You already paid for this order, or time to accomplish expired. Try again to create new order",
   "Order.CreateErrorMessage": "Error during order creation",
   "Order.InvoiceGenerationFailedErrorMessage": "Error during invoice generation. Try again later",
-  "Order.OrderNumberTitle": "Order number {orderNumber}",
+  "Order.OrderNumberTitle": "Order number",
   "Order.OrderSummaryTitle": "Your order summary",
   "Order.TotalPriceTitle": "Total price",
 

@@ -55,7 +55,7 @@ public class PaymentProceedMessageSender
         var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
 
         message
-            .AppendLine($"<b>{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}</b>")
+            .AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}")
             .AppendLine(new string('~', 20));
 
         foreach (var orderCartItem in order.CartItems)
@@ -66,7 +66,7 @@ public class PaymentProceedMessageSender
 
         message
             .AppendLine()
-            .AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: <b>{order.TotalPrice}{currencySymbol}</b>")
+            .AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: {order.TotalPrice}{currencySymbol}")
             .AppendLine(new string('~', 20));
 
         message

@@ -25,11 +25,9 @@ const ApplicationContentEdit: React.FC = () => {
   }, [notify]);
 
   const handleSave = async () => {
-    console.log("save");
     try {
       if (applicationContent) {
-        const { data } = await axios.patch("/applicationContent", applicationContent);
-        console.log(data);
+        await axios.patch("/applicationContent", applicationContent);
         notify("Application content data saved", { type: "success" });
         refresh();
       }
