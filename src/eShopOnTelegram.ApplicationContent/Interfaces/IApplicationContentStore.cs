@@ -1,10 +1,8 @@
-﻿using eShopOnTelegram.ApplicationContent.Models;
-
-namespace eShopOnTelegram.ApplicationContent.Interfaces;
+﻿namespace eShopOnTelegram.ApplicationContent.Interfaces;
 
 public interface IApplicationContentStore
 {
-    Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken);
+    Task<string> GetApplicationContentAsJsonStringAsync(CancellationToken cancellationToken);
 
     Task<string> GetValueAsync(string key, CancellationToken cancellationToken);
 

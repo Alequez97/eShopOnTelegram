@@ -3,7 +3,6 @@
 using Azure.Storage.Blobs;
 
 using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Models;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -36,19 +35,17 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         _logger = logger;
     }
 
-    public async Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken)
+    public async Task<string> GetApplicationContentAsJsonStringAsync(CancellationToken cancellationToken)
     {
         try
         {
-            var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-
-            return JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentJsonAsString);
+            return await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
         }
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
 
-            return await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
+            return await _applicationDefaultContentStore.GetDefaultApplicationContentAsJsonStringAsync(cancellationToken);
         }
     }
 
@@ -100,13 +97,13 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
     private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
     {
         var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
+        var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsJsonStringAsync(cancellationToken);
 
         using var memoryStream = new MemoryStream();
 
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
-            var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
             await UploadApplicationContentToBlobContainerAsync(JsonConvert.SerializeObject(defaultApplicatonContent), cancellationToken);
         }
 
@@ -115,9 +112,52 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         memoryStream.Position = 0;
 
         using var reader = new StreamReader(memoryStream);
-        var jsonAsString = await reader.ReadToEndAsync(cancellationToken);
+        var downloadedJsonContent = await reader.ReadToEndAsync(cancellationToken);
 
-        return jsonAsString;
+        var defaultObject = JObject.Parse(defaultApplicatonContent);
+        var azureBlobStorageObject = JObject.Parse(downloadedJsonContent);
+
+        // Check if any new keys are missing in the azure blob storage JSON
+        var missingKeys = defaultObject.Properties()
+            .Where(p => !azureBlobStorageObject.ContainsKey(p.Name))
+            .ToList();
+
+        if (missingKeys.Any())
+        {
+            var propertiesToInsert = missingKeys.Select(jsonProperty =>
+            {
+                var defaultValue = jsonProperty.Value;
+                return new JProperty(jsonProperty.Name, defaultValue);
+            });
+
+            // Find the appropriate position to insert the missing keys
+            var defaultObjectPropertiesList = defaultObject.Properties().ToList();
+            var azureBlobStorageObjectPropertiesList = azureBlobStorageObject.Properties().ToList();
+
+            foreach (var missingKey in missingKeys)
+            {
+                var keyIndex = defaultObjectPropertiesList.IndexOf(missingKey);
+                if (keyIndex >= 0)
+                {
+                    azureBlobStorageObjectPropertiesList.Insert(keyIndex, missingKey);
+                }
+            }
+
+            // Create a new JObject with the updated properties
+            azureBlobStorageObject = new JObject(azureBlobStorageObjectPropertiesList);
+
+            downloadedJsonContent = azureBlobStorageObject.ToString();
+
+            // Upload updated JSON to Azure Blob Storage
+            memoryStream.Position = 0;
+            using var writer = new StreamWriter(memoryStream);
+            await writer.WriteAsync(downloadedJsonContent);
+            await writer.FlushAsync();
+            memoryStream.Position = 0;
+            await blobClient.UploadAsync(memoryStream, true, cancellationToken);
+        }
+
+        return downloadedJsonContent;
     }
 
     private async Task UploadApplicationContentToBlobContainerAsync(string contentJson, CancellationToken cancellationToken)
