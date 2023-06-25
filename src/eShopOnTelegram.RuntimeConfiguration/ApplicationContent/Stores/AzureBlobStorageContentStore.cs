@@ -2,7 +2,7 @@
 
 using Azure.Storage.Blobs;
 
-using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace eShopOnTelegram.ApplicationContent.Stores;
+namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 
 public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 {
@@ -27,7 +27,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         )
     {
         var connectionString = configuration["Azure:StorageAccountConnectionString"];
-        var blobContainerName = configuration["Azure:ApplicationContentBlobContainerName"];
+        var blobContainerName = configuration["Azure:RuntimeConfigurationBlobContainerName"];
 
         var blobServiceClient = new BlobServiceClient(connectionString);
         _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);

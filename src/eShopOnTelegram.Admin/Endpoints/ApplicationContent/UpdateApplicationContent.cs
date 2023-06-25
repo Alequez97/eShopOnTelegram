@@ -1,5 +1,5 @@
 ﻿using eShopOnTelegram.Admin.Constants;
-using eShopOnTelegram.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 namespace eShopOnTelegram.Admin.Endpoints.ApplicationContent;
 

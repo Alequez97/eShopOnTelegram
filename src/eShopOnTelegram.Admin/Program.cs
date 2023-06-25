@@ -1,7 +1,7 @@
-using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Stores;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 
 using Microsoft.EntityFrameworkCore;
 

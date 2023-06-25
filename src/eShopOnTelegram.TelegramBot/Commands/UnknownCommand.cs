@@ -1,5 +1,5 @@
-﻿using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Keys;
+﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands;

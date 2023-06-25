@@ -2,11 +2,11 @@
 
 using eshopOnTelegram.TelegramBot.Appsettings;
 
-using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Keys;
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;

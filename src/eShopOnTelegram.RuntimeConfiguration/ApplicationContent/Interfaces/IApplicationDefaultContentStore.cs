@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.ApplicationContent.Interfaces;
+﻿namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 public interface IApplicationDefaultContentStore
 {

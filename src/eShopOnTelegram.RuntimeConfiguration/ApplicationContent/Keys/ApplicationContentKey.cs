@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.ApplicationContent.Keys;
+﻿namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 
 public static class ApplicationContentKey
 {

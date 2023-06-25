@@ -1,7 +1,7 @@
-﻿using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Keys;
-using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;

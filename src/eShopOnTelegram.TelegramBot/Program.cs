@@ -1,12 +1,14 @@
 using eshopOnTelegram.TelegramBot.Appsettings;
 
-using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Stores;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Extensions;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
+using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Workers;
@@ -35,6 +37,8 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
         services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
+        
+        services.AddScoped<IBotOwnerDataStore, AzureBlobStorageBotOwnerDataStore>();
 
         services.AddSingleton(configuration.GetSection<TelegramAppsettings>("Telegram"));
         services.AddSingleton(configuration.GetSection<PaymentAppsettings>("Payment"));

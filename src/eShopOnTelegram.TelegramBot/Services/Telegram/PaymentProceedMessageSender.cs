@@ -1,9 +1,9 @@
 ﻿using System.Text;
 
-using eShopOnTelegram.ApplicationContent.Interfaces;
-using eShopOnTelegram.ApplicationContent.Keys;
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Services.Payment.Interfaces;
