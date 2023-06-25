@@ -33,9 +33,34 @@ export default function Products() {
     // eslint-disable-next-line
   }, [cartItems]);
 
-  const sendDataToTelegram = useCallback(() => {
-    const json = getCartItemsAsJsonString(cartItems);
-    telegramWebApp.sendData(json);
+    const sendDataToTelegram = useCallback(() => {
+
+    //telegramWebApp.showPopup(
+    //  {
+    //    title: "Active order from previous session",
+    //    message: `Init data: ${JSON.stringify(telegramWebApp.initDataUnsafe)}`,
+    //    buttons: [
+    //      {
+    //        type: "default",
+    //        text: "Continue",
+    //        id: "continue",
+    //      },
+    //      {
+    //        type: "destructive",
+    //        text: "Start new",
+    //        id: "start_new",
+    //      },
+    //    ],
+    //  },
+    //  (value: any) => {
+    //    telegramWebApp.showPopup({
+    //      message: `You clicked ${value}`,
+    //    });
+    //  }
+    //  );
+
+     const json = getCartItemsAsJsonString(cartItems);
+     telegramWebApp.sendData(json);
     // eslint-disable-next-line
   }, [cartItems]);
 
@@ -95,11 +120,13 @@ export default function Products() {
             defaultValue={DEFAULT_SELECTOR_VALUE}
             onChange={selectOnChangeHandler}
           >
-            <option value={DEFAULT_SELECTOR_VALUE}>
+            <option value={DEFAULT_SELECTOR_VALUE} key={DEFAULT_SELECTOR_VALUE}>
               {DEFAULT_SELECTOR_VALUE}
             </option>
             {productCategories?.map((category) => (
-              <option value={category}>{category}</option>
+              <option value={category} key={category}>
+                {category}
+              </option>
             ))}
           </select>
         </div>

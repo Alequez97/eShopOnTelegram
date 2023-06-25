@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNotify, TextInput, SimpleForm, useRefresh } from "react-admin";
 
@@ -7,6 +7,7 @@ type ApplicationContent = Record<string, string>;
 const ApplicationContentEdit: React.FC = () => {
   const [applicationContent, setApplicationContent] =
     useState<ApplicationContent | null>(null);
+  const contentWasModifiedRef = useRef(false);
 
   const notify = useNotify();
   const refresh = useRefresh();
@@ -36,7 +37,28 @@ const ApplicationContentEdit: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    // Ctrl + S event handler
+    const handleKeyDown = async (event: KeyboardEvent) => {
+      if (event.ctrlKey && event.key === "s") {
+        event.preventDefault();
+        if (contentWasModifiedRef.current) {
+          await handleSave();
+        } else {
+          notify("Data wasn't modified", { type: "info" });
+        }
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [handleSave]);
+
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    contentWasModifiedRef.current = true;
     const { name, value } = event.target;
     setApplicationContent((prevData) => ({
       ...(prevData as ApplicationContent),
