@@ -220,6 +220,7 @@ rcf/
 # Microsoft Azure Storage Emulator
 *azurite*
 *blobstorage*
+!*blobstorage*.cs
 
 # Windows Store app package directories and files
 AppPackages/
