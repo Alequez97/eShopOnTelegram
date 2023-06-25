@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+﻿using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Groups;
 
@@ -24,27 +22,6 @@ public class ChatMemberAddedCommand : ITelegramCommand
             await _telegramBot.SendTextMessageAsync(
                 update.Message.Chat.Id,
                 welcomeMessage,
-                parseMode: ParseMode.Html);
-
-            return;
-        }
-
-        if (update.Message.NewChatMembers.Length > 1)
-        {
-            var welcomeMessage = new StringBuilder();
-
-            welcomeMessage
-                .AppendLine($"Welcome {update.Message.NewChatMembers.Length} new persons on the board!")
-                .AppendLine();
-
-            foreach (var newChatMember in update.Message.NewChatMembers)
-            {
-                welcomeMessage.AppendLine($"@{newChatMember.Username ?? newChatMember.FirstName}");
-            }
-
-            await _telegramBot.SendTextMessageAsync(
-                update.Message.Chat.Id,
-                welcomeMessage.ToString(),
                 parseMode: ParseMode.Html);
 
             return;

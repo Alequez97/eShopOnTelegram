@@ -55,8 +55,6 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         {
             var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
-            // TODO: If applicationContent
-
             var data = JObject.Parse(applicationContentJsonAsString);
             var value = data[key]?.ToString();
 
