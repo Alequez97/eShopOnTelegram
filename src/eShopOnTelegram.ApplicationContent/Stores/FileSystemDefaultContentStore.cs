@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace eShopOnTelegram.ApplicationContent.Stores;
 
-public class FileSystemApplicationDefaultValueContentStore : IApplicationDefaultContentStore
+public class FileSystemDefaultContentStore : IApplicationDefaultContentStore
 {
     public async Task<ApplicationContentModel> GetDefaultApplicationContentAsync(CancellationToken cancellationToken)
     {

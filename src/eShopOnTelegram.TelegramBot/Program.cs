@@ -34,7 +34,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         });
 
         services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
-        services.AddScoped<IApplicationDefaultContentStore, FileSystemApplicationDefaultValueContentStore>();
+        services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
 
         services.AddSingleton(configuration.GetSection<TelegramAppsettings>("Telegram"));
         services.AddSingleton(configuration.GetSection<PaymentAppsettings>("Payment"));

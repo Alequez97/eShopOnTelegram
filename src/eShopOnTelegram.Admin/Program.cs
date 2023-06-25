@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
-builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemApplicationDefaultValueContentStore>();
+builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
 
 // Add services to the container.
 builder.Services.AddScoped<IProductService, ProductService>();
