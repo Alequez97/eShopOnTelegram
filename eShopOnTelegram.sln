@@ -26,9 +26,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.Domain.Inte
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.ExternalServices", "src\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj", "{A5CB223B-08A7-4D68-93FF-0D1206BA73F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.ApplicationContent", "src\eShopOnTelegram.ApplicationContent\eShopOnTelegram.ApplicationContent.csproj", "{A5C20D3D-517B-4EC5-B721-CF9F5A426E34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.RuntimeConfiguration", "src\eShopOnTelegram.RuntimeConfiguration\eShopOnTelegram.RuntimeConfiguration.csproj", "{A5C20D3D-517B-4EC5-B721-CF9F5A426E34}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.Notifications", "src\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj", "{A9DA1999-27B1-409F-8880-628A9CD69D39}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.Notifications", "src\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj", "{A9DA1999-27B1-409F-8880-628A9CD69D39}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
