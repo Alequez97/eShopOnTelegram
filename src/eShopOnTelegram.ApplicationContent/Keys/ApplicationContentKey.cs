@@ -29,6 +29,7 @@ public static class ApplicationContentKey
         public const string ChoosePaymentMethod = "Payment.ChoosePaymentMethod";
         public const string ProceedToPayment = "Payment.ProceedToPayment";
         public const string InvoiceReceiveMessage = "Payment.InvoiceReceiveMessage";
+        public const string IncorrectInvoiceChoosen = "Payment.IncorrectInvoiceChoosen";
         public const string SuccessfullPayment = "Payment.SuccessfullPayment";
         public const string ErrorDuringPaymentConfirmation = "Payment.ErrorDuringPaymentConfirmation";
     }

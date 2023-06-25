@@ -58,6 +58,8 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         {
             var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
+            // TODO: If applicationContent
+
             var data = JObject.Parse(applicationContentJsonAsString);
             var value = data[key]?.ToString();
 
@@ -80,11 +82,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
             foreach (var keyValue in keyValues)
             {
-                var value = data[keyValue.Key];
-                if (value != null)
-                {
-                    data[keyValue.Key] = keyValue.Value;
-                }
+                data[keyValue.Key] = keyValue.Value;
             }
 
             await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);

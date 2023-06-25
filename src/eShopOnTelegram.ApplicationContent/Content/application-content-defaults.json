@@ -18,6 +18,7 @@
   "Payment.ChoosePaymentMethod": "Please select payment method",
   "Payment.ProceedToPayment": "Proceed to payment",
   "Payment.InvoiceReceiveMessage": "Please receive your invoice",
+  "Payment.IncorrectInvoiceChoosen": "You choosed incorrect invoice to pay for",
   "Payment.SuccessfullPayment": "Thank you for purchase",
   "Payment.ErrorDuringPaymentConfirmation": "Error during order confirmation"
 }

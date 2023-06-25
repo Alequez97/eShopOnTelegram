@@ -13,6 +13,11 @@ using Newtonsoft.Json;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Order;
 
+/// <summary>
+/// <para>Currently this command is used to create new order.
+/// This command is executed when sendData(data: string) function is executed in web app</para>
+/// <i>Note: sendData() function is available only when web app is opened with telegram keyboard button</i>
+/// </summary>
 public class WebAppCommand : ITelegramCommand
 {
     private readonly ILogger<WebAppCommand> _logger;

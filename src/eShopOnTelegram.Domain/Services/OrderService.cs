@@ -231,6 +231,20 @@ public class OrderService : IOrderService
                 };
             }
 
+            var getUnpdaidOrderResponse = await GetUnpaidOrderByTelegramIdAsync(customer.TelegramUserUID, cancellationToken);
+            if (getUnpdaidOrderResponse.Status == ResponseStatus.Success || getUnpdaidOrderResponse.Data != null)
+            {
+                var response = await DeleteByOrderNumberAsync(getUnpdaidOrderResponse.Data.OrderNumber, cancellationToken);
+
+                if (response.Status != ResponseStatus.Success)
+                {
+                    return new CreateOrderResponse()
+                    {
+                        Status = ResponseStatus.Exception,
+                    };
+                }
+            }
+
             if (request.CartItems.Count == 0)
             {
                 return new CreateOrderResponse()
@@ -339,6 +353,39 @@ public class OrderService : IOrderService
                 Status = ResponseStatus.Success
             };
         }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
+    public async Task<ActionResponse> DeleteByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
+    {
+        try 
+        {
+            var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+
+            if (existingOrder == null)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            _dbContext.Orders.Remove(existingOrder);
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new ActionResponse
+            {
+                Status = ResponseStatus.Success
+            };
+        } 
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
