@@ -59,7 +59,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
                 {
                     await _telegramBot.SendTextMessageAsync(
                         chatId: telegramGroupId,
-                        text: "New order received!!!",
+                        text: "New order received!!! Click here for details",
                         parseMode: ParseMode.Html
                     );
                 }

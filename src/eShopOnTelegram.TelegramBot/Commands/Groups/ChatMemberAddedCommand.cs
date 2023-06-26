@@ -23,7 +23,7 @@ public class ChatMemberAddedCommand : ITelegramCommand
                 update.Message.Chat.Id,
                 welcomeMessage,
                 parseMode: ParseMode.Html);
-
+            
             return;
         }
     }
