@@ -1,0 +1,7 @@
+1) terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate"
+2) terraform validate
+3) terraform plan -input=false -out=test-plan -var="subscription_id=349526ee-2859-455b-8a10-1ffc02973465" -var-file="vars/dev.tfvars"
+3) (with spn) terraform plan -input=false -out=${{parameters.tfPlanName}} -var="spn-client-id=${{parameters.spnClientId}}" -var="spn-client-secret=${{parameters.spnClientSecret}}" -var="spn-tenant-id=${{parameters.spnTenantId}}" -var="subscription_id=${{parameters.subscriptionId}}" -var-file="${{parameters.tfVarFile}}"
+
+
+-backend-config="access_key=uZCtjGWI3MhoP9PoaZfYCfNQboCGM9f3ppurNCID7yV5GRsLoISs1V9CHC+qEjDsGo78jnejr00J+AStfEAiiQ=="
