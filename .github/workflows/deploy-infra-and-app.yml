@@ -36,7 +36,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -input=false -out=plan -var-file="vars/dev.tfvars"
+        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var-file="vars/dev.tfvars"
 
       - name: Teffaform Apply
         working-directory: terraform
