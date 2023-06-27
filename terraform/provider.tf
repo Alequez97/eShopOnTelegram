@@ -21,13 +21,11 @@ variable "subscription_id" {
 }
 
 provider "azurerm" {
-  features {}
-  subscription_id            = var.subscription_id
-  skip_provider_registration = "true"
-
   features {
     resource_group {
       prevent_deletion_if_contains_resources = true
     }
   }
+  subscription_id            = var.subscription_id
+  skip_provider_registration = "true"
 }

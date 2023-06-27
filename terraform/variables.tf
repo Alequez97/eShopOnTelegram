@@ -14,3 +14,13 @@ variable "app_environment" {
   type = string
   description = "App environment"
 }
+
+variable "sql_server_name" {
+  type = string
+  description = "Sql server name"
+}
+
+variable "sql_database_name" {
+  type = string
+  description = "Sql database name"
+}
