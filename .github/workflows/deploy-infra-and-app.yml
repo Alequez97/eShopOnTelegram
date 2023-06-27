@@ -48,9 +48,7 @@ jobs:
       - name: Set admin app name env variable from terraform output
         working-directory: terraform
         id: terraformoutput
-        run: |
-          output=$(terraform output admin_app_name)
-          echo "adminAppName=$output" >> $GITHUB_OUTPUT
+        run: echo "adminAppName=$(terraform output admin_app_name)" >> $GITHUB_OUTPUT
       
     outputs:
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
