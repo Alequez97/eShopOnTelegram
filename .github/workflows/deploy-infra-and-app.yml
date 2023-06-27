@@ -41,7 +41,9 @@ jobs:
       - name: Teffaform Apply
         id: terraformapply
         working-directory: terraform
-        run: terraform apply "plan"
+        run: |
+          terraform apply "plan"
+          echo "::set-output name=admin_app_name::$(terraform output -json admin_app_name)"
   
   deploy_admin_app:
     runs-on: ubuntu-latest
@@ -81,7 +83,7 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: steps.terraformapply.outputs.admin_app_name
+          app-name: ${{ needs.deploy_infrastructure.outputs.terraformapply.outputs.admin_app_name }}
           package: src/eShopOnTelegram.Admin/publish
 
   # deploy_telegram_webapp:
