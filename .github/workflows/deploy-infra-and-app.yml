@@ -45,12 +45,11 @@ jobs:
         working-directory: terraform
         run: terraform apply "plan"
 
-      - name: Echo output variable
+      - name: Set admin app name env variable from terraform output
         working-directory: terraform
         run: |
           output=$(terraform output admin_app_name)
-          echo $output
-          echo $output >> $ADMIN_APP_NAME
+          echo "ADMIN_APP_NAME=$output" >> $GITHUB_ENV
   
   deploy_admin_app:
     runs-on: ubuntu-latest
