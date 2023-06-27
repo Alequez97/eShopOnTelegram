@@ -20,34 +20,34 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
 
 jobs:
-  deploy_infrastructure:
-    runs-on: ubuntu-latest
+  # deploy_infrastructure:
+  #   runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
 
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v2
+  #     - name: Set up Terraform
+  #       uses: hashicorp/setup-terraform@v2
 
-      - name: Initialize Terraform
-        working-directory: terraform
-        run: terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate" -reconfigure
+  #     - name: Initialize Terraform
+  #       working-directory: terraform
+  #       run: terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate" -reconfigure
 
-      - name: Terraform Plan
-        working-directory: terraform
-        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var-file="vars/dev.tfvars"
+  #     - name: Terraform Plan
+  #       working-directory: terraform
+  #       run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var-file="vars/dev.tfvars"
 
-      - name: Teffaform Apply
-        id: terraformapply
-        working-directory: terraform
-        run: terraform apply "plan"
+  #     - name: Teffaform Apply
+  #       id: terraformapply
+  #       working-directory: terraform
+  #       run: terraform apply "plan"
   
   deploy_admin_app:
     runs-on: ubuntu-latest
     
     name: Deploy admin app to dev env
-    needs: [deploy_infrastructure]
+    # needs: [deploy_infrastructure]
     
     steps:
       - name: Checkout
@@ -57,6 +57,9 @@ jobs:
         uses: actions/setup-dotnet@v1
         with:
           dotnet-version: 7.0.x
+
+      - name: Install pnpm
+        run: npm install -g pnpm
 
       - name: Restore NuGet packages
         working-directory: src/eShopOnTelegram.Admin
@@ -78,7 +81,8 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: steps.terraformapply.outputs.admin_app_name
+          # app-name: steps.terraformapply.outputs.admin_app_name
+          app-name: app-admin-eshopontelegram-dev
           package: src/eShopOnTelegram.Admin/publish
 
   # deploy_telegram_webapp:
