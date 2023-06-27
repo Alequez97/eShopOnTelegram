@@ -30,7 +30,7 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_wrapper: true
+          terraform_wrapper: false
 
       - name: Initialize Terraform
         working-directory: terraform
@@ -46,7 +46,10 @@ jobs:
         run: terraform apply "plan"
 
       - name: Echo output variable
-        run: echo ${{ steps.terraformapply.outputs.admin_app_name }}
+        run: |
+          output=$(terraform output admin_app_name)
+          echo $output
+          echo $output >> $ADMIN_APP_NAME
   
   deploy_admin_app:
     runs-on: ubuntu-latest
@@ -86,7 +89,7 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ steps.terraformapply.outputs.admin_app_name }}
+          app-name: ${{ env.ADMIN_APP_NAME }}
           package: src/eShopOnTelegram.Admin/publish
 
   # deploy_telegram_webapp:
