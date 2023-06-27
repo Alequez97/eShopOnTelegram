@@ -6,7 +6,7 @@ resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = "northeurope"
 
-  tags                = local.az_common_tags
+  tags = local.az_common_tags
 }
 
 resource "azurerm_mssql_server" "mssqlserver" {
@@ -17,7 +17,7 @@ resource "azurerm_mssql_server" "mssqlserver" {
   administrator_login          = "aleksandrs"
   administrator_login_password = "4-v3ry-53cr37-p455w0rd"
 
-  tags                = local.az_common_tags
+  tags = local.az_common_tags
 }
 
 resource "azurerm_mssql_database" "mssqldatabase" {
@@ -27,6 +27,17 @@ resource "azurerm_mssql_database" "mssqldatabase" {
   ledger_enabled = false
   license_type   = "BasePrice"
   sku_name       = "Basic"
+
+  tags = local.az_common_tags
+}
+
+resource "azurerm_storage_account" "storageaccount" {
+  name                     = var.storage_account_name
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  account_tier             = "Standard"
+  account_replication_type = "GRS"
+  allow_nested_items_to_be_public   = true
 
   tags = local.az_common_tags
 }
@@ -55,6 +66,10 @@ resource "azurerm_linux_web_app" "admin" {
     application_stack {
       dotnet_version ="6.0"
     }
+  }
+
+  app_settings = {
+    "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
   }
 
   tags = local.az_common_tags

@@ -25,6 +25,11 @@ variable "sql_database_name" {
   description = "Sql database name"
 }
 
+variable "storage_account_name" {
+  type = string
+  description = "Storage account name"
+}
+
 variable "app_service_plan_name" {
   type = string
   description = "App service plan name"
