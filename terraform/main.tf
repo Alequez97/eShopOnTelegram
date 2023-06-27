@@ -112,3 +112,11 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
 
   tags = local.az_common_tags
 }
+
+output "admin_app_name" {
+  value = azurerm_linux_web_app.admin.name
+}
+
+output "telegram_webapp_name" {
+  value = azurerm_linux_web_app.telegramwebapp.name
+}

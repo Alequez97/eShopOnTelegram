@@ -39,8 +39,54 @@ jobs:
         run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var-file="vars/dev.tfvars"
 
       - name: Teffaform Apply
+        id: terraformapply
         working-directory: terraform
         run: terraform apply "plan"
-        
+  
+  deploy_admin_app:
+    runs-on: ubuntu-latest
+    
+    name: Deploy admin app to dev env
+    needs: [deploy_infrastructure]
+    
+    steps: 
+      - name: Deploy
+        run: echo Do dev env deployment
 
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+
+      - name: Restore NuGet packages
+        working-directory: src/eShopOnTelegram.Admin
+        run: dotnet restore
+
+      - name: Build admin application
+        working-directory: src/eShopOnTelegram.Admin
+        run: dotnet build --configuration Release --no-restore
       
+      - name: Publish admin application
+        working-directory: src/eShopOnTelegram.Admin
+        run: dotnet publish --configuration Release --no-build --output publish
+
+      - name: Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: steps.terraformapply.outputs.admin_app_name
+          package: src/eShopOnTelegram.Admin/publish
+
+  # deploy_telegram_webapp:
+  #   runs-on: ubuntu-latest
+    
+  #   name: Deploy to Dev
+  #   needs: [deploy_infrastructure]
+    
+  #   steps: 
+  #     - name: Deploy
+  #       run: echo Do dev env deployment
