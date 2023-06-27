@@ -47,9 +47,10 @@ jobs:
 
       - name: Set admin app name env variable from terraform output
         working-directory: terraform
+        id: terraformoutput
         run: |
           output=$(terraform output admin_app_name)
-          echo "ADMIN_APP_NAME=$output" >> $GITHUB_ENV
+          echo "adminAppName=$output" >> $GITHUB_OUTPUT
   
   deploy_admin_app:
     runs-on: ubuntu-latest
@@ -89,7 +90,7 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ env.ADMIN_APP_NAME }}
+          app-name: ${{ needs.terraformoutput.outputs.adminAppName }}
           package: src/eShopOnTelegram.Admin/publish
 
   # deploy_telegram_webapp:
