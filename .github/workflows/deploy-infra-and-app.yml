@@ -46,6 +46,7 @@ jobs:
         run: terraform apply "plan"
 
       - name: Echo output variable
+        working-directory: terraform
         run: |
           output=$(terraform output admin_app_name)
           echo $output
