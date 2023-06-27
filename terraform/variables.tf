@@ -39,3 +39,8 @@ variable "admin_app_name" {
   type = string
   description = "Admin application name"
 }
+
+variable "telegram_webapp_name" {
+  type = string
+  description = "Telegram webapp name"
+}

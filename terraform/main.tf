@@ -87,3 +87,28 @@ resource "azurerm_linux_web_app" "admin" {
 
   tags = local.az_common_tags
 }
+
+resource "azurerm_linux_web_app" "telegramwebapp" {
+  name                = var.telegram_webapp_name
+  resource_group_name = azurerm_resource_group.rg.name
+  location            = azurerm_service_plan.serviceplan.location
+  service_plan_id     = azurerm_service_plan.serviceplan.id
+  https_only          = true
+
+  site_config {
+    always_on = false
+    minimum_tls_version = 1.2
+
+    application_stack {
+      dotnet_version ="6.0"
+    }
+  }
+  
+  connection_string {
+    name = "Sql"
+    type = "SQLServer"
+    value = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  }
+
+  tags = local.az_common_tags
+}
