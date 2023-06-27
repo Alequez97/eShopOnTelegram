@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v3
 
       - name: Set up Terraform
@@ -49,9 +49,9 @@ jobs:
     name: Deploy admin app to dev env
     needs: [deploy_infrastructure]
     
-    steps: 
-      - name: Deploy
-        run: echo Do dev env deployment
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
