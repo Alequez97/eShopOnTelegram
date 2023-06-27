@@ -70,7 +70,7 @@ resource "azurerm_linux_web_app" "admin" {
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version ="6.0"
     }
   }
 
@@ -100,7 +100,7 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version ="6.0"
     }
   }
   
