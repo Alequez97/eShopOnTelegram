@@ -24,3 +24,13 @@ variable "sql_database_name" {
   type = string
   description = "Sql database name"
 }
+
+variable "app_service_plan_name" {
+  type = string
+  description = "App service plan name"
+}
+
+variable "admin_app_name" {
+  type = string
+  description = "Admin application name"
+}
