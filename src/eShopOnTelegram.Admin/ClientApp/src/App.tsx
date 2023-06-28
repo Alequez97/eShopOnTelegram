@@ -10,7 +10,7 @@ import { ProductCategoriesEdit } from "./components/product-categories/ProductCa
 import { ProductEdit } from "./components/products/ProductEdit";
 import ApplicationContentEdit from "./components/application-content/ApplicationContentEdit";
 
-const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? "";
+const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? "/api";
 const dataProvider = restProvider(apiBaseUrl);
 
 function App() {
