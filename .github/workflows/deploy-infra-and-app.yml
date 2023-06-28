@@ -123,11 +123,11 @@ jobs:
         working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
         run: dotnet restore
 
-      - name: Build admin application
+      - name: Build telegram webapp
         working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
         run: dotnet build --configuration Release --no-restore
       
-      - name: Publish admin application
+      - name: Publish telegram webapp
         working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
         run: dotnet publish --configuration Release --no-build --output publish
 
@@ -139,5 +139,5 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
+          app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
           package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish

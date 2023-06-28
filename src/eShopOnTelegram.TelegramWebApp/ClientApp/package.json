@@ -5,10 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "pnpm scss-types && vite",
+    "build": "pnpm scss-types && tsc && vite build",
     "watch": "pnpm scss-types && vite build --mode dev --watch",
-    "start:dev": "pnpm scss-types && vite --mode dev",
-    "build:dev": "pnpm scss-types && tsc && vite build --mode dev",
-    "build:stage": "pnpm scss-types && tsc && vite build --mode stage",
     "scss-types": "typed-scss-modules src",
     "preview": "vite preview",
     "lint": "eslint ./src/"
