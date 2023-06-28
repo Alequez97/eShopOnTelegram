@@ -1,5 +1,5 @@
 ﻿[Unit]
-Description=eShopOnTelegram.TelegramBot Telegram Bot
+Description=eShopOnTelegram.TelegramBot
 
 [Service]
 # will set the Current Working Directory (CWD). Worker service will have issues without this setting
@@ -18,7 +18,7 @@ User=root
 
 # ensure the service restarts after crashing
 Restart=always
-# amount of time to wait before restarting the service                  
+# amount of time to wait before restarting the service
 RestartSec=5
 
 # This environment variable is necessary when dotnet isn't loaded for the specified user.
