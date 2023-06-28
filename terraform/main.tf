@@ -82,8 +82,8 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Azure.StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
-    "Azure.RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
+    "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
+    "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
   }
 
   connection_string {
