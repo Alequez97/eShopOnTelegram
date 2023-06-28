@@ -18,10 +18,14 @@ env:
   ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+  ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
+  TELEGRAM_WEBAPP_LOCATION: src/eShopOnTelegram.TelegramWebApp
 
 jobs:
   deploy_infrastructure:
     runs-on: ubuntu-latest
+    
+    name: Deploy Azure infrastructure
 
     steps:
       - name: Checkout
@@ -45,13 +49,16 @@ jobs:
         working-directory: terraform
         run: terraform apply "plan"
 
-      - name: Set admin app name env variable from terraform output
+      - name: Set terraform output to GitHub env variables
         working-directory: terraform
         id: terraformoutput
-        run: echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
+        run: |
+          echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
+          echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
       
     outputs:
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
+      telegramWebAppName: ${{ steps.terraformoutput.outputs.telegramWebAppName }}
   
   deploy_admin_app:
     runs-on: ubuntu-latest
@@ -72,15 +79,15 @@ jobs:
         run: npm install -g pnpm
 
       - name: Restore NuGet packages
-        working-directory: src/eShopOnTelegram.Admin
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
         run: dotnet restore
 
       - name: Build admin application
-        working-directory: src/eShopOnTelegram.Admin
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
         run: dotnet build --configuration Release --no-restore
       
       - name: Publish admin application
-        working-directory: src/eShopOnTelegram.Admin
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
         run: dotnet publish --configuration Release --no-build --output publish
 
       - name: Azure CLI Login
@@ -92,14 +99,45 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
-          package: src/eShopOnTelegram.Admin/publish
+          package: ${{ env.ADMIN_APP_LOCATION }}/publish
 
-  # deploy_telegram_webapp:
-  #   runs-on: ubuntu-latest
+  deploy_telegram_webapp:
+    runs-on: ubuntu-latest
     
-  #   name: Deploy to Dev
-  #   needs: [deploy_infrastructure]
+    name: 'Deploy telegram webapp'
+    needs: [deploy_infrastructure]
     
-  #   steps: 
-  #     - name: Deploy
-  #       run: echo Do dev env deployment
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Install pnpm
+        run: npm install -g pnpm
+
+      - name: Restore NuGet packages
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet restore
+
+      - name: Build admin application
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet build --configuration Release --no-restore
+      
+      - name: Publish admin application
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet publish --configuration Release --no-build --output publish
+
+      - name: Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
+          package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
