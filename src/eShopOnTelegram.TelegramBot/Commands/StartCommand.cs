@@ -69,6 +69,8 @@ namespace eShopOnTelegram.TelegramBot.Commands
                         await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.StartError, CancellationToken.None),
                         parseMode: ParseMode.Html
                     );
+
+                    return;
                 }
 
                 var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
