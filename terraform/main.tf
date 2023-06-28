@@ -20,6 +20,13 @@ resource "azurerm_mssql_server" "mssqlserver" {
   tags = local.az_common_tags
 }
 
+resource "azurerm_mssql_firewall_rule" "firewall" {
+  name             = "AllowAccessToAzureServices"
+  server_id        = azurerm_mssql_server.mssqlserver.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}
+
 resource "azurerm_mssql_database" "mssqldatabase" {
   name           = var.sql_database_name
   server_id      = azurerm_mssql_server.mssqlserver.id
