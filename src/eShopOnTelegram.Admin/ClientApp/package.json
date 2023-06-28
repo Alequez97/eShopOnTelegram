@@ -5,10 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "typed-scss-modules src && vite",
-    "start:dev": "typed-scss-modules src --watch && vite --mode dev",
     "build": "typed-scss-modules src && tsc && vite build",
-    "build:dev": "typed-scss-modules src && tsc && vite build --mode dev",
-    "build:stage": "typed-scss-modules src && tsc && vite build --mode stage",
     "watch": "typed-scss-modules src --watch && vite build --watch",
     "scss-types": "typed-scss-modules src --watch",
     "preview": "vite preview",
