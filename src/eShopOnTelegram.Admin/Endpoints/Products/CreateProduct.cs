@@ -1,8 +1,7 @@
-﻿using eShopOnTelegram.Domain.Requests.Products;
+﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
+using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.Admin.Constants;
 
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
@@ -19,7 +18,7 @@ public class CreateProduct : EndpointBaseAsync
 
     [HttpPost("/api/products")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
-    public override async Task<ActionResult<Response>> HandleAsync([FromBody] CreateProductRequest request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult<Response>> HandleAsync([FromForm] CreateProductRequest request, CancellationToken cancellationToken = default)
     {
         var response = await _productService.CreateAsync(request, cancellationToken);
         return response.AsActionResult();

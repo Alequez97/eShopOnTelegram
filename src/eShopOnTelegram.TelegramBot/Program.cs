@@ -5,6 +5,8 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Extensions;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.Persistence.Files.Interfaces;
+using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
@@ -27,6 +29,8 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddDbContext<EShopOnTelegramDbContext>(
             options => options.UseSqlServer(configuration.GetConnectionString("Sql")));
+
+        services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 
         services.AddSingleton<ITelegramBotClient>(_ =>
         {

@@ -3,17 +3,28 @@ using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Files.Interfaces;
+
+using Microsoft.Extensions.Configuration;
 
 namespace eShopOnTelegram.Domain.Services;
 
 public class ProductService : IProductService
 {
     private readonly EShopOnTelegramDbContext _dbContext;
+    private readonly IProductImagesStore _productImagesStore;
+    private readonly string _productImagesHostname;
     private readonly ILogger<ProductService> _logger;
 
-    public ProductService(EShopOnTelegramDbContext dbContext, ILogger<ProductService> logger)
+    public ProductService(
+        EShopOnTelegramDbContext dbContext,
+        IProductImagesStore productImagesStore,
+        IConfiguration configuration,
+        ILogger<ProductService> logger)
     {
         _dbContext = dbContext;
+        _productImagesStore = productImagesStore;
+        _productImagesHostname = configuration["ProductImagesHostName"];
         _logger = logger;
     }
 
@@ -35,14 +46,14 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                //Image = product.ImageName
+                Image = $"{_productImagesHostname}/{product.ImageName}"
             });
 
             return new Response<IEnumerable<ProductDto>>()
             {
                 Status = ResponseStatus.Success,
                 Data = getProductsResponse,
-                TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+                TotalItemsInDatabase = await _dbContext.Products.Where(product => product.IsDeleted == false).CountAsync(cancellationToken)
             };
         }
         catch (Exception exception)
@@ -73,7 +84,7 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                //Image = product.ImageName
+                Image = $"{_productImagesHostname}/{product.ImageName}"
             });
 
             return new Response<IEnumerable<ProductDto>>()
@@ -117,7 +128,7 @@ public class ProductService : IProductService
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
                 QuantityLeft = product.QuantityLeft,
-                Image = product.ImageName
+                Image = $"{_productImagesHostname}/{product.ImageName}"
             };
 
             return new Response<ProductDto>()
@@ -153,6 +164,8 @@ public class ProductService : IProductService
                 };
             }
 
+            var storedImageName = await _productImagesStore.SaveAsync(request.ProductImage, CancellationToken.None);
+
             var product = new Product()
             {
                 Name = request.ProductName,
@@ -160,7 +173,8 @@ public class ProductService : IProductService
                 PriceWithDiscount = request.PriceWithDiscount,
                 QuantityLeft = request.QuantityLeft,
                 Category = existingProductCategory,
-                IsDeleted = false
+                IsDeleted = false,
+                ImageName = storedImageName
             };
 
             _dbContext.Products.Add(product);
@@ -255,6 +269,8 @@ public class ProductService : IProductService
 
             existingProduct.IsDeleted = true;
             await _dbContext.SaveChangesAsync(cancellationToken);
+
+            await _productImagesStore.DeleteAsync(existingProduct.ImageName);
 
             return new ActionResponse()
             {

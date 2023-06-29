@@ -1,5 +1,7 @@
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.Persistence.Files.Interfaces;
+using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 
@@ -15,6 +17,8 @@ builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+
+builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 
 builder.Services.AddDbContext<EShopOnTelegramDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));

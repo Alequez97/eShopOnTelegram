@@ -27,7 +27,7 @@ function Card({ product, onAdd, onRemove }: CardProps) {
   return (
     <div className={classes.card}>
       <div className={classes.imageContainer}>
-        <img src={'https://math-media.byjusfutureschool.com/bfs-math/2022/07/04185628/Asset-1-8-300x300.png'} alt={productName} />
+        <img src={product.image} alt={productName} />
       </div>
       <h4 className={classes.cardTitle}>
         {productName}
