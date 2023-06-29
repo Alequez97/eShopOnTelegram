@@ -58,7 +58,7 @@ resource "azurerm_storage_container" "runtime_configuration_blob_storage" {
 resource "azurerm_storage_container" "product_images_blob_storage" {
   name                  = "product-images"
   storage_account_name  = azurerm_storage_account.storageaccount.name
-  container_access_type = "public"
+  container_access_type = "container"
 }
 
 resource "azurerm_service_plan" "serviceplan" {
