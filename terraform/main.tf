@@ -39,11 +39,11 @@ resource "azurerm_mssql_database" "mssqldatabase" {
 }
 
 resource "azurerm_storage_account" "storageaccount" {
-  name                     = var.storage_account_name
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_tier             = "Standard"
-  account_replication_type = "GRS"
+  name                              = var.storage_account_name
+  resource_group_name               = azurerm_resource_group.rg.name
+  location                          = azurerm_resource_group.rg.location
+  account_tier                      = "Standard"
+  account_replication_type          = "GRS"
   allow_nested_items_to_be_public   = true
 
   tags = local.az_common_tags
@@ -53,6 +53,12 @@ resource "azurerm_storage_container" "runtime_configuration_blob_storage" {
   name                  = "runtime-configuration"
   storage_account_name  = azurerm_storage_account.storageaccount.name
   container_access_type = "private"
+}
+
+resource "azurerm_storage_container" "product_images_blob_storage" {
+  name                  = "product-images"
+  storage_account_name  = azurerm_storage_account.storageaccount.name
+  container_access_type = "public"
 }
 
 resource "azurerm_service_plan" "serviceplan" {
@@ -73,22 +79,23 @@ resource "azurerm_linux_web_app" "admin" {
   https_only          = true
 
   site_config {
-    always_on = false
+    always_on           = false
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version = "7.0"
     }
   }
 
   app_settings = {
-    "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
+    "Azure__StorageAccountConnectionString"        = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
+    "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
   }
 
   connection_string {
-    name = "Sql"
-    type = "SQLServer"
+    name  = "Sql"
+    type  = "SQLServer"
     value = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 
@@ -110,10 +117,16 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
       dotnet_version ="7.0"
     }
   }
+
+  app_settings = {
+    "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
+    "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+    "ProductImagesHostName"                 = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
+  }
   
   connection_string {
-    name = "Sql"
-    type = "SQLServer"
+    name  = "Sql"
+    type  = "SQLServer"
     value = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 
