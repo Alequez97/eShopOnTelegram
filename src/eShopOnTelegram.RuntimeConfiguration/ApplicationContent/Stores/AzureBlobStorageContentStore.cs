@@ -2,6 +2,7 @@
 
 using Azure.Storage.Blobs;
 
+using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 using Microsoft.Extensions.Configuration;
@@ -35,7 +36,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         _logger = logger;
     }
 
-    public async Task<string> GetApplicationContentAsJsonStringAsync(CancellationToken cancellationToken)
+    public async Task<ApplicationContentModel> GetApplicationContentAsync(CancellationToken cancellationToken)
     {
         try
         {
@@ -45,7 +46,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         {
             _logger.LogError(exception, exception.Message);
 
-            return await _applicationDefaultContentStore.GetDefaultApplicationContentAsJsonStringAsync(cancellationToken);
+            return await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
         }
     }
 
@@ -53,9 +54,9 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
     {
         try
         {
-            var applicationContentJsonAsString = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+            var applicationContentModel = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
 
-            var data = JObject.Parse(applicationContentJsonAsString);
+            var data = JObject.Parse(JsonConvert.SerializeObject(applicationContentModel));
             var value = data[key]?.ToString();
 
             return !string.IsNullOrWhiteSpace(value) ? value : await _applicationDefaultContentStore.GetDefaultValueAsync(key, cancellationToken);
@@ -72,8 +73,8 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
     {
         try
         {
-            var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-            var data = JObject.Parse(applicationContentJson);
+            var applicationContentModel = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+            var data = JObject.Parse(JsonConvert.SerializeObject(applicationContentModel));
 
             foreach (var keyValue in keyValues)
             {
@@ -92,70 +93,71 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         }
     }
 
-    private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
+    private async Task<ApplicationContentModel> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
     {
         var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
-        var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsJsonStringAsync(cancellationToken);
-
-        using var memoryStream = new MemoryStream();
-
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
+            var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
+
             await UploadApplicationContentToBlobContainerAsync(JsonConvert.SerializeObject(defaultApplicatonContent), cancellationToken);
+            return defaultApplicatonContent;
         }
 
-        await blobClient.DownloadToAsync(memoryStream, cancellationToken);
+        using var applicationContentBlobStorageMemoryStream = new MemoryStream();
+        await blobClient.DownloadToAsync(applicationContentBlobStorageMemoryStream, cancellationToken);
 
-        memoryStream.Position = 0;
+        applicationContentBlobStorageMemoryStream.Position = 0;
 
-        using var reader = new StreamReader(memoryStream);
-        var downloadedJsonContent = await reader.ReadToEndAsync(cancellationToken);
+        using var applicationContentBlobStorageReader = new StreamReader(applicationContentBlobStorageMemoryStream);
+        var applicationContentFromAzureBlobStorage = await applicationContentBlobStorageReader.ReadToEndAsync(cancellationToken);
+        var applicationContentModel = JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentFromAzureBlobStorage);
 
-        var defaultObject = JObject.Parse(defaultApplicatonContent);
-        var azureBlobStorageObject = JObject.Parse(downloadedJsonContent);
+        //var defaultObject = JObject.Parse(defaultApplicatonContent);
+        //var azureBlobStorageObject = JObject.Parse(applicationContentFromAzureBlobStorage);
 
-        // Check if any new keys are missing in the azure blob storage JSON
-        var missingKeys = defaultObject.Properties()
-            .Where(p => !azureBlobStorageObject.ContainsKey(p.Name))
-            .ToList();
+        //// Check if any new keys are missing in the azure blob storage JSON
+        //var missingKeys = defaultObject.Properties()
+        //    .Where(p => !azureBlobStorageObject.ContainsKey(p.Name))
+        //    .ToList();
 
-        if (missingKeys.Any())
-        {
-            var propertiesToInsert = missingKeys.Select(jsonProperty =>
-            {
-                var defaultValue = jsonProperty.Value;
-                return new JProperty(jsonProperty.Name, defaultValue);
-            });
+        //if (missingKeys.Any())
+        //{
+        //    var propertiesToInsert = missingKeys.Select(jsonProperty =>
+        //    {
+        //        var defaultValue = jsonProperty.Value;
+        //        return new JProperty(jsonProperty.Name, defaultValue);
+        //    });
 
-            // Find the appropriate position to insert the missing keys
-            var defaultObjectPropertiesList = defaultObject.Properties().ToList();
-            var azureBlobStorageObjectPropertiesList = azureBlobStorageObject.Properties().ToList();
+        //    // Find the appropriate position to insert the missing keys
+        //    var defaultObjectPropertiesList = defaultObject.Properties().ToList();
+        //    var azureBlobStorageObjectPropertiesList = azureBlobStorageObject.Properties().ToList();
 
-            foreach (var missingKey in missingKeys)
-            {
-                var keyIndex = defaultObjectPropertiesList.IndexOf(missingKey);
-                if (keyIndex >= 0)
-                {
-                    azureBlobStorageObjectPropertiesList.Insert(keyIndex, missingKey);
-                }
-            }
+        //    foreach (var missingKey in missingKeys)
+        //    {
+        //        var keyIndex = defaultObjectPropertiesList.IndexOf(missingKey);
+        //        if (keyIndex >= 0)
+        //        {
+        //            azureBlobStorageObjectPropertiesList.Insert(keyIndex, missingKey);
+        //        }
+        //    }
 
-            // Create a new JObject with the updated properties
-            azureBlobStorageObject = new JObject(azureBlobStorageObjectPropertiesList);
+        //    // Create a new JObject with the updated properties
+        //    azureBlobStorageObject = new JObject(azureBlobStorageObjectPropertiesList);
 
-            downloadedJsonContent = azureBlobStorageObject.ToString();
+        //    applicationContentFromAzureBlobStorage = azureBlobStorageObject.ToString();
 
-            // Upload updated JSON to Azure Blob Storage
-            memoryStream.Position = 0;
-            using var writer = new StreamWriter(memoryStream);
-            await writer.WriteAsync(downloadedJsonContent);
-            await writer.FlushAsync();
-            memoryStream.Position = 0;
-            await blobClient.UploadAsync(memoryStream, true, cancellationToken);
-        }
+        //    // Upload updated JSON to Azure Blob Storage
+        //    applicationContentBlobStorageMemoryStream.Position = 0;
+        //    using var writer = new StreamWriter(applicationContentBlobStorageMemoryStream);
+        //    await writer.WriteAsync(applicationContentFromAzureBlobStorage);
+        //    await writer.FlushAsync();
+        //    applicationContentBlobStorageMemoryStream.Position = 0;
+        //    await blobClient.UploadAsync(applicationContentBlobStorageMemoryStream, true, cancellationToken);
+        //}
 
-        return downloadedJsonContent;
+        return applicationContentModel;
     }
 
     private async Task UploadApplicationContentToBlobContainerAsync(string contentJson, CancellationToken cancellationToken)

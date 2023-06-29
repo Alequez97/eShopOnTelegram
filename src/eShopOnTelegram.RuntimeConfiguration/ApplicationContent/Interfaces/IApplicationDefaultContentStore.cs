@@ -1,8 +1,10 @@
-﻿namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
+
+namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 public interface IApplicationDefaultContentStore
 {
-    Task<string> GetDefaultApplicationContentAsJsonStringAsync(CancellationToken cancellationToken);
+    Task<ApplicationContentModel> GetDefaultApplicationContentAsync(CancellationToken cancellationToken);
 
     Task<string> GetDefaultValueAsync(string key, CancellationToken cancellationToken);
 }

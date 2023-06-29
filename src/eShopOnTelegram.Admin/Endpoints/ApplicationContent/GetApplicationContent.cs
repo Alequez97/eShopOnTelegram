@@ -1,6 +1,8 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
+using Newtonsoft.Json;
+
 namespace eShopOnTelegram.Admin.Endpoints.ApplicationContent;
 
 public class GetApplicationContent : EndpointBaseAsync
@@ -18,6 +20,6 @@ public class GetApplicationContent : EndpointBaseAsync
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ApplicationContent })]
     public override async Task<ActionResult> HandleAsync(CancellationToken cancellationToken)
     {
-        return Ok(await _applicationContentStore.GetApplicationContentAsJsonStringAsync(cancellationToken));
+        return Ok(JsonConvert.SerializeObject(await _applicationContentStore.GetApplicationContentAsync(cancellationToken)));
     }
 }

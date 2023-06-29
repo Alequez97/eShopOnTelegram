@@ -16,6 +16,7 @@ const ApplicationContentEdit: React.FC = () => {
     const fetchApplicationContent = async () => {
       try {
         const { data } = await axios.get("/applicationContent");
+        console.log(data);
         setApplicationContent(data);
       } catch (error) {
         notify("Error saving application content data", { type: "error" });
@@ -73,6 +74,7 @@ const ApplicationContentEdit: React.FC = () => {
   return (
     <SimpleForm onSubmit={handleSave}>
       {Object.entries(applicationContent).map(([key, value], index, array) => {
+        console.log(key, value)
         if (
           index === 0 ||
           key.split(".")[0] !== array[index - 1][0].split(".")[0]
