@@ -7,7 +7,6 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
@@ -102,7 +101,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
-            await UploadApplicationContentToBlobContainerAsync(JsonConvert.SerializeObject(defaultApplicatonContent), cancellationToken);
+            await UploadApplicationContentToBlobContainerAsync(defaultApplicatonContent, cancellationToken);
         }
 
         await blobClient.DownloadToAsync(memoryStream, cancellationToken);

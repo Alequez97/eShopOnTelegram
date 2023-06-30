@@ -1,7 +1,7 @@
-﻿using System.Reflection;
-
+﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
@@ -10,12 +10,7 @@ public class FileSystemDefaultContentStore : IApplicationDefaultContentStore
 {
     public async Task<string> GetDefaultApplicationContentAsJsonStringAsync(CancellationToken cancellationToken)
     {
-        var applicationContentDefaultFileName = "application-content-defaults.json";
-        var appLocation = Path.GetDirectoryName(Assembly.GetEntryAssembly().Location);
-
-        var fileLocation = $"{appLocation}/ApplicationContent/Content/{applicationContentDefaultFileName}";
-
-        return await File.ReadAllTextAsync(fileLocation, cancellationToken);
+        return await Task.FromResult(JsonConvert.SerializeObject(new DefaultApplicationContentModel()));
     }
 
     public async Task<string> GetDefaultValueAsync(string key, CancellationToken cancellationToken)
