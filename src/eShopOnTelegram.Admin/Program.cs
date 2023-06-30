@@ -5,8 +5,8 @@ using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 
-using Microsoft.ApplicationInsights.AspNetCore.Extensions;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +26,16 @@ builder.Services.AddDbContext<EShopOnTelegramDbContext>(
 
 builder.Services.AddControllersWithViews();
 
-var instrumentationKey = builder.Configuration["Azure:AppInsightsInstrumentationKey"];
-if (!string.IsNullOrWhiteSpace(instrumentationKey))
+var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
+if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
 {
-    builder.Services.AddApplicationInsightsTelemetry(new ApplicationInsightsServiceOptions()
-    {
-        ConnectionString = instrumentationKey,
-    });
+    builder.Logging.AddApplicationInsights(
+            configureTelemetryConfiguration: (config) =>
+                config.ConnectionString = appInsightsConnectionString,
+                configureApplicationInsightsLoggerOptions: (options) => { }
+        );
+
+    builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
 }
 
 var app = builder.Build();

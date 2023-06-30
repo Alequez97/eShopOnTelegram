@@ -1,7 +1,5 @@
 ##### AZ RESOURCES DOCU ####
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/
-data "azurerm_client_config" "ui" {}
-
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = "northeurope"
@@ -96,7 +94,8 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Azure__AppInsightsInstrumentationKey"         = azurerm_application_insights.app_insights.instrumentation_key
+    "Azure__AppInsightsConnectionString"           = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
+    "Logging__ApplicationInsights"                 = "Information"
     "Azure__StorageAccountConnectionString"        = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
@@ -128,7 +127,8 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   }
 
   app_settings = {
-    "Azure__AppInsightsInstrumentationKey"  = azurerm_application_insights.app_insights.instrumentation_key
+    "Azure__AppInsightsConnectionString"    = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
+    "Logging__ApplicationInsights"          = "Information"
     "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "ProductImagesHostName"                 = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"

@@ -71,19 +71,17 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
     {
         try
         {
-            throw new Exception("Test application insights");
+            var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
+            var data = JObject.Parse(applicationContentJson);
 
-            //var applicationContentJson = await ReadApplicationContentFromBlobContainerAsync(cancellationToken);
-            //var data = JObject.Parse(applicationContentJson);
+            foreach (var keyValue in keyValues)
+            {
+                data[keyValue.Key] = keyValue.Value;
+            }
 
-            //foreach (var keyValue in keyValues)
-            //{
-            //    data[keyValue.Key] = keyValue.Value;
-            //}
+            await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);
 
-            //await UploadApplicationContentToBlobContainerAsync(data.ToString(), cancellationToken);
-
-            //return true;
+            return true;
         }
         catch (Exception exception)
         {
