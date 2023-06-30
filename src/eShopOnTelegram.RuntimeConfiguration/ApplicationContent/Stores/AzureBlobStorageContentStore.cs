@@ -95,11 +95,12 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
     private async Task<ApplicationContentModel> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
     {
+        var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
+
         var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
-            var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsync(cancellationToken);
 
             await UploadApplicationContentToBlobContainerAsync(JsonConvert.SerializeObject(defaultApplicatonContent), cancellationToken);
             return defaultApplicatonContent;
@@ -114,48 +115,48 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
         var applicationContentFromAzureBlobStorage = await applicationContentBlobStorageReader.ReadToEndAsync(cancellationToken);
         var applicationContentModel = JsonConvert.DeserializeObject<ApplicationContentModel>(applicationContentFromAzureBlobStorage);
 
-        //var defaultObject = JObject.Parse(defaultApplicatonContent);
-        //var azureBlobStorageObject = JObject.Parse(applicationContentFromAzureBlobStorage);
+        var defaultObject = JObject.Parse(JsonConvert.SerializeObject(defaultApplicatonContent));
+        var azureBlobStorageObject = JObject.Parse(applicationContentFromAzureBlobStorage);
 
-        //// Check if any new keys are missing in the azure blob storage JSON
-        //var missingKeys = defaultObject.Properties()
-        //    .Where(p => !azureBlobStorageObject.ContainsKey(p.Name))
-        //    .ToList();
+        // Check if any new keys are missing in the azure blob storage JSON
+        var missingKeys = defaultObject.Properties()
+            .Where(p => !azureBlobStorageObject.ContainsKey(p.Name))
+            .ToList();
 
-        //if (missingKeys.Any())
-        //{
-        //    var propertiesToInsert = missingKeys.Select(jsonProperty =>
-        //    {
-        //        var defaultValue = jsonProperty.Value;
-        //        return new JProperty(jsonProperty.Name, defaultValue);
-        //    });
+        if (missingKeys.Any())
+        {
+            var propertiesToInsert = missingKeys.Select(jsonProperty =>
+            {
+                var defaultValue = jsonProperty.Value;
+                return new JProperty(jsonProperty.Name, defaultValue);
+            });
 
-        //    // Find the appropriate position to insert the missing keys
-        //    var defaultObjectPropertiesList = defaultObject.Properties().ToList();
-        //    var azureBlobStorageObjectPropertiesList = azureBlobStorageObject.Properties().ToList();
+            // Find the appropriate position to insert the missing keys
+            var defaultObjectPropertiesList = defaultObject.Properties().ToList();
+            var azureBlobStorageObjectPropertiesList = azureBlobStorageObject.Properties().ToList();
 
-        //    foreach (var missingKey in missingKeys)
-        //    {
-        //        var keyIndex = defaultObjectPropertiesList.IndexOf(missingKey);
-        //        if (keyIndex >= 0)
-        //        {
-        //            azureBlobStorageObjectPropertiesList.Insert(keyIndex, missingKey);
-        //        }
-        //    }
+            foreach (var missingKey in missingKeys)
+            {
+                var keyIndex = defaultObjectPropertiesList.IndexOf(missingKey);
+                if (keyIndex >= 0)
+                {
+                    azureBlobStorageObjectPropertiesList.Insert(keyIndex, missingKey);
+                }
+            }
 
-        //    // Create a new JObject with the updated properties
-        //    azureBlobStorageObject = new JObject(azureBlobStorageObjectPropertiesList);
+            // Create a new JObject with the updated properties
+            azureBlobStorageObject = new JObject(azureBlobStorageObjectPropertiesList);
 
-        //    applicationContentFromAzureBlobStorage = azureBlobStorageObject.ToString();
+            applicationContentFromAzureBlobStorage = azureBlobStorageObject.ToString();
 
-        //    // Upload updated JSON to Azure Blob Storage
-        //    applicationContentBlobStorageMemoryStream.Position = 0;
-        //    using var writer = new StreamWriter(applicationContentBlobStorageMemoryStream);
-        //    await writer.WriteAsync(applicationContentFromAzureBlobStorage);
-        //    await writer.FlushAsync();
-        //    applicationContentBlobStorageMemoryStream.Position = 0;
-        //    await blobClient.UploadAsync(applicationContentBlobStorageMemoryStream, true, cancellationToken);
-        //}
+            // Upload updated JSON to Azure Blob Storage
+            applicationContentBlobStorageMemoryStream.Position = 0;
+            using var writer = new StreamWriter(applicationContentBlobStorageMemoryStream);
+            await writer.WriteAsync(applicationContentFromAzureBlobStorage);
+            await writer.FlushAsync();
+            applicationContentBlobStorageMemoryStream.Position = 0;
+            await blobClient.UploadAsync(applicationContentBlobStorageMemoryStream, true, cancellationToken);
+        }
 
         return applicationContentModel;
     }

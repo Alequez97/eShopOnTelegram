@@ -4,6 +4,15 @@ using Newtonsoft.Json;
 
 namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
 
+/// <summary>
+/// <para>This model contains default values as well
+/// If store does not contains json with application content
+/// it is created from values provided in this model.</para>
+/// <para>As well this class is used to map values from json and
+/// in case when this values are changed they are mapped on property of this values</para>
+/// and default values are overrided
+/// </summary>
+// This logic is not really good and straightforwad. Maybe it's worth to find better way to deal with this problem
 public class ApplicationContentModel
 {
     [JsonProperty(ApplicationContentKey.TelegramBot.StartError)]
