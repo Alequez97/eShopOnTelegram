@@ -94,8 +94,9 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Azure__AppInsightsConnectionString"           = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
+    "Logging__LogLevel__Default"                   = "Information"
     "Logging__ApplicationInsights"                 = "Information"
+    "Azure__AppInsightsConnectionString"           = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
     "Azure__StorageAccountConnectionString"        = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
@@ -127,8 +128,9 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   }
 
   app_settings = {
-    "Azure__AppInsightsConnectionString"    = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
+    "Logging__LogLevel__Default"            = "Information"
     "Logging__ApplicationInsights"          = "Information"
+    "Azure__AppInsightsConnectionString"    = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
     "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "ProductImagesHostName"                 = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
