@@ -71,8 +71,8 @@ resource "azurerm_service_plan" "serviceplan" {
   tags                = local.az_common_tags
 }
 
-resource "azurerm_application_insights" "admin_app_insights" {
-  name                = var.admin_app_insights_name
+resource "azurerm_application_insights" "app_insights" {
+  name                = var.app_insights_name
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
@@ -96,7 +96,7 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Azure__AppInsightsInstrumentationKey"         = azurerm_application_insights.admin_app_insights.instrumentation_key
+    "Azure__AppInsightsInstrumentationKey"         = azurerm_application_insights.app_insights.instrumentation_key
     "Azure__StorageAccountConnectionString"        = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
@@ -109,14 +109,6 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   tags = local.az_common_tags
-}
-
-resource "azurerm_application_insights" "telegramwebapp_insights" {
-  name                = var.admin_app_insights_name
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
-  application_type    = "web"
-  retention_in_days = 30
 }
 
 resource "azurerm_linux_web_app" "telegramwebapp" {
@@ -136,7 +128,7 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   }
 
   app_settings = {
-    "Azure__AppInsightsInstrumentationKey"  = azurerm_application_insights.telegramwebapp_insights.instrumentation_key
+    "Azure__AppInsightsInstrumentationKey"  = azurerm_application_insights.app_insights.instrumentation_key
     "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "ProductImagesHostName"                 = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"

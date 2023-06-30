@@ -35,7 +35,7 @@ variable "app_service_plan_name" {
   description = "App service plan name"
 }
 
-variable "admin_app_insights_name" {
+variable "app_insights_name" {
   type = string
   description = "Admin application insights"
 }
@@ -43,11 +43,6 @@ variable "admin_app_insights_name" {
 variable "admin_app_name" {
   type = string
   description = "Admin application name"
-}
-
-variable "telegram_webapp_insights_name" {
-  type = string
-  description = "Telegram webapp application insights"
 }
 
 variable "telegram_webapp_name" {
