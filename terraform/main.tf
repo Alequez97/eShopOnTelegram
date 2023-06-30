@@ -76,7 +76,7 @@ resource "azurerm_application_insights" "admin_app_insights" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
-  retention_in_days = 7
+  retention_in_days = 30
 }
 
 resource "azurerm_linux_web_app" "admin" {
@@ -116,7 +116,7 @@ resource "azurerm_application_insights" "telegramwebapp_insights" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
-  retention_in_days = 7
+  retention_in_days = 30
 }
 
 resource "azurerm_linux_web_app" "telegramwebapp" {
