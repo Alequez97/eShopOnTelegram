@@ -41,7 +41,7 @@ public class ProductService : IProductService
             var getProductsResponse = products.Select(product => new ProductDto
             {
                 Id = product.Id,
-                ProductName = product.Name,
+                Name = product.Name,
                 ProductCategoryName = product.Category.Name,
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
@@ -79,7 +79,7 @@ public class ProductService : IProductService
             var getProductsResponse = products.Select(product => new ProductDto
             {
                 Id = product.Id,
-                ProductName = product.Name,
+                Name = product.Name,
                 ProductCategoryName = product.Category.Name,
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
@@ -123,7 +123,7 @@ public class ProductService : IProductService
             var getProductResponse = new ProductDto()
             {
                 Id = product.Id,
-                ProductName = product.Name,
+                Name = product.Name,
                 ProductCategoryName = product.Category.Name,
                 OriginalPrice = product.OriginalPrice,
                 PriceWithDiscount = product.PriceWithDiscount,
@@ -168,7 +168,7 @@ public class ProductService : IProductService
 
             var product = new Product()
             {
-                Name = request.ProductName,
+                Name = request.Name,
                 OriginalPrice = request.OriginalPrice,
                 PriceWithDiscount = request.PriceWithDiscount,
                 QuantityLeft = request.QuantityLeft,
@@ -216,7 +216,7 @@ public class ProductService : IProductService
 
             var updatedProduct = new Product()
             {
-                Name = updateProductRequest.ProductName,
+                Name = updateProductRequest.Name,
                 Category = existingProduct.Category,
                 OriginalPrice = updateProductRequest.OriginalPrice,
                 PriceWithDiscount = updateProductRequest.PriceWithDiscount,

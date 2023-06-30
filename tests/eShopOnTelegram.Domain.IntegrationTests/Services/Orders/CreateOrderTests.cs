@@ -166,7 +166,7 @@ public class CreateOrderTests
         }
 
         var createProductRequest = new Faker<CreateProductRequest>()
-                .RuleFor(request => request.ProductName, faker => faker.Commerce.ProductName())
+                .RuleFor(request => request.Name, faker => faker.Commerce.ProductName())
                 .RuleFor(request => request.ProductCategoryId, existingProductCategory.Id)
                 .RuleFor(request => request.OriginalPrice, 20)
                 .RuleFor(request => request.QuantityLeft, 100)

@@ -21,7 +21,7 @@ public static class CreateCartItemRequestExtensions
                 var existingProduct = response.Data;
 
                 labeledPrices.Add(
-                    new LabeledPrice($"{existingProduct.ProductName} ({existingProduct.PriceWithDiscount ?? existingProduct.OriginalPrice}) x{cartItem.Quantity}", 
+                    new LabeledPrice($"{existingProduct.Name} ({existingProduct.PriceWithDiscount ?? existingProduct.OriginalPrice}) x{cartItem.Quantity}", 
                     (int)((existingProduct.PriceWithDiscount ?? existingProduct.OriginalPrice) * cartItem.Quantity * 100)));
             }
         }

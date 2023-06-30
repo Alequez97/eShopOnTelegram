@@ -6,7 +6,7 @@ namespace eShopOnTelegram.Domain.Requests.Products;
 
 public class CreateProductRequest
 {
-    public required string ProductName { get; set; }
+    public required string Name { get; set; }
 
     public required long ProductCategoryId { get; set; }
 

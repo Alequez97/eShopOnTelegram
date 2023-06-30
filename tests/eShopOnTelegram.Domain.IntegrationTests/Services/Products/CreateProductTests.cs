@@ -22,7 +22,7 @@ public class CreateProductTests
         // Arrange 
         var request = new CreateProductRequest()
         {
-            ProductName = "Test-ProductName",
+            Name = "Test-Name",
             ProductCategoryId = -1,
             OriginalPrice = 0,
             QuantityLeft = 0,

@@ -2,7 +2,7 @@
 
 public class ProductDto : DtoBase
 {
-    public required string ProductName { get; set; }
+    public required string Name { get; set; }
 
     public required string ProductCategoryName { get; set; }
 
