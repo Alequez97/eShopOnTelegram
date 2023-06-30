@@ -73,8 +73,8 @@ resource "azurerm_service_plan" "serviceplan" {
 
 resource "azurerm_application_insights" "admin_app_insights" {
   name                = var.admin_app_insights_name
-  location            = azurerm_resource_group.editor.location
-  resource_group_name = azurerm_resource_group.editor.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
   retention_in_days = 7
 }
@@ -113,8 +113,8 @@ resource "azurerm_linux_web_app" "admin" {
 
 resource "azurerm_application_insights" "telegramwebapp_insights" {
   name                = var.admin_app_insights_name
-  location            = azurerm_resource_group.editor.location
-  resource_group_name = azurerm_resource_group.editor.name
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
   application_type    = "web"
   retention_in_days = 7
 }
