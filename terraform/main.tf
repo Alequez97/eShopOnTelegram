@@ -2,7 +2,7 @@
 ## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
-  location = "northeurope"
+  location = var.resource_group_location
 
   tags = local.az_common_tags
 }
@@ -64,7 +64,7 @@ resource "azurerm_service_plan" "serviceplan" {
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   os_type             = "Linux"
-  sku_name            = "F1"
+  sku_name            = var.app_service_plan_sku_name
 
   tags                = local.az_common_tags
 }
@@ -85,7 +85,7 @@ resource "azurerm_linux_web_app" "admin" {
   https_only          = true
 
   site_config {
-    always_on           = false
+    always_on           = var.app_service_plan_sku_name == "F1" ? false : true
     minimum_tls_version = 1.2
 
     application_stack {
@@ -119,7 +119,7 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   https_only          = true
 
   site_config {
-    always_on = false
+    always_on = var.app_service_plan_sku_name == "F1" ? false : true
     minimum_tls_version = 1.2
 
     application_stack {

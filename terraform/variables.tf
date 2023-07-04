@@ -5,14 +5,19 @@
 ##########################################################################
 
 # GENERAL VARIABLES #
+variable "app_environment" {
+  type = string
+  description = "App environment"
+}
+
 variable "resource_group_name" {
   type = string
   description = "Resource group name"
 }
 
-variable "app_environment" {
+variable "resource_group_location" {
   type = string
-  description = "App environment"
+  description = "Resource group location"
 }
 
 variable "sql_server_name" {
@@ -33,6 +38,11 @@ variable "storage_account_name" {
 variable "app_service_plan_name" {
   type = string
   description = "App service plan name"
+}
+
+variable "app_service_plan_sku_name" {
+  type = string
+  description = "App service sku name"
 }
 
 variable "app_insights_name" {
