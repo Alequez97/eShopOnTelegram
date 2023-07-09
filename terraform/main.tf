@@ -77,7 +77,7 @@ resource "azurerm_application_insights" "app_insights" {
   retention_in_days = 30
 }
 
-resource "azurerm_linux_web_app" "admin" {
+resource "azurerm_windows_web_app" "admin" {
   name                = var.admin_app_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_service_plan.serviceplan.location
@@ -89,7 +89,7 @@ resource "azurerm_linux_web_app" "admin" {
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version = "7.0"
+      dotnet_version = "v7.0"
     }
   }
 
@@ -108,7 +108,7 @@ resource "azurerm_linux_web_app" "admin" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_linux_web_app" "telegramwebapp" {
+resource "azurerm_windows_web_app" "telegramwebapp" {
   name                = var.telegram_webapp_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_service_plan.serviceplan.location
@@ -120,7 +120,7 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version ="v7.0"
     }
   }
   
@@ -147,13 +147,13 @@ resource "azurerm_key_vault" "keyvault" {
   sku_name                        = "standard"
 
   depends_on   = [
-    azurerm_linux_web_app.admin,
-    azurerm_linux_web_app.telegramwebapp
+    azurerm_windows_web_app.admin,
+    azurerm_windows_web_app.telegramwebapp
   ]
 
   # Admin app identity access to keyvault
   access_policy {
-    object_id  =  azurerm_linux_web_app.admin.identity.0.principal_id
+    object_id  =  azurerm_windows_web_app.admin.identity.0.principal_id
     tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
 
     secret_permissions = [
@@ -164,7 +164,7 @@ resource "azurerm_key_vault" "keyvault" {
 
   # Telegram webapp identity access to keyvault
   access_policy {
-    object_id  =  azurerm_linux_web_app.telegramwebapp.identity.0.principal_id
+    object_id  =  azurerm_windows_web_app.telegramwebapp.identity.0.principal_id
     tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
 
     secret_permissions = [
@@ -246,7 +246,7 @@ resource "azurerm_key_vault_secret" "telegramtoken" {
 
 resource "azurerm_key_vault_secret" "telegramwebappurl" {
   name         = "Telegram--WebAppUrl"
-  value        = "https://${azurerm_linux_web_app.telegramwebapp.name}.azurewebsites.net"
+  value        = "https://${azurerm_windows_web_app.telegramwebapp.name}.azurewebsites.net"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
@@ -287,9 +287,9 @@ resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
 }
 
 output "admin_app_name" {
-  value = azurerm_linux_web_app.admin.name
+  value = azurerm_windows_web_app.admin.name
 }
 
 output "telegram_webapp_name" {
-  value = azurerm_linux_web_app.telegramwebapp.name
+  value = azurerm_windows_web_app.telegramwebapp.name
 }
