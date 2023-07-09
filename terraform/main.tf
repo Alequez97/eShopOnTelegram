@@ -7,49 +7,6 @@ resource "azurerm_resource_group" "rg" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_key_vault" "keyvault" {
-  name                            = var.keyvault_name
-  location                        = azurerm_resource_group.rg.location
-  resource_group_name             = azurerm_resource_group.rg.name
-  tenant_id                       = data.azurerm_client_config.eshopontelegram.tenant_id
-  soft_delete_retention_days      = "7"
-  sku_name                        = "standard"
-
-  # Admin access to keyvault
-  access_policy {
-    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id = var.admin_object_id
-
-    secret_permissions = [
-      "Get",
-      "List",
-      "Set",
-      "Delete",
-      "Purge",
-      "Recover",
-      "Restore"
-    ]
-  }
-
-  # Service principal access to keyvault
-  access_policy {
-    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id = var.sp_object_id
-
-    secret_permissions = [
-      "Get",
-      "List",
-      "Set",
-      "Delete",
-      "Purge",
-      "Recover",
-      "Restore"
-    ]
-  }
-
-  tags = local.az_common_tags
-}
-
 resource "azurerm_mssql_server" "mssqlserver" {
   name                         = var.sql_server_name
   resource_group_name          = azurerm_resource_group.rg.name
@@ -139,7 +96,7 @@ resource "azurerm_linux_web_app" "admin" {
   app_settings = {
     "Logging__LogLevel__Default"                   = "Information"
     "Logging__ApplicationInsights"                 = "Information"
-    "Azure__KeyVaultUri"                           = "https://${azurerm_key_vault.keyvault.name}.vault.azure.net"
+    "Azure__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
   }
@@ -166,8 +123,78 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   app_settings = {
     "Logging__LogLevel__Default"            = "Information"
     "Logging__ApplicationInsights"          = "Information"
-    "Azure__KeyVaultUri"                    = "https://${azurerm_key_vault.keyvault.name}.vault.azure.net"
+    "Azure__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+  }
+
+  tags = local.az_common_tags
+}
+
+resource "azurerm_key_vault" "keyvault" {
+  name                            = var.keyvault_name
+  location                        = azurerm_resource_group.rg.location
+  resource_group_name             = azurerm_resource_group.rg.name
+  tenant_id                       = data.azurerm_client_config.eshopontelegram.tenant_id
+  soft_delete_retention_days      = "7"
+  sku_name                        = "standard"
+
+  depends_on   = [
+    azurerm_linux_web_app.admin,
+    azurerm_linux_web_app.telegramwebapp
+  ]
+
+  # Admin app identity access to keyvault
+  access_policy {
+    object_id  =  azurerm_linux_web_app.admin.identity.0.principal_id
+    tenant_id  =  data.azurerm_client_config.editor.tenant_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+
+  # Telegram webapp identity access to keyvault
+  access_policy {
+    object_id  =  azurerm_linux_web_app.telegramwebapp.identity.0.principal_id
+    tenant_id  =  data.azurerm_client_config.editor.tenant_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+    ]
+  }
+
+  # Azure admin access to keyvault
+  access_policy {
+    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
+    object_id = var.admin_object_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete",
+      "Purge",
+      "Recover",
+      "Restore"
+    ]
+  }
+
+  # Service principal access to keyvault
+  access_policy {
+    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
+    object_id = var.sp_object_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete",
+      "Purge",
+      "Recover",
+      "Restore"
+    ]
   }
 
   tags = local.az_common_tags
