@@ -18,6 +18,9 @@ using eShopOnTelegram.TelegramBot.Workers;
 using Microsoft.EntityFrameworkCore;
 
 IHost host = Host.CreateDefaultBuilder(args)
+    .ConfigureAppConfiguration(configurationBuilder => {
+        configurationBuilder.AddEnvironmentVariables();
+    })
     .ConfigureServices(services =>
     {
         var configuration = services.BuildServiceProvider().GetRequiredService<IConfiguration>();
