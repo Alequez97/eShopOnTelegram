@@ -1,3 +1,6 @@
+
+using Azure.Identity;
+
 using eshopOnTelegram.TelegramBot.Appsettings;
 
 using eShopOnTelegram.Domain.Services;
@@ -18,8 +21,24 @@ using eShopOnTelegram.TelegramBot.Workers;
 using Microsoft.EntityFrameworkCore;
 
 IHost host = Host.CreateDefaultBuilder(args)
-    .ConfigureAppConfiguration(configurationBuilder => {
-        configurationBuilder.AddEnvironmentVariables();
+    .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) => {
+        var configuration = configurationBuilder.Build();
+        var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
+        string azureKeyVaultUri;
+
+        azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
+        if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+        {
+            configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+            return;
+        }
+
+        azureKeyVaultUri = configuration[azureKeyVaultUriConfigValueSelector];
+        if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+        {
+            configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+            return;
+        }
     })
     .ConfigureServices(services =>
     {
@@ -30,8 +49,9 @@ IHost host = Host.CreateDefaultBuilder(args)
             hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
         });
 
+        var sqlConnectionString = configuration.GetConnectionString("Sql");
         services.AddDbContext<EShopOnTelegramDbContext>(
-            options => options.UseSqlServer(configuration.GetConnectionString("Sql")));
+            options => options.UseSqlServer(sqlConnectionString));
 
         services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 

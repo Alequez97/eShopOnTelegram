@@ -1,6 +1,7 @@
 app_environment = "Dev"
 resource_group_name = "rg-eshopontelegram-dev"
 resource_group_location = "northeurope"
+keyvault_name = "kv-eshopontelegram-dev"
 sql_server_name = "sqlserver-eshopontelegram-dev"
 sql_database_name = "db-eshopontelegram-dev"
 storage_account_name = "steshopontelegramdev"

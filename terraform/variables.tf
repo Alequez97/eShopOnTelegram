@@ -20,6 +20,11 @@ variable "resource_group_location" {
   description = "Resource group location"
 }
 
+variable "keyvault_name" {
+  type = string
+  description = "App service name"
+}
+
 variable "sql_server_name" {
   type = string
   description = "Sql server name"

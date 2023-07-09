@@ -1,3 +1,5 @@
+using Azure.Identity;
+
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Files.Interfaces;
@@ -7,6 +9,22 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
+
+var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
+var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
+if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+{
+    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+}
+else
+{
+    var configurationValue = builder.Configuration[azureKeyVaultUriConfigValueSelector];
+    if (!string.IsNullOrWhiteSpace(configurationValue))
+    {
+        azureKeyVaultUri = configurationValue;
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+    }
+}
 
 // Add services to the container.
 builder.Services.AddScoped<IOrderService, OrderService>();

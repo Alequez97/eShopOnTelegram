@@ -1,5 +1,5 @@
-##### AZ RESOURCES DOCU ####
-## https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/
+data "azurerm_client_config" "eshopontelegram" {}
+
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
   location = var.resource_group_location
@@ -96,16 +96,8 @@ resource "azurerm_linux_web_app" "admin" {
   app_settings = {
     "Logging__LogLevel__Default"                   = "Information"
     "Logging__ApplicationInsights"                 = "Information"
-    "Azure__AppInsightsConnectionString"           = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
-    "Azure__StorageAccountConnectionString"        = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
-  }
-
-  connection_string {
-    name  = "Sql"
-    type  = "SQLServer"
-    value = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 
   tags = local.az_common_tags
@@ -130,19 +122,115 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   app_settings = {
     "Logging__LogLevel__Default"            = "Information"
     "Logging__ApplicationInsights"          = "Information"
-    "Azure__AppInsightsConnectionString"    = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
-    "Azure__StorageAccountConnectionString" = azurerm_storage_account.storageaccount.primary_connection_string
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
-    "ProductImagesHostName"                 = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
-  }
-  
-  connection_string {
-    name  = "Sql"
-    type  = "SQLServer"
-    value = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
   }
 
   tags = local.az_common_tags
+}
+
+resource "azurerm_key_vault" "keyvault" {
+  name                            = var.keyvault_name
+  location                        = azurerm_resource_group.rg.location
+  resource_group_name             = azurerm_resource_group.rg.name
+  tenant_id                       = data.azurerm_client_config.eshopontelegram.tenant_id
+  soft_delete_retention_days      = "7"
+  sku_name                        = "standard"
+
+  # SPN access to keyvault
+  access_policy {
+    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
+    object_id = data.azurerm_client_config.eshopontelegram.object_id
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete",
+      "Purge",
+      "Recover",
+      "Restore"
+    ]
+  }
+
+  tags = local.az_common_tags
+}
+
+resource "azurerm_key_vault_secret" "sqlconnectionstring" {
+  name         = "ConnectionStrings--Sql"
+  value        = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "storageaccountconnectionstring" {
+  name         = "Azure--StorageAccountConnectionString"
+  value        = azurerm_storage_account.storageaccount.primary_connection_string
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "appinsightsconnectionstring" {
+  name         = "Azure--AppInsightsConnectionString"
+  value        = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "productimageshostname" {
+  name         = "ProductImagesHostName"
+  value        = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "telegramownerid" {
+  name         = "Telegram--BotOwnerTelegramId"
+  value        = "55845175"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "telegramtoken" {
+  name         = "Telegram--Token"
+  value        = "6374180790:AAHalAb_5euzgytLCmGGGVNdn4cFXW7zV3w"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "telegramwebappurl" {
+  name         = "Telegram--WebAppUrl"
+  value        = "https://${azurerm_linux_web_app.telegramwebapp.name}.azurewebsites.net"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "paymentcurrency" {
+  name         = "Payment--MainCurrency"
+  value        = "EUR"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "cardpaymentenabled" {
+  name         = "Payment--Card--Enabled"
+  value        = "true"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
+  name         = "Payment--Card--ApiToken"
+  value        = "284685063:TEST:MDNkZDcxMWVlZDM2"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "pliciopaymentenabled" {
+  name         = "Payment--Plisio--Enabled"
+  value        = "true"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
+  name         = "Payment--Plisio--ApiToken"
+  value        = "hZ2AQ4QfVwby_xkXMp7l9CyAH69z1tCl9JEiIrRRLxmfZBneucWH8RRAC7DishZh"
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
+  name         = "Payment--Plisio--CryptoCurrency"
+  value        = "BTC"
+  key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 output "admin_app_name" {
