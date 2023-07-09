@@ -93,6 +93,10 @@ resource "azurerm_linux_web_app" "admin" {
     }
   }
 
+  identity {
+    type = "SystemAssigned"
+  }
+
   app_settings = {
     "Logging__LogLevel__Default"                   = "Information"
     "Logging__ApplicationInsights"                 = "Information"
@@ -118,6 +122,10 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
     application_stack {
       dotnet_version ="7.0"
     }
+  }
+  
+  identity {
+    type = "SystemAssigned"
   }
 
   app_settings = {
