@@ -144,26 +144,26 @@ resource "azurerm_key_vault" "keyvault" {
   ]
 
   # Admin app identity access to keyvault
-  access_policy {
-    object_id  =  azurerm_linux_web_app.admin.identity.0.principal_id
-    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
+  # access_policy {
+  #   object_id  =  azurerm_linux_web_app.admin.identity.0.principal_id
+  #   tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
 
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
+  #   secret_permissions = [
+  #     "Get",
+  #     "List",
+  #   ]
+  # }
 
   # Telegram webapp identity access to keyvault
-  access_policy {
-    object_id  =  azurerm_linux_web_app.telegramwebapp.identity.0.principal_id
-    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
+  # access_policy {
+  #   object_id  =  azurerm_linux_web_app.telegramwebapp.identity.0.principal_id
+  #   tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
 
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
+  #   secret_permissions = [
+  #     "Get",
+  #     "List",
+  #   ]
+  # }
 
   # Azure admin access to keyvault
   access_policy {
