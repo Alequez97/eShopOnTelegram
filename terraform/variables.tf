@@ -4,7 +4,18 @@
 #  var/dev/dev.tfvars || var/prod/prod.tfvars || var/stage/stage.tfvars  # 
 ##########################################################################
 
-# GENERAL VARIABLES #
+# SECRET VARIABLES #
+variable "admin_object_id" {
+  type = string
+  description = "Admin azure object id"
+}
+
+variable "sp_object_id" {
+  type = string
+  description = "Service principal azure object id"
+}
+
+# INFRASTRUCTURE VARIABLES #
 variable "app_environment" {
   type = string
   description = "App environment"
@@ -18,11 +29,6 @@ variable "resource_group_name" {
 variable "resource_group_location" {
   type = string
   description = "Resource group location"
-}
-
-variable "keyvault_name" {
-  type = string
-  description = "App service name"
 }
 
 variable "sql_server_name" {
@@ -63,4 +69,9 @@ variable "admin_app_name" {
 variable "telegram_webapp_name" {
   type = string
   description = "Telegram webapp name"
+}
+
+variable "keyvault_name" {
+  type = string
+  description = "App service name"
 }
