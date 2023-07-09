@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - master
+      - azure-key-vault-migration
   workflow_dispatch:
     # inputs:
     #   logLevel:
