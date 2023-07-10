@@ -54,18 +54,22 @@ jobs:
         working-directory: terraform
         id: terraformoutput
         run: |
+          echo "resourceGroupName=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
           echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
           echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
           echo "acrUsername=$(terraform output -raw acr_username)" >> $GITHUB_OUTPUT
           echo "acrPassword=$(terraform output -raw acr_password)" >> $GITHUB_OUTPUT
+          echo "keyVaultUri=$(terraform output -raw key_vault_uri)" >> $GITHUB_OUTPUT
       
     outputs:
+      resourceGroupName: ${{ steps.terraformoutput.outputs.resourceGroupName }}
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
       telegramWebAppName: ${{ steps.terraformoutput.outputs.telegramWebAppName }}
       acrLoginServer: ${{ steps.terraformoutput.outputs.acrLoginServer }}
       acrUsername: ${{ steps.terraformoutput.outputs.acrUsername }}
       acrPassword: ${{ steps.terraformoutput.outputs.acrPassword }}
+      keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
   
   # deploy_admin_app:
   #   runs-on: ubuntu-latest
@@ -164,12 +168,31 @@ jobs:
         with:
           creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
 
-      - name: Build and push telegram bot docker image
+      - name: Login to Azure Container Registry
         uses: azure/docker-login@v1
         with:
           login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
           username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
           password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-      - run: |
+          
+      - name: Push telegram bot docker image
+        run: |
           docker build -f ./src/eShopOnTelegram.TelegramBot/Dockerfile -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest .
           docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
+
+      - name: Deploy telegram bot container instance
+        uses: azure/container-instance@v1
+        with:
+          resource-group: ${{ needs.deploy_infrastructure.outputs.resourceGroupName }}
+          name: containerinstance-telegrambot-eshopontelegram-dev
+          image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
+          registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
+          registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
+          registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
+          dns-name-label: containerinstance-telegrambot-eshopontelegram-dev
+          ports: 80
+          environment-variables: |
+            Azure:KeyVaultUri  = ${{ needs.deploy_infrastructure.outputs.keyVaultUri }}
+            Azure:TenantId     = ${{ secrets.AZURE_TENANT_ID }}
+            Azure:ClientId     = ${{ secrets.APP_SP_AZURE_CLIENT_ID }}
+            Azure:ClientSecret = ${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}

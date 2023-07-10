@@ -303,3 +303,7 @@ output "acr_password" {
   value = azurerm_container_registry.containerregistry.admin_password
   sensitive = true
 }
+
+output "key_vault_uri" {
+  value = "https://${azurerm_key_vault.keyvault.name}.vault.azure.net"
+}
