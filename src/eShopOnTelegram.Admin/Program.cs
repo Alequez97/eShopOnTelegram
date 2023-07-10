@@ -16,7 +16,7 @@ var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
 var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
 if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
 {
-    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new ClientSecretCredential("bf6ef353-a632-470c-8235-e122f2ebf99d", "aae3d44a-bdef-42ea-82cb-53f729a8886a", "X1K8Q~gjcjB0-pCC89bbBybuMa.af.4MlHHFuaBS"));
 }
 else
 {
@@ -24,7 +24,7 @@ else
     if (!string.IsNullOrWhiteSpace(configurationValue))
     {
         azureKeyVaultUri = configurationValue;
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new ClientSecretCredential("bf6ef353-a632-470c-8235-e122f2ebf99d", "aae3d44a-bdef-42ea-82cb-53f729a8886a", "X1K8Q~gjcjB0-pCC89bbBybuMa.af.4MlHHFuaBS"));
     }
 }
 
