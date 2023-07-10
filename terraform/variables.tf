@@ -30,6 +30,33 @@ variable "sp_object_id" {
   description = "Service principal azure object id"
 }
 
+variable "sql_admin_password" {
+  type = string
+  description = "Sql server admin password"
+}
+
+variable "telegram_bot_owner_telegram_id" {
+  type = string
+  description = "Sql server admin password"
+}
+
+variable "telegram_token" {
+  type = string
+  description = "Sql server admin password"
+}
+
+variable "payment_card_api_token" {
+  type = string
+  description = "Sql server admin password"
+  default = ""
+}
+
+variable "payment_plicio_api_token" {
+  type = string
+  description = "Sql server admin password"
+  default = ""
+}
+
 # INFRASTRUCTURE VARIABLES #
 variable "app_environment" {
   type = string

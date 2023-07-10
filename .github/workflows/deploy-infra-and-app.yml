@@ -6,13 +6,10 @@ on:
       - master
       - azure-key-vault-migration
   workflow_dispatch:
-    # inputs:
-    #   logLevel:
-    #     description: 'Log level'     
-    #     required: true
-    #     default: 'warning'
-    #   tags:
-    #     description: 'Test scenario tags'
+    inputs:
+      environment:
+        required: true
+        default: 'dev'
 
 env:
   ARM_CLIENT_ID: ${{ secrets.GH_SP_AZURE_CLIENT_ID }}
@@ -27,6 +24,8 @@ jobs:
     runs-on: ubuntu-latest
     
     name: Deploy Azure infrastructure
+    environment:
+      name: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout
@@ -43,7 +42,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="app_sp_object_id=${{ secrets.APP_SP_AZURE_OBJECT_ID }}" -var="app_sp_client_id=${{ secrets.APP_SP_AZURE_CLIENT_ID }}" -var="app_sp_client_secret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var="sp_object_id=${{ secrets.GH_SP_AZURE_OBJECT_ID }}" -var-file="vars/dev.tfvars"
+        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="app_sp_object_id=${{ secrets.APP_SP_AZURE_OBJECT_ID }}" -var="app_sp_client_id=${{ secrets.APP_SP_AZURE_CLIENT_ID }}" -var="app_sp_client_secret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var="sp_object_id=${{ secrets.GH_SP_AZURE_OBJECT_ID }}" -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var="telegram_bot_owner_telegram_id=${{ secrets.TELEGRAM_BOT_OWNER_TELEGRAM_ID }}" -var="telegram_token=${{ secrets.TELEGRAM_TOKEN }}" -var="payment_card_api_token=${{ secrets.PAYMENT_CARD_API_TOKEN }}" -var="payment_plicio_api_token=${{ secrets.PAYMENT_PLICIO_API_TOKEN }}" -var-file="vars/dev.tfvars"
 
       - name: Teffaform Apply
         id: terraformapply
@@ -78,6 +77,8 @@ jobs:
     
   #   name: Deploy admin app to dev env
   #   needs: [deploy_infrastructure]
+  # environment:
+  #   name: ${{ github.event.inputs.environment }}
     
   #   steps:
   #     - name: Checkout
@@ -119,6 +120,8 @@ jobs:
     
   #   name: 'Deploy telegram webapp'
   #   needs: [deploy_infrastructure]
+  # environment:
+  #   name: ${{ github.event.inputs.environment }}
     
   #   steps:
   #     - name: Checkout
@@ -160,6 +163,8 @@ jobs:
 
     name: 'Deploy telegram bot'
     needs: [deploy_infrastructure]
+    environment:
+      name: ${{ github.event.inputs.environment }}
 
     steps:
       - name: Checkout
@@ -196,4 +201,5 @@ jobs:
           registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
           registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
           registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
+          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }}
+          secure-environment-variables: Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}

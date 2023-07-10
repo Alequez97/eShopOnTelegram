@@ -13,7 +13,7 @@ resource "azurerm_mssql_server" "mssqlserver" {
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
   administrator_login          = "aleksandrs"
-  administrator_login_password = "4-v3ry-53cr37-p455w0rd"
+  administrator_login_password = var.sql_admin_password
 
   tags = local.az_common_tags
 }
@@ -231,13 +231,13 @@ resource "azurerm_key_vault_secret" "productimageshostname" {
 
 resource "azurerm_key_vault_secret" "telegramownerid" {
   name         = "Telegram--BotOwnerTelegramId"
-  value        = "55845175"
+  value        = var.telegram_bot_owner_telegram_id
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "telegramtoken" {
   name         = "Telegram--Token"
-  value        = "6374180790:AAHalAb_5euzgytLCmGGGVNdn4cFXW7zV3w"
+  value        = var.telegram_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
@@ -255,25 +255,25 @@ resource "azurerm_key_vault_secret" "paymentcurrency" {
 
 resource "azurerm_key_vault_secret" "cardpaymentenabled" {
   name         = "Payment--Card--Enabled"
-  value        = "true"
+  value        = var.payment_card_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
   name         = "Payment--Card--ApiToken"
-  value        = "284685063:TEST:MDNkZDcxMWVlZDM2"
+  value        = var.payment_card_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentenabled" {
   name         = "Payment--Plisio--Enabled"
-  value        = "true"
+  value        = var.payment_plicio_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
   name         = "Payment--Plisio--ApiToken"
-  value        = "hZ2AQ4QfVwby_xkXMp7l9CyAH69z1tCl9JEiIrRRLxmfZBneucWH8RRAC7DishZh"
+  value        = var.payment_plicio_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
