@@ -25,7 +25,7 @@ jobs:
     
     name: Deploy Azure infrastructure
     environment:
-      name: ${{ github.event.inputs.environment }}
+      name: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout
@@ -72,91 +72,91 @@ jobs:
       acrPassword: ${{ steps.terraformoutput.outputs.acrPassword }}
       keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
   
-  # deploy_admin_app:
-  #   runs-on: ubuntu-latest
+  deploy_admin_app:
+    runs-on: ubuntu-latest
     
-  #   name: Deploy admin app to dev env
-  #   needs: [deploy_infrastructure]
-  # environment:
-  #   name: ${{ github.event.inputs.environment }}
+    name: Deploy admin app to dev env
+    needs: [deploy_infrastructure]
+    environment:
+      name: ${{ github.event.inputs.environment || 'dev' }}
     
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Setup .NET
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: 7.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
 
-  #     - name: Install pnpm
-  #       run: npm install -g pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
 
-  #     - name: Restore NuGet packages
-  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
-  #       run: dotnet restore
+      - name: Restore NuGet packages
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
+        run: dotnet restore
 
-  #     - name: Build admin application
-  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
-  #       run: dotnet build --configuration Release --no-restore
+      - name: Build admin application
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
+        run: dotnet build --configuration Release --no-restore
       
-  #     - name: Publish admin application
-  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
-  #       run: dotnet publish --configuration Release --no-build --output publish
+      - name: Publish admin application
+        working-directory: ${{ env.ADMIN_APP_LOCATION }}
+        run: dotnet publish --configuration Release --no-build --output publish
 
-  #     - name: Azure CLI Login
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
+      - name: Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
 
-  #     - name: Deploy to Azure WebApp
-  #       uses: azure/webapps-deploy@v2
-  #       with:
-  #         app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
-  #         package: ${{ env.ADMIN_APP_LOCATION }}/publish
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
+          package: ${{ env.ADMIN_APP_LOCATION }}/publish
 
-  # deploy_telegram_webapp:
-  #   runs-on: ubuntu-latest
+  deploy_telegram_webapp:
+    runs-on: ubuntu-latest
     
-  #   name: 'Deploy telegram webapp'
-  #   needs: [deploy_infrastructure]
-  # environment:
-  #   name: ${{ github.event.inputs.environment }}
+    name: 'Deploy telegram webapp'
+    needs: [deploy_infrastructure]
+    environment:
+      name: ${{ github.event.inputs.environment || 'dev' }}
     
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v3
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  #     - name: Setup .NET
-  #       uses: actions/setup-dotnet@v1
-  #       with:
-  #         dotnet-version: 7.0.x
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 7.0.x
 
-  #     - name: Install pnpm
-  #       run: npm install -g pnpm
+      - name: Install pnpm
+        run: npm install -g pnpm
 
-  #     - name: Restore NuGet packages
-  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-  #       run: dotnet restore
+      - name: Restore NuGet packages
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet restore
 
-  #     - name: Build telegram webapp
-  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-  #       run: dotnet build --configuration Release --no-restore
+      - name: Build telegram webapp
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet build --configuration Release --no-restore
       
-  #     - name: Publish telegram webapp
-  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-  #       run: dotnet publish --configuration Release --no-build --output publish
+      - name: Publish telegram webapp
+        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        run: dotnet publish --configuration Release --no-build --output publish
 
-  #     - name: Azure CLI Login
-  #       uses: azure/login@v1
-  #       with:
-  #         creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
+      - name: Azure CLI Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
 
-  #     - name: Deploy to Azure WebApp
-  #       uses: azure/webapps-deploy@v2
-  #       with:
-  #         app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
-  #         package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
+      - name: Deploy to Azure WebApp
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
+          package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
 
   deploy_telegram_bot:
     runs-on: ubuntu-latest
@@ -164,7 +164,7 @@ jobs:
     name: 'Deploy telegram bot'
     needs: [deploy_infrastructure]
     environment:
-      name: ${{ github.event.inputs.environment }}
+      name: ${{ github.event.inputs.environment || 'dev' }}
 
     steps:
       - name: Checkout
