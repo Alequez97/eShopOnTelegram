@@ -181,7 +181,7 @@ jobs:
           docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
 
       - name: Deploy telegram bot container instance
-        uses: azure/container-instance@v1
+        uses: azure/aci-deploy@v1
         with:
           resource-group: ${{ needs.deploy_infrastructure.outputs.resourceGroupName }}
           name: containerinstance-telegrambot-eshopontelegram-dev
