@@ -55,6 +55,7 @@ jobs:
         id: terraformoutput
         run: |
           echo "resourceGroupName=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
+          echo "resourceGroupLocation=$(terraform output -raw resource_group_location)" >> $GITHUB_OUTPUT
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
           echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
           echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
@@ -64,6 +65,7 @@ jobs:
       
     outputs:
       resourceGroupName: ${{ steps.terraformoutput.outputs.resourceGroupName }}
+      resourceGroupLocation: ${{ steps.terraformoutput.outputs.resourceGroupLocation }}
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
       telegramWebAppName: ${{ steps.terraformoutput.outputs.telegramWebAppName }}
       acrLoginServer: ${{ steps.terraformoutput.outputs.acrLoginServer }}
@@ -184,6 +186,7 @@ jobs:
         uses: azure/aci-deploy@v1
         with:
           resource-group: ${{ needs.deploy_infrastructure.outputs.resourceGroupName }}
+          location: ${{ needs.deploy_infrastructure.outputs.resourceGroupLocation }}
           name: containerinstance-telegrambot-eshopontelegram-dev
           image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
           registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
