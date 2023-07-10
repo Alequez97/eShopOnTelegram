@@ -91,11 +91,6 @@ variable "container_registry_name" {
   description = "Container registry name"
 }
 
-# variable "container_group_name" {
-#   type = string
-#   description = "Container group name"
-# }
-
 variable "keyvault_name" {
   type = string
   description = "App service name"
