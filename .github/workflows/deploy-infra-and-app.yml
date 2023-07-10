@@ -56,89 +56,118 @@ jobs:
         run: |
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
           echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
+          echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
+          echo "acrUsername=$(terraform output -raw acr_username)" >> $GITHUB_OUTPUT
+          echo "acrPassword=$(terraform output -raw acr_password)" >> $GITHUB_OUTPUT
       
     outputs:
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
       telegramWebAppName: ${{ steps.terraformoutput.outputs.telegramWebAppName }}
+      acrLoginServer: ${{ steps.terraformoutput.outputs.acrLoginServer }}
+      acrUsername: ${{ steps.terraformoutput.outputs.acrUsername }}
+      acrPassword: ${{ steps.terraformoutput.outputs.acrPassword }}
   
-  deploy_admin_app:
+  # deploy_admin_app:
+  #   runs-on: ubuntu-latest
+    
+  #   name: Deploy admin app to dev env
+  #   needs: [deploy_infrastructure]
+    
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: 7.0.x
+
+  #     - name: Install pnpm
+  #       run: npm install -g pnpm
+
+  #     - name: Restore NuGet packages
+  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
+  #       run: dotnet restore
+
+  #     - name: Build admin application
+  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
+  #       run: dotnet build --configuration Release --no-restore
+      
+  #     - name: Publish admin application
+  #       working-directory: ${{ env.ADMIN_APP_LOCATION }}
+  #       run: dotnet publish --configuration Release --no-build --output publish
+
+  #     - name: Azure CLI Login
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
+
+  #     - name: Deploy to Azure WebApp
+  #       uses: azure/webapps-deploy@v2
+  #       with:
+  #         app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
+  #         package: ${{ env.ADMIN_APP_LOCATION }}/publish
+
+  # deploy_telegram_webapp:
+  #   runs-on: ubuntu-latest
+    
+  #   name: 'Deploy telegram webapp'
+  #   needs: [deploy_infrastructure]
+    
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v3
+
+  #     - name: Setup .NET
+  #       uses: actions/setup-dotnet@v1
+  #       with:
+  #         dotnet-version: 7.0.x
+
+  #     - name: Install pnpm
+  #       run: npm install -g pnpm
+
+  #     - name: Restore NuGet packages
+  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+  #       run: dotnet restore
+
+  #     - name: Build telegram webapp
+  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+  #       run: dotnet build --configuration Release --no-restore
+      
+  #     - name: Publish telegram webapp
+  #       working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+  #       run: dotnet publish --configuration Release --no-build --output publish
+
+  #     - name: Azure CLI Login
+  #       uses: azure/login@v1
+  #       with:
+  #         creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
+
+  #     - name: Deploy to Azure WebApp
+  #       uses: azure/webapps-deploy@v2
+  #       with:
+  #         app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
+  #         package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
+
+  deploy_telegram_bot:
     runs-on: ubuntu-latest
-    
-    name: Deploy admin app to dev env
+
+    name: 'Deploy telegram bot'
     needs: [deploy_infrastructure]
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+      - name: Login to Azure Container Registry
+        uses: azure/docker-login@v1
         with:
-          dotnet-version: 7.0.x
+          login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
+          username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
+          password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
 
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Restore NuGet packages
-        working-directory: ${{ env.ADMIN_APP_LOCATION }}
-        run: dotnet restore
-
-      - name: Build admin application
-        working-directory: ${{ env.ADMIN_APP_LOCATION }}
-        run: dotnet build --configuration Release --no-restore
-      
-      - name: Publish admin application
-        working-directory: ${{ env.ADMIN_APP_LOCATION }}
-        run: dotnet publish --configuration Release --no-build --output publish
-
-      - name: Azure CLI Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
-          package: ${{ env.ADMIN_APP_LOCATION }}/publish
-
-  deploy_telegram_webapp:
-    runs-on: ubuntu-latest
-    
-    name: 'Deploy telegram webapp'
-    needs: [deploy_infrastructure]
-    
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Install pnpm
-        run: npm install -g pnpm
-
-      - name: Restore NuGet packages
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-        run: dotnet restore
-
-      - name: Build telegram webapp
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-        run: dotnet build --configuration Release --no-restore
-      
-      - name: Publish telegram webapp
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
-        run: dotnet publish --configuration Release --no-build --output publish
-
-      - name: Azure CLI Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
-
-      - name: Deploy to Azure WebApp
-        uses: azure/webapps-deploy@v2
-        with:
-          app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
-          package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
+      - name: Build and push Docker image
+        run: |
+          cd src/eShopOnTelegram.TelegramBot
+          docker build -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/eshopontelegram-telegrambot-dev:${{ github.sha }} .
+          docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/eshopontelegram-telegrambot-dev:${{ github.sha }}

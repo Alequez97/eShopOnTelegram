@@ -311,3 +311,15 @@ output "admin_app_name" {
 output "telegram_webapp_name" {
   value = azurerm_linux_web_app.telegramwebapp.name
 }
+
+output "acr_login_server" {
+  value = azurerm_container_registry.containerregistry.login_server
+}
+
+output "acr_username" {
+  value = azurerm_container_registry.containerregistry.admin_username
+}
+
+output "acr_password" {
+  value = azurerm_container_registry.containerregistry.admin_password
+}
