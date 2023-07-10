@@ -4,7 +4,7 @@ export function getProducts(): Product[] {
   return [
     {
       id: 1,
-      productName: "Banana",
+      name: "Banana",
       productCategoryName: "E-Cigarette",
       originalPrice: 7.99,
       quantityLeft: 10,
@@ -13,7 +13,7 @@ export function getProducts(): Product[] {
     },
     {
       id: 2,
-      productName: "Grape",
+      name: "Grape",
       productCategoryName: "E-Cigarette",
       originalPrice: 7.99,
       quantityLeft: 10,
@@ -22,7 +22,7 @@ export function getProducts(): Product[] {
     },
     {
       id: 3,
-      productName: "Lychee",
+      name: "Lychee",
       productCategoryName: "E-Cigarette",
       originalPrice: 7.99,
       quantityLeft: 10,
@@ -31,7 +31,7 @@ export function getProducts(): Product[] {
     },
     {
       id: 4,
-      productName: "Strawberry",
+      name: "Strawberry",
       productCategoryName: "E-Cigarette",
       originalPrice: 7.99,
       quantityLeft: 10,
