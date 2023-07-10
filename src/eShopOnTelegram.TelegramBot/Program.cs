@@ -24,14 +24,13 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) => {
         var configuration = configurationBuilder.Build();
-        var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
 
-        var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
+        var azureKeyVaultUri = Environment.GetEnvironmentVariable("Azure__KeyVaultUri");
         if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
         {
-            var tenantId = Environment.GetEnvironmentVariable("Azure:TenantId");
-            var clientId = Environment.GetEnvironmentVariable("Azure:ClientId");
-            var clientSecret = Environment.GetEnvironmentVariable("Azure:ClientSecret");
+            var tenantId = Environment.GetEnvironmentVariable("Azure__TenantId");
+            var clientId = Environment.GetEnvironmentVariable("Azure__ClientId");
+            var clientSecret = Environment.GetEnvironmentVariable("Azure__ClientSecret");
 
             TokenCredential azureCredentials =
                 string.IsNullOrWhiteSpace(tenantId)
@@ -42,7 +41,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         }
         else
         {
-            azureKeyVaultUri = configuration[azureKeyVaultUriConfigValueSelector];
+            azureKeyVaultUri = configuration["Azure:KeyVaultUri"];
 
             if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
             {
