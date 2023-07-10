@@ -1,4 +1,4 @@
-
+using Azure.Core;
 using Azure.Identity;
 
 using eshopOnTelegram.TelegramBot.Appsettings;
@@ -19,25 +19,60 @@ using eShopOnTelegram.TelegramBot.Extensions;
 using eShopOnTelegram.TelegramBot.Workers;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 
 IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureAppConfiguration((hostBuilderContext, configurationBuilder) => {
         var configuration = configurationBuilder.Build();
         var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
-        string azureKeyVaultUri;
 
-        azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
+        var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
         if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
         {
-            configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
-            return;
+            var tenantId = Environment.GetEnvironmentVariable("Azure:TenantId");
+            var clientId = Environment.GetEnvironmentVariable("Azure:ClientId");
+            var clientSecret = Environment.GetEnvironmentVariable("Azure:ClientSecret");
+
+            TokenCredential azureCredentials =
+                string.IsNullOrWhiteSpace(tenantId)
+             || string.IsNullOrWhiteSpace(clientId)
+             || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
+            configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
         }
-
-        azureKeyVaultUri = configuration[azureKeyVaultUriConfigValueSelector];
-        if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+        else
         {
-            configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
-            return;
+            azureKeyVaultUri = configuration[azureKeyVaultUriConfigValueSelector];
+
+            if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+            {
+                var tenantId = configuration["Azure:TenantId"];
+                var clientId = configuration["Azure:ClientId"];
+                var clientSecret = configuration["Azure:ClientSecret"];
+
+                TokenCredential azureCredentials =
+                    string.IsNullOrWhiteSpace(tenantId)
+                 || string.IsNullOrWhiteSpace(clientId)
+                 || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
+                configurationBuilder.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+            }
+        }
+    })
+    .ConfigureLogging((hostBuilderContext, loggingBuilder) =>
+    {
+        var configuration = hostBuilderContext.Configuration;
+
+        var appInsightsConnectionString = configuration["Azure:AppInsightsConnectionString"];
+        if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+        {
+            loggingBuilder.AddApplicationInsights(
+                    configureTelemetryConfiguration: (config) =>
+                        config.ConnectionString = appInsightsConnectionString,
+                        configureApplicationInsightsLoggerOptions: (options) => { }
+                );
+
+            loggingBuilder.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
         }
     })
     .ConfigureServices(services =>

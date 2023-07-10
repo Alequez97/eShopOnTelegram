@@ -136,6 +136,37 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   tags = local.az_common_tags
 }
 
+resource "azurerm_container_registry" "containerregistry" {
+  name                     = var.container_registry_name
+  resource_group_name      = azurerm_resource_group.rg.name
+  location                 = azurerm_resource_group.rg.location
+  sku                      = "Basic"
+
+  tags = local.az_common_tags
+}
+
+# resource "azurerm_container_group" "containergroup" {
+#   name                = var.container_group_name
+#   location            = azurerm_resource_group.rg.location
+#   resource_group_name = azurerm_resource_group.rg.name
+
+#   ip_address_type = "public"
+#   os_type         = "linux"
+
+#   container {
+#     name   = "container-telegrambot-eshopontelegram-dev"
+#     image  = "${azurerm_container_registry.example.login_server}/<Image Name>:<Image Version>"
+#     cpu    = "1"
+#     memory = "1.5"
+#     ports {
+#       port     = 80
+#       protocol = "TCP"
+#     }
+#   }
+
+#   tags = local.az_common_tags
+# }
+
 resource "azurerm_key_vault" "keyvault" {
   name                            = var.keyvault_name
   location                        = azurerm_resource_group.rg.location

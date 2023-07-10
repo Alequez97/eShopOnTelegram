@@ -86,6 +86,16 @@ variable "telegram_webapp_name" {
   description = "Telegram webapp name"
 }
 
+variable "container_registry_name" {
+  type = string
+  description = "Container registry name"
+}
+
+# variable "container_group_name" {
+#   type = string
+#   description = "Container group name"
+# }
+
 variable "keyvault_name" {
   type = string
   description = "App service name"
