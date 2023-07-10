@@ -283,6 +283,10 @@ resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
+output "resource_group_name" {
+  value = azurerm_resource_group.rg.name
+}
+
 output "admin_app_name" {
   value = azurerm_linux_web_app.admin.name
 }
