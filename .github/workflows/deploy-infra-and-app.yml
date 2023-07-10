@@ -195,7 +195,7 @@ jobs:
           dns-name-label: containerinstance-telegrambot-eshopontelegram-dev
           ports: 80
           environment-variables: |
-            Azure:KeyVaultUri  = ${{ needs.deploy_infrastructure.outputs.keyVaultUri }}
-            Azure:TenantId     = ${{ secrets.AZURE_TENANT_ID }}
-            Azure:ClientId     = ${{ secrets.APP_SP_AZURE_CLIENT_ID }}
-            Azure:ClientSecret = ${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
+            Azure__KeyVaultUri  = ${{ needs.deploy_infrastructure.outputs.keyVaultUri }}
+            Azure__TenantId     = ${{ secrets.AZURE_TENANT_ID }}
+            Azure__ClientId     = ${{ secrets.APP_SP_AZURE_CLIENT_ID }}
+            Azure__ClientSecret = ${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
