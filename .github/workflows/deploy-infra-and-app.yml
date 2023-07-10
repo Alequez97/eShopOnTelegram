@@ -166,6 +166,5 @@ jobs:
 
       - name: Build and push telegram bot docker image
         run: |
-          cd src/eShopOnTelegram.TelegramBot
-          docker build -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
+          docker build -f .\src\eShopOnTelegram.TelegramBot\Dockerfile -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest .
           docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
