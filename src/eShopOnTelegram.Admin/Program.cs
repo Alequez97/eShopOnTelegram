@@ -14,37 +14,20 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 var builder = WebApplication.CreateBuilder(args);
 
 var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
-var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
+var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
+
 if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
 {
     var tenantId = builder.Configuration["Azure:TenantId"];
     var clientId = builder.Configuration["Azure:ClientId"];
     var clientSecret = builder.Configuration["Azure:ClientSecret"];
 
-    TokenCredential azureCredentials = 
+    TokenCredential azureCredentials =
         string.IsNullOrWhiteSpace(tenantId)
      || string.IsNullOrWhiteSpace(clientId)
      || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
 
     builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
-}
-else
-{
-    var configurationValue = builder.Configuration[azureKeyVaultUriConfigValueSelector];
-    if (!string.IsNullOrWhiteSpace(configurationValue))
-    {
-        var tenantId = builder.Configuration["Azure:TenantId"];
-        var clientId = builder.Configuration["Azure:ClientId"];
-        var clientSecret = builder.Configuration["Azure:ClientSecret"];
-
-        TokenCredential azureCredentials =
-            string.IsNullOrWhiteSpace(tenantId)
-         || string.IsNullOrWhiteSpace(clientId)
-         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
-
-        azureKeyVaultUri = configurationValue;
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
-    }
 }
 
 builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
