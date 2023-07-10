@@ -189,13 +189,11 @@ jobs:
           location: ${{ needs.deploy_infrastructure.outputs.resourceGroupLocation }}
           name: containerinstance-telegrambot-eshopontelegram-dev
           image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
+          dns-name-label: containerinstance-telegrambot-eshopontelegram-dev
+          ports: 80
+          cpu: 1
+          memory: 1
           registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
           registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
           registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          dns-name-label: containerinstance-telegrambot-eshopontelegram-dev
-          ports: 80
-          environment-variables: |
-            Azure__KeyVaultUri  = ${{ needs.deploy_infrastructure.outputs.keyVaultUri }}
-            Azure__TenantId     = ${{ secrets.AZURE_TENANT_ID }}
-            Azure__ClientId     = ${{ secrets.APP_SP_AZURE_CLIENT_ID }}
-            Azure__ClientSecret = ${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
+          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
