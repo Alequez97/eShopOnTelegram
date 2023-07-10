@@ -1,6 +1,6 @@
 interface Product {
     id: number
-    productName: string
+    name: string
     productCategoryName: string
     originalPrice: number
     priceWithDiscount?: number

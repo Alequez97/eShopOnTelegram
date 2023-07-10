@@ -11,7 +11,7 @@ interface CardProps {
 
 function Card({ product, onAdd, onRemove }: CardProps) {
   const [productQuantityAddedInCart, setProductQuantityAddedInCart] = useState(0);
-  const { productName, image, originalPrice } = product;
+  const { name, image, originalPrice } = product;
 
   const handleIncrement = () => {
     if (productQuantityAddedInCart < product.quantityLeft) {
@@ -27,10 +27,10 @@ function Card({ product, onAdd, onRemove }: CardProps) {
   return (
     <div className={classes.card}>
       <div className={classes.imageContainer}>
-        <img src={product.image} alt={productName} />
+        <img src={image} alt={name} />
       </div>
       <h4 className={classes.cardTitle}>
-        {productName}
+        {name}
         <br />
         <span className={classes.cardPrice}>{originalPrice} €</span>
         <br />
