@@ -15,8 +15,8 @@ on:
     #     description: 'Test scenario tags'
 
 env:
-  ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-  ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+  ARM_CLIENT_ID: ${{ secrets.GH_SP_AZURE_CLIENT_ID }}
+  ARM_CLIENT_SECRET: ${{ secrets.GH_SP_AZURE_CLIENT_SECRET }}
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
@@ -43,7 +43,7 @@ jobs:
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="sp_object_id=${{ secrets.SP_AZURE_OBJECT_ID }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var-file="vars/dev.tfvars"
+        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="app_sp_object_id=${{ secrets.APP_SP_AZURE_OBJECT_ID }}" -var="app_sp_client_id=${{ secrets.APP_SP_AZURE_CLIENT_ID }}" -var="app_sp_client_secret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var="sp_object_id=${{ secrets.GH_SP_AZURE_OBJECT_ID }}" -var-file="vars/dev.tfvars"
 
       - name: Teffaform Apply
         id: terraformapply

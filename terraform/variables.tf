@@ -5,6 +5,21 @@
 ##########################################################################
 
 # SECRET VARIABLES #
+variable "app_sp_object_id" {
+  type = string
+  description = "Object id of service principal that is used to access keyvault keys from application"
+}
+
+variable "app_sp_client_id" {
+  type = string
+  description = "Object id of service principal that is used to access keyvault keys from application"
+}
+
+variable "app_sp_client_secret" {
+  type = string
+  description = "Object id of service principal that is used to access keyvault keys from application"
+}
+
 variable "admin_object_id" {
   type = string
   description = "Admin azure object id"

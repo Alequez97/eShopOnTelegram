@@ -1,3 +1,4 @@
+using Azure.Core;
 using Azure.Identity;
 
 using eShopOnTelegram.Domain.Services;
@@ -14,15 +15,33 @@ var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
 var azureKeyVaultUri = Environment.GetEnvironmentVariable(azureKeyVaultUriConfigValueSelector);
 if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
 {
-    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+    var tenantId = builder.Configuration["Azure:TenantId"];
+    var clientId = builder.Configuration["Azure:ClientId"];
+    var clientSecret = builder.Configuration["Azure:ClientSecret"];
+
+    TokenCredential azureCredentials =
+        string.IsNullOrWhiteSpace(tenantId)
+     || string.IsNullOrWhiteSpace(clientId)
+     || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
+    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
 }
 else
 {
     var configurationValue = builder.Configuration[azureKeyVaultUriConfigValueSelector];
     if (!string.IsNullOrWhiteSpace(configurationValue))
     {
+        var tenantId = builder.Configuration["Azure:TenantId"];
+        var clientId = builder.Configuration["Azure:ClientId"];
+        var clientSecret = builder.Configuration["Azure:ClientSecret"];
+
+        TokenCredential azureCredentials =
+            string.IsNullOrWhiteSpace(tenantId)
+         || string.IsNullOrWhiteSpace(clientId)
+         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
         azureKeyVaultUri = configurationValue;
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), new DefaultAzureCredential());
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
     }
 }
 
