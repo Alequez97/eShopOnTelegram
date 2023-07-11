@@ -203,5 +203,5 @@ jobs:
           registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
           registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
           registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} AdminAppHostName=${{ needs.deploy_infrastructure.outputs.adminAppHostName }}
+          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} AdminHost=${{ needs.deploy_infrastructure.outputs.adminAppHostName }}
           secure-environment-variables: Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}

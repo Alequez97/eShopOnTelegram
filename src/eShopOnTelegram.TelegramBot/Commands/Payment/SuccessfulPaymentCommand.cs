@@ -63,9 +63,9 @@ public class SuccessfulPaymentCommand : ITelegramCommand
                 InlineKeyboardMarkup inlineKeyboard = null;
                 var orderReceivedMessage = new StringBuilder("New order received!!!");
 
-                if (!string.IsNullOrEmpty(_configuration["AdminAppHostName"]))
+                if (!string.IsNullOrEmpty(_configuration["AdminHost"]))
                 {
-                    var orderLink = $"{_configuration["AdminAppHostName"]}/#/orders/{update.Message.SuccessfulPayment.InvoicePayload}";
+                    var orderLink = $"{_configuration["AdminHost"]}/#/orders/{update.Message.SuccessfulPayment.InvoicePayload}";
 
                     orderReceivedMessage
                         .AppendLine()
