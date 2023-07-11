@@ -56,7 +56,7 @@ jobs:
           echo "resourceGroupName=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
           echo "resourceGroupLocation=$(terraform output -raw resource_group_location)" >> $GITHUB_OUTPUT
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
-          echo "adminAppHostName=$(terraform output -raw admin_app_host_name)" >> $GITHUB_OUTPUT
+          echo "adminAppHostName=$(terraform output -raw admin_app_hostname)" >> $GITHUB_OUTPUT
           echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
           echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
           echo "acrUsername=$(terraform output -raw acr_username)" >> $GITHUB_OUTPUT
@@ -203,5 +203,5 @@ jobs:
           registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
           registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
           registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} AdminHost=${{ needs.deploy_infrastructure.outputs.adminAppHostName }}
+          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} AdminAppHostName=${{ needs.deploy_infrastructure.outputs.adminAppHostName }}
           secure-environment-variables: Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}
