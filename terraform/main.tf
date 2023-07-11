@@ -295,6 +295,10 @@ output "admin_app_name" {
   value = azurerm_linux_web_app.admin.name
 }
 
+output "admin_app_hostname" {
+  value = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
+}
+
 output "telegram_webapp_name" {
   value = azurerm_linux_web_app.telegramwebapp.name
 }

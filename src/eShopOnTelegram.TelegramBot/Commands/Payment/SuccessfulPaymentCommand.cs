@@ -1,4 +1,6 @@
-﻿using eshopOnTelegram.TelegramBot.Appsettings;
+﻿using System.Text;
+
+using eshopOnTelegram.TelegramBot.Appsettings;
 
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
@@ -9,6 +11,8 @@ using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Extensions;
 
+using Telegram.Bot.Types.ReplyMarkups;
+
 namespace eShopOnTelegram.TelegramBot.Commands.Payment;
 
 public class SuccessfulPaymentCommand : ITelegramCommand
@@ -18,6 +22,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
     private readonly IApplicationContentStore _applicationContentStore;
     private readonly IBotOwnerDataStore _botOwnerDataStore;
     private readonly TelegramAppsettings _telegramAppsettings;
+    private readonly IConfiguration _configuration;
     private readonly ILogger<SuccessfulPaymentCommand> _logger;
 
     public SuccessfulPaymentCommand(
@@ -26,6 +31,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
         IApplicationContentStore applicationContentStore,
         IBotOwnerDataStore botOwnerDataStore,
         TelegramAppsettings telegramAppsettings,
+        IConfiguration configuration,
         ILogger<SuccessfulPaymentCommand> logger)
     {
         _telegramBot = telegramBot;
@@ -33,6 +39,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
         _applicationContentStore = applicationContentStore;
         _botOwnerDataStore = botOwnerDataStore;
         _telegramAppsettings = telegramAppsettings;
+        _configuration = configuration;
         _logger = logger;
     }
 
@@ -53,24 +60,32 @@ public class SuccessfulPaymentCommand : ITelegramCommand
                     await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.SuccessfullPayment, CancellationToken.None)
                 );
 
-                var telegramGroupId = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(CancellationToken.None);
+                InlineKeyboardMarkup inlineKeyboard = null;
+                var orderReceivedMessage = new StringBuilder("New order received!!!");
 
-                if (!string.IsNullOrWhiteSpace(telegramGroupId))
+                if (!string.IsNullOrEmpty(_configuration["AdminAppHostName"]))
                 {
-                    await _telegramBot.SendTextMessageAsync(
-                        chatId: telegramGroupId,
-                        text: "New order received!!! Click here for details",
-                        parseMode: ParseMode.Html
-                    );
+                    var orderLink = $"{_configuration["AdminAppHostName"]}/#/orders/{update.Message.SuccessfulPayment.InvoicePayload}";
+
+                    orderReceivedMessage
+                        .AppendLine()
+                        .AppendLine("Click button for details");
+
+                    inlineKeyboard = new(new[]
+                    {
+                        InlineKeyboardButton.WithUrl(
+                            text: "Show order details",
+                            url: orderLink)
+                    });
                 }
-                else
-                {
+
+                var telegramGroupId = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(CancellationToken.None);
                     await _telegramBot.SendTextMessageAsync(
-                        chatId: _telegramAppsettings.BotOwnerTelegramId,
-                        text: "New order received!!!",
-                        parseMode: ParseMode.Html
+                        chatId: string.IsNullOrWhiteSpace(telegramGroupId) ? _telegramAppsettings.BotOwnerTelegramId : telegramGroupId,
+                        text: orderReceivedMessage.ToString(),
+                        parseMode: ParseMode.Html,
+                        replyMarkup: inlineKeyboard
                     );
-                }
             }
             else
             {

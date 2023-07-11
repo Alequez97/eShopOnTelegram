@@ -37,7 +37,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
         }
         else
         {
-            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
+            await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.NoUnpaidOrderFound, CancellationToken.None));
         }
     }
 
