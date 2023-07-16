@@ -1,9 +1,6 @@
 import { Datagrid, DateField, Link, List, TextField, ShowButton, useListController } from "react-admin";
 
 export default function OrdersList() {
-  const dsfa = useListController()
-  console.log(dsfa)
-
   return (
     <List>
       <Datagrid bulkActionButtons={false}>
@@ -11,7 +8,7 @@ export default function OrdersList() {
         <DateField source="creationDate" sortable={false} showTime={true} />
         <DateField
           source="paymentDate"
-          sortable={false}
+          sortable={true}
           showTime={true}
           emptyText={"-"}
         />

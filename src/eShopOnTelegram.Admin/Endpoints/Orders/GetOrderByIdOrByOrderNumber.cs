@@ -46,7 +46,7 @@ public class GetOrderByIdOrByOrderNumber : EndpointBaseAsync
 
         // TODO: It is required for react admin id to be matched with requested id
         // Later should remove this temp fix with proper solution
-        getByOrderNumberResponse.Data.Id = Convert.ToInt64(getByIdResponse.Data.OrderNumber);
+        getByOrderNumberResponse.Data.Id = Convert.ToInt64(getByOrderNumberResponse.Data.OrderNumber);
 
         return new OkObjectResult(getByOrderNumberResponse.Data);
     }
