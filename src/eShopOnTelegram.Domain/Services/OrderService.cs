@@ -19,6 +19,42 @@ public class OrderService : IOrderService
         _logger = logger;
     }
 
+    public async Task<Response<OrderDto>> GetAsync(string id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingOrder = await _dbContext.Orders
+                .Include(order => order.CartItems)
+                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(product => product.Category)
+                .Include(order => order.Customer)
+                .FirstOrDefaultAsync(order => order.Id == Convert.ToInt64(id), cancellationToken);
+
+            if (existingOrder == null)
+            {
+                return new Response<OrderDto>()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            return new Response<OrderDto>
+            {
+                Status = ResponseStatus.Success,
+                Data = existingOrder.ToOrderDto()
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new Response<OrderDto>()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
     public async Task<Response<OrderDto>> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
     {
         try

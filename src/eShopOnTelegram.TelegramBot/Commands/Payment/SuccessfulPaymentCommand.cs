@@ -65,7 +65,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 
                 if (!string.IsNullOrEmpty(_configuration["AdminAppHostName"]))
                 {
-                    var orderLink = $"{_configuration["AdminAppHostName"]}/#/orders/{update.Message.SuccessfulPayment.InvoicePayload}";
+                    var orderLink = $"{_configuration["AdminAppHostName"]}/#/orders/{update.Message.SuccessfulPayment.InvoicePayload}/show";
 
                     orderReceivedMessage
                         .AppendLine()
@@ -81,7 +81,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 
                 var telegramGroupId = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(CancellationToken.None);
                     await _telegramBot.SendTextMessageAsync(
-                        chatId: string.IsNullOrWhiteSpace(telegramGroupId) ? _telegramAppsettings.BotOwnerTelegramId : telegramGroupId,
+                        chatId: !string.IsNullOrWhiteSpace(telegramGroupId) ? telegramGroupId : _telegramAppsettings.BotOwnerTelegramId,
                         text: orderReceivedMessage.ToString(),
                         parseMode: ParseMode.Html,
                         replyMarkup: inlineKeyboard

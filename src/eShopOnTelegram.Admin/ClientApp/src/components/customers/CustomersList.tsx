@@ -3,7 +3,7 @@ import { List, Datagrid, TextField } from "react-admin";
 export default function CustomersList() {
   return (
     <List>
-      <Datagrid>
+      <Datagrid bulkActionButtons={false}>
         <TextField
           source="telegramUserUID"
           label="Telegram User UID"

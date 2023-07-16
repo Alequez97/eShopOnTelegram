@@ -7,6 +7,8 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface IOrderService
 {
+    public Task<Response<OrderDto>> GetAsync(string id, CancellationToken cancellationToken);
+
     public Task<Response<OrderDto>> GetByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken);
 
     public Task<Response<IEnumerable<OrderDto>>> GetByTelegramIdAsync(long telegramId, CancellationToken cancellationToken);
