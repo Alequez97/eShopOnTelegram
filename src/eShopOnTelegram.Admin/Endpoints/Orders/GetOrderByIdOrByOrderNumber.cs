@@ -28,6 +28,26 @@ public class GetOrderByIdOrByOrderNumber : EndpointBaseAsync
         }
 
         var getByOrderNumberResponse = await _orderService.GetByOrderNumberAsync(idOrOrderNumber, cancellationToken);
-        return getByOrderNumberResponse.AsActionResult();
+        
+        if (getByOrderNumberResponse.Status == ResponseStatus.ValidationFailed)
+        {
+            return new BadRequestResult();
+        }
+
+        if (getByOrderNumberResponse.Status == ResponseStatus.NotFound)
+        {
+            return new NotFoundResult();
+        }
+
+        if (getByOrderNumberResponse.Status == ResponseStatus.Exception)
+        {
+            return new StatusCodeResult(500);
+        }
+
+        // TODO: It is required for react admin id to be matched with requested id
+        // Later should remove this temp fix with proper solution
+        getByOrderNumberResponse.Data.Id = Convert.ToInt64(getByIdResponse.Data.OrderNumber);
+
+        return new OkObjectResult(getByOrderNumberResponse.Data);
     }
 }
