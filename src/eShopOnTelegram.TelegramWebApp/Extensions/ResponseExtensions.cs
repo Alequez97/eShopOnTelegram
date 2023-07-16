@@ -6,9 +6,14 @@ public static class ResponseExtensions
 {
     public static ActionResult AsActionResult(this Response response)
     {
-        if (response.Status == ResponseStatus.ValidationFailed || response.Status == ResponseStatus.NotFound)
+        if (response.Status == ResponseStatus.ValidationFailed)
         {
             return new BadRequestResult();
+        }
+
+        if (response.Status == ResponseStatus.NotFound)
+        {
+            return new NotFoundResult();
         }
 
         if (response.Status == ResponseStatus.Exception)
@@ -21,9 +26,14 @@ public static class ResponseExtensions
 
     public static ActionResult AsActionResult<T>(this Response<T> response) where T : class
     {
-        if (response.Status == ResponseStatus.ValidationFailed || response.Status == ResponseStatus.NotFound)
+        if (response.Status == ResponseStatus.ValidationFailed)
         {
             return new BadRequestResult();
+        }
+
+        if (response.Status == ResponseStatus.NotFound)
+        {
+            return new NotFoundResult();
         }
 
         if (response.Status == ResponseStatus.Exception)
