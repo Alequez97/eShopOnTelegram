@@ -37,7 +37,7 @@ function ProductCreate() {
   async function handleSubmit(request: any) {
     try {
       const formData = new FormData();
-      formData.append("productName", request.productName);
+      formData.append("name", request.productName);
       formData.append("productCategoryId", request.productCategoryId);
       formData.append("quantityLeft", request.quantityLeft);
       formData.append("originalPrice", request.originalPrice);
