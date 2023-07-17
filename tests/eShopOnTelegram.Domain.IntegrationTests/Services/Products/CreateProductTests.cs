@@ -26,6 +26,7 @@ public class CreateProductTests
             ProductCategoryId = -1,
             OriginalPrice = 0,
             QuantityLeft = 0,
+            ProductImage = null
         };
 
         // Act
