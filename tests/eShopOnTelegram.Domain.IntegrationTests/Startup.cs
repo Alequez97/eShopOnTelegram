@@ -22,6 +22,7 @@ public class Startup
             .Build();
 
         services
+            .AddSingleton<IConfiguration>(config)
             .AddDbContext<EShopOnTelegramDbContext>(options => options.UseSqlServer(config.GetConnectionString("Sql")))
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>))
