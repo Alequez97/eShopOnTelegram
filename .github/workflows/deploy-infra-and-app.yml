@@ -38,11 +38,11 @@ jobs:
 
       - name: Initialize Terraform
         working-directory: terraform
-        run: terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate" -reconfigure
+        run: terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-${{ github.event.inputs.environment || 'dev' }}.tfstate" -reconfigure
 
       - name: Terraform Plan
         working-directory: terraform
-        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="app_sp_object_id=${{ secrets.APP_SP_AZURE_OBJECT_ID }}" -var="app_sp_client_id=${{ secrets.APP_SP_AZURE_CLIENT_ID }}" -var="app_sp_client_secret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var="sp_object_id=${{ secrets.GH_SP_AZURE_OBJECT_ID }}" -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var="telegram_bot_owner_telegram_id=${{ secrets.TELEGRAM_BOT_OWNER_TELEGRAM_ID }}" -var="telegram_token=${{ secrets.TELEGRAM_TOKEN }}" -var="payment_card_api_token=${{ secrets.PAYMENT_CARD_API_TOKEN }}" -var="payment_plicio_api_token=${{ secrets.PAYMENT_PLICIO_API_TOKEN }}" -var-file="vars/dev.tfvars"
+        run: terraform plan -input=false -out=plan -var="subscription_id=${{ secrets.AZURE_SUBSCRIPTION_ID }}" -var="app_sp_object_id=${{ secrets.APP_SP_AZURE_OBJECT_ID }}" -var="app_sp_client_id=${{ secrets.APP_SP_AZURE_CLIENT_ID }}" -var="app_sp_client_secret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}" -var="admin_object_id=${{ secrets.ADMIN_AZURE_OBJECT_ID }}" -var="sp_object_id=${{ secrets.GH_SP_AZURE_OBJECT_ID }}" -var="sql_admin_password=${{ secrets.SQL_ADMIN_PASSWORD }}" -var="telegram_bot_owner_telegram_id=${{ secrets.TELEGRAM_BOT_OWNER_TELEGRAM_ID }}" -var="telegram_token=${{ secrets.TELEGRAM_TOKEN }}" -var="payment_card_api_token=${{ secrets.PAYMENT_CARD_API_TOKEN }}" -var="payment_plicio_api_token=${{ secrets.PAYMENT_PLICIO_API_TOKEN }}" -var-file="vars/${{ github.event.inputs.environment || 'dev' }}.tfvars"
 
       - name: Teffaform Apply
         id: terraformapply
@@ -77,7 +77,7 @@ jobs:
   deploy_admin_app:
     runs-on: ubuntu-latest
     
-    name: Deploy admin app to dev env
+    name: Deploy admin app to ${{ github.event.inputs.environment || 'dev' }} env
     needs: [deploy_infrastructure]
     environment:
       name: ${{ github.event.inputs.environment || 'dev' }}
@@ -186,17 +186,17 @@ jobs:
           
       - name: Push telegram bot docker image
         run: |
-          docker build -f ./src/eShopOnTelegram.TelegramBot/Dockerfile -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest .
-          docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
+          docker build -f ./src/eShopOnTelegram.TelegramBot/Dockerfile -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest .
+          docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest
 
       - name: Deploy telegram bot container instance
         uses: azure/aci-deploy@v1
         with:
           resource-group: ${{ needs.deploy_infrastructure.outputs.resourceGroupName }}
           location: ${{ needs.deploy_infrastructure.outputs.resourceGroupLocation }}
-          name: containerinstance-telegrambot-eshopontelegram-dev
-          image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-dev:latest
-          dns-name-label: containerinstance-telegrambot-eshopontelegram-dev
+          name: containerinstance-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}
+          image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest
+          dns-name-label: containerinstance-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}
           ports: 80
           cpu: 1
           memory: 1
