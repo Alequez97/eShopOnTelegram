@@ -1,6 +1,8 @@
 ﻿using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
+using eShopOnTelegram.Persistence.Files.Interfaces;
+using eShopOnTelegram.Persistence.Files.Stores;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -24,6 +26,7 @@ public class Startup
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>))
             .AddTransient<IProductService, ProductService>()
+            .AddTransient<IProductImagesStore, AzureBlobStorageProductImagesStore>()
             .AddTransient<IOrderService, OrderService>()
             .AddTransient<ICustomerService, CustomerService>()
             .AddTransient<IProductCategoryService, ProductCategoryService>();
