@@ -1,6 +1,6 @@
 app_environment = "Stage"
 resource_group_name = "rg-eshopontelegram-stage"
-resource_group_location = "northeurope"
+resource_group_location = "swedencentral"
 sql_server_name = "sqlserver-eshopontelegram-stage"
 sql_database_name = "db-eshopontelegram-stage"
 storage_account_name = "steshopontelegramstage"

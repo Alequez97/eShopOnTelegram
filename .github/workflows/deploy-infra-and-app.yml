@@ -1,10 +1,9 @@
 name: Deploy infrastructure and application
 
 on:
-  push:
-    branches:
-      - master
-      - azure-key-vault-migration
+  # push:
+  #   branches:
+  #     - master
   workflow_dispatch:
     inputs:
       environment:
