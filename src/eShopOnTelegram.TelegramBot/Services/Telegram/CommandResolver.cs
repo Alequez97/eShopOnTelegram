@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.TelegramBot.Commands;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
+using eShopOnTelegram.TelegramBot.Exceptions;
 
 namespace eShopOnTelegram.TelegramBot.Services.Telegram;
 
@@ -16,14 +17,19 @@ public class CommandResolver
 
     public async Task<ITelegramCommand> ResolveAsync(Update update)
     {
-        foreach (var command in _commands)
+        var responsibleCommands = _commands.Where(command => command.IsResponsibleForUpdateAsync(update).Result).ToList();
+
+        if (responsibleCommands.Count > 1)
         {
-            if (await command.IsResponsibleForUpdateAsync(update))
-            {
-                return command;
-            }
+            var responsibleForUpdateTypesAsString = string.Join(", ", responsibleCommands.Select(command => command.GetType().Name));
+            throw new MoreThanOneCommandIsResponsibleForUpdateException($"More than one command found as responsible for incoming update. List of commands that match same update: {responsibleForUpdateTypesAsString}");
         }
 
-        return _unknownCommand;
+        if (responsibleCommands.Count == 0)
+        {
+            return _unknownCommand;
+        }
+
+        return await Task.FromResult(responsibleCommands.First());
     }
 }

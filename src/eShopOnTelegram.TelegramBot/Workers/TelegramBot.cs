@@ -51,12 +51,19 @@ public class TelegramBot : BackgroundService
     private Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
         CancellationToken cancellationToken)
     {
-        Task.Run(() =>
+        Task.Run(async () =>
         {
-            using IServiceScope scope = _serviceProvider.CreateScope();
-            var telegramUpdateResponseSender = scope.ServiceProvider.GetRequiredService<UpdateResponseSender>();
+            try
+            {
+                using IServiceScope scope = _serviceProvider.CreateScope();
+                var telegramUpdateResponseSender = scope.ServiceProvider.GetRequiredService<UpdateResponseSender>();
 
-            telegramUpdateResponseSender.SendResponse(update);
+                await telegramUpdateResponseSender.SendResponse(update);
+            }
+            catch (Exception exception)
+            {
+                _logger.LogError(exception, exception.Message);
+            }
         }, cancellationToken);
 
         return Task.CompletedTask;
