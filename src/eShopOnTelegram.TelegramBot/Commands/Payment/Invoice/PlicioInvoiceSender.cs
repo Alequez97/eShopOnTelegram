@@ -1,6 +1,4 @@
-﻿using System;
-
-using eShopOnTelegram.Domain.Responses;
+﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
@@ -47,7 +45,6 @@ public class PlicioInvoiceSender : ITelegramCommand
 
         try
         {
-            Thread.Sleep(5000);
             var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
