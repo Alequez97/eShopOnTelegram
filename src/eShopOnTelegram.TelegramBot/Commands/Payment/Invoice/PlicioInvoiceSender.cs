@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.Domain.Responses;
+﻿using System;
+
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
@@ -7,6 +9,8 @@ using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
+
+using Refit;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
@@ -43,6 +47,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
         try
         {
+            Thread.Sleep(5000);
             var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 
             if (getOrdersResponse.Status != ResponseStatus.Success)
@@ -74,6 +79,11 @@ public class PlicioInvoiceSender : ITelegramCommand
                 text: await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
+        }
+        catch (ApiException apiException)
+        {
+            _logger.LogError(apiException, $"{apiException.Message}\n{apiException.Content}");
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
         }
         catch (Exception exception)
         {

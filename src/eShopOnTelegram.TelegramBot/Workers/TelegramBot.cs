@@ -25,7 +25,7 @@ public class TelegramBot : BackgroundService
         return base.StartAsync(cancellationToken);
     }
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override Task ExecuteAsync(CancellationToken cancellationToken)
     {
         var receiverOptions = new ReceiverOptions
         {
@@ -38,6 +38,8 @@ public class TelegramBot : BackgroundService
             receiverOptions: receiverOptions,
             cancellationToken: cancellationToken
         );
+
+        return Task.CompletedTask;
     }
 
     public override Task StopAsync(CancellationToken cancellationToken)
@@ -46,13 +48,15 @@ public class TelegramBot : BackgroundService
         return base.StopAsync(cancellationToken);
     }
 
-    private async Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
+    private Task HandleUpdateAsync(ITelegramBotClient botClient, Update update,
         CancellationToken cancellationToken)
     {
         using IServiceScope scope = _serviceProvider.CreateScope();
         var telegramUpdateExecutor = scope.ServiceProvider.GetRequiredService<UpdateExecutor>();
 
-        await telegramUpdateExecutor.ExecuteAsync(update);
+        telegramUpdateExecutor.ExecuteAsync(update);
+
+        return Task.CompletedTask;
     }
 
     private Task HandlePollingErrorAsync(ITelegramBotClient botClient, Exception exception,

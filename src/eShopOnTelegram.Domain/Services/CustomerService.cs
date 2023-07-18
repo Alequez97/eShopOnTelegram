@@ -10,9 +10,9 @@ public class CustomerService : ICustomerService
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<CustomerService> _logger;
 
-    public CustomerService(EShopOnTelegramDbContext dbContext, ILogger<CustomerService> logger)
+    public CustomerService(IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory, ILogger<CustomerService> logger)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContextFactory.CreateDbContext();
         _logger = logger;
     }
 
