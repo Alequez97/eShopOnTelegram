@@ -35,8 +35,9 @@ builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
 builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 
-builder.Services.AddDbContext<EShopOnTelegramDbContext>(
-    options => options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
+builder.Services.AddDbContextFactory<EShopOnTelegramDbContext>(
+    options =>
+        options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
 
 //builder.Services.AddCors(opt =>
 //{

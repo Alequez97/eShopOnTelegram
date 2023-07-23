@@ -17,12 +17,12 @@ public class ProductService : IProductService
     private readonly ILogger<ProductService> _logger;
 
     public ProductService(
-        EShopOnTelegramDbContext dbContext,
+        IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory,
         IProductImagesStore productImagesStore,
         IConfiguration configuration,
         ILogger<ProductService> logger)
     {
-        _dbContext = dbContext;
+        _dbContext = dbContextFactory.CreateDbContext();
         _productImagesStore = productImagesStore;
         _productImagesHostname = configuration["ProductImagesHostName"];
         _logger = logger;
