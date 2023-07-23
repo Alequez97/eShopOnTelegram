@@ -1,6 +1,4 @@
-﻿using Telegram.Bot.Types;
-
-namespace eShopOnTelegram.TelegramBot.UnitTests.Extensions;
+﻿namespace eShopOnTelegram.TelegramBot.UnitTests.Extensions;
 
 public static class TestData
 {
