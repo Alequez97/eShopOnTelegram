@@ -8,6 +8,8 @@ using eShopOnTelegram.TelegramBot.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Constants;
 using eShopOnTelegram.TelegramBot.Extensions;
 
+using Refit;
+
 using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.TelegramBot.Commands.Payment.Invoice;
@@ -74,6 +76,11 @@ public class PlicioInvoiceSender : ITelegramCommand
                 text: await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
                 replyMarkup: inlineKeyboard,
                 cancellationToken: CancellationToken.None);
+        }
+        catch (ApiException apiException)
+        {
+            _logger.LogError(apiException, $"{apiException.Message}\n{apiException.Content}");
+            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
         }
         catch (Exception exception)
         {

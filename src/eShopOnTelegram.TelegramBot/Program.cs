@@ -84,8 +84,9 @@ IHost host = Host.CreateDefaultBuilder(args)
         });
 
         var sqlConnectionString = configuration.GetConnectionString("Sql");
-        services.AddDbContext<EShopOnTelegramDbContext>(
-            options => options.UseSqlServer(sqlConnectionString));
+        services.AddDbContextFactory<EShopOnTelegramDbContext>(
+            options =>
+                options.UseSqlServer(sqlConnectionString));
 
         services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 

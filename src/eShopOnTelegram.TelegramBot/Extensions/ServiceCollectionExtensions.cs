@@ -43,7 +43,7 @@ namespace eShopOnTelegram.TelegramBot.Extensions
 
             // Telegram services
             services.AddScoped<CommandResolver>();
-            services.AddScoped<UpdateExecutor>();
+            services.AddScoped<UpdateResponseSender>();
             services.AddScoped<PaymentProceedMessageSender>();
 
             // Mappers
