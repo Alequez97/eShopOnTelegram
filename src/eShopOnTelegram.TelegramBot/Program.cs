@@ -120,6 +120,12 @@ IHost host = Host.CreateDefaultBuilder(args)
         {
             httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
         });
+
+        using (var serviceProvider = services.BuildServiceProvider())
+        {
+            var dbContext = serviceProvider.GetRequiredService<EShopOnTelegramDbContext>();
+            dbContext.Database.Migrate();
+        }
     })
     .Build();
 

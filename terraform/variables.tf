@@ -98,6 +98,11 @@ variable "app_service_plan_sku_name" {
   description = "App service sku name"
 }
 
+variable "log_analytics_workspace_name" {
+  type = string
+  description = "Log analytics workspace name"
+}
+
 variable "app_insights_name" {
   type = string
   description = "Admin application insights"
