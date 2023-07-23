@@ -1,7 +1,7 @@
-﻿using eShopOnTelegram.TelegramWebApp.Constants;
-using eShopOnTelegram.TelegramWebApp.Extensions;
+﻿using eShopOnTelegram.TelegramWebApp.Api.Constants;
+using eShopOnTelegram.TelegramWebApp.Api.Extensions;
 
-namespace eShopOnTelegram.TelegramWebApp.Endpoints.Orders;
+namespace eShopOnTelegram.TelegramWebApp.Api.Endpoints.Orders;
 
 public class GetUnpaidOrderByTelegramId : EndpointBaseAsync
     .WithRequest<long>

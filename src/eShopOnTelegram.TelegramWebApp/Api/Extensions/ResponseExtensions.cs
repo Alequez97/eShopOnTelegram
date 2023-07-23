@@ -1,6 +1,6 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 
-namespace eShopOnTelegram.TelegramWebApp.Extensions;
+namespace eShopOnTelegram.TelegramWebApp.Api.Extensions;
 
 public static class ResponseExtensions
 {

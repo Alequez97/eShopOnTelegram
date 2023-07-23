@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramWebApp.Constants;
+﻿namespace eShopOnTelegram.TelegramWebApp.Api.Constants;
 
 public static class SwaggerGroup
 {
