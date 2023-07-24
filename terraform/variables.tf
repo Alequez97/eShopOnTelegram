@@ -113,14 +113,9 @@ variable "admin_app_name" {
   description = "Admin application name"
 }
 
-variable "telegram_webapp_name" {
+variable "telegram_bot_app_name" {
   type = string
-  description = "Telegram webapp name"
-}
-
-variable "container_registry_name" {
-  type = string
-  description = "Container registry name"
+  description = "Telegram bot project name"
 }
 
 variable "keyvault_name" {

@@ -2,8 +2,8 @@
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.Commands;
 using eShopOnTelegram.TelegramBot.UnitTests.Extensions;
+using eShopOnTelegram.TelegramBot.Worker.Commands;
 
 using FluentAssertions;
 
@@ -11,7 +11,6 @@ using Moq;
 using Moq.AutoMock;
 
 using Telegram.Bot;
-using Telegram.Bot.Types;
 
 namespace eShopOnTelegram.TelegramBot.UnitTests.Commands;
 

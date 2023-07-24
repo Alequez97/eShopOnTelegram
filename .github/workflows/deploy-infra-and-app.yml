@@ -56,7 +56,7 @@ jobs:
           echo "resourceGroupLocation=$(terraform output -raw resource_group_location)" >> $GITHUB_OUTPUT
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
           echo "adminAppHostName=$(terraform output -raw admin_app_hostname)" >> $GITHUB_OUTPUT
-          echo "telegramWebAppName=$(terraform output -raw telegram_webapp_name)" >> $GITHUB_OUTPUT
+          echo "telegramBotAppName=$(terraform output -raw telegram_bot_app_name)" >> $GITHUB_OUTPUT
           echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
           echo "acrUsername=$(terraform output -raw acr_username)" >> $GITHUB_OUTPUT
           echo "acrPassword=$(terraform output -raw acr_password)" >> $GITHUB_OUTPUT
@@ -67,7 +67,7 @@ jobs:
       resourceGroupLocation: ${{ steps.terraformoutput.outputs.resourceGroupLocation }}
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
       adminAppHostName: ${{ steps.terraformoutput.outputs.adminAppHostName }}
-      telegramWebAppName: ${{ steps.terraformoutput.outputs.telegramWebAppName }}
+      telegramBotAppName: ${{ steps.terraformoutput.outputs.telegramBotAppName }}
       acrLoginServer: ${{ steps.terraformoutput.outputs.acrLoginServer }}
       acrUsername: ${{ steps.terraformoutput.outputs.acrUsername }}
       acrPassword: ${{ steps.terraformoutput.outputs.acrPassword }}
@@ -156,51 +156,5 @@ jobs:
       - name: Deploy to Azure WebApp
         uses: azure/webapps-deploy@v2
         with:
-          app-name: ${{ needs.deploy_infrastructure.outputs.telegramWebAppName }}
+          app-name: ${{ needs.deploy_infrastructure.outputs.telegramBotAppName }}
           package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
-
-  deploy_telegram_bot:
-    runs-on: ubuntu-latest
-
-    name: 'Deploy telegram bot'
-    needs: [deploy_infrastructure]
-    environment:
-      name: ${{ github.event.inputs.environment || 'dev' }}
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Azure CLI Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.GH_SP_AZURE_CREDENTIALS }}
-
-      - name: Login to Azure Container Registry
-        uses: azure/docker-login@v1
-        with:
-          login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
-          username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
-          password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          
-      - name: Push telegram bot docker image
-        run: |
-          docker build -f ./src/eShopOnTelegram.TelegramBot/Dockerfile -t ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest .
-          docker push ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest
-
-      - name: Deploy telegram bot container instance
-        uses: azure/aci-deploy@v1
-        with:
-          resource-group: ${{ needs.deploy_infrastructure.outputs.resourceGroupName }}
-          location: ${{ needs.deploy_infrastructure.outputs.resourceGroupLocation }}
-          name: containerinstance-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}
-          image: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}/containerimage-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}:latest
-          dns-name-label: containerinstance-telegrambot-eshopontelegram-${{ github.event.inputs.environment || 'dev' }}
-          ports: 80
-          cpu: 1
-          memory: 1
-          registry-login-server: ${{ needs.deploy_infrastructure.outputs.acrLoginServer }}
-          registry-username: ${{ needs.deploy_infrastructure.outputs.acrUsername }}
-          registry-password: ${{ needs.deploy_infrastructure.outputs.acrPassword }}
-          environment-variables: Azure__KeyVaultUri=${{ needs.deploy_infrastructure.outputs.keyVaultUri }} Azure__TenantId=${{ secrets.AZURE_TENANT_ID }} Azure__ClientId=${{ secrets.APP_SP_AZURE_CLIENT_ID }} AdminAppHostName=${{ needs.deploy_infrastructure.outputs.adminAppHostName }}
-          secure-environment-variables: Azure__ClientSecret=${{ secrets.APP_SP_AZURE_CLIENT_SECRET }}

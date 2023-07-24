@@ -114,8 +114,8 @@ resource "azurerm_linux_web_app" "admin" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_linux_web_app" "telegramwebapp" {
-  name                = var.telegram_webapp_name
+resource "azurerm_linux_web_app" "telegram_bot" {
+  name                = var.telegram_bot_app_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_service_plan.serviceplan.location
   service_plan_id     = azurerm_service_plan.serviceplan.id
@@ -143,16 +143,6 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_container_registry" "containerregistry" {
-  name                     = var.container_registry_name
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  sku                      = "Basic"
-  admin_enabled            = true
-
-  tags = local.az_common_tags
-}
-
 resource "azurerm_key_vault" "keyvault" {
   name                            = var.keyvault_name
   location                        = azurerm_resource_group.rg.location
@@ -163,7 +153,7 @@ resource "azurerm_key_vault" "keyvault" {
 
   depends_on   = [
     azurerm_linux_web_app.admin,
-    azurerm_linux_web_app.telegramwebapp
+    azurerm_linux_web_app.telegram_bot
   ]
 
   # App identity access to keyvault
@@ -248,9 +238,9 @@ resource "azurerm_key_vault_secret" "telegramtoken" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
-resource "azurerm_key_vault_secret" "telegramwebappurl" {
+resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
   name         = "Telegram--WebAppUrl"
-  value        = "https://${azurerm_linux_web_app.telegramwebapp.name}.azurewebsites.net"
+  value        = "https://${azurerm_linux_web_app.telegram_bot.name}.azurewebsites.net"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
@@ -306,8 +296,8 @@ output "admin_app_hostname" {
   value = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
 }
 
-output "telegram_webapp_name" {
-  value = azurerm_linux_web_app.telegramwebapp.name
+output "telegram_bot_app_name" {
+  value = azurerm_linux_web_app.telegram_bot.name
 }
 
 output "acr_login_server" {
