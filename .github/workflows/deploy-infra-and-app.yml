@@ -16,7 +16,7 @@ env:
   ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
-  TELEGRAM_WEBAPP_LOCATION: src/eShopOnTelegram.TelegramWebApp
+  TELEGRAM_BOT_LOCATION: src/eShopOnTelegram.TelegramBot
 
 jobs:
   deploy_infrastructure:
@@ -131,15 +131,15 @@ jobs:
         run: npm install -g pnpm
 
       - name: Restore NuGet packages
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+        working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}
         run: dotnet restore
 
-      - name: Build telegram webapp
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+      - name: Build telegram bot project
+        working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}
         run: dotnet build --configuration Release --no-restore
       
-      - name: Publish telegram webapp
-        working-directory: ${{ env.TELEGRAM_WEBAPP_LOCATION }}
+      - name: Publish telegram bot project
+        working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}
         run: dotnet publish --configuration Release --no-build --output publish
 
       - name: Azure CLI Login
@@ -151,4 +151,4 @@ jobs:
         uses: azure/webapps-deploy@v2
         with:
           app-name: ${{ needs.deploy_infrastructure.outputs.telegramBotAppName }}
-          package: ${{ env.TELEGRAM_WEBAPP_LOCATION }}/publish
+          package: ${{ env.TELEGRAM_BOT_LOCATION }}/publish
