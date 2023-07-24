@@ -50,6 +50,7 @@ builder.Services.AddDbContextFactory<EShopOnTelegramDbContext>(
 
 // Domain layer services
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 
