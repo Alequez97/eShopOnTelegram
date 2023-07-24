@@ -19,6 +19,7 @@ using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,7 +83,7 @@ builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpCl
 {
     httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
 });
-builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>, PlisioPaymentReceivedWebhookRequestValidator>();
+builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ => new PlisioPaymentReceivedWebhookRequestValidator(builder.Configuration["Payment:Plisio:ApiToken"]));
 
 // Controllers and views
 builder.Services.AddControllersWithViews();

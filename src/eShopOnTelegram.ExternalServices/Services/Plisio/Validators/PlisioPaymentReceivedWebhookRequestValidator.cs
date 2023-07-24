@@ -12,9 +12,9 @@ public class PlisioPaymentReceivedWebhookRequestValidator : IWebhookRequestValid
 {
     private readonly string _plisioApiToken;
 
-    public PlisioPaymentReceivedWebhookRequestValidator(PaymentAppsettings configuration)
+    public PlisioPaymentReceivedWebhookRequestValidator(string plisioApiToken)
     {
-        _plisioApiToken = configuration["Payment:Plisio:ApiToken"];
+        _plisioApiToken = plisioApiToken;
     }
 
     public bool Validate(PlisioPaymentReceivedWebhookRequest request)
