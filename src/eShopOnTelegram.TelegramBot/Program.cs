@@ -84,7 +84,13 @@ builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpCl
 {
     httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
 });
-builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ => new PlisioPaymentReceivedWebhookRequestValidator(builder.Configuration["Payment:Plisio:ApiToken"]));
+
+// External services webhook validators
+builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ => 
+{
+    var plisioApiToken = builder.Configuration["Payment:Plisio:ApiToken"];
+    return new PlisioPaymentReceivedWebhookRequestValidator(plisioApiToken);
+});
 
 // Notification senders
 builder.Services.AddScoped<INotificationSender>((provider) => 
