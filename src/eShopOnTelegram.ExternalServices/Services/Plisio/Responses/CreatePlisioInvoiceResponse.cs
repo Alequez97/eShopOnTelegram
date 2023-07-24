@@ -2,7 +2,7 @@
 
 namespace eShopOnTelegram.ExternalServices.Services.Plisio.Responses;
 
-public class CreatePlicioInvoiceResponse
+public class CreatePlisioInvoiceResponse
 {
     public string Status { get; set; }
 

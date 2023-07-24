@@ -3,5 +3,5 @@
 public static class PaymentMethodConstants
 {
     public const string BankCard = "BankCard";
-    public const string Plicio = "Plicio";
+    public const string Plisio = "Plisio";
 }

@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Appsettings;
+﻿namespace eShopOnTelegram.TelegramBot.Appsettings;
 public class TelegramAppsettings
 {
     public required string BotOwnerTelegramId { get; set; }

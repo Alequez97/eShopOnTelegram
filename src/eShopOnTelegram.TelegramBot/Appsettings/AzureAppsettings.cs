@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Appsettings;
+﻿namespace eShopOnTelegram.TelegramBot.Appsettings;
 
 public class AzureAppsettings
 {

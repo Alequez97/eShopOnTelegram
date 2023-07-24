@@ -34,11 +34,11 @@ namespace eShopOnTelegram.TelegramBot.Worker.Extensions
 
             // Invoice generation commands
             services.AddScoped<ITelegramCommand, BankCardInvoiceSender>();
-            services.AddScoped<ITelegramCommand, PlicioInvoiceSender>();
+            services.AddScoped<ITelegramCommand, PlisioInvoiceSender>();
 
             // Payment telegram buttons generators
             services.AddSingleton<IPaymentTelegramButtonProvider, BankCardPaymentTelegramButtonProvider>();
-            services.AddSingleton<IPaymentTelegramButtonProvider, PlicioPaymentTelegramButtonProvider>();
+            services.AddSingleton<IPaymentTelegramButtonProvider, PlisioPaymentTelegramButtonProvider>();
 
             // Telegram services
             services.AddScoped<CommandResolver>();

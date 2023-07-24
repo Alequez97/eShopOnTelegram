@@ -1,4 +1,4 @@
-﻿using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+﻿using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 

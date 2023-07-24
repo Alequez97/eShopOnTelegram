@@ -3,7 +3,7 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;

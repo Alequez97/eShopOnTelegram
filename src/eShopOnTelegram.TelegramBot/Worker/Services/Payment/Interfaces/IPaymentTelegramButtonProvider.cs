@@ -1,4 +1,4 @@
-﻿using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+﻿using eShopOnTelegram.TelegramBot.Appsettings;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

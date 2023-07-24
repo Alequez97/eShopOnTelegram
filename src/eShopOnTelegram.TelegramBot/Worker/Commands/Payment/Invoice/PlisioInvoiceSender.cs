@@ -1,9 +1,8 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
@@ -14,25 +13,25 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
 
-public class PlicioInvoiceSender : ITelegramCommand
+public class PlisioInvoiceSender : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
-    private readonly IPlicioClient _plicioClient;
+    private readonly IPlisioClient _plisioClient;
     private readonly IOrderService _orderService;
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly IApplicationContentStore _applicationContentStore;
-    private readonly ILogger<PlicioInvoiceSender> _logger;
+    private readonly ILogger<PlisioInvoiceSender> _logger;
 
-    public PlicioInvoiceSender(
+    public PlisioInvoiceSender(
         ITelegramBotClient telegramBot,
-        IPlicioClient plicioClient,
+        IPlisioClient plisioClient,
         IOrderService orderService,
         PaymentAppsettings paymentAppsettings,
         IApplicationContentStore applicationContentStore,
-        ILogger<PlicioInvoiceSender> logger)
+        ILogger<PlisioInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
-        _plicioClient = plicioClient;
+        _plisioClient = plisioClient;
         _orderService = orderService;
         _paymentAppsettings = paymentAppsettings;
         _applicationContentStore = applicationContentStore;
@@ -55,7 +54,7 @@ public class PlicioInvoiceSender : ITelegramCommand
 
             var activeOrder = getOrdersResponse.Data;
 
-            var createPlicioInvoiceResponse = await _plicioClient.CreateInvoiceAsync(
+            var createPlisioInvoiceResponse = await _plisioClient.CreateInvoiceAsync(
                 _paymentAppsettings.Plisio.ApiToken,
                 _paymentAppsettings.MainCurrency,
                 (int)Math.Ceiling(activeOrder.TotalPrice),
@@ -67,7 +66,7 @@ public class PlicioInvoiceSender : ITelegramCommand
                 // first row
                 new []
                 {
-                    InlineKeyboardButton.WithUrl(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlicioInvoiceResponse.Data.InvoiceUrl),
+                    InlineKeyboardButton.WithUrl(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlisioInvoiceResponse.Data.InvoiceUrl),
                 },
             });
 
@@ -91,6 +90,6 @@ public class PlicioInvoiceSender : ITelegramCommand
 
     public Task<bool> IsResponsibleForUpdateAsync(Update update)
     {
-        return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.Plicio));
+        return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.Plisio));
     }
 }

@@ -3,7 +3,10 @@ using Azure.Identity;
 
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.ExternalServices.Extensions;
+using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
+using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
+using eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
@@ -11,8 +14,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker;
-using eShopOnTelegram.TelegramBot.Worker.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 
 using Microsoft.EntityFrameworkCore;
@@ -70,17 +73,19 @@ builder.Services.AddSingleton(builder.Configuration.GetSection<TelegramAppsettin
 builder.Services.AddSingleton(builder.Configuration.GetSection<PaymentAppsettings>("Payment"));
 builder.Services.AddHostedService<TelegramBot>();
 
-builder.Services.AddControllersWithViews();
-
 // External services
 builder.Services
     .AddPolicyRegistry()
     .AddHttpRetryPolicy();
 
-builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlicioClient>((_, httpClient) =>
+builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpClient) =>
 {
     httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
 });
+builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>, PlisioPaymentReceivedWebhookRequestValidator>();
+
+// Controllers and views
+builder.Services.AddControllersWithViews();
 
 // App insights logging
 var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];

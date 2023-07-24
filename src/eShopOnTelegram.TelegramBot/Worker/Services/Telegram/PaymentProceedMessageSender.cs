@@ -4,7 +4,7 @@ using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 

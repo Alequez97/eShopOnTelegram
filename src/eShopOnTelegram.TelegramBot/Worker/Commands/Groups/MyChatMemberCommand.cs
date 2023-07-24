@@ -1,5 +1,5 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Appsettings;
+using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
