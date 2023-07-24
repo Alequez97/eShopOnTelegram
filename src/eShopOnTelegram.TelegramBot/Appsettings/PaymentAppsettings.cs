@@ -13,14 +13,14 @@ public class PaymentAppsettings
 
 public class Card
 {
-    public bool Enabled { get; set; }
+    public bool Enabled => !string.IsNullOrWhiteSpace(ApiToken);
 
     public required string ApiToken { get; set; }
 }
 
 public class Plisio
 {
-    public bool Enabled { get; set; }
+    public bool Enabled => !string.IsNullOrWhiteSpace(ApiToken);
 
     public required string ApiToken { get; set; }
 
