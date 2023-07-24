@@ -7,6 +7,8 @@ using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
+using eShopOnTelegram.Notifications;
+using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
@@ -83,6 +85,16 @@ builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpCl
     httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
 });
 builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ => new PlisioPaymentReceivedWebhookRequestValidator(builder.Configuration["Payment:Plisio:ApiToken"]));
+
+// Notification senders
+builder.Services.AddScoped<INotificationSender>((provider) => 
+{
+    var telegramBot = provider.GetRequiredService<ITelegramBotClient>();
+    var botOwnerDataStore = provider.GetRequiredService<IBotOwnerDataStore>();
+    var adminAppHostName = builder.Configuration["AdminAppHostName"];
+
+    return new TelegramNotificationSender(telegramBot, botOwnerDataStore, adminAppHostName);
+});
 
 // Controllers and views
 builder.Services.AddControllersWithViews();

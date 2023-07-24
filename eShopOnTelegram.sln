@@ -28,6 +28,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.RuntimeConf
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.TelegramBot.UnitTests", "tests\eShopOnTelegram.TelegramBot.UnitTests\eShopOnTelegram.TelegramBot.UnitTests.csproj", "{A411F2D1-8EC5-49BF-ADC9-76A654160EC3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.Notifications", "src\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj", "{202CF239-842A-44CA-B9FD-B39AF6D31B03}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -66,6 +68,10 @@ Global
 		{A411F2D1-8EC5-49BF-ADC9-76A654160EC3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A411F2D1-8EC5-49BF-ADC9-76A654160EC3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A411F2D1-8EC5-49BF-ADC9-76A654160EC3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{202CF239-842A-44CA-B9FD-B39AF6D31B03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{202CF239-842A-44CA-B9FD-B39AF6D31B03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{202CF239-842A-44CA-B9FD-B39AF6D31B03}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{202CF239-842A-44CA-B9FD-B39AF6D31B03}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -79,6 +85,7 @@ Global
 		{A5CB223B-08A7-4D68-93FF-0D1206BA73F4} = {504149A5-8FEB-4D42-ACFA-F71707405684}
 		{A5C20D3D-517B-4EC5-B721-CF9F5A426E34} = {504149A5-8FEB-4D42-ACFA-F71707405684}
 		{A411F2D1-8EC5-49BF-ADC9-76A654160EC3} = {874E042E-04E0-4623-B6E1-90DD0021C80A}
+		{202CF239-842A-44CA-B9FD-B39AF6D31B03} = {504149A5-8FEB-4D42-ACFA-F71707405684}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C63F10C5-8BC5-4A50-9D97-E705571A20A6}

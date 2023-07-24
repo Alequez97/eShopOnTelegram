@@ -2,5 +2,7 @@
 
 public interface INotificationSender
 {
-    void SendNotificationAsync(string title, string message);
+    Task SendNotificationAsync(string title, string message, CancellationToken cancellationToken);
+
+    Task SendOrderReceivedNotificationAsync(string orderNumber, CancellationToken cancellationToken);
 }

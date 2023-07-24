@@ -12,8 +12,9 @@ namespace eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
 
 public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
 {
-    private const string _botOwnerGroupIdFileName = "bot-owner-group-id.txt";
+    private const string BOT_OWNER_GROUP_ID_FILE_NAME = "bot-owner-group-id.txt";
     private readonly BlobContainerClient _blobContainerClient;
+    private readonly string _botOwnerTelegramId;
     private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageBotOwnerDataStore(
@@ -26,19 +27,21 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
         var blobServiceClient = new BlobServiceClient(connectionString);
         _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
 
+        _botOwnerTelegramId = configuration["Telegram:BotOwnerTelegramId"];
+
         _logger = logger;
     }
 
     public async Task<string> GetBotOwnerTelegramGroupIdAsync(CancellationToken cancellationToken)
     {
-        var blobClient = _blobContainerClient.GetBlobClient(_botOwnerGroupIdFileName);
+        var blobClient = _blobContainerClient.GetBlobClient(BOT_OWNER_GROUP_ID_FILE_NAME);
 
         using var memoryStream = new MemoryStream();
 
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
-            return string.Empty;
+            return _botOwnerTelegramId;
         }
 
         await blobClient.DownloadToAsync(memoryStream, cancellationToken);
@@ -52,7 +55,7 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
     {
         try
         {
-            var blobClient = _blobContainerClient.GetBlobClient(_botOwnerGroupIdFileName);
+            var blobClient = _blobContainerClient.GetBlobClient(BOT_OWNER_GROUP_ID_FILE_NAME);
 
             using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(telegramGroupId));
             await blobClient.UploadAsync(memoryStream, overwrite: false, cancellationToken: cancellationToken);

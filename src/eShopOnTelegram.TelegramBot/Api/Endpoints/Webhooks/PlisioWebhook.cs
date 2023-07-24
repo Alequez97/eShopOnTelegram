@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
+using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.TelegramBot.Api.Constants;
 
 namespace eShopOnTelegram.TelegramBot.Api.Endpoints.Webhooks;
@@ -8,26 +9,30 @@ public class PlisioWebhook : EndpointBaseAsync
     .WithRequest<PlisioPaymentReceivedWebhookRequest>
     .WithActionResult
 {
-    private readonly ITelegramBotClient _telegramBot;
+    private readonly IEnumerable<INotificationSender> _notificationSenders;
     private readonly IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest> _validator;
 
     public PlisioWebhook(
-        ITelegramBotClient telegramBot,
+        IEnumerable<INotificationSender> notificationSenders,
         IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest> validator)
     {
-        _telegramBot = telegramBot;
+        _notificationSenders = notificationSenders;
         _validator = validator;
     }
 
     [HttpPost("/api/webhook/plisio")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Webhooks })]
-    public override async Task<ActionResult> HandleAsync([FromBody] PlisioPaymentReceivedWebhookRequest request, CancellationToken cancellationToken = default)
+    public override async Task<ActionResult> HandleAsync([FromBody] PlisioPaymentReceivedWebhookRequest request, CancellationToken cancellationToken)
     {
         var requestIsFromPlisio = _validator.Validate(request);
 
         if (requestIsFromPlisio)
         {
-            // TODO: Update order status, send notification to group
+            foreach (var notificationSender in _notificationSenders)
+            {
+                await notificationSender.SendOrderReceivedNotificationAsync(request.OrderNumber, cancellationToken);
+            }
+
             return Ok();
         }
 
