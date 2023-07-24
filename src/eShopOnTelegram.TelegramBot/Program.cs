@@ -19,7 +19,6 @@ using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
