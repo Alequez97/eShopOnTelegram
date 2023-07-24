@@ -143,16 +143,6 @@ resource "azurerm_linux_web_app" "telegramwebapp" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_container_registry" "containerregistry" {
-  name                     = var.container_registry_name
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  sku                      = "Basic"
-  admin_enabled            = true
-
-  tags = local.az_common_tags
-}
-
 resource "azurerm_key_vault" "keyvault" {
   name                            = var.keyvault_name
   location                        = azurerm_resource_group.rg.location

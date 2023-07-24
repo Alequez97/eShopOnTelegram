@@ -118,11 +118,6 @@ variable "telegram_webapp_name" {
   description = "Telegram webapp name"
 }
 
-variable "container_registry_name" {
-  type = string
-  description = "Container registry name"
-}
-
 variable "keyvault_name" {
   type = string
   description = "App service name"
