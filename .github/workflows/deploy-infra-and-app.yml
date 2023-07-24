@@ -57,9 +57,6 @@ jobs:
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
           echo "adminAppHostName=$(terraform output -raw admin_app_hostname)" >> $GITHUB_OUTPUT
           echo "telegramBotAppName=$(terraform output -raw telegram_bot_app_name)" >> $GITHUB_OUTPUT
-          echo "acrLoginServer=$(terraform output -raw acr_login_server)" >> $GITHUB_OUTPUT
-          echo "acrUsername=$(terraform output -raw acr_username)" >> $GITHUB_OUTPUT
-          echo "acrPassword=$(terraform output -raw acr_password)" >> $GITHUB_OUTPUT
           echo "keyVaultUri=$(terraform output -raw key_vault_uri)" >> $GITHUB_OUTPUT
       
     outputs:
@@ -68,9 +65,6 @@ jobs:
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
       adminAppHostName: ${{ steps.terraformoutput.outputs.adminAppHostName }}
       telegramBotAppName: ${{ steps.terraformoutput.outputs.telegramBotAppName }}
-      acrLoginServer: ${{ steps.terraformoutput.outputs.acrLoginServer }}
-      acrUsername: ${{ steps.terraformoutput.outputs.acrUsername }}
-      acrPassword: ${{ steps.terraformoutput.outputs.acrPassword }}
       keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
   
   deploy_admin_app:

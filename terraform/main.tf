@@ -300,19 +300,6 @@ output "telegram_bot_app_name" {
   value = azurerm_linux_web_app.telegram_bot.name
 }
 
-output "acr_login_server" {
-  value = azurerm_container_registry.containerregistry.login_server
-}
-
-output "acr_username" {
-  value = azurerm_container_registry.containerregistry.admin_username
-}
-
-output "acr_password" {
-  value = azurerm_container_registry.containerregistry.admin_password
-  sensitive = true
-}
-
 output "key_vault_uri" {
   value = "https://${azurerm_key_vault.keyvault.name}.vault.azure.net"
 }
