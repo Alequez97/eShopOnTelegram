@@ -33,8 +33,7 @@ export default function Products() {
     // eslint-disable-next-line
   }, [cartItems]);
 
-    const sendDataToTelegram = useCallback(() => {
-
+  const sendDataToTelegram = useCallback(() => {
     //telegramWebApp.showPopup(
     //  {
     //    title: "Active order from previous session",
@@ -59,8 +58,8 @@ export default function Products() {
     //  }
     //  );
 
-     const json = getCartItemsAsJsonString(cartItems);
-     telegramWebApp.sendData(json);
+    const json = getCartItemsAsJsonString(cartItems);
+    telegramWebApp.sendData(json);
     // eslint-disable-next-line
   }, [cartItems]);
 
@@ -109,7 +108,9 @@ export default function Products() {
       <h2 className={classes.heading}>eShopOnTelegram</h2>
 
       {products.length === 0 && (
-        <span>No available products at this moment</span>
+        <div className={classes.noProductsMessage}>
+          <span>No available products at this moment</span>
+        </div>
       )}
 
       {products.length !== 0 && (
