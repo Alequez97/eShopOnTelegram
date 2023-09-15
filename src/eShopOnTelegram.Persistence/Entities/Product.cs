@@ -19,4 +19,9 @@ public class Product : EntityBase
     public required bool IsDeleted { get; set; }
 
     public Product? PreviousVersion { get; set; }
+
+    public void DecreaseQuantity(int amountToDecrease)
+    {
+        this.QuantityLeft -= amountToDecrease;
+    }
 }

@@ -11,7 +11,7 @@ public class OrderService : IOrderService
 {
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<OrderService> _logger;
-    private readonly Random _random = new(DateTime.Now.Millisecond);
+    private readonly Random _random = new();
 
     public OrderService(IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory, ILogger<OrderService> logger)
     {
@@ -267,19 +267,19 @@ public class OrderService : IOrderService
                 };
             }
 
-            var getUnpdaidOrderResponse = await GetUnpaidOrderByTelegramIdAsync(customer.TelegramUserUID, cancellationToken);
-            if (getUnpdaidOrderResponse.Status == ResponseStatus.Success || getUnpdaidOrderResponse.Data != null)
-            {
-                var response = await DeleteByOrderNumberAsync(getUnpdaidOrderResponse.Data.OrderNumber, cancellationToken);
+            //var getUnpdaidOrderResponse = await GetUnpaidOrderByTelegramIdAsync(customer.TelegramUserUID, cancellationToken);
+            //if (getUnpdaidOrderResponse.Status == ResponseStatus.Success || getUnpdaidOrderResponse.Data != null)
+            //{
+            //    var response = await DeleteByOrderNumberAsync(getUnpdaidOrderResponse.Data.OrderNumber, cancellationToken);
 
-                if (response.Status != ResponseStatus.Success)
-                {
-                    return new CreateOrderResponse()
-                    {
-                        Status = ResponseStatus.Exception,
-                    };
-                }
-            }
+            //    if (response.Status != ResponseStatus.Success)
+            //    {
+            //        return new CreateOrderResponse()
+            //        {
+            //            Status = ResponseStatus.Exception,
+            //        };
+            //    }
+            //}
 
             if (request.CartItems.Count == 0)
             {
@@ -290,38 +290,34 @@ public class OrderService : IOrderService
                 };
             }
 
-            foreach (var requestCartItem in request.CartItems)
+            using var transaction = _dbContext.Database.BeginTransaction(); // Default Transaction Isolation Level is ReadCommited
+
+            var query = $"SELECT * FROM Products WITH (UPDLOCK) WHERE Id IN ({string.Join(", ", request.CartItems.Select(ci => ci.ProductId).ToList())}) AND IsDeleted = 0"; // Fetch requested products with UPDLOCK
+            var requestedProducts = await _dbContext.Products.FromSqlRaw(query).ToListAsync();
+
+            if (request.CartItems.Count != requestedProducts.Count) // Either deleted or does not exist
             {
-                var product = _dbContext.Products.FirstOrDefault(product => product.Id == requestCartItem.ProductId);
-
-                if (product == null)
+                await transaction.RollbackAsync();
+                return new CreateOrderResponse()
                 {
-                    return new CreateOrderResponse()
-                    {
-                        Status = ResponseStatus.NotFound,
-                        Message = $"Product with id {requestCartItem.ProductId} not found"
-                    };
-                }
+                    Status = ResponseStatus.NotFound,
+                    Message = "Some of requested products was not found"
+                };
+            }
 
-                if (product.IsDeleted == true)
+            foreach (var product in requestedProducts) // todo could be optimized probably
+            {
+                var requestedCountToBuy = request.CartItems.Where(ci => ci.ProductId == product.Id).Select(ci => ci.Quantity).First();
+                if (product.QuantityLeft < requestedCountToBuy)
                 {
-                    return new CreateOrderResponse()
-                    {
-                        Status = ResponseStatus.Exception,
-                        Message = $"Product was updated while request was processed"
-                    };
-                }
-
-                if (product.QuantityLeft < requestCartItem.Quantity)
-                {
+                    await transaction.RollbackAsync();
                     return new CreateOrderResponse()
                     {
                         Status = ResponseStatus.ValidationFailed,
-                        Message = $"Requested {requestCartItem.Quantity} amount of product with id {requestCartItem.ProductId}, but only {product.QuantityLeft} is available"
+                        Message = $"Requested {requestedCountToBuy} amount of product with id {product.Id}, but only {product.QuantityLeft} is available"
                     };
                 }
-
-                product.QuantityLeft -= requestCartItem.Quantity;
+                product.DecreaseQuantity(requestedCountToBuy);
             }
 
             var orderCartItems = request.CartItems.Select(requestedCartItem => new CartItem()
@@ -338,8 +334,18 @@ public class OrderService : IOrderService
                 Status = OrderStatus.New
             };
 
-            _dbContext.Add(order);
-            await _dbContext.SaveChangesAsync();
+            try
+            {
+                _dbContext.Add(order);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to make products update while creating order");
+                transaction.Rollback();
+                throw;
+            }
 
             var createdOrder = await GetByOrderNumberAsync(order.OrderNumber, cancellationToken);
 
@@ -357,7 +363,8 @@ public class OrderService : IOrderService
 
             return new CreateOrderResponse()
             {
-                Status = ResponseStatus.Exception
+                Status = ResponseStatus.Exception,
+                Message = $"{ex.Message} {(ex.InnerException != null ? ex.InnerException.Message : string.Empty)}"
             };
         }
     }

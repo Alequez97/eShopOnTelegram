@@ -202,12 +202,22 @@ public class ProductService : IProductService
     {
         try
         {
-            var existingProduct = await _dbContext.Products
-                .Include(product => product.Category)
-                .FirstOrDefaultAsync(product => product.Id == updateProductRequest.Id);
+            var query = @$"
+                SELECT * FROM Products as P WITH (UPDLOCK)
+                INNER JOIN ProductCategories as PC on PC.Id = P.CategoryId
+                WHERE Id = {updateProductRequest.Id}";
+
+            //var existingProduct = await _dbContext.Products
+            //    .Include(product => product.Category)
+            //    .FirstOrDefaultAsync(product => product.Id == updateProductRequest.Id);
+
+            using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            var existingProduct = await _dbContext.Products.FromSqlRaw(query).FirstOrDefaultAsync();
 
             if (existingProduct == null)
             {
+                await transaction.RollbackAsync(cancellationToken);
                 return new ActionResponse()
                 {
                     Status = ResponseStatus.NotFound
@@ -227,8 +237,18 @@ public class ProductService : IProductService
 
             existingProduct.IsDeleted = true;
 
-            _dbContext.Products.Add(updatedProduct);
-            await _dbContext.SaveChangesAsync(cancellationToken);
+            try
+            {
+                _dbContext.Products.Add(updatedProduct);
+                await _dbContext.SaveChangesAsync(cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Failed to update product when commiting transaction.");
+                await transaction.RollbackAsync(cancellationToken);
+                throw;
+            }
 
             //if (updateProductRequest.ProductImage != null)
             //{
