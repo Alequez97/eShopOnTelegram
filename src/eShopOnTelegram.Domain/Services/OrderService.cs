@@ -11,7 +11,7 @@ public class OrderService : IOrderService
 {
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<OrderService> _logger;
-    private readonly Random _random = new();
+    private readonly Random _random = new(Guid.NewGuid().GetHashCode());
 
     public OrderService(IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory, ILogger<OrderService> logger)
     {
