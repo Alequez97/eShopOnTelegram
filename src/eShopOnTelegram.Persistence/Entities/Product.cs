@@ -5,6 +5,7 @@ public class Product : EntityBase
 {
     public required string Name { get; set; }
 
+    public long CategoryId { get; set; }
     public ProductCategory Category { get; set; }
 
     public required decimal OriginalPrice { get; set; }

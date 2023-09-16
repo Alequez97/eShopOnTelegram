@@ -202,18 +202,18 @@ public class ProductService : IProductService
     {
         try
         {
-            var query = @$"
-                SELECT * FROM Products as P WITH (UPDLOCK)
+            var query = @"
+                SELECT
+                    P.*,
+                    PC.Name AS ProductCategoryName,
+                    PC.IsDeleted AS CategoryIsDeleted
+                FROM Products as P WITH (UPDLOCK)
                 INNER JOIN ProductCategories as PC on PC.Id = P.CategoryId
-                WHERE Id = {updateProductRequest.Id}";
-
-            //var existingProduct = await _dbContext.Products
-            //    .Include(product => product.Category)
-            //    .FirstOrDefaultAsync(product => product.Id == updateProductRequest.Id);
+                WHERE P.Id = {0}";
 
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            var existingProduct = await _dbContext.Products.FromSqlRaw(query).FirstOrDefaultAsync();
+            var existingProduct = await _dbContext.Products.FromSqlRaw(query, updateProductRequest.Id).FirstOrDefaultAsync();
 
             if (existingProduct == null)
             {
@@ -227,7 +227,7 @@ public class ProductService : IProductService
             var updatedProduct = new Product()
             {
                 Name = updateProductRequest.Name,
-                Category = existingProduct.Category,
+                CategoryId = existingProduct.CategoryId,
                 OriginalPrice = updateProductRequest.OriginalPrice,
                 PriceWithDiscount = updateProductRequest.PriceWithDiscount,
                 QuantityLeft = updateProductRequest.QuantityLeft,
