@@ -292,8 +292,10 @@ public class OrderService : IOrderService
 
             using var transaction = _dbContext.Database.BeginTransaction(); // Default Transaction Isolation Level is ReadCommited
 
-            var query = $"SELECT * FROM Products WITH (UPDLOCK) WHERE Id IN ({string.Join(", ", request.CartItems.Select(ci => ci.ProductId).ToList())}) AND IsDeleted = 0"; // Fetch requested products with UPDLOCK
-            var requestedProducts = await _dbContext.Products.FromSqlRaw(query).ToListAsync();
+            var query = "SELECT * FROM Products WITH (UPDLOCK) WHERE Id IN ({0}) AND IsDeleted = 0"; // Fetch requested products with UPDLOCK
+            var productIds = string.Join(", ", request.CartItems.Select(ci => ci.ProductId).ToList());
+
+            var requestedProducts = await _dbContext.Products.FromSqlRaw(query, productIds).ToListAsync();
 
             if (request.CartItems.Count != requestedProducts.Count) // Either deleted or does not exist
             {
