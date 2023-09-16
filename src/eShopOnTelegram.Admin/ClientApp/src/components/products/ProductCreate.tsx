@@ -53,7 +53,7 @@ function ProductCreate() {
 
   return (
     <SimpleForm onSubmit={handleSubmit}>
-      <TextInput source="productName" validate={[required()]} />
+      <TextInput source="name" label="Product name" validate={[required()]} />
       <ReferenceInput source="productCategoryId" reference="productCategories">
         <SelectInput optionText="name" validate={[required()]} />
       </ReferenceInput>
