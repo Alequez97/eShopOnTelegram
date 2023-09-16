@@ -267,19 +267,19 @@ public class OrderService : IOrderService
                 };
             }
 
-            //var getUnpdaidOrderResponse = await GetUnpaidOrderByTelegramIdAsync(customer.TelegramUserUID, cancellationToken);
-            //if (getUnpdaidOrderResponse.Status == ResponseStatus.Success || getUnpdaidOrderResponse.Data != null)
-            //{
-            //    var response = await DeleteByOrderNumberAsync(getUnpdaidOrderResponse.Data.OrderNumber, cancellationToken);
+            var getUnpdaidOrderResponse = await GetUnpaidOrderByTelegramIdAsync(customer.TelegramUserUID, cancellationToken);
+            if (getUnpdaidOrderResponse.Status == ResponseStatus.Success || getUnpdaidOrderResponse.Data != null)
+            {
+                var response = await DeleteByOrderNumberAsync(getUnpdaidOrderResponse.Data.OrderNumber, cancellationToken);
 
-            //    if (response.Status != ResponseStatus.Success)
-            //    {
-            //        return new CreateOrderResponse()
-            //        {
-            //            Status = ResponseStatus.Exception,
-            //        };
-            //    }
-            //}
+                if (response.Status != ResponseStatus.Success)
+                {
+                    return new CreateOrderResponse()
+                    {
+                        Status = ResponseStatus.Exception,
+                    };
+                }
+            }
 
             if (request.CartItems.Count == 0)
             {
