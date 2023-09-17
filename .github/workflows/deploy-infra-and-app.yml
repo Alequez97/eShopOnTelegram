@@ -17,6 +17,7 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
   TELEGRAM_BOT_LOCATION: src/eShopOnTelegram.TelegramBot
+  DOTNET_VERSION: 7.x
 
 jobs:
   deploy_infrastructure:
@@ -66,7 +67,7 @@ jobs:
       adminAppHostName: ${{ steps.terraformoutput.outputs.adminAppHostName }}
       telegramBotAppName: ${{ steps.terraformoutput.outputs.telegramBotAppName }}
       keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
-  
+
   deploy_admin_app:
     runs-on: ubuntu-latest
     
@@ -82,7 +83,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -125,7 +126,7 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install pnpm
         run: npm install -g pnpm
