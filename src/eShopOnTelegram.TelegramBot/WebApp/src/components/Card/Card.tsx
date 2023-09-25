@@ -1,16 +1,24 @@
-import React, { useState } from "react";
-import classes from "./Card.module.scss";
-import Button from "../Button/Button";
-import Product from "../../types/Product";
+import { useState } from "react";
+import { Button } from "../button/button";
+import { Product } from "../../types/product";
+import {
+  StyledButtonContainer,
+  StyledCard,
+  StyledCardBadge,
+  StyledCardPrice,
+  StyledCardTitle,
+  StyledImageContainer,
+} from "./card.styled";
 
 interface CardProps {
-  product: Product
+  product: Product;
   onAdd: (product: Product) => void;
   onRemove: (product: Product) => void;
 }
 
-function Card({ product, onAdd, onRemove }: CardProps) {
-  const [productQuantityAddedInCart, setProductQuantityAddedInCart] = useState(0);
+export const Card = ({ product, onAdd, onRemove }: CardProps) => {
+  const [productQuantityAddedInCart, setProductQuantityAddedInCart] =
+    useState(0);
   const { name, image, originalPrice } = product;
 
   const handleIncrement = () => {
@@ -25,34 +33,49 @@ function Card({ product, onAdd, onRemove }: CardProps) {
   };
 
   return (
-    <div className={classes.card}>
-      <div className={classes.imageContainer}>
+    <StyledCard>
+      <StyledImageContainer>
         <img src={image} alt={name} />
-      </div>
-      <h4 className={classes.cardTitle}>
+      </StyledImageContainer>
+      <StyledCardTitle>
         {name}
         <br />
-        <span className={classes.cardPrice}>{originalPrice} €</span>
+        <StyledCardPrice>{originalPrice} €</StyledCardPrice>
         <br />
         <i>
-          Available: {product.quantityLeft < 20 ? product.quantityLeft : '20+'}
+          Available: {product.quantityLeft < 20 ? product.quantityLeft : "20+"}
         </i>
-      </h4>
+      </StyledCardTitle>
 
-
-      <div className={classes.btnContainer}>
-        {productQuantityAddedInCart === 0 && <Button title={"Add"} type={"add"} onClick={handleIncrement} disabled={false} />}
-
-        {productQuantityAddedInCart !== 0 && <Button title={"-"} type={"remove"} onClick={handleDecrement} disabled={false} />}
-        <span
-          className={`${productQuantityAddedInCart !== 0 ? classes.cardBadge : classes.cardBadgeHidden}`}
-        >
+      <StyledButtonContainer>
+        {productQuantityAddedInCart === 0 && (
+          <Button
+            title={"Add"}
+            type={"add"}
+            onClick={handleIncrement}
+            disabled={false}
+          />
+        )}
+        {productQuantityAddedInCart !== 0 && (
+          <Button
+            title={"-"}
+            type={"remove"}
+            onClick={handleDecrement}
+            disabled={false}
+          />
+        )}
+        <StyledCardBadge visible={productQuantityAddedInCart !== 0}>
           {productQuantityAddedInCart}
-        </span>
-        {productQuantityAddedInCart !== 0 && <Button title={"+"} type={"add"} onClick={handleIncrement} disabled={false} />}
-      </div>
-    </div>
+        </StyledCardBadge>
+        {productQuantityAddedInCart !== 0 && (
+          <Button
+            title={"+"}
+            type={"add"}
+            onClick={handleIncrement}
+            disabled={false}
+          />
+        )}
+      </StyledButtonContainer>
+    </StyledCard>
   );
 }
-
-export default Card;

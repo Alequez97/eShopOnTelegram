@@ -17,6 +17,8 @@ env:
   ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
   ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
   TELEGRAM_BOT_LOCATION: src/eShopOnTelegram.TelegramBot
+  DOTNET_VERSION: 7.x
+  NODE_VERSION: 18.x
 
 jobs:
   deploy_infrastructure:
@@ -66,7 +68,7 @@ jobs:
       adminAppHostName: ${{ steps.terraformoutput.outputs.adminAppHostName }}
       telegramBotAppName: ${{ steps.terraformoutput.outputs.telegramBotAppName }}
       keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
-  
+
   deploy_admin_app:
     runs-on: ubuntu-latest
     
@@ -79,10 +81,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install pnpm
         run: npm install -g pnpm
@@ -111,7 +118,7 @@ jobs:
           package: ${{ env.ADMIN_APP_LOCATION }}/publish
 
   deploy_telegram_webapp:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     name: 'Deploy telegram webapp'
     needs: [deploy_infrastructure]
@@ -122,13 +129,26 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
         with:
-          dotnet-version: 7.0.x
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install pnpm
         run: npm install -g pnpm
+
+      - name: Install node modules
+        working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}/WebApp
+        run: pnpm install
+
+      - name: Build UI project
+        working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}/WebApp
+        run: pnpm build
 
       - name: Restore NuGet packages
         working-directory: ${{ env.TELEGRAM_BOT_LOCATION }}

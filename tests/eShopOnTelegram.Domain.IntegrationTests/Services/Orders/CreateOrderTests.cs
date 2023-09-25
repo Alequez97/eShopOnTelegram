@@ -94,7 +94,7 @@ public class CreateOrderTests
             existingCustomer = _dbContext.Customers.First();
         }
 
-        var existingProduct = _dbContext.Products.FirstOrDefault();
+        var existingProduct = _dbContext.Products.FirstOrDefault(product => product.IsDeleted == false);
         if (existingProduct == null)
         {
             await CreateProductAsync();
@@ -102,7 +102,7 @@ public class CreateOrderTests
         }
 
         var orderItemsAmount = 10;
-        existingProduct.QuantityLeft += orderItemsAmount;
+        existingProduct.DecreaseQuantity(orderItemsAmount);
         await _dbContext.SaveChangesAsync();
 
         var request = new CreateOrderRequest()
@@ -125,14 +125,17 @@ public class CreateOrderTests
         // Assert
         response.Status.Should().Be(ResponseStatus.Success);
         
-        var createdOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.Id == response.Id);
+        var createdOrder = await _dbContext.Orders
+            .Include(order => order.CartItems)
+            .FirstOrDefaultAsync(order => order.Id == response.Id);
+        
         createdOrder.Should().NotBeNull();
         createdOrder!.Status.Should().Be(OrderStatus.New);
         createdOrder!.CartItems.Count().Should().Be(1);
         createdOrder!.CartItems[0].ProductId.Should().Be(existingProduct.Id);
         createdOrder!.CartItems[0].Quantity.Should().Be(orderItemsAmount);
 
-        var orderedProduct = await _dbContext.Products.FirstAsync(product => product.Id == existingProduct.Id);
+        var orderedProduct = await _dbContext.Products.AsNoTracking().FirstAsync(product => product.Id == existingProduct.Id);
         orderedProduct.QuantityLeft.Should().Be(productLeftAmountBeforeOrder - orderItemsAmount);
     }
 

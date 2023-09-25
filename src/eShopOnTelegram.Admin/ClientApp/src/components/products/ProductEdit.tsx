@@ -6,7 +6,7 @@ export function ProductEdit() {
     <Edit title="Edit product">
       <SimpleForm>
         <TextInput disabled source="id" />
-        <TextInput source="productName" validate={[required()]} />
+        <TextInput source="name" validate={[required()]} />
         <TextInput source="originalPrice" validate={[required(), number()]} />
         <TextInput
           source="priceWithDiscount"

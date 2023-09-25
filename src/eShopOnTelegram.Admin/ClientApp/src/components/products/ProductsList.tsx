@@ -4,7 +4,7 @@ export default function ProductsList() {
   return (
     <List>
       <Datagrid>
-        <TextField source="productName" sortable={false} />
+        <TextField source="name" sortable={false} />
         <TextField source="productCategoryName" sortable={false} />
         <TextField source="originalPrice" sortable={false} />
         <TextField

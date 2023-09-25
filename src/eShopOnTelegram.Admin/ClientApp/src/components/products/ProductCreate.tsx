@@ -37,7 +37,7 @@ function ProductCreate() {
   async function handleSubmit(request: any) {
     try {
       const formData = new FormData();
-      formData.append("name", request.productName);
+      formData.append("name", request.name);
       formData.append("productCategoryId", request.productCategoryId);
       formData.append("quantityLeft", request.quantityLeft);
       formData.append("originalPrice", request.originalPrice);
@@ -53,7 +53,7 @@ function ProductCreate() {
 
   return (
     <SimpleForm onSubmit={handleSubmit}>
-      <TextInput source="productName" validate={[required()]} />
+      <TextInput source="name" label="Product name" validate={[required()]} />
       <ReferenceInput source="productCategoryId" reference="productCategories">
         <SelectInput optionText="name" validate={[required()]} />
       </ReferenceInput>

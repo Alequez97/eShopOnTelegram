@@ -1,4 +1,6 @@
-.card {
+import styled, { css } from "styled-components";
+
+export const StyledCard = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -9,18 +11,14 @@
   margin: 13px 10px;
   position: relative;
   border-radius: 5px;
-}
+`;
 
-.card-title {
+export const StyledCardTitle = styled.h4`
   font-weight: 400;
   text-align: center;
+`;
 
-  .card-price {
-    font-weight: bold;
-  }
-}
-
-.image-container {
+export const StyledImageContainer = styled.div`
   width: 100px;
   height: 100px;
   margin: 0 auto;
@@ -29,9 +27,9 @@
     width: 100%;
     object-fit: cover;
   }
-}
+`;
 
-.btn-container {
+export const StyledButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -39,14 +37,19 @@
   button {
     margin: 0 auto;
   }
-}
+`;
 
-.card-price {
+export const StyledCardPrice = styled.span`
   text-align: center;
   display: inline-block;
+  font-weight: bold;
+`;
+
+interface StyledCardBadgeProps {
+  visible: boolean;
 }
 
-.card-badge {
+export const StyledCardBadge = styled.div<StyledCardBadgeProps>`
   position: relative;
   top: 3px;
   width: 90px;
@@ -58,8 +61,10 @@
   text-align: center;
   border: 2px solid rgb(21, 0, 138);
   font-size: 20px;
-}
 
-.card-badge-hidden {
-  display: none;
-}
+  ${(props) =>
+    !props.visible &&
+    css`
+      display: none;
+    `}
+`;

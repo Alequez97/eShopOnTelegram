@@ -1,4 +1,14 @@
-.ringLoader {
+import styled, { keyframes } from "styled-components";
+
+const ringLoaderAnimation = keyframes`
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }`;
+
+export const StyledRingLoader = styled.div`
   position: absolute;
   top: 50%;
   left: 50%;
@@ -29,11 +39,19 @@
     border-top: 3px solid var(--text-color);
     border-right: 3px solid var(--text-color);
     border-radius: 50%;
-    animation: animateC 2s linear infinite;
+    animation: ${ringLoaderAnimation} 2s linear infinite;
   }
-}
+`;
 
-.ringLoaderSpan {
+const ringLoaderSpanAnimation = keyframes`
+  0% {
+    transform: rotate(45deg);
+  }
+  100% {
+    transform: rotate(405deg);
+  }`;
+
+export const StyledRingLoaderSpan = styled.div`
   display: block;
   position: absolute;
   top: calc(50% - 2px);
@@ -42,7 +60,7 @@
   height: 4px;
   background: transparent;
   transform-origin: left;
-  animation: animate 2s linear infinite;
+  animation: ${ringLoaderSpanAnimation} 2s linear infinite;
 
   &::before {
     content: "";
@@ -55,21 +73,4 @@
     right: -8px;
     box-shadow: 0 0 20px var(--text-color);
   }
-}
-
-@keyframes animateC {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-@keyframes animate {
-  0% {
-    transform: rotate(45deg);
-  }
-  100% {
-    transform: rotate(405deg);
-  }
-}
+`;
