@@ -1,27 +1,49 @@
-import React, { MouseEventHandler } from 'react'
-import classes from './Button.module.scss'
+import { MouseEventHandler } from "react";
+import styled from "styled-components";
 
 interface ButtonProps {
-    type: string,
-    title: string,
-    disabled: boolean,
-    onClick: MouseEventHandler<HTMLElement>
+  type: "add" | "remove";
+  title: string;
+  disabled: boolean;
+  onClick: MouseEventHandler<HTMLElement>;
 }
 
-function Button(props: ButtonProps) {
+const buttonStyles = {
+  add: {
+    normal: "rgb(75, 226, 75)",
+    hover: "#ad9a1c",
+    active: "#83730b",
+  },
+  remove: {
+    normal: "tomato",
+    hover: "rgb(209, 83, 61)",
+    active: "rgb(189, 83, 61)",
+  },
+};
+
+const StyledButton = styled.button<ButtonProps>`
+  padding: 0.6rem 0.8rem;
+  font-size: 1.2rem;
+  text-align: center;
+  border: 0;
+  outline: none;
+  border-radius: 10px;
+  width: 120px;
+  margin-left: 10px;
+  box-shadow: 1px -3px 52px -5px rgba(0, 0, 0, 0.7);
+  background-color: ${(props) => buttonStyles[props.type].normal};
+
+  &:hover {
+    background-color: ${(props) => buttonStyles[props.type].hover}
+  }
+
+  &:active {
+    background-color: ${(props) => buttonStyles[props.type].active}
+  }
+`;
+
+export const Button = (props: ButtonProps) => {
   return (
-    <button 
-        className={`${classes.btn} ${
-            (props.type === 'add' && `${classes.add}`) || 
-            (props.type === 'remove' && `${classes.remove}`) ||
-            (props.type === 'checkout' && `${classes.checkout}`)
-        }`}
-        disabled={props.disabled}
-        onClick={props.onClick}
-    >
-        {props.title}
-    </button>
-  )
+    <StyledButton {...props}>{props.title}</StyledButton>
+  );
 }
-
-export default Button

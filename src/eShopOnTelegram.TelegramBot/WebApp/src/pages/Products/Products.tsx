@@ -1,15 +1,20 @@
-import React, { ChangeEvent, useCallback, useEffect, useState } from "react";
-import classes from "./Products.module.scss";
-import Card from "../../components/Card/Card";
+import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import Card from "../../components/card/card";
 import Loader from "../../components/Loader/Loader";
 import Error from "../../components/Error/Error";
 import { getCartItemsAsJsonString } from "../../utilities/cartItems";
 import { useCartItems } from "../../hooks/cartItems";
 import { useTelegramWebApp } from "../../hooks/telegram";
-import Product from "../../types/Product";
+import { Product } from "../../types/product";
 import { useProducts } from "../../hooks/products";
+import {
+  StyledCardsContainer,
+  StyledMissingProductsMessageWrapper,
+  StyledProductCategoriesSelect,
+  StyledProductCategoriesWrapper,
+} from "../styled/products.styled";
 
-export default function Products() {
+export const Products = () => {
   const { telegramWebApp } = useTelegramWebApp();
 
   useEffect(() => {
@@ -30,37 +35,11 @@ export default function Products() {
     } else {
       telegramWebApp.MainButton.show();
     }
-    // eslint-disable-next-line
   }, [cartItems]);
 
   const sendDataToTelegram = useCallback(() => {
-    //telegramWebApp.showPopup(
-    //  {
-    //    title: "Active order from previous session",
-    //    message: `Init data: ${JSON.stringify(telegramWebApp.initDataUnsafe)}`,
-    //    buttons: [
-    //      {
-    //        type: "default",
-    //        text: "Continue",
-    //        id: "continue",
-    //      },
-    //      {
-    //        type: "destructive",
-    //        text: "Start new",
-    //        id: "start_new",
-    //      },
-    //    ],
-    //  },
-    //  (value: any) => {
-    //    telegramWebApp.showPopup({
-    //      message: `You clicked ${value}`,
-    //    });
-    //  }
-    //  );
-
     const json = getCartItemsAsJsonString(cartItems);
     telegramWebApp.sendData(json);
-    // eslint-disable-next-line
   }, [cartItems]);
 
   useEffect(() => {
@@ -105,19 +84,18 @@ export default function Products() {
 
   return (
     <>
-      <h2 className={classes.heading}>eShopOnTelegram</h2>
+      <h2 style={{ textAlign: "center" }}>eShopOnTelegram</h2>
 
       {products.length === 0 && (
-        <div className={classes.noProductsMessage}>
+        <StyledMissingProductsMessageWrapper>
           <span>No available products at this moment</span>
-        </div>
+        </StyledMissingProductsMessageWrapper>
       )}
 
       {products.length !== 0 && (
-        <div className={classes.productCategoriesWrapper}>
-          <select
+        <StyledProductCategoriesWrapper>
+          <StyledProductCategoriesSelect
             name="product-categories"
-            className={classes.productCategoriesSelect}
             defaultValue={DEFAULT_SELECTOR_VALUE}
             onChange={selectOnChangeHandler}
           >
@@ -129,11 +107,11 @@ export default function Products() {
                 {category}
               </option>
             ))}
-          </select>
-        </div>
+          </StyledProductCategoriesSelect>
+        </StyledProductCategoriesWrapper>
       )}
 
-      <div className={classes.cardsContainer}>
+      <StyledCardsContainer>
         {filteredProducts === undefined &&
           products.map((product) => (
             <Card
@@ -152,7 +130,7 @@ export default function Products() {
               onRemove={onRemove}
             />
           ))}
-      </div>
+      </StyledCardsContainer>
     </>
   );
 }

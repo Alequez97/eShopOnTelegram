@@ -1,6 +1,6 @@
 import { useState } from "react";
-import CartItem from "../types/CartItem";
-import Product from "../types/Product";
+import CartItem from "../types/cart-item";
+import Product from "../types/product";
 
 export function useCartItems() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);

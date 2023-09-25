@@ -1,4 +1,4 @@
-interface Product {
+export interface Product {
     id: number
     name: string
     productCategoryName: string
@@ -7,5 +7,3 @@ interface Product {
     quantityLeft: number,
     image: string
 }
-
-export default Product
