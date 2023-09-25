@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { css } from "styled-components";
 
 export const StyledCard = styled.div`
   display: flex;
@@ -45,7 +45,11 @@ export const StyledCardPrice = styled.span`
   font-weight: bold;
 `;
 
-export const StyledCardBadge = styled.div`
+interface StyledCardBadgeProps {
+  visible: boolean;
+}
+
+export const StyledCardBadge = styled.div<StyledCardBadgeProps>`
   position: relative;
   top: 3px;
   width: 90px;
@@ -57,8 +61,10 @@ export const StyledCardBadge = styled.div`
   text-align: center;
   border: 2px solid rgb(21, 0, 138);
   font-size: 20px;
-`;
 
-export const StyledCardBadgeHidden = styled.div`
-  display: none;
+  ${(props) =>
+    !props.visible &&
+    css`
+      display: none;
+    `}
 `;

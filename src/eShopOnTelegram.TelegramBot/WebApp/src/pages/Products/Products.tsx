@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import Card from "../../components/card/card";
-import Loader from "../../components/Loader/Loader";
-import Error from "../../components/Error/Error";
+import { Card } from "../../components/card/card";
+import { Loader } from "../../components/loader/loader";
+import { Error } from "../../components/error/error";
 import { getCartItemsAsJsonString } from "../../utilities/cartItems";
 import { useCartItems } from "../../hooks/cartItems";
 import { useTelegramWebApp } from "../../hooks/telegram";
@@ -133,4 +133,4 @@ export const Products = () => {
       </StyledCardsContainer>
     </>
   );
-}
+};

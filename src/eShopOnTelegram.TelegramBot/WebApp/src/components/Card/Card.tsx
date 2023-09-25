@@ -1,8 +1,10 @@
 import { useState } from "react";
-import classes from "./Card.module.scss";
 import { Button } from "../button/button";
 import { Product } from "../../types/product";
 import {
+  StyledButtonContainer,
+  StyledCard,
+  StyledCardBadge,
   StyledCardPrice,
   StyledCardTitle,
   StyledImageContainer,
@@ -14,7 +16,7 @@ interface CardProps {
   onRemove: (product: Product) => void;
 }
 
-function Card({ product, onAdd, onRemove }: CardProps) {
+export const Card = ({ product, onAdd, onRemove }: CardProps) => {
   const [productQuantityAddedInCart, setProductQuantityAddedInCart] =
     useState(0);
   const { name, image, originalPrice } = product;
@@ -31,7 +33,7 @@ function Card({ product, onAdd, onRemove }: CardProps) {
   };
 
   return (
-    <div className={classes.card}>
+    <StyledCard>
       <StyledImageContainer>
         <img src={image} alt={name} />
       </StyledImageContainer>
@@ -45,7 +47,7 @@ function Card({ product, onAdd, onRemove }: CardProps) {
         </i>
       </StyledCardTitle>
 
-      <div className={classes.btnContainer}>
+      <StyledButtonContainer>
         {productQuantityAddedInCart === 0 && (
           <Button
             title={"Add"}
@@ -54,7 +56,6 @@ function Card({ product, onAdd, onRemove }: CardProps) {
             disabled={false}
           />
         )}
-
         {productQuantityAddedInCart !== 0 && (
           <Button
             title={"-"}
@@ -63,15 +64,9 @@ function Card({ product, onAdd, onRemove }: CardProps) {
             disabled={false}
           />
         )}
-        <span
-          className={`${
-            productQuantityAddedInCart !== 0
-              ? classes.cardBadge
-              : classes.cardBadgeHidden
-          }`}
-        >
+        <StyledCardBadge visible={productQuantityAddedInCart !== 0}>
           {productQuantityAddedInCart}
-        </span>
+        </StyledCardBadge>
         {productQuantityAddedInCart !== 0 && (
           <Button
             title={"+"}
@@ -80,9 +75,7 @@ function Card({ product, onAdd, onRemove }: CardProps) {
             disabled={false}
           />
         )}
-      </div>
-    </div>
+      </StyledButtonContainer>
+    </StyledCard>
   );
 }
-
-export default Card;

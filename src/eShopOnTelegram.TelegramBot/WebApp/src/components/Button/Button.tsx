@@ -8,7 +8,7 @@ interface ButtonProps {
   onClick: MouseEventHandler<HTMLElement>;
 }
 
-const buttonStyles = {
+const buttonStyles: Record<ButtonProps["type"], any> = {
   add: {
     normal: "rgb(75, 226, 75)",
     hover: "#ad9a1c",
@@ -34,16 +34,14 @@ const StyledButton = styled.button<ButtonProps>`
   background-color: ${(props) => buttonStyles[props.type].normal};
 
   &:hover {
-    background-color: ${(props) => buttonStyles[props.type].hover}
+    background-color: ${(props) => buttonStyles[props.type].hover};
   }
 
   &:active {
-    background-color: ${(props) => buttonStyles[props.type].active}
+    background-color: ${(props) => buttonStyles[props.type].active};
   }
 `;
 
 export const Button = (props: ButtonProps) => {
-  return (
-    <StyledButton {...props}>{props.title}</StyledButton>
-  );
-}
+  return <StyledButton {...props}>{props.title}</StyledButton>;
+};

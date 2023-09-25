@@ -1,6 +1,6 @@
-import ICartItem from "../types/cart-item";
+import { CartItem } from "../types/cart-item";
 
-export function getCartItemsAsJsonString(cartItems: ICartItem[]) {
+export function getCartItemsAsJsonString(cartItems: CartItem[]) {
     let products: string[] = [];
 
     cartItems.forEach(cartItem => {

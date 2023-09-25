@@ -1,11 +1,10 @@
-import React from "react";
-import css from "./Loader.module.scss";
+import { StyledRingLoader, StyledRingLoaderSpan } from "./loader.styled";
 
-export default function Loader() {
+export const Loader = () => {
   return (
-    <div className={css.ringLoader}>
+    <StyledRingLoader>
       Loading
-      <span className={css.ringLoaderSpan}></span>
-    </div>
+      <StyledRingLoaderSpan />
+    </StyledRingLoader>
   );
 }
