@@ -18,6 +18,7 @@ env:
   ADMIN_APP_LOCATION: src/eShopOnTelegram.Admin
   TELEGRAM_BOT_LOCATION: src/eShopOnTelegram.TelegramBot
   DOTNET_VERSION: 7.x
+  NODE_VERSION: 18.x
 
 jobs:
   deploy_infrastructure:
@@ -83,7 +84,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
@@ -127,6 +128,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Setup .NET
         uses: actions/setup-dotnet@v1
