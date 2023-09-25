@@ -118,7 +118,7 @@ jobs:
           package: ${{ env.ADMIN_APP_LOCATION }}/publish
 
   deploy_telegram_webapp:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     
     name: 'Deploy telegram webapp'
     needs: [deploy_infrastructure]
