@@ -1,7 +1,7 @@
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Card } from "../../components/card/card";
-import { Loader } from "../../components/loader/loader";
-import { Error } from "../../components/error/error";
+import { Card } from "../../components/Card/card";
+import { Loader } from "../../components/Loader/loader";
+import { Error } from "../../components/Error/error";
 import { getCartItemsAsJsonString } from "../../utilities/cartItems";
 import { useCartItems } from "../../hooks/cartItems";
 import { useTelegramWebApp } from "../../hooks/telegram";
