@@ -1,9 +1,8 @@
+import { ProductAttribute } from "./productAttribute"
+
 export interface Product {
     id: number
     name: string
     productCategoryName: string
-    originalPrice: number
-    priceWithDiscount?: number
-    quantityLeft: number,
-    image: string
+    productAttributes: ProductAttribute[]
 }

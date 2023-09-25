@@ -6,46 +6,64 @@ import {
   StyledCard,
   StyledCardBadge,
   StyledCardPrice,
-  StyledCardTitle,
+  StyledCardInfoWrapper,
   StyledImageContainer,
 } from "./card.styled";
+import { ProductAttribute } from "../../types/productAttribute";
+import { ColorSelector } from "./colorSelector";
 
 interface CardProps {
   product: Product;
-  onAdd: (product: Product) => void;
-  onRemove: (product: Product) => void;
+  onAdd: (productAttribute: ProductAttribute) => void;
+  onRemove: (productAttribute: ProductAttribute) => void;
 }
 
 export const Card = ({ product, onAdd, onRemove }: CardProps) => {
   const [productQuantityAddedInCart, setProductQuantityAddedInCart] =
     useState(0);
-  const { name, image, originalPrice } = product;
+  const [selectedProductAttribute, setSelectedProductAttribute] = useState(
+    product.productAttributes[0]
+  );
+
+  const { name } = product;
 
   const handleIncrement = () => {
-    if (productQuantityAddedInCart < product.quantityLeft) {
+    if (productQuantityAddedInCart < selectedProductAttribute.quantityLeft) {
       setProductQuantityAddedInCart(productQuantityAddedInCart + 1);
-      onAdd(product);
+      onAdd(selectedProductAttribute);
     }
   };
   const handleDecrement = () => {
     setProductQuantityAddedInCart(productQuantityAddedInCart - 1);
-    onRemove(product);
+    onRemove(selectedProductAttribute);
   };
 
   return (
     <StyledCard>
       <StyledImageContainer>
-        <img src={image} alt={name} />
+        <img src={selectedProductAttribute.image} alt={name} />
       </StyledImageContainer>
-      <StyledCardTitle>
+      <StyledCardInfoWrapper>
         {name}
         <br />
-        <StyledCardPrice>{originalPrice} €</StyledCardPrice>
+        <StyledCardPrice>
+          {selectedProductAttribute.originalPrice} €
+        </StyledCardPrice>
         <br />
         <i>
-          Available: {product.quantityLeft < 20 ? product.quantityLeft : "20+"}
+          Available:{" "}
+          {selectedProductAttribute.quantityLeft < 20
+            ? selectedProductAttribute.quantityLeft
+            : "20+"}
         </i>
-      </StyledCardTitle>
+        <ColorSelector
+          colors={
+            product.productAttributes
+              .map((attribute) => attribute.color)
+              .filter((color) => color !== undefined) as string[]
+          }
+        />
+      </StyledCardInfoWrapper>
 
       <StyledButtonContainer>
         {productQuantityAddedInCart === 0 && (
@@ -64,7 +82,7 @@ export const Card = ({ product, onAdd, onRemove }: CardProps) => {
             disabled={false}
           />
         )}
-        <StyledCardBadge visible={productQuantityAddedInCart !== 0}>
+        <StyledCardBadge $isVisible={productQuantityAddedInCart !== 0}>
           {productQuantityAddedInCart}
         </StyledCardBadge>
         {productQuantityAddedInCart !== 0 && (
@@ -78,4 +96,4 @@ export const Card = ({ product, onAdd, onRemove }: CardProps) => {
       </StyledButtonContainer>
     </StyledCard>
   );
-}
+};
