@@ -46,7 +46,7 @@ export const StyledCardPrice = styled.span`
 `;
 
 interface StyledCardBadgeProps {
-  visible: boolean;
+  $isVisible: boolean;
 }
 
 export const StyledCardBadge = styled.div<StyledCardBadgeProps>`
@@ -63,7 +63,7 @@ export const StyledCardBadge = styled.div<StyledCardBadgeProps>`
   font-size: 20px;
 
   ${(props) =>
-    !props.visible &&
+    !props.$isVisible &&
     css`
       display: none;
     `}

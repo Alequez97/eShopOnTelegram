@@ -6,11 +6,9 @@ import {
   StyledCard,
   StyledCardBadge,
   StyledCardPrice,
-  StyledCardInfoWrapper,
   StyledImageContainer,
 } from "./card.styled";
 import { ProductAttribute } from "../../types/productAttribute";
-import { ColorSelector } from "./colorSelector";
 import { ProductAttributeSelector } from "../productAttributeSelector/productAttributeSelector";
 
 interface CardProps {
