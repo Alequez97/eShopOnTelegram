@@ -5,6 +5,7 @@ import {
   StyledButtonContainer,
   StyledCard,
   StyledCardBadge,
+  StyledCardInfoWrapper,
   StyledCardPrice,
   StyledImageContainer,
 } from "./card.styled";
