@@ -13,6 +13,8 @@ import {
   StyledProductCategoriesSelect,
   StyledProductCategoriesWrapper,
 } from "../styled/products.styled";
+import { useProductsMock } from "../../hooks/productsMock";
+import { ProductAttribute } from "../../types/productAttribute";
 
 export const Products = () => {
   const { telegramWebApp } = useTelegramWebApp();
@@ -22,9 +24,9 @@ export const Products = () => {
     // eslint-disable-next-line
   }, []);
 
-  const { cartItems, addProductToState, removeProductFromState } =
+  const { cartItems, addProductAttributeToState, removeProductAttributeFromState } =
     useCartItems();
-  const { products, productCategories, error, loading } = useProducts();
+  const { products, productCategories, error, loading } = useProductsMock();
   const [filteredProducts, setFilteredProducts] = useState<
     Product[] | undefined
   >(undefined);
@@ -50,12 +52,12 @@ export const Products = () => {
     // eslint-disable-next-line
   }, [sendDataToTelegram]);
 
-  const onAdd = (product: Product) => {
-    addProductToState(product);
+  const onAdd = (productAttribute: ProductAttribute) => {
+    addProductAttributeToState(productAttribute);
   };
 
-  const onRemove = (product: Product) => {
-    removeProductFromState(product);
+  const onRemove = (productAttribute: ProductAttribute) => {
+    removeProductAttributeFromState(productAttribute);
   };
 
   if (loading) {

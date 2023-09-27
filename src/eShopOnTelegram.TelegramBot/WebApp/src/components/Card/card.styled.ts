@@ -13,7 +13,7 @@ export const StyledCard = styled.div`
   border-radius: 5px;
 `;
 
-export const StyledCardTitle = styled.h4`
+export const StyledCardInfoWrapper = styled.h4`
   font-weight: 400;
   text-align: center;
 `;
@@ -61,10 +61,5 @@ export const StyledCardBadge = styled.div<StyledCardBadgeProps>`
   text-align: center;
   border: 2px solid rgb(21, 0, 138);
   font-size: 20px;
-
-  ${(props) =>
-    !props.$isVisible &&
-    css`
-      display: none;
-    `}
+  display: ${(props) => (props.$isVisible ? "block" : "none")};
 `;

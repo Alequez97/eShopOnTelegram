@@ -5,6 +5,7 @@ import { Product } from "../types/product";
 
 export function useProductsMock() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [productCategories, setProductCategories] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -25,5 +26,19 @@ export function useProductsMock() {
     fetchProducts();
   }, []);
 
-  return { products, error, loading };
+  useEffect(() => {
+    setProductCategories(
+      products
+        .map((product) => product.productCategoryName)
+        .filter(
+          (categoryName) =>
+            categoryName !== undefined &&
+            categoryName !== null &&
+            categoryName !== ""
+        )
+        .filter((value, index, array) => array.indexOf(value) === index)
+    );
+  }, [products]);
+
+  return { products, productCategories, error, loading };
 }

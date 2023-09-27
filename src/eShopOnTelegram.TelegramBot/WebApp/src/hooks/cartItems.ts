@@ -1,18 +1,19 @@
 import { useState } from "react";
 import { CartItem } from "../types/cart-item";
 import { Product } from "../types/product";
+import { ProductAttribute } from "../types/productAttribute";
 
 export function useCartItems() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     
-    const addProductToState = (product: Product) => {
+    const addProductAttributeToState = (productAttribute: ProductAttribute) => {
         const existingCartItem = cartItems.find(
-            (cartItem) => cartItem.product.id === product.id
+            (cartItem) => cartItem.productAttribute.id === productAttribute.id
           );
     
           if (existingCartItem) {
             let newState = cartItems.map((cartItem) => {
-              if (cartItem.product.id === product.id) {
+              if (cartItem.productAttribute.id === productAttribute.id) {
                 return {
                   ...existingCartItem,
                   quantity: existingCartItem.quantity + 1,
@@ -27,20 +28,20 @@ export function useCartItems() {
     
           let newState = [
             ...cartItems,
-            { product: product, quantity: 1 },
+            { productAttribute, quantity: 1 },
           ];
     
           setCartItems(newState)
     }
 
-    const removeProductFromState = (product: Product) => {
+    const removeProductAttributeFromState = (productAttribute: ProductAttribute) => {
         const existingCartItem = cartItems.find(
-            (cartItem) => cartItem.product.id === product.id
+            (cartItem) => cartItem.productAttribute.id === productAttribute.id
           );
     
           if (existingCartItem?.quantity === 1) {
             let newState = cartItems.filter(
-              (cartItem) => cartItem.product.id !== product.id
+              (cartItem) => cartItem.productAttribute.id !== productAttribute.id
             );
     
             setCartItems(newState)
@@ -48,7 +49,7 @@ export function useCartItems() {
           }
     
           let newState = cartItems.map((cartItem) => {
-            if (cartItem.product.id === product.id) {
+            if (cartItem.productAttribute.id === productAttribute.id) {
               return { ...cartItem, quantity: cartItem.quantity - 1 };
             }
             return cartItem;
@@ -57,5 +58,5 @@ export function useCartItems() {
           setCartItems(newState)
     }
 
-    return { cartItems, addProductToState, removeProductFromState }
+    return { cartItems, addProductAttributeToState, removeProductAttributeFromState }
 } 
