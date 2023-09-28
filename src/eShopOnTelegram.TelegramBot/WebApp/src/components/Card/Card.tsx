@@ -21,27 +21,9 @@ interface CardProps {
   onRemove: (productAttribute: ProductAttribute) => void;
 }
 
-export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
-  const [productQuantityAddedInCart, setProductQuantityAddedInCart] =
-    useState(0);
-
+export const Card = observer(({ product }: CardProps) => {
   const [cardStore] = useState(new CardStore(product.productAttributes));
-
   const { name } = product;
-
-  const handleIncrement = () => {
-    if (
-      productQuantityAddedInCart <
-      cardStore.getSelectedProductAttribute.quantityLeft
-    ) {
-      setProductQuantityAddedInCart(productQuantityAddedInCart + 1);
-      onAdd(cardStore.getSelectedProductAttribute);
-    }
-  };
-  const handleDecrement = () => {
-    setProductQuantityAddedInCart(productQuantityAddedInCart - 1);
-    onRemove(cardStore.getSelectedProductAttribute);
-  };
 
   return (
     <StyledCard>
@@ -53,7 +35,7 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
         )}
       </StyledImageContainer>
       <StyledCardInfoWrapper>
-        {cardStore.getSelectedProductAttribute && name}
+        {name}
         <br />
         <StyledCardPrice>
           {cardStore.getSelectedProductAttribute && (
@@ -86,30 +68,32 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
       </StyledCardInfoWrapper>
 
       <StyledButtonContainer>
-        {productQuantityAddedInCart === 0 && (
+        {cardStore.getSelectedProductAttributeQuantity === 0 && (
           <Button
             title={"Add"}
             type={"add"}
-            onClick={handleIncrement}
+            onClick={() => cardStore.increaseSelectedProductAttributeQuantity()}
             disabled={!cardStore.selectionStateIsValid}
           />
         )}
-        {productQuantityAddedInCart !== 0 && (
+        {cardStore.getSelectedProductAttributeQuantity !== 0 && (
           <Button
             title={"-"}
             type={"remove"}
-            onClick={handleDecrement}
+            onClick={() => cardStore.decreaseSelectedProductAttributeQuantity()}
             disabled={false}
           />
         )}
-        <StyledCardBadge $isVisible={productQuantityAddedInCart !== 0}>
-          {productQuantityAddedInCart}
+        <StyledCardBadge
+          $isVisible={cardStore.getSelectedProductAttributeQuantity !== 0}
+        >
+          {cardStore.getSelectedProductAttributeQuantity}
         </StyledCardBadge>
-        {productQuantityAddedInCart !== 0 && (
+        {cardStore.getSelectedProductAttributeQuantity !== 0 && (
           <Button
             title={"+"}
             type={"add"}
-            onClick={handleIncrement}
+            onClick={() => cardStore.increaseSelectedProductAttributeQuantity()}
             disabled={false}
           />
         )}

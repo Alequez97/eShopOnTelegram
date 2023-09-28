@@ -20,7 +20,7 @@ export function getProducts(): Product[] {
           color: "Grape",
           originalPrice: 8.99,
           priceWithDiscount: 5.99,
-          quantityLeft: 100,
+          quantityLeft: 0,
           image:
             "https://royal-mmxxi.com/wp-content/uploads/2021/03/600-grape-ice-web-600x600.jpg",
         },

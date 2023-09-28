@@ -9,6 +9,8 @@ export class CardStore {
   private availableColors: string[];
   private availableSizes: string[];
 
+  private localCart: { [key: number]: number } = {};
+
   constructor(productAttributes: ProductAttribute[]) {
     this.productAttributes = productAttributes;
     this.selectedProductAttribute = productAttributes[0];
@@ -45,12 +47,21 @@ export class CardStore {
   }
 
   get selectionStateIsValid() {
-    return this.colorSetOrNotRequired && this.sizeSetOrNotRequired;
+    return (
+      this.selectedProductAttribute !== undefined &&
+      this.selectedProductAttribute.quantityLeft > 0
+    );
   }
 
   public setSelectedColor(color: string) {
-    this.selectedColor = color;
-    this.updateSelectedProductAttribute();
+    const productAttribute = this.productAttributes.find(
+      (productAttribute) => productAttribute.color === color
+    );
+
+    if (productAttribute) {
+      this.selectedColor = color;
+      this.updateSelectedProductAttribute();
+    }
   }
 
   get getSelectedColor() {
@@ -72,20 +83,38 @@ export class CardStore {
     return this.selectedSize;
   }
 
+  public increaseSelectedProductAttributeQuantity() {
+    if (this.selectedProductAttribute) {
+      const productId = this.selectedProductAttribute.id;
+      if (this.localCart[productId] === undefined) {
+        this.localCart[productId] = 1;
+      } else {
+        this.localCart[productId]++;
+      }
+    }
+  }
+
+  public decreaseSelectedProductAttributeQuantity() {
+    if (this.selectedProductAttribute) {
+      const productId = this.selectedProductAttribute.id;
+      this.localCart[productId]--;
+    }
+  }
+
+  get getSelectedProductAttributeQuantity() {
+    if (this.selectedProductAttribute) {
+      return this.localCart[this.selectedProductAttribute.id] ?? 0;
+    }
+
+    return 0;
+  }
+
   private get colorIsRequired() {
     return (
       this.productAttributes.find(
         (productAttribute) => productAttribute.color !== undefined
       ) !== undefined
     );
-  }
-
-  private get colorSetOrNotRequired() {
-    if (this.colorIsRequired) {
-      return this.selectedColor !== null;
-    }
-
-    return true;
   }
 
   private get sizeIsRequired() {
@@ -96,29 +125,19 @@ export class CardStore {
     );
   }
 
-  private get sizeSetOrNotRequired() {
-    if (this.sizeIsRequired) {
-      return this.selectedSize !== null;
-    }
-
-    return true;
-  }
-
   private updateSelectedProductAttribute() {
     if (this.colorIsRequired && this.sizeIsRequired) {
-      if (this.colorSetOrNotRequired && this.sizeSetOrNotRequired) {
-        const productAttribute = this.productAttributes.find(
-          (productAttribute) =>
-            productAttribute.color === this.selectedColor &&
-            productAttribute.size === this.selectedSize
-        ) as ProductAttribute;
-        this.selectedProductAttribute = productAttribute;
-      }
-    } else if (this.colorIsRequired && this.colorSetOrNotRequired) {
+      const productAttribute = this.productAttributes.find(
+        (productAttribute) =>
+          productAttribute.color === this.selectedColor &&
+          productAttribute.size === this.selectedSize
+      ) as ProductAttribute;
+      this.selectedProductAttribute = productAttribute;
+    } else if (this.colorIsRequired) {
       this.selectedProductAttribute = this.productAttributes.find(
         (productAttribute) => productAttribute.color === this.selectedColor
       ) as ProductAttribute;
-    } else if (this.sizeIsRequired && this.sizeSetOrNotRequired) {
+    } else if (this.sizeIsRequired) {
       this.selectedProductAttribute = this.productAttributes.find(
         (productAttribute) => productAttribute.size === this.selectedSize
       ) as ProductAttribute;
