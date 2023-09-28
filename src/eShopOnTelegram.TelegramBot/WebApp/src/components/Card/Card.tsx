@@ -73,33 +73,15 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
         )}
         <ProductAttributeSelector
           productAttributeName="Color"
-          productAttributeValues={[
-            ...new Set(
-              product.productAttributes
-                .map((productAttribute) => productAttribute.color)
-                .filter((color) => color !== undefined) as string[]
-            ),
-          ]}
-          onSelection={(selectedColor: string | null) => {
-            if (selectedColor) {
-              cardStore.setSelectedColor(selectedColor);
-            }
-          }}
+          productAttributeValues={cardStore.getAvailableColors}
+          selectedProductAttribute={cardStore.getSelectedColor}
+          onSelection={(color: string) => cardStore.setSelectedColor(color)}
         />
         <ProductAttributeSelector
           productAttributeName="Size"
-          productAttributeValues={[
-            ...new Set(
-              product.productAttributes
-                .map((productAttribute) => productAttribute.size)
-                .filter((size) => size !== undefined) as string[]
-            ),
-          ]}
-          onSelection={(selectedSize: string | null) => {
-            if (selectedSize) {
-              cardStore.setSelectedSize(selectedSize);
-            }
-          }}
+          productAttributeValues={cardStore.getAvailableSizes}
+          selectedProductAttribute={cardStore.getSelectedSize}
+          onSelection={(color: string) => cardStore.setSelectedSize(color)}
         />
       </StyledCardInfoWrapper>
 

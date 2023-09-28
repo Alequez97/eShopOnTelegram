@@ -6,12 +6,28 @@ export class CardStore {
   private selectedProductAttribute: ProductAttribute;
   private selectedColor: string | null;
   private selectedSize: string | null;
+  private availableColors: string[];
+  private availableSizes: string[];
 
   constructor(productAttributes: ProductAttribute[]) {
     this.productAttributes = productAttributes;
     this.selectedProductAttribute = productAttributes[0];
-    this.selectedColor = null;
-    this.selectedSize = null;
+    this.availableColors = [
+      ...new Set(
+        this.productAttributes
+          .map((productAttribute) => productAttribute.color)
+          .filter((color) => color !== undefined) as string[]
+      ),
+    ];
+    this.availableSizes = [
+      ...new Set(
+        this.productAttributes
+          .map((productAttribute) => productAttribute.size)
+          .filter((color) => color !== undefined) as string[]
+      ),
+    ];
+    this.selectedColor = this.availableColors[0] ?? null;
+    this.selectedSize = this.availableSizes[0] ?? null;
 
     makeAutoObservable(this);
   }
@@ -20,19 +36,25 @@ export class CardStore {
     return this.selectedProductAttribute;
   }
 
+  get getAvailableColors() {
+    return this.availableColors;
+  }
+
+  get getAvailableSizes() {
+    return this.availableSizes;
+  }
+
   get selectionStateIsValid() {
     return this.colorSetOrNotRequired && this.sizeSetOrNotRequired;
   }
 
   public setSelectedColor(color: string) {
-    const productAttribute = this.productAttributes.find(
-      (productAttribute) => productAttribute.color === color
-    );
+    this.selectedColor = color;
+    this.updateSelectedProductAttribute();
+  }
 
-    if (productAttribute) {
-      this.selectedColor = color;
-      this.updateSelectedProductAttribute();
-    }
+  get getSelectedColor() {
+    return this.selectedColor;
   }
 
   public setSelectedSize(size: string) {
@@ -44,6 +66,10 @@ export class CardStore {
       this.selectedSize = size;
       this.updateSelectedProductAttribute();
     }
+  }
+
+  get getSelectedSize() {
+    return this.selectedSize;
   }
 
   private get colorIsRequired() {
