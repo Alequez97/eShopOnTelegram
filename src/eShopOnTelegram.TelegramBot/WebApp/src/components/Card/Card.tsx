@@ -11,6 +11,9 @@ import {
 } from "./card.styled";
 import { ProductAttribute } from "../../types/productAttribute";
 import { ProductAttributeSelector } from "../productAttributeSelector/productAttributeSelector";
+import { observer } from "mobx-react-lite";
+import { CardStore } from "./card.store";
+import outOfStockImage from "../../assets/out_of_stock.jpg";
 
 interface CardProps {
   product: Product;
@@ -18,59 +21,85 @@ interface CardProps {
   onRemove: (productAttribute: ProductAttribute) => void;
 }
 
-export const Card = ({ product, onAdd, onRemove }: CardProps) => {
+export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
   const [productQuantityAddedInCart, setProductQuantityAddedInCart] =
     useState(0);
-  const [selectedProductAttribute, setSelectedProductAttribute] = useState(
-    product.productAttributes[0]
-  );
+
+  const [cardStore] = useState(new CardStore(product.productAttributes));
 
   const { name } = product;
 
   const handleIncrement = () => {
-    if (productQuantityAddedInCart < selectedProductAttribute.quantityLeft) {
+    if (
+      productQuantityAddedInCart <
+      cardStore.getSelectedProductAttribute.quantityLeft
+    ) {
       setProductQuantityAddedInCart(productQuantityAddedInCart + 1);
-      onAdd(selectedProductAttribute);
+      onAdd(cardStore.getSelectedProductAttribute);
     }
   };
   const handleDecrement = () => {
     setProductQuantityAddedInCart(productQuantityAddedInCart - 1);
-    onRemove(selectedProductAttribute);
+    onRemove(cardStore.getSelectedProductAttribute);
   };
 
   return (
     <StyledCard>
       <StyledImageContainer>
-        <img src={selectedProductAttribute.image} alt={name} />
+        {cardStore.getSelectedProductAttribute ? (
+          <img src={cardStore.getSelectedProductAttribute.image} alt={name} />
+        ) : (
+          <img src={outOfStockImage} alt={"Out of stock"} />
+        )}
       </StyledImageContainer>
       <StyledCardInfoWrapper>
-        {name}
+        {cardStore.getSelectedProductAttribute && name}
         <br />
         <StyledCardPrice>
-          {selectedProductAttribute.originalPrice} €
+          {cardStore.getSelectedProductAttribute && (
+            <>{cardStore.getSelectedProductAttribute.originalPrice} €</>
+          )}
         </StyledCardPrice>
         <br />
-        <i>
-          Available:{" "}
-          {selectedProductAttribute.quantityLeft < 20
-            ? selectedProductAttribute.quantityLeft
-            : "20+"}
-        </i>
+        {cardStore.getSelectedProductAttribute ? (
+          <i>
+            Available:{" "}
+            {cardStore.getSelectedProductAttribute.quantityLeft < 20
+              ? cardStore.getSelectedProductAttribute.quantityLeft
+              : "20+"}
+          </i>
+        ) : (
+          <i>Available: 0</i>
+        )}
         <ProductAttributeSelector
           productAttributeName="Color"
-          productAttributeValues={
-            product.productAttributes
-              .map((productAttribute) => productAttribute.color)
-              .filter((color) => color !== undefined) as string[]
-          }
+          productAttributeValues={[
+            ...new Set(
+              product.productAttributes
+                .map((productAttribute) => productAttribute.color)
+                .filter((color) => color !== undefined) as string[]
+            ),
+          ]}
+          onSelection={(selectedColor: string | null) => {
+            if (selectedColor) {
+              cardStore.setSelectedColor(selectedColor);
+            }
+          }}
         />
         <ProductAttributeSelector
           productAttributeName="Size"
-          productAttributeValues={
-            product.productAttributes
-              .map((productAttribute) => productAttribute.size)
-              .filter((size) => size !== undefined) as string[]
-          }
+          productAttributeValues={[
+            ...new Set(
+              product.productAttributes
+                .map((productAttribute) => productAttribute.size)
+                .filter((size) => size !== undefined) as string[]
+            ),
+          ]}
+          onSelection={(selectedSize: string | null) => {
+            if (selectedSize) {
+              cardStore.setSelectedSize(selectedSize);
+            }
+          }}
         />
       </StyledCardInfoWrapper>
 
@@ -80,7 +109,7 @@ export const Card = ({ product, onAdd, onRemove }: CardProps) => {
             title={"Add"}
             type={"add"}
             onClick={handleIncrement}
-            disabled={false}
+            disabled={!cardStore.selectionStateIsValid}
           />
         )}
         {productQuantityAddedInCart !== 0 && (
@@ -105,4 +134,4 @@ export const Card = ({ product, onAdd, onRemove }: CardProps) => {
       </StyledButtonContainer>
     </StyledCard>
   );
-};
+});

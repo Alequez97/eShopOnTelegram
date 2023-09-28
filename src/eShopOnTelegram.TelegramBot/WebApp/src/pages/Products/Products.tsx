@@ -12,20 +12,22 @@ import {
   StyledMissingProductsMessageWrapper,
   StyledProductCategoriesSelect,
   StyledProductCategoriesWrapper,
-} from "../styled/products.styled";
+} from "./products.styled";
 import { useProductsMock } from "../../hooks/productsMock";
 import { ProductAttribute } from "../../types/productAttribute";
 
 export const Products = () => {
   const { telegramWebApp } = useTelegramWebApp();
-
   useEffect(() => {
     telegramWebApp.expand();
-    // eslint-disable-next-line
-  }, []);
+  }, [telegramWebApp]);
 
-  const { cartItems, addProductAttributeToState, removeProductAttributeFromState } =
-    useCartItems();
+  const {
+    cartItems,
+    addProductAttributeToState,
+    removeProductAttributeFromState,
+  } = useCartItems();
+
   const { products, productCategories, error, loading } = useProductsMock();
   const [filteredProducts, setFilteredProducts] = useState<
     Product[] | undefined
@@ -49,7 +51,6 @@ export const Products = () => {
     return () => {
       telegramWebApp.offEvent("mainButtonClicked", sendDataToTelegram);
     };
-    // eslint-disable-next-line
   }, [sendDataToTelegram]);
 
   const onAdd = (productAttribute: ProductAttribute) => {

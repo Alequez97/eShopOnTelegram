@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { CartItem } from "../types/cart-item";
-import { Product } from "../types/product";
 import { ProductAttribute } from "../types/productAttribute";
 
 export function useCartItems() {
