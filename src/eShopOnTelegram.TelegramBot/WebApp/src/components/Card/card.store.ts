@@ -5,13 +5,14 @@ import { CartItem } from "../../types/cart-item";
 export class CardStore {
   private readonly productAttributes: ProductAttribute[];
   private selectedProductAttribute: ProductAttribute;
+
   private selectedColor: string | null;
   private selectedSize: string | null;
+
   private availableColors: string[];
   private availableSizes: string[];
 
-  private newLocalCart: CartItem[] = [];
-  private localCart: { [key: number]: number } = {};
+  private localCartItems: CartItem[] = [];
 
   constructor(productAttributes: ProductAttribute[]) {
     this.productAttributes = productAttributes;
@@ -86,36 +87,58 @@ export class CardStore {
   }
 
   public increaseSelectedProductAttributeQuantity() {
-    if (this.selectedProductAttribute) {
-      const productId = this.selectedProductAttribute.id;
-      const amountOfSelectedProductAttributeAdded = this.localCart[productId];
+    if (!this.selectedProductAttribute) {
+      return;
+    }
 
-      if (amountOfSelectedProductAttributeAdded === undefined) {
-        this.localCart[productId] = 1;
-      } else {
-        if (
-          amountOfSelectedProductAttributeAdded <
-          this.selectedProductAttribute.quantityLeft
-        ) {
-          this.localCart[productId]++;
-        }
-      }
+    const selectedProductAttributeCartItem = this.localCartItems.find(
+      (cartItem) =>
+        cartItem.productAttribute.id === this.selectedProductAttribute.id
+    );
+
+    if (!selectedProductAttributeCartItem) {
+      this.localCartItems.push({
+        productAttribute: this.selectedProductAttribute,
+        quantity: 1,
+      });
+    } else {
+      selectedProductAttributeCartItem.quantity++;
     }
   }
 
   public decreaseSelectedProductAttributeQuantity() {
-    if (this.selectedProductAttribute) {
-      const productId = this.selectedProductAttribute.id;
-      this.localCart[productId]--;
+    if (!this.selectedProductAttribute) {
+      return;
+    }
+
+    const selectedProductAttributeCartItem = this.localCartItems.find(
+      (cartItem) =>
+        cartItem.productAttribute.id === this.selectedProductAttribute.id
+    );
+    if (selectedProductAttributeCartItem) {
+      selectedProductAttributeCartItem.quantity--;
     }
   }
 
   get getSelectedProductAttributeQuantityAddedToCart() {
-    if (this.selectedProductAttribute) {
-      return this.localCart[this.selectedProductAttribute.id] ?? 0;
+    if (!this.selectedProductAttribute) {
+      return 0;
     }
 
-    return 0;
+    const localCartItem = this.localCartItems.find(
+      (cartItem) =>
+        cartItem.productAttribute.id === this.selectedProductAttribute.id
+    );
+
+    if (!localCartItem) {
+      return 0;
+    }
+
+    return localCartItem.quantity;
+  }
+
+  get getLocalCartItems() {
+    return this.localCartItems;
   }
 
   private get colorIsRequired() {
