@@ -1,5 +1,6 @@
 import { makeAutoObservable } from "mobx";
 import { ProductAttribute } from "../../types/productAttribute";
+import { CartItem } from "../../types/cart-item";
 
 export class CardStore {
   private readonly productAttributes: ProductAttribute[];
@@ -9,6 +10,7 @@ export class CardStore {
   private availableColors: string[];
   private availableSizes: string[];
 
+  private newLocalCart: CartItem[] = [];
   private localCart: { [key: number]: number } = {};
 
   constructor(productAttributes: ProductAttribute[]) {
@@ -86,10 +88,17 @@ export class CardStore {
   public increaseSelectedProductAttributeQuantity() {
     if (this.selectedProductAttribute) {
       const productId = this.selectedProductAttribute.id;
-      if (this.localCart[productId] === undefined) {
+      const amountOfSelectedProductAttributeAdded = this.localCart[productId];
+
+      if (amountOfSelectedProductAttributeAdded === undefined) {
         this.localCart[productId] = 1;
       } else {
-        this.localCart[productId]++;
+        if (
+          amountOfSelectedProductAttributeAdded <
+          this.selectedProductAttribute.quantityLeft
+        ) {
+          this.localCart[productId]++;
+        }
       }
     }
   }
@@ -101,7 +110,7 @@ export class CardStore {
     }
   }
 
-  get getSelectedProductAttributeQuantity() {
+  get getSelectedProductAttributeQuantityAddedToCart() {
     if (this.selectedProductAttribute) {
       return this.localCart[this.selectedProductAttribute.id] ?? 0;
     }

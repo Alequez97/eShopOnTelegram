@@ -68,7 +68,7 @@ export const Card = observer(({ product }: CardProps) => {
       </StyledCardInfoWrapper>
 
       <StyledButtonContainer>
-        {cardStore.getSelectedProductAttributeQuantity === 0 && (
+        {cardStore.getSelectedProductAttributeQuantityAddedToCart === 0 && (
           <Button
             title={"Add"}
             type={"add"}
@@ -76,7 +76,7 @@ export const Card = observer(({ product }: CardProps) => {
             disabled={!cardStore.selectionStateIsValid}
           />
         )}
-        {cardStore.getSelectedProductAttributeQuantity !== 0 && (
+        {cardStore.getSelectedProductAttributeQuantityAddedToCart !== 0 && (
           <Button
             title={"-"}
             type={"remove"}
@@ -85,11 +85,11 @@ export const Card = observer(({ product }: CardProps) => {
           />
         )}
         <StyledCardBadge
-          $isVisible={cardStore.getSelectedProductAttributeQuantity !== 0}
+          $isVisible={cardStore.getSelectedProductAttributeQuantityAddedToCart !== 0}
         >
-          {cardStore.getSelectedProductAttributeQuantity}
+          {cardStore.getSelectedProductAttributeQuantityAddedToCart}
         </StyledCardBadge>
-        {cardStore.getSelectedProductAttributeQuantity !== 0 && (
+        {cardStore.getSelectedProductAttributeQuantityAddedToCart !== 0 && (
           <Button
             title={"+"}
             type={"add"}
