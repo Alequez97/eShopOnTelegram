@@ -1,8 +1,14 @@
-export function useTelegramWebApp() {
-    const telegramWebApp = window.Telegram.WebApp
-    telegramWebApp.ready();
+let isReadyCalled = false;
 
-    return {
-        telegramWebApp
-    }
+export function useTelegramWebApp() {
+  const telegramWebApp = window.Telegram.WebApp;
+
+  if (!isReadyCalled) {
+    telegramWebApp.ready();
+    isReadyCalled = true;
+  }
+
+  return {
+    telegramWebApp,
+  };
 }
