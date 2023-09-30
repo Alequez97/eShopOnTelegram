@@ -21,7 +21,7 @@ interface CardProps {
   onRemove: (productAttribute: ProductAttribute) => void;
 }
 
-export const Card = observer(({ product }: CardProps) => {
+export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
   const [cardStore] = useState(new CardStore(product.productAttributes));
   const { name } = product;
 
@@ -72,7 +72,10 @@ export const Card = observer(({ product }: CardProps) => {
           <Button
             title={"Add"}
             type={"add"}
-            onClick={() => cardStore.increaseSelectedProductAttributeQuantity()}
+            onClick={() => {
+              cardStore.increaseSelectedProductAttributeQuantity();
+              onAdd(cardStore.getSelectedProductAttribute);
+            }}
             disabled={!cardStore.selectionStateIsValid}
           />
         )}
@@ -80,12 +83,17 @@ export const Card = observer(({ product }: CardProps) => {
           <Button
             title={"-"}
             type={"remove"}
-            onClick={() => cardStore.decreaseSelectedProductAttributeQuantity()}
+            onClick={() => {
+              cardStore.decreaseSelectedProductAttributeQuantity();
+              onRemove(cardStore.getSelectedProductAttribute);
+            }}
             disabled={false}
           />
         )}
         <StyledCardBadge
-          $isVisible={cardStore.getSelectedProductAttributeQuantityAddedToCart !== 0}
+          $isVisible={
+            cardStore.getSelectedProductAttributeQuantityAddedToCart !== 0
+          }
         >
           {cardStore.getSelectedProductAttributeQuantityAddedToCart}
         </StyledCardBadge>
@@ -93,7 +101,10 @@ export const Card = observer(({ product }: CardProps) => {
           <Button
             title={"+"}
             type={"add"}
-            onClick={() => cardStore.increaseSelectedProductAttributeQuantity()}
+            onClick={() => {
+              cardStore.increaseSelectedProductAttributeQuantity();
+              onAdd(cardStore.getSelectedProductAttribute);
+            }}
             disabled={false}
           />
         )}
