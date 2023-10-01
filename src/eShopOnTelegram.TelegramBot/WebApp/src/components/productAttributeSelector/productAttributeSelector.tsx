@@ -27,9 +27,9 @@ export const ProductAttributeSelector = observer(
             productAttributeValues !== null && productAttributeValues.length > 0
           }
         >
-          <StyledProductAttributeTitle>
+          {/* <StyledProductAttributeTitle>
             {productAttributeName}:
-          </StyledProductAttributeTitle>
+          </StyledProductAttributeTitle> */}
           {productAttributeValues?.map((productAttributeValue, index) => (
             <StyledProductAttributeOptions
               key={index}
