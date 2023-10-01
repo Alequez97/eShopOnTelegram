@@ -1,7 +1,6 @@
 ﻿using System.Text;
 
 using eShopOnTelegram.Domain.Dto.Orders;
-using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Appsettings;
@@ -61,7 +60,7 @@ public class PaymentProceedMessageSender
         foreach (var orderCartItem in order.CartItems)
         {
             message
-            .AppendLine($"{orderCartItem.Name} (x{orderCartItem.Quantity}) {orderCartItem.TotalPrice}{currencySymbol}");
+            .AppendLine(orderCartItem.GetFormattedMessage(currencySymbol));
         };
 
         message

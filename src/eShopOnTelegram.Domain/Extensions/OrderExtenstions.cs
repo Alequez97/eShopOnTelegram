@@ -20,12 +20,14 @@ public static class OrderExtenstions
             {
                 ProductAttribute = new ProductAttributeDto()
                 {
+                    Id = cartItem.ProductAttribute.Id,
+                    Color = cartItem.ProductAttribute.Color,
+                    Size = cartItem.ProductAttribute.Size,
                     ProductName = cartItem.ProductAttribute.ProductName,
                     ProductCategoryName = cartItem.ProductAttribute.ProductCategoryName,
                     OriginalPrice = cartItem.ProductAttribute.OriginalPrice,
                     PriceWithDiscount = cartItem.ProductAttribute.PriceWithDiscount,
                     QuantityLeft = cartItem.ProductAttribute.QuantityLeft,
-                    ImageName = cartItem.ProductAttribute.ImageName
                 },
                 Quantity = cartItem.Quantity
             }).ToList(),

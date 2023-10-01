@@ -13,6 +13,7 @@ public static class ProductExtensions
             ProductCategoryName = product.Category.Name,
             ProductAttributes = product.ProductAttributes.Select(productAttribute => new ProductAttributeDto()
             {
+                Id = productAttribute.Id,
                 ProductName = productAttribute.ProductName,
                 ProductCategoryName = productAttribute.ProductCategoryName,
                 Color = productAttribute.Color,

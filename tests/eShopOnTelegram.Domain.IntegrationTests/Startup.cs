@@ -27,6 +27,7 @@ public class Startup
             .AddSingleton<ILoggerFactory, LoggerFactory>()
             .AddTransient(typeof(ILogger<>), typeof(Logger<>))
             .AddTransient<IProductService, ProductService>()
+            .AddTransient<IProductAttributeService, ProductAttributeService>()
             .AddTransient<IProductImagesStore, AzureBlobStorageProductImagesStore>()
             .AddTransient<IOrderService, OrderService>()
             .AddTransient<ICustomerService, CustomerService>()

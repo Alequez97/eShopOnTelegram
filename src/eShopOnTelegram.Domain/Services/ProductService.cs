@@ -187,6 +187,7 @@ public class ProductService : IProductService
         }
     }
 
+    // TODO: Fix update to update product attributes
     public async Task<ActionResponse> UpdateAsync(UpdateProductRequest updateProductRequest, CancellationToken cancellationToken)
     {
         try
@@ -217,9 +218,9 @@ public class ProductService : IProductService
             {
                 Name = updateProductRequest.Name,
                 CategoryId = existingProduct.CategoryId,
-                OriginalPrice = updateProductRequest.OriginalPrice,
-                PriceWithDiscount = updateProductRequest.PriceWithDiscount,
-                QuantityLeft = updateProductRequest.QuantityLeft,
+                //OriginalPrice = updateProductRequest.OriginalPrice,
+                //PriceWithDiscount = updateProductRequest.PriceWithDiscount,
+                //Quantity = updateProductRequest.Quantity,
                 IsDeleted = false,
                 PreviousVersion = existingProduct
             };

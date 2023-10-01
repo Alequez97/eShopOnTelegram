@@ -2,7 +2,9 @@
 
 public class ProductAttributeDto
 {
-    // TODO: Remove required, this is to ensure field is mapped in all places
+    public required long Id { get; set; }
+
+    // TODO: Remove required size and color, this is to ensure fields are mapped in all places
     public required string Color { get; set; }
 
     public required string Size { get; set; }
@@ -18,7 +20,4 @@ public class ProductAttributeDto
     public required int QuantityLeft { get; set; }
 
     public string? Image { get; set; }
-
-    public decimal TotalPrice => (PriceWithDiscount ?? OriginalPrice) * QuantityLeft;
-
 }
