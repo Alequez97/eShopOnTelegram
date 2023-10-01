@@ -17,9 +17,11 @@ interface StyledProductAttributeTextProps {
 }
 
 export const StyledProductAttributeOptions = styled.span<StyledProductAttributeTextProps>`
-  background-color: ${(props) => (props.$isSelected ? "gray" : "inherit")};
+  background-color: var(--button-color);
+  color: var(--button-text-color);
   border: 1px solid black;
-  color: black;
+  border: ${(props) => (props.$isSelected ? "2px solid var(--text-color)" : "none")};
+  font-weight: ${(props) => (props.$isSelected ? "bold" : "normal")};;
   border-radius: 50px;
   padding: 10px;
   margin: 0;

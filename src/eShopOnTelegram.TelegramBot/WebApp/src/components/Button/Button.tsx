@@ -12,7 +12,7 @@ const buttonStyles: Record<ButtonProps["type"], any> = {
   add: {
     normal: "rgb(75, 226, 75)",
     hover: "#ad9a1c",
-    active: "#83730b",
+    active: "#0b8325",
   },
   remove: {
     normal: "tomato",
@@ -22,6 +22,7 @@ const buttonStyles: Record<ButtonProps["type"], any> = {
 };
 
 const StyledButton = styled.button<ButtonProps>`
+  color: black;
   padding: 0.6rem 0.8rem;
   font-size: 1.2rem;
   text-align: center;
@@ -30,7 +31,7 @@ const StyledButton = styled.button<ButtonProps>`
   border-radius: 10px;
   width: 120px;
   margin-left: 10px;
-  box-shadow: 1px -3px 52px -5px rgba(0, 0, 0, 0.7);
+  box-shadow: 1px -3px 12px -5px var(--text-color);
   background-color: ${(props) => buttonStyles[props.type].normal};
 
   &:hover {
@@ -39,6 +40,13 @@ const StyledButton = styled.button<ButtonProps>`
 
   &:active {
     background-color: ${(props) => buttonStyles[props.type].active};
+    box-shadow: none;
+  }
+
+  &:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
   }
 `;
 
