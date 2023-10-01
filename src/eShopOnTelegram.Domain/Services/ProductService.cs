@@ -35,19 +35,11 @@ public class ProductService : IProductService
             var products = await _dbContext.Products
                 .Where(product => product.IsDeleted == false)
                 .Include(product => product.Category)
+                .Include(product => product.ProductAttributes)
                 .WithPagination(request.PaginationModel)
-                .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
-            var getProductsResponse = products.Select(product => new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            });
+            var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
 
             return new Response<IEnumerable<ProductDto>>()
             {
@@ -76,16 +68,7 @@ public class ProductService : IProductService
                 .Include(product => product.Category)
                 .ToListAsync(cancellationToken);
 
-            var getProductsResponse = products.Select(product => new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            });
+            var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
 
             return new Response<IEnumerable<ProductDto>>()
             {
@@ -120,16 +103,7 @@ public class ProductService : IProductService
                 };
             }
 
-            var getProductResponse = new ProductDto()
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            };
+            var getProductResponse = product.ToProductDto(_productImagesHostname);
 
             return new Response<ProductDto>()
             {
@@ -164,21 +138,36 @@ public class ProductService : IProductService
                 };
             }
 
-            var storedImageName = await _productImagesStore.SaveAsync(request.ProductImage, CancellationToken.None);
-
             var product = new Product()
             {
                 Name = request.Name,
-                OriginalPrice = request.OriginalPrice,
-                PriceWithDiscount = request.PriceWithDiscount,
-                QuantityLeft = request.QuantityLeft,
                 Category = existingProductCategory,
                 IsDeleted = false,
-                ImageName = storedImageName
             };
 
-            _dbContext.Products.Add(product);
+            var productAttributesList = new List<ProductAttribute>();
+            foreach (var createProductAttributeRequest in request.ProductAttributes)
+            {
+                var storedImageName = await _productImagesStore.SaveAsync(createProductAttributeRequest.ProductImage, cancellationToken);
 
+                var newProductAttribute = new ProductAttribute()
+                {
+                    Product = product,
+                    Color = createProductAttributeRequest.Color,
+                    Size = createProductAttributeRequest.Size,
+                    OriginalPrice = createProductAttributeRequest.OriginalPrice,
+                    PriceWithDiscount = createProductAttributeRequest.PriceWithDiscount,
+                    QuantityLeft = createProductAttributeRequest.QuantityLeft,
+                    IsDeleted = false,
+                    ImageName = storedImageName,
+                };
+
+                productAttributesList.Add(newProductAttribute);
+            }
+
+            product.ProductAttributes = productAttributesList;
+
+            _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
@@ -252,9 +241,9 @@ public class ProductService : IProductService
 
             //if (updateProductRequest.ProductImage != null)
             //{
-            //    await _productImagesRepository.DeleteAsync(existingProduct.ImageName);
+            //    await _productImagesRepository.DeleteAsync(existingProduct.Image);
             //    var newImageName = await _productImagesRepository.SaveAsync(updateProductRequest.ProductImage, CancellationToken.None);
-            //    existingProduct.ImageName = newImageName;
+            //    existingProduct.Image = newImageName;
             //}
 
             return new ActionResponse()
@@ -288,9 +277,14 @@ public class ProductService : IProductService
             }
 
             existingProduct.IsDeleted = true;
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            await _productImagesStore.DeleteAsync(existingProduct.ImageName);
+            foreach (var productAttribute in existingProduct.ProductAttributes)
+            {
+                productAttribute.IsDeleted = true;
+                await _productImagesStore.DeleteAsync(productAttribute.ImageName);
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
             {

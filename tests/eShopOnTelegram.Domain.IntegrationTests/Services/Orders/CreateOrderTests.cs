@@ -46,7 +46,7 @@ public class CreateOrderTests
             {
                 new CreateCartItemRequest()
                 {
-                    ProductId = -1,
+                    ProductAttributeId = -1,
                     Quantity = 5,
                 }
             }
@@ -112,7 +112,7 @@ public class CreateOrderTests
             {
                 new CreateCartItemRequest()
                 {
-                    ProductId = existingProduct.Id,
+                    ProductAttributeId = existingProduct.Id,
                     Quantity = orderItemsAmount
                 }
             }

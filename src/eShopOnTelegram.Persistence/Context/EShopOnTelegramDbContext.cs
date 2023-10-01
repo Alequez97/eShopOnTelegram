@@ -6,6 +6,8 @@ public class EShopOnTelegramDbContext : DbContext
 
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<ProductAttribute> ProductAttributes { get; set; }
+
     public DbSet<ProductCategory> ProductCategories { get; set; }
 
     public DbSet<Order> Orders { get; set; }
