@@ -33,7 +33,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Property<long?>("OrderId")
                         .HasColumnType("bigint");
 
-                    b.Property<long>("ProductId")
+                    b.Property<long>("ProductAttributeId")
                         .HasColumnType("bigint");
 
                     b.Property<int>("Quantity")
@@ -43,7 +43,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.HasIndex("ProductId");
+                    b.HasIndex("ProductAttributeId");
 
                     b.ToTable("CartItems");
                 });
@@ -145,10 +145,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Property<long>("CategoryId")
                         .HasColumnType("bigint");
 
-                    b.Property<string>("ImageName")
-                        .HasMaxLength(200)
-                        .HasColumnType("nvarchar(200)");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
@@ -156,17 +152,8 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<decimal>("OriginalPrice")
-                        .HasColumnType("decimal(18,2)");
-
                     b.Property<long?>("PreviousVersionId")
                         .HasColumnType("bigint");
-
-                    b.Property<decimal?>("PriceWithDiscount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.Property<int>("QuantityLeft")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -177,6 +164,54 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasIndex("PreviousVersionId");
 
                     b.ToTable("Products");
+                });
+
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductAttribute", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("Color")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ImageName")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<decimal>("OriginalPrice")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long?>("PreviousVersionId")
+                        .HasColumnType("bigint");
+
+                    b.Property<decimal?>("PriceWithDiscount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<long>("ProductId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("QuantityLeft")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Size")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PreviousVersionId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductAttributes");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductCategory", b =>
@@ -214,13 +249,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .WithMany("CartItems")
                         .HasForeignKey("OrderId");
 
-                    b.HasOne("eShopOnTelegram.Persistence.Entities.Product", "Product")
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.ProductAttribute", "ProductAttribute")
                         .WithMany()
-                        .HasForeignKey("ProductId")
+                        .HasForeignKey("ProductAttributeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Product");
+                    b.Navigation("ProductAttribute");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Order", b =>
@@ -251,6 +286,23 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Navigation("PreviousVersion");
                 });
 
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductAttribute", b =>
+                {
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.ProductAttribute", "PreviousVersion")
+                        .WithMany()
+                        .HasForeignKey("PreviousVersionId");
+
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.Product", "Product")
+                        .WithMany("ProductAttributes")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("PreviousVersion");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductCategory", b =>
                 {
                     b.HasOne("eShopOnTelegram.Persistence.Entities.ProductCategory", "PreviousVersion")
@@ -263,6 +315,11 @@ namespace eShopOnTelegram.Persistence.Migrations
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Order", b =>
                 {
                     b.Navigation("CartItems");
+                });
+
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Product", b =>
+                {
+                    b.Navigation("ProductAttributes");
                 });
 #pragma warning restore 612, 618
         }

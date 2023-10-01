@@ -83,10 +83,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CategoryId = table.Column<long>(type: "bigint", nullable: false),
-                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    PriceWithDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
-                    QuantityLeft = table.Column<int>(type: "int", nullable: false),
-                    ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
                     IsDeleted = table.Column<bool>(type: "bit", nullable: false),
                     PreviousVersionId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -107,12 +103,44 @@ namespace eShopOnTelegram.Persistence.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "ProductAttributes",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PriceWithDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
+                    QuantityLeft = table.Column<int>(type: "int", nullable: false),
+                    ImageName = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: false),
+                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    PreviousVersionId = table.Column<long>(type: "bigint", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ProductAttributes", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductAttributes_ProductAttributes_PreviousVersionId",
+                        column: x => x.PreviousVersionId,
+                        principalTable: "ProductAttributes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_ProductAttributes_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "CartItems",
                 columns: table => new
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    ProductId = table.Column<long>(type: "bigint", nullable: false),
+                    ProductAttributeId = table.Column<long>(type: "bigint", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     OrderId = table.Column<long>(type: "bigint", nullable: true)
                 },
@@ -125,9 +153,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                         principalTable: "Orders",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_CartItems_Products_ProductId",
-                        column: x => x.ProductId,
-                        principalTable: "Products",
+                        name: "FK_CartItems_ProductAttributes_ProductAttributeId",
+                        column: x => x.ProductAttributeId,
+                        principalTable: "ProductAttributes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -138,9 +166,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                 column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CartItems_ProductId",
+                name: "IX_CartItems_ProductAttributeId",
                 table: "CartItems",
-                column: "ProductId");
+                column: "ProductAttributeId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Customers_TelegramUserUID",
@@ -158,6 +186,16 @@ namespace eShopOnTelegram.Persistence.Migrations
                 table: "Orders",
                 column: "OrderNumber",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributes_PreviousVersionId",
+                table: "ProductAttributes",
+                column: "PreviousVersionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ProductAttributes_ProductId",
+                table: "ProductAttributes",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductCategories_Name",
@@ -196,10 +234,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                 name: "Orders");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "ProductAttributes");
 
             migrationBuilder.DropTable(
                 name: "Customers");
+
+            migrationBuilder.DropTable(
+                name: "Products");
 
             migrationBuilder.DropTable(
                 name: "ProductCategories");
