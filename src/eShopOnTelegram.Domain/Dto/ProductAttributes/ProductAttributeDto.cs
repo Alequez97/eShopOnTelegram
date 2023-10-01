@@ -4,10 +4,9 @@ public class ProductAttributeDto
 {
     public required long Id { get; set; }
 
-    // TODO: Remove required size and color, this is to ensure fields are mapped in all places
-    public required string Color { get; set; }
+    public string? Color { get; set; }
 
-    public required string Size { get; set; }
+    public string? Size { get; set; }
 
     public required string ProductName { get; set; }
 

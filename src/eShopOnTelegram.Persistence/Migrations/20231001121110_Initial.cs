@@ -108,8 +108,8 @@ namespace eShopOnTelegram.Persistence.Migrations
                 {
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Color = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Size = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Color = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Size = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     OriginalPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     PriceWithDiscount = table.Column<decimal>(type: "decimal(18,2)", nullable: true),
                     QuantityLeft = table.Column<int>(type: "int", nullable: false),

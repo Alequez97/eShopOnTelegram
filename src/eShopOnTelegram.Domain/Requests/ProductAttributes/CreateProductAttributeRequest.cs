@@ -5,9 +5,9 @@ namespace eShopOnTelegram.Domain.Requests.ProductAttributes;
 
 public class CreateProductAttributeRequest
 {
-    public required string Color { get; set; }
+    public string? Color { get; set; }
 
-    public required string Size { get; set; }
+    public string? Size { get; set; }
 
     public required decimal OriginalPrice { get; set; }
 

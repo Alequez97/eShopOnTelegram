@@ -2,10 +2,9 @@
 
 public class ProductAttribute : EntityBase
 {
-    // TODO: Remove required, this is to ensure field is mapped in all places
-    public required string Color { get; set; }
+    public string? Color { get; set; }
 
-    public required string Size { get; set; }
+    public string? Size { get; set; }
 
     public required decimal OriginalPrice { get; set; }
 
