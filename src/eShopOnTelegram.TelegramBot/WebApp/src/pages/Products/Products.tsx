@@ -13,7 +13,6 @@ import {
   StyledProductCategoriesSelect,
   StyledProductCategoriesWrapper,
 } from "./products.styled";
-import { useProductsMock } from "../../hooks/productsMock";
 import { ProductAttribute } from "../../types/productAttribute";
 
 export const Products = () => {
@@ -28,7 +27,7 @@ export const Products = () => {
     removeProductAttributeFromState,
   } = useCartItems();
 
-  const { products, productCategories, error, loading } = useProductsMock();
+  const { products, productCategories, error, loading } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<
     Product[] | undefined
   >(undefined);

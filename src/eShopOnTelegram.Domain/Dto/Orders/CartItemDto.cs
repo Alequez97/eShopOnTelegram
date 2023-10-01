@@ -14,28 +14,30 @@ public class CartItemDto
 
     public string GetFormattedMessage(char currencySymbol)
     {
-        var ProductAttributeInfoStringBuilder = new StringBuilder();
-        ProductAttributeInfoStringBuilder.Append($"{ProductAttribute.ProductName}");
+        var productAttributeInfoStringBuilder = new StringBuilder();
+        productAttributeInfoStringBuilder.Append($"{ProductAttribute.ProductName}");
 
         if (!string.IsNullOrWhiteSpace(ProductAttribute.Color) || !string.IsNullOrWhiteSpace(ProductAttribute.Size))
         {
-            ProductAttributeInfoStringBuilder.Append(" (");
+            productAttributeInfoStringBuilder.Append(" (");
             if (!string.IsNullOrWhiteSpace(ProductAttribute.Color))
             {
-                ProductAttributeInfoStringBuilder.Append($"{ProductAttribute.Color}");
+                productAttributeInfoStringBuilder.Append($"{ProductAttribute.Color}");
                 if (!string.IsNullOrWhiteSpace(ProductAttribute.Size))
                 {
-                    ProductAttributeInfoStringBuilder.Append($"{ProductAttribute.Size}");
+                    productAttributeInfoStringBuilder.Append($", ");
+                    productAttributeInfoStringBuilder.Append($"{ProductAttribute.Size}");
                 }
             }
             else
             {
-                ProductAttributeInfoStringBuilder.Append($"{ProductAttribute.Size}");
+                productAttributeInfoStringBuilder.Append($"{ProductAttribute.Size}");
             }
-            ProductAttributeInfoStringBuilder.Append(")");
+            productAttributeInfoStringBuilder.Append(")");
         }
-        ProductAttributeInfoStringBuilder.Append($" (x{Quantity}) {TotalPrice}{currencySymbol}");
 
-        return ProductAttributeInfoStringBuilder.ToString();
+        productAttributeInfoStringBuilder.Append($" (x{Quantity}) {TotalPrice}{currencySymbol}");
+
+        return productAttributeInfoStringBuilder.ToString();
     }
 }

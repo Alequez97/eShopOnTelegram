@@ -65,6 +65,7 @@ public class ProductService : IProductService
         {
             var products = await _dbContext.Products
                 .Where(product => product.IsDeleted == false)
+                .Include(product => product.ProductAttributes)
                 .Include(product => product.Category)
                 .ToListAsync(cancellationToken);
 
@@ -92,6 +93,7 @@ public class ProductService : IProductService
         try
         {
             var product = await _dbContext.Products
+                .Include(product => product.ProductAttributes)
                 .Include(product => product.Category)
                 .FirstOrDefaultAsync(product => product.Id == id && product.IsDeleted == false, cancellationToken);
 
