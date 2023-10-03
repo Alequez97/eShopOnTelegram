@@ -1,7 +1,4 @@
-﻿using eShopOnTelegram.Domain.Validation.Attributes;
-using Microsoft.AspNetCore.Http;
-
-namespace eShopOnTelegram.Domain.Requests.ProductAttributes;
+﻿namespace eShopOnTelegram.Domain.Requests.ProductAttributes;
 
 public class CreateProductAttributeRequest
 {
@@ -15,6 +12,7 @@ public class CreateProductAttributeRequest
 
     public required int QuantityLeft { get; set; }
 
-    [AllowedExtensions(new string[] { ".jpg", ".jpeg", ".png", ".gif" })]
-    public required IFormFile ProductImage { get; set; }
+    public required byte[] ImageAsBase64 { get; set; }
+
+    public required string ImageName { get; set; }
 }

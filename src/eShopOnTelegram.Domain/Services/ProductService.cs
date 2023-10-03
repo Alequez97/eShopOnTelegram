@@ -5,6 +5,8 @@ using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -129,6 +131,15 @@ public class ProductService : IProductService
     {
         try
         {
+            if (request.ProductAttributes == null || request.ProductAttributes.Count == 0)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.ValidationFailed,
+                    Message = "Create product request should contain at least on product attribute"
+                };
+            }
+
             var existingProductCategory = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(category => category.Id == request.ProductCategoryId, cancellationToken);
 
@@ -150,7 +161,7 @@ public class ProductService : IProductService
             var productAttributesList = new List<ProductAttribute>();
             foreach (var createProductAttributeRequest in request.ProductAttributes)
             {
-                var storedImageName = await _productImagesStore.SaveAsync(createProductAttributeRequest.ProductImage, cancellationToken);
+                var storedImageName = await _productImagesStore.SaveAsync(createProductAttributeRequest.ImageAsBase64, createProductAttributeRequest.ImageName, cancellationToken);
 
                 var newProductAttribute = new ProductAttribute()
                 {

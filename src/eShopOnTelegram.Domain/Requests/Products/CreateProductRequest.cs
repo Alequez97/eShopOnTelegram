@@ -8,5 +8,5 @@ public class CreateProductRequest
 
     public required long ProductCategoryId { get; set; }
 
-    public List<CreateProductAttributeRequest> ProductAttributes { get; set; }
+    public required List<CreateProductAttributeRequest> ProductAttributes { get; set; }
 }

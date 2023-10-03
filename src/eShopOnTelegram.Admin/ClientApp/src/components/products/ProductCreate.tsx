@@ -1,4 +1,5 @@
 import {
+  ArrayInput,
   Create,
   FileInput,
   ImageInput,
@@ -8,6 +9,7 @@ import {
   required,
   SelectInput,
   SimpleForm,
+  SimpleFormIterator,
   TextInput,
   useNotify,
   useRedirect,
@@ -31,42 +33,110 @@ function ProductCreate() {
     return undefined;
   };
 
+  async function fileToBase64(file: File): Promise<string | null> {
+    return new Promise<string | null>((resolve) => {
+      const reader = new FileReader();
+
+      reader.onload = (event) => {
+        if (event.target && event.target.result) {
+          const base64String = event.target.result.toString().split(",")[1];
+          resolve(base64String);
+        } else {
+          resolve(null);
+        }
+      };
+
+      reader.onerror = () => {
+        resolve(null);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  }
+
   const notify = useNotify();
   const redirect = useRedirect();
 
+  async function replaceEmptyKeysWithNull(obj: any) {
+    for (const key in obj) {
+      console.log("key", key);
+      if (typeof obj[key] === "string" && obj[key].trim() === "") {
+        obj[key] = null;
+      }
+    }
+  }
+
   async function handleSubmit(request: any) {
     try {
-      const formData = new FormData();
-      formData.append("name", request.name);
-      formData.append("productCategoryId", request.productCategoryId);
-      formData.append("quantityLeft", request.quantityLeft);
-      formData.append("originalPrice", request.originalPrice);
-      formData.append("priceWithDiscount", request.priceWithDiscount ?? "");
-      formData.append("productImage", request.productImage.rawFile);
-      await axios.post("/products", formData);
+      for (let index = 0; index < request.productAttributes.length; index++) {
+        const productAttribute = request.productAttributes[index];
+
+        const imageAsBase64 = await fileToBase64(
+          productAttribute.productImage.rawFile
+        );
+
+        request.productAttributes[index].imageAsBase64 = imageAsBase64;
+        request.productAttributes[index].imageName =
+          productAttribute.productImage.rawFile.name;
+
+        replaceEmptyKeysWithNull(request.productAttributes[index]);
+      }
+      console.log(request);
+      await axios.post("/products", request);
       notify("New product created", { type: "success" });
-      redirect('/products')
+      // TODO: Reset form here
     } catch (error) {
       notify("Error saving application content data", { type: "error" });
     }
   }
 
   return (
-    <SimpleForm onSubmit={handleSubmit}>
-      <TextInput source="name" label="Product name" validate={[required()]} />
-      <ReferenceInput source="productCategoryId" reference="productCategories">
-        <SelectInput optionText="name" validate={[required()]} />
+    <SimpleForm onSubmit={handleSubmit} sanitizeEmptyValues={true}>
+      <ReferenceInput
+        source="productCategoryId"
+        reference="productCategories"
+        validate={[required()]}
+      >
+        <SelectInput optionText="name" />
       </ReferenceInput>
-      <NumberInput source="originalPrice" validate={[required(), number()]} />
-      <NumberInput
-        source="priceWithDiscount"
-        validate={[number(), shouldBeLessThanOriginalPrice]}
-      />
-      <NumberInput source="quantityLeft" validate={[required(), number()]} />
-      <FileInput
-        source="productImage"
-        validate={[required(), validateFileExtension]}
-      />
+      <TextInput source="name" label="Product name" validate={[required()]} />
+      <div>
+        <p>
+          We support adding color and size as additional properties for your
+          products. If your product does not require this additional information
+          just leave it empty
+        </p>
+      </div>
+      <ArrayInput
+        source="productAttributes"
+        validate={[required("At least one product attribute is required")]}
+      >
+        <SimpleFormIterator inline disableReordering>
+          <NumberInput
+            source="originalPrice"
+            label="Original Price"
+            validate={[required("Original price is required")]}
+          />
+          <NumberInput
+            source="priceWithDiscount"
+            label="Price With Discount"
+            defaultValue={null}
+          />
+          <NumberInput
+            source="quantityLeft"
+            label="Quantity Left"
+            validate={[required("Quantity is required")]}
+          />
+          <TextInput source="color" label="Color" />
+          <TextInput source="size" label="Size" />
+          <FileInput
+            source="productImage"
+            label="Product Image"
+            accept="image/*"
+            validate={[required("Image is required")]}
+          />
+        </SimpleFormIterator>
+      </ArrayInput>
     </SimpleForm>
   );
 }
