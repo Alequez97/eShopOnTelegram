@@ -14,11 +14,15 @@ import {
   useNotify,
   useRedirect,
   useRefresh,
+  useResetStore,
 } from "react-admin";
 import { shouldBeLessThanOriginalPrice } from "./validations/PriceWithDiscounts";
 import axios from "axios";
+import { useRef } from "react";
+import { useForm } from "react-final-form";
 
 function ProductCreate() {
+  const formRef = useRef<HTMLDivElement | null>(null);
   const validateFileExtension = (imageObject: any) => {
     const allowedExtensions = ["png", "jpeg", "jpg", "gif"];
 
@@ -84,7 +88,7 @@ function ProductCreate() {
       console.log(request);
       await axios.post("/products", request);
       notify("New product created", { type: "success" });
-      // TODO: Reset form here
+      redirect('/products')
     } catch (error) {
       notify("Error saving application content data", { type: "error" });
     }

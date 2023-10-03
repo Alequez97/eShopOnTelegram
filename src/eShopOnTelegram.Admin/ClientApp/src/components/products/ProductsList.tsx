@@ -11,7 +11,7 @@ export default function ProductsList() {
   return (
     <List>
       <Datagrid>
-        <TextField source="name" sortable={false} />
+        <TextField source="name" sortable={false}/>
         <TextField source="productCategoryName" sortable={false} />
         <ArrayField source="productAttributes">
           <Datagrid bulkActionButtons={false}>
@@ -24,9 +24,9 @@ export default function ProductsList() {
               emptyText="-"
             />
             <TextField source="quantityLeft" label="Quantity Left" />
-            <EditButton />
           </Datagrid>
         </ArrayField>
+        <EditButton />
       </Datagrid>
     </List>
   );

@@ -27,7 +27,7 @@ public class AzureBlobStorageProductImagesStore : IProductImagesStore
         using var memoryStream = new MemoryStream(file);
         await blobClient.UploadAsync(memoryStream, cancellationToken);
 
-        return fileName;
+        return generatedFileName;
     }
 
     public async Task DeleteAsync(string id)
