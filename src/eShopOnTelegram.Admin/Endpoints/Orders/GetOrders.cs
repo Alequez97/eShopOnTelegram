@@ -3,7 +3,7 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Requests;
 
-namespace eShopOnTelegram.Admin.Endpoints.Customers;
+namespace eShopOnTelegram.Admin.Endpoints.Orders;
 
 public class GetOrders : EndpointBaseAsync
     .WithRequest<GetRequest>
