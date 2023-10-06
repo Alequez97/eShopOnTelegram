@@ -33,7 +33,11 @@ export const Products = () => {
   >(undefined);
 
   useEffect(() => {
-    if (cartItems.length === 0) {
+    const notEmptyCartItems = cartItems.filter(
+      (cartItem) => cartItem.quantity > 0
+    );
+
+    if (notEmptyCartItems.length === 0) {
       telegramWebApp.MainButton.hide();
     } else {
       telegramWebApp.MainButton.show();

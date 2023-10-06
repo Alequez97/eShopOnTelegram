@@ -54,13 +54,11 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
           <i>Available: 0</i>
         )}
         <ProductAttributeSelector
-          productAttributeName="Color"
           productAttributeValues={cardStore.getAvailableColors}
           selectedProductAttribute={cardStore.getSelectedColor}
           onSelection={(color: string) => cardStore.setSelectedColor(color)}
         />
         <ProductAttributeSelector
-          productAttributeName="Size"
           productAttributeValues={cardStore.getAvailableSizes}
           selectedProductAttribute={cardStore.getSelectedSize}
           onSelection={(color: string) => cardStore.setSelectedSize(color)}

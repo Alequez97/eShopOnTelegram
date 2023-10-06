@@ -1,13 +1,10 @@
-import { useEffect, useState } from "react";
+import { observer } from "mobx-react-lite";
 import {
   StyledProductAttributeOptions,
-  StyledProductAttributeSelectorWrapper,
-  StyledProductAttributeTitle,
+  StyledProductAttributeSelectorWrapper
 } from "./productAttributeSelector.styled";
-import { observer } from "mobx-react-lite";
 
 interface ProductAttributeSelectorProps {
-  productAttributeName: string;
   productAttributeValues: string[] | null;
   selectedProductAttribute: string | null;
   onSelection: (productAttributeValue: string) => void;
@@ -15,7 +12,6 @@ interface ProductAttributeSelectorProps {
 
 export const ProductAttributeSelector = observer(
   ({
-    productAttributeName,
     productAttributeValues,
     selectedProductAttribute,
     onSelection,
@@ -27,18 +23,17 @@ export const ProductAttributeSelector = observer(
             productAttributeValues !== null && productAttributeValues.length > 0
           }
         >
-          {/* <StyledProductAttributeTitle>
-            {productAttributeName}:
-          </StyledProductAttributeTitle> */}
-          {productAttributeValues?.map((productAttributeValue, index) => (
-            <StyledProductAttributeOptions
-              key={index}
-              $isSelected={selectedProductAttribute === productAttributeValue}
-              onClick={() => onSelection(productAttributeValue)}
-            >
-              {productAttributeValue}
-            </StyledProductAttributeOptions>
-          ))}
+          {productAttributeValues !== null &&
+            productAttributeValues.length &&
+            productAttributeValues?.map((productAttributeValue, index) => (
+              <StyledProductAttributeOptions
+                key={index}
+                $isSelected={selectedProductAttribute === productAttributeValue}
+                onClick={() => onSelection(productAttributeValue)}
+              >
+                {productAttributeValue}
+              </StyledProductAttributeOptions>
+            ))}
         </StyledProductAttributeSelectorWrapper>
       </div>
     );
