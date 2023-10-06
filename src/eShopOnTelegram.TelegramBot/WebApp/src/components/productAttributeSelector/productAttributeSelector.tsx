@@ -1,7 +1,7 @@
 import { observer } from "mobx-react-lite";
 import {
   StyledProductAttributeOptions,
-  StyledProductAttributeSelectorWrapper
+  StyledProductAttributeSelectorWrapper,
 } from "./productAttributeSelector.styled";
 
 interface ProductAttributeSelectorProps {
@@ -17,25 +17,21 @@ export const ProductAttributeSelector = observer(
     onSelection,
   }: ProductAttributeSelectorProps) => {
     return (
-      <div>
-        <StyledProductAttributeSelectorWrapper
-          $isVisible={
-            productAttributeValues !== null && productAttributeValues.length > 0
-          }
-        >
-          {productAttributeValues !== null &&
-            productAttributeValues.length &&
-            productAttributeValues?.map((productAttributeValue, index) => (
-              <StyledProductAttributeOptions
-                key={index}
-                $isSelected={selectedProductAttribute === productAttributeValue}
-                onClick={() => onSelection(productAttributeValue)}
-              >
-                {productAttributeValue}
-              </StyledProductAttributeOptions>
-            ))}
-        </StyledProductAttributeSelectorWrapper>
-      </div>
+      <StyledProductAttributeSelectorWrapper
+        $isVisible={
+          productAttributeValues !== null && productAttributeValues.length > 0
+        }
+      >
+        {productAttributeValues?.map((productAttributeValue, index) => (
+          <StyledProductAttributeOptions
+            key={index}
+            $isSelected={selectedProductAttribute === productAttributeValue}
+            onClick={() => onSelection(productAttributeValue)}
+          >
+            {productAttributeValue}
+          </StyledProductAttributeOptions>
+        ))}
+      </StyledProductAttributeSelectorWrapper>
     );
   }
 );

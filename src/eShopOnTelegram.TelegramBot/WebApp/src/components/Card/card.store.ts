@@ -21,14 +21,14 @@ export class CardStore {
       ...new Set(
         this.productAttributes
           .map((productAttribute) => productAttribute.color)
-          .filter((color) => color !== undefined) as string[]
+          .filter((color) => color !== undefined && color !== null) as string[]
       ),
     ];
     this.availableSizes = [
       ...new Set(
         this.productAttributes
           .map((productAttribute) => productAttribute.size)
-          .filter((color) => color !== undefined) as string[]
+          .filter((size) => size !== undefined && size !== null) as string[]
       ),
     ];
     this.selectedColor = this.availableColors[0] ?? null;
