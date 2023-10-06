@@ -1,6 +1,8 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class DeleteProductCategory : EndpointBaseAsync
@@ -14,6 +16,7 @@ public class DeleteProductCategory : EndpointBaseAsync
         _productCategoryService = productCategoryService;
     }
 
+    [Authorize]
     [HttpDelete("/api/productCategories/{id}")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
     public override async Task<ActionResult> HandleAsync([FromRoute] long id, CancellationToken cancellationToken = default)
