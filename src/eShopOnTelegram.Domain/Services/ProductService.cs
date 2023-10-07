@@ -212,11 +212,15 @@ public class ProductService : IProductService
                     PC.IsDeleted AS CategoryIsDeleted
                 FROM Products as P WITH (UPDLOCK)
                 INNER JOIN ProductCategories as PC on PC.Id = P.CategoryId
+                INNER JOIN ProductAttributes as PA on PA.ProductId = P.Id
                 WHERE P.Id = {0}";
 
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            var existingProduct = await _dbContext.Products.FromSqlRaw(query, updateProductRequest.Id).FirstOrDefaultAsync();
+            var existingProduct = await _dbContext.Products
+                .FromSqlRaw(query, updateProductRequest.Id)
+                .Include(product => product.ProductAttributes)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (existingProduct == null)
             {
