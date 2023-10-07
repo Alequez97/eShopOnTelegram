@@ -17,16 +17,16 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands.Orders;
 /// This command is executed when sendData(data: string) function is executed in web app</para>
 /// <i>Note: sendData() function is available only when web app is opened with telegram keyboard button</i>
 /// </summary>
-public class WebAppCommand : ITelegramCommand
+public class CreateOrderCommand : ITelegramCommand
 {
-    private readonly ILogger<WebAppCommand> _logger;
+    private readonly ILogger<CreateOrderCommand> _logger;
     private readonly ITelegramBotClient _telegramBot;
     private readonly IOrderService _orderService;
     private readonly PaymentProceedMessageSender _paymentMethodsSender;
     private readonly IApplicationContentStore _applicationContentStore;
 
-    public WebAppCommand(
-        ILogger<WebAppCommand> logger,
+    public CreateOrderCommand(
+        ILogger<CreateOrderCommand> logger,
         ITelegramBotClient telegramBot,
         IOrderService orderService,
         PaymentProceedMessageSender paymentMethodsSender,
@@ -50,13 +50,9 @@ public class WebAppCommand : ITelegramCommand
             Guard.Against.Null(update.Message.WebAppData);
             Guard.Against.Null(update.Message.WebAppData.Data);
 
-            var webAppData = JsonConvert.DeserializeObject<WebAppCommandData>(update.Message.WebAppData.Data);
+            var createOrderRequest = JsonConvert.DeserializeObject<CreateOrderRequest>(update.Message.WebAppData.Data);
 
-            var createOrderRequest = new CreateOrderRequest()
-            {
-                TelegramUserUID = update.Message.From.Id,
-                CartItems = webAppData.CartItems,
-            };
+            createOrderRequest.TelegramUserUID = update.Message.From.Id;
 
             var createOrderResponse = await _orderService.CreateAsync(createOrderRequest, cancellationToken: CancellationToken.None);
 
@@ -85,9 +81,4 @@ public class WebAppCommand : ITelegramCommand
     {
         return Task.FromResult(update.Message?.Type == MessageType.WebAppData);
     }
-}
-
-public class WebAppCommandData
-{
-    public required IList<CreateCartItemRequest> CartItems { get; set; }
 }

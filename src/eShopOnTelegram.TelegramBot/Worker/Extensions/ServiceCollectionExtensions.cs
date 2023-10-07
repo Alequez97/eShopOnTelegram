@@ -25,7 +25,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Extensions
             services.AddScoped<ITelegramCommand, ChatMemberLeftCommand>();
 
             // Order commands
-            services.AddScoped<ITelegramCommand, WebAppCommand>();
+            services.AddScoped<ITelegramCommand, CreateOrderCommand>();
             services.AddScoped<ITelegramCommand, ShowActiveOrderCommand>();
 
             // Payment commands
