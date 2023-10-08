@@ -5,8 +5,6 @@ using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Configuration;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -171,8 +169,8 @@ public class ProductService : IProductService
                     OriginalPrice = createProductAttributeRequest.OriginalPrice,
                     PriceWithDiscount = createProductAttributeRequest.PriceWithDiscount,
                     QuantityLeft = createProductAttributeRequest.QuantityLeft,
-                    IsDeleted = false,
                     ImageName = storedImageName,
+                    IsDeleted = false,
                 };
 
                 productAttributesList.Add(newProductAttribute);
@@ -231,13 +229,45 @@ public class ProductService : IProductService
                 };
             }
 
+            // Update product attributes
+            var newProductAttributes = new List<ProductAttribute>();
+            foreach (var updateProducatAttributeRequest in updateProductRequest.ProductAttributes)
+            {
+                var existingProductAttribute = await _dbContext.ProductAttributes.FirstOrDefaultAsync(productAttribute => productAttribute.Id == updateProducatAttributeRequest.Id, cancellationToken);
+
+                if (existingProductAttribute == null)
+                {
+                    continue;
+                }
+
+                var newProductAttributeImageName = existingProductAttribute.ImageName;
+                if (updateProducatAttributeRequest.ImageAsBase64 != null && updateProducatAttributeRequest.ImageName != null)
+                {
+                    await _productImagesStore.DeleteAsync(existingProductAttribute.ImageName, cancellationToken);
+                    newProductAttributeImageName = await _productImagesStore.SaveAsync(updateProducatAttributeRequest.ImageAsBase64, updateProducatAttributeRequest.ImageName, cancellationToken);
+                }
+
+                var newProductAttribute = new ProductAttribute()
+                {
+                    Color = updateProducatAttributeRequest.Color,
+                    Size = updateProducatAttributeRequest.Size,
+                    OriginalPrice = updateProducatAttributeRequest.OriginalPrice,
+                    PriceWithDiscount = updateProducatAttributeRequest.PriceWithDiscount,
+                    QuantityLeft = updateProducatAttributeRequest.QuantityLeft,
+                    ImageName = newProductAttributeImageName,
+                    IsDeleted = false,
+                    PreviousVersionId = existingProductAttribute.Id,
+                };
+                newProductAttributes.Add(newProductAttribute);
+
+                existingProductAttribute.IsDeleted = true;
+            }
+
             var updatedProduct = new Product()
             {
                 Name = updateProductRequest.Name,
                 CategoryId = existingProduct.CategoryId,
-                //OriginalPrice = updateProductRequest.OriginalPrice,
-                //PriceWithDiscount = updateProductRequest.PriceWithDiscount,
-                //Quantity = updateProductRequest.Quantity,
+                ProductAttributes = newProductAttributes,
                 IsDeleted = false,
                 PreviousVersion = existingProduct
             };
@@ -256,13 +286,6 @@ public class ProductService : IProductService
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
-
-            //if (updateProductRequest.ProductImage != null)
-            //{
-            //    await _productImagesRepository.DeleteAsync(existingProduct.Image);
-            //    var newImageName = await _productImagesRepository.SaveAsync(updateProductRequest.ProductImage, CancellationToken.None);
-            //    existingProduct.Image = newImageName;
-            //}
 
             return new ActionResponse()
             {
@@ -299,7 +322,7 @@ public class ProductService : IProductService
             foreach (var productAttribute in existingProduct.ProductAttributes)
             {
                 productAttribute.IsDeleted = true;
-                await _productImagesStore.DeleteAsync(productAttribute.ImageName);
+                await _productImagesStore.DeleteAsync(productAttribute.ImageName, cancellationToken);
             }
 
             await _dbContext.SaveChangesAsync(cancellationToken);

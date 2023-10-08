@@ -16,5 +16,3 @@ export interface Product {
   productCategoryName: string;
   productAttributes: ProductAttribute[];
 }
-
-export interface CreateProductRequest {}

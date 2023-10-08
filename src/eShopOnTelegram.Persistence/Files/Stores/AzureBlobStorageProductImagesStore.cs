@@ -30,8 +30,8 @@ public class AzureBlobStorageProductImagesStore : IProductImagesStore
         return generatedFileName;
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken cancellationToken)
     {
-        await _blobContainer.DeleteBlobIfExistsAsync(id);
+        await _blobContainer.DeleteBlobIfExistsAsync(id, cancellationToken: cancellationToken);
     }
 }

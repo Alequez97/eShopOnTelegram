@@ -20,6 +20,8 @@ public class ProductAttribute : EntityBase
 
     public required bool IsDeleted { get; set; }
 
+    
+    public long? PreviousVersionId { get; set; }
     public ProductAttribute? PreviousVersion { get; set; }
 
     public void DecreaseQuantity(int amountToDecrease)
