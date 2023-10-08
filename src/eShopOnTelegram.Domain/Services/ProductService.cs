@@ -307,7 +307,9 @@ public class ProductService : IProductService
     {
         try
         {
-            var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id);
+            var existingProduct = await _dbContext.Products
+                .Include(product => product.ProductAttributes)
+                .FirstOrDefaultAsync(product => product.Id == id);
 
             if (existingProduct == null)
             {
