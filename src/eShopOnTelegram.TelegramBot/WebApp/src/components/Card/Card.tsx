@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../button/button";
-import { Product } from "../../types/product";
+import { Product } from "../../types/product.type";
 import {
   StyledButtonContainer,
   StyledCard,
@@ -9,7 +9,7 @@ import {
   StyledCardPrice,
   StyledImageContainer,
 } from "./card.styled";
-import { ProductAttribute } from "../../types/productAttribute";
+import { ProductAttribute } from "../../types/product-attribute.type";
 import { ProductAttributeSelector } from "../productAttributeSelector/productAttributeSelector";
 import { observer } from "mobx-react-lite";
 import { CardStore } from "./card.store";

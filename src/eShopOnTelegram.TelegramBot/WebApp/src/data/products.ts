@@ -1,6 +1,6 @@
-import { Product } from "../types/product";
+import { Product } from "../types/product.type";
 
-export function getProducts(): Product[] {
+export const getProducts = (): Product[] => {
   return [
     {
       id: 1,
@@ -91,4 +91,4 @@ export function getProducts(): Product[] {
       ],
     },
   ];
-}
+};

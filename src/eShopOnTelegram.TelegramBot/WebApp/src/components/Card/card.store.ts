@@ -1,6 +1,6 @@
 import { makeAutoObservable } from "mobx";
-import { ProductAttribute } from "../../types/productAttribute";
-import { CartItem } from "../../types/cart-item";
+import { ProductAttribute } from "../../types/product-attribute.type";
+import { CartItem } from "../../types/cart-item.type";
 
 export class CardStore {
   private readonly productAttributes: ProductAttribute[];

@@ -1,6 +1,6 @@
 import axios, { AxiosError } from "axios";
 import { useEffect, useState } from "react";
-import { Product } from "../types/product";
+import { Product } from "../types/product.type";
 
 export function useProducts() {
   const [products, setProducts] = useState<Product[]>([]);

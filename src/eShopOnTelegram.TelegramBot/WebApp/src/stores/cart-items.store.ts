@@ -1,5 +1,5 @@
 import { makeAutoObservable } from "mobx";
-import { CartItem } from "../types/cart-item";
+import { CartItem } from "../types/cart-item.type";
 
 class CartItemsStore {
   private cartItems: CartItem[];

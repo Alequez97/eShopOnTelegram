@@ -2,18 +2,18 @@ import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import { Card } from "../../components/card/card";
 import { Loader } from "../../components/loader/loader";
 import { Error } from "../../components/error/error";
-import { getCartItemsAsJsonString } from "../../utilities/cartItems";
-import { useCartItems } from "../../hooks/cartItems";
-import { useTelegramWebApp } from "../../hooks/telegram";
-import { Product } from "../../types/product";
-import { useProducts } from "../../hooks/products";
+import { getCartItemsAsJsonString } from "../../utils/cart-items.utility";
+import { useCartItemsState } from "../../hooks/useCartItemsState";
+import { useTelegramWebApp } from "../../hooks/useTelegramWebApp";
+import { Product } from "../../types/product.type";
+import { useProducts } from "../../hooks/useProducts";
 import {
   StyledCardsContainer,
   StyledMissingProductsMessageWrapper,
   StyledProductCategoriesSelect,
   StyledProductCategoriesWrapper,
 } from "./products.styled";
-import { ProductAttribute } from "../../types/productAttribute";
+import { ProductAttribute } from "../../types/product-attribute.type";
 
 export const Products = () => {
   const { telegramWebApp } = useTelegramWebApp();
@@ -25,7 +25,7 @@ export const Products = () => {
     cartItems,
     addProductAttributeToState,
     removeProductAttributeFromState,
-  } = useCartItems();
+  } = useCartItemsState();
 
   const { products, productCategories, error, loading } = useProducts();
   const [filteredProducts, setFilteredProducts] = useState<

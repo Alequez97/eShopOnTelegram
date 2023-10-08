@@ -1,4 +1,4 @@
-import { ProductAttribute } from "./productAttribute"
+import { ProductAttribute } from "./product-attribute.type"
 
 export interface Product {
     id: number

@@ -1,4 +1,4 @@
-import { CartItem } from "../types/cart-item";
+import { CartItem } from "../types/cart-item.type";
 
 export function getCartItemsAsJsonString(cartItems: CartItem[]) {
     let products: string[] = [];
