@@ -1,6 +1,8 @@
+import { WebApp } from "../telegram/types";
+
 let isReadyCalled = false;
 
-export function useTelegramWebApp() {
+export function useTelegramWebApp(): WebApp {
   const telegramWebApp = window.Telegram.WebApp;
 
   if (!isReadyCalled) {
@@ -8,7 +10,5 @@ export function useTelegramWebApp() {
     isReadyCalled = true;
   }
 
-  return {
-    telegramWebApp,
-  };
+  return telegramWebApp;
 }

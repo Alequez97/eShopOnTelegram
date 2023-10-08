@@ -16,7 +16,7 @@ import {
 import { ProductAttribute } from "../../types/product-attribute.type";
 
 export const Products = () => {
-  const { telegramWebApp } = useTelegramWebApp();
+  const telegramWebApp = useTelegramWebApp();
   useEffect(() => {
     telegramWebApp.expand();
   }, [telegramWebApp]);
