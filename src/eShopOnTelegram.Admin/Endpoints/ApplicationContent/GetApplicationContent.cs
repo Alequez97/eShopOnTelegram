@@ -1,6 +1,8 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.ApplicationContent;
 
 public class GetApplicationContent : EndpointBaseAsync
@@ -14,6 +16,7 @@ public class GetApplicationContent : EndpointBaseAsync
         _applicationContentStore = applicationContentStore;
     }
 
+    [Authorize]
     [HttpGet("/api/applicationContent")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ApplicationContent })]
     public override async Task<ActionResult> HandleAsync(CancellationToken cancellationToken)

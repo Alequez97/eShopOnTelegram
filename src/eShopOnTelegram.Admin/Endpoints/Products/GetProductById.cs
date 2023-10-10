@@ -2,6 +2,8 @@
 using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Dto.Products;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class GetProductById : EndpointBaseAsync
@@ -15,6 +17,7 @@ public class GetProductById : EndpointBaseAsync
         _productService = productService;
     }
 
+    [Authorize]
     [HttpGet("/api/products/{id}")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
     public override async Task<ActionResult<ProductDto>> HandleAsync([FromRoute] long id, CancellationToken cancellationToken = default)
