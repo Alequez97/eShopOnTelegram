@@ -3,6 +3,8 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Responses;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.Orders;
 
 public class GetOrderByIdOrByOrderNumber : EndpointBaseAsync
@@ -16,6 +18,7 @@ public class GetOrderByIdOrByOrderNumber : EndpointBaseAsync
         _orderService = orderService;
     }
 
+    [Authorize]
     [HttpGet("/api/orders/{idOrOrderNumber}")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Orders })]
     public override async Task<ActionResult<OrderDto>> HandleAsync([FromRoute] string idOrOrderNumber, CancellationToken cancellationToken)

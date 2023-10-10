@@ -3,6 +3,8 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Requests.ProductCategories;
 using eShopOnTelegram.Domain.Responses;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class CreateProductCategory : EndpointBaseAsync
@@ -16,6 +18,7 @@ public class CreateProductCategory : EndpointBaseAsync
         _productCategoryService = productCategoryService;
     }
 
+    [Authorize]
     [HttpPost("/api/productCategories")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
     public override async Task<ActionResult<Response>> HandleAsync([FromBody] CreateProductCategoryRequest request, CancellationToken cancellationToken = default)

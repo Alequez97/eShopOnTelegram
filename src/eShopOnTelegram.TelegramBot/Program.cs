@@ -25,98 +25,24 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Azure keyvault setup
-var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
-var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
-
-if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
-{
-    var tenantId = builder.Configuration["Azure:TenantId"];
-    var clientId = builder.Configuration["Azure:ClientId"];
-    var clientSecret = builder.Configuration["Azure:ClientSecret"];
-
-    TokenCredential azureCredentials =
-        string.IsNullOrWhiteSpace(tenantId)
-     || string.IsNullOrWhiteSpace(clientId)
-     || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
-
-    builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
-}
-
-// Persistence layer services
-builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
-builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
-builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
-builder.Services.AddScoped<IBotOwnerDataStore, AzureBlobStorageBotOwnerDataStore>();
-
-builder.Services.AddDbContextFactory<EShopOnTelegramDbContext>(
-    options =>
-        options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
-
-// Domain layer services
-builder.Services.AddScoped<IOrderService, OrderService>();
-builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IProductService, ProductService>();
-builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
-
-// Telegram bot worker services
-builder.Services.AddTelegramCommandServices();
-builder.Services.AddSingleton<ITelegramBotClient>(_ =>
-{
-    var telegramAppsettings = builder.Configuration.GetSection<TelegramAppsettings>("Telegram");
-
-    return new TelegramBotClient(telegramAppsettings.Token);
-});
-builder.Services.Configure<HostOptions>(hostOptions =>
-{
-    hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
-});
-builder.Services.AddSingleton(builder.Configuration.GetSection<TelegramAppsettings>("Telegram"));
-builder.Services.AddSingleton(builder.Configuration.GetSection<PaymentAppsettings>("Payment"));
-builder.Services.AddHostedService<TelegramBot>();
+ConfigureAzureKeyVault(builder);
+ConfigureServices(builder);
+ConfigureTelegramBotWorkerServices(builder);
+ConfigureHostOptions(builder);
+ConfigureAppSettings(builder);
 
 // External services
 builder.Services
     .AddPolicyRegistry()
     .AddHttpRetryPolicy();
 
-builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpClient) =>
-{
-    httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
-});
-
-// External services webhook validators
-builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ => 
-{
-    var plisioApiToken = builder.Configuration["Payment:Plisio:ApiToken"];
-    return new PlisioPaymentReceivedWebhookRequestValidator(plisioApiToken);
-});
-
-// Notification senders
-builder.Services.AddScoped<INotificationSender>((provider) => 
-{
-    var telegramBot = provider.GetRequiredService<ITelegramBotClient>();
-    var botOwnerDataStore = provider.GetRequiredService<IBotOwnerDataStore>();
-    var adminAppHostName = builder.Configuration["AdminAppHostName"];
-
-    return new TelegramNotificationSender(telegramBot, botOwnerDataStore, adminAppHostName);
-});
+ConfigurePlisio(builder);
+ConfigureNotificationSenders(builder);
 
 // Controllers and views
 builder.Services.AddControllersWithViews();
 
-// App insights logging
-var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
-if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
-{
-    builder.Logging.AddApplicationInsights(
-            configureTelemetryConfiguration: (config) =>
-                config.ConnectionString = appInsightsConnectionString,
-                configureApplicationInsightsLoggerOptions: (options) => { }
-        );
-
-    builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
-}
+ConfigureApplicationInsights(builder);
 
 // App building
 var app = builder.Build();
@@ -145,3 +71,114 @@ app.MapControllerRoute(
 app.MapFallbackToFile("index.html"); ;
 
 app.Run();
+
+static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
+{
+    // Azure keyvault setup
+    var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
+    var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
+
+    if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+    {
+        var tenantId = builder.Configuration["Azure:TenantId"];
+        var clientId = builder.Configuration["Azure:ClientId"];
+        var clientSecret = builder.Configuration["Azure:ClientSecret"];
+
+        TokenCredential azureCredentials =
+            string.IsNullOrWhiteSpace(tenantId)
+         || string.IsNullOrWhiteSpace(clientId)
+         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
+    }
+}
+
+static void ConfigureServices(WebApplicationBuilder builder)
+{
+    // Persistence layer services
+    builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
+    builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
+    builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
+    builder.Services.AddScoped<IBotOwnerDataStore, AzureBlobStorageBotOwnerDataStore>();
+
+    builder.Services.AddDbContextFactory<EShopOnTelegramDbContext>(
+        options =>
+            options.UseSqlServer(builder.Configuration.GetConnectionString("Sql")));
+
+    // Domain layer services
+    builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<ICustomerService, CustomerService>();
+    builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+}
+
+static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder)
+{
+    // Telegram bot worker services
+    builder.Services.AddTelegramCommandServices();
+    builder.Services.AddSingleton<ITelegramBotClient>(_ =>
+    {
+        var telegramAppsettings = builder.Configuration.GetSection<TelegramAppsettings>("Telegram");
+
+        return new TelegramBotClient(telegramAppsettings.Token);
+    });
+    builder.Services.AddHostedService<TelegramBot>();
+}
+
+static void ConfigureHostOptions(WebApplicationBuilder builder)
+{
+    builder.Services.Configure<HostOptions>(hostOptions =>
+    {
+        hostOptions.BackgroundServiceExceptionBehavior = BackgroundServiceExceptionBehavior.Ignore;
+    });
+}
+
+static void ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
+{
+    builder.Services.AddSingleton(builder.Configuration.GetSection<TelegramAppsettings>("Telegram"));
+    builder.Services.AddSingleton(builder.Configuration.GetSection<PaymentAppsettings>("Payment"));
+}
+
+static void ConfigureApplicationInsights(WebApplicationBuilder builder)
+{
+    // App insights logging
+    var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
+    if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+    {
+        builder.Logging.AddApplicationInsights(
+                configureTelemetryConfiguration: (config) =>
+                    config.ConnectionString = appInsightsConnectionString,
+                    configureApplicationInsightsLoggerOptions: (options) => { }
+            );
+
+        builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>(string.Empty, LogLevel.Information);
+    }
+}
+
+static void ConfigureNotificationSenders(WebApplicationBuilder builder)
+{
+    // Notification senders
+    builder.Services.AddScoped<INotificationSender>((provider) =>
+    {
+        var telegramBot = provider.GetRequiredService<ITelegramBotClient>();
+        var botOwnerDataStore = provider.GetRequiredService<IBotOwnerDataStore>();
+        var adminAppHostName = builder.Configuration["AdminAppHostName"];
+
+        return new TelegramNotificationSender(telegramBot, botOwnerDataStore, adminAppHostName);
+    });
+}
+
+static void ConfigurePlisio(WebApplicationBuilder builder)
+{
+    builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpClient) =>
+    {
+        httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
+    });
+
+    // External services webhook validators
+    builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ =>
+    {
+        var plisioApiToken = builder.Configuration["Payment:Plisio:ApiToken"];
+        return new PlisioPaymentReceivedWebhookRequestValidator(plisioApiToken);
+    });
+}

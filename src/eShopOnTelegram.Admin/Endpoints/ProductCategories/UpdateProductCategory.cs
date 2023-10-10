@@ -2,6 +2,8 @@
 using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Requests.ProductCategories;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class UpdateProductCategory : EndpointBaseAsync
@@ -15,6 +17,7 @@ public class UpdateProductCategory : EndpointBaseAsync
         _productCategoryService = productCategoryService;
     }
 
+    [Authorize]
     [HttpPut("/api/productCategories/{id}")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
     public override async Task<ActionResult> HandleAsync([FromBody] UpdateProductCategoryRequest request, CancellationToken cancellationToken = default)

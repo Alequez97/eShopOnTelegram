@@ -3,6 +3,8 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class UpdateProduct : EndpointBaseAsync
@@ -16,6 +18,7 @@ public class UpdateProduct : EndpointBaseAsync
         _productService = productService;
     }
 
+    [Authorize]
     [HttpPut("/api/products/{id}")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
     public override async Task<ActionResult<ActionResponse>> HandleAsync([FromBody] UpdateProductRequest request, CancellationToken cancellationToken = default)

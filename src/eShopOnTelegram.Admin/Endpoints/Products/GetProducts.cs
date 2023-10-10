@@ -3,6 +3,8 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Domain.Dto.Products;
 using eShopOnTelegram.Domain.Requests;
 
+using Microsoft.AspNetCore.Authorization;
+
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class GetProducts : EndpointBaseAsync
@@ -16,6 +18,7 @@ public class GetProducts : EndpointBaseAsync
         _productService = productService;
     }
 
+    [Authorize]
     [HttpGet("/api/products")]
     [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
     public async override Task<ActionResult<IEnumerable<ProductDto>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
