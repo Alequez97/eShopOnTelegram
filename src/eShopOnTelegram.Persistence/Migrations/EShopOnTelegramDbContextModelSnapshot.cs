@@ -98,6 +98,15 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("AspNetUserClaims", (string)null);
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            ClaimType = "Role",
+                            ClaimValue = "superadmin",
+                            UserId = 1L
+                        });
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<long>", b =>
@@ -178,7 +187,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.ToTable("CartItems", (string)null);
+                    b.ToTable("CartItems");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Customer", b =>
@@ -210,7 +219,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasIndex("TelegramUserUID")
                         .IsUnique();
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Order", b =>
@@ -264,7 +273,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasIndex("OrderNumber")
                         .IsUnique();
 
-                    b.ToTable("Orders", (string)null);
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Product", b =>
@@ -309,7 +318,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("PreviousVersionId");
 
-                    b.ToTable("Products", (string)null);
+                    b.ToTable("Products");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.ProductCategory", b =>
@@ -338,7 +347,7 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.HasIndex("PreviousVersionId");
 
-                    b.ToTable("ProductCategories", (string)null);
+                    b.ToTable("ProductCategories");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.User", b =>
@@ -413,15 +422,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "f2335bbc-6234-4e25-8486-93948227b7f2",
-                            Email = "admin@tgshop.io",
-                            EmailConfirmed = true,
+                            ConcurrencyStamp = "2f026094-fc48-4bbd-8d04-f4c74e27b1bc",
+                            EmailConfirmed = false,
                             LockoutEnabled = false,
-                            NormalizedEmail = "ADMIN@TGSHOP.IO",
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEH5rbnF0YxTWKrfoaRTbIDyg0ra2XhPMNvRED48MgSEXV3PkRsGK5tYxG8OQ2d1qbw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEEhRf5M7YsjzEAHrhVRyQUt3nGkMuFq7L9A2xW/NchWpzLVTLY2G8Ftni7W3gjZljA==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "50d8a9ad-a4ac-44e5-987f-9946c9e781ca",
+                            SecurityStamp = "311c9158-a99b-43c9-ae5f-8570ba343f99",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -456,16 +463,18 @@ namespace eShopOnTelegram.Persistence.Migrations
 
                     b.Property<string>("Token")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<long>("UserId")
                         .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Token");
+
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserRefreshTokens", (string)null);
+                    b.ToTable("UserRefreshTokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<long>", b =>
@@ -480,7 +489,7 @@ namespace eShopOnTelegram.Persistence.Migrations
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<long>", b =>
                 {
                     b.HasOne("eShopOnTelegram.Persistence.Entities.User", null)
-                        .WithMany()
+                        .WithMany("Claims")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -589,6 +598,8 @@ namespace eShopOnTelegram.Persistence.Migrations
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.User", b =>
                 {
+                    b.Navigation("Claims");
+
                     b.Navigation("UserRefreshTokens");
                 });
 #pragma warning restore 612, 618

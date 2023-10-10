@@ -201,7 +201,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     UserId = table.Column<long>(type: "bigint", nullable: false),
-                    Token = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Token = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CreatedByIP = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
                     ExpiresAt = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
@@ -308,7 +308,12 @@ namespace eShopOnTelegram.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1L, 0, "f2335bbc-6234-4e25-8486-93948227b7f2", "admin@tgshop.io", true, false, null, "ADMIN@TGSHOP.IO", "ADMIN", "AQAAAAIAAYagAAAAEH5rbnF0YxTWKrfoaRTbIDyg0ra2XhPMNvRED48MgSEXV3PkRsGK5tYxG8OQ2d1qbw==", null, false, "50d8a9ad-a4ac-44e5-987f-9946c9e781ca", false, "admin" });
+                values: new object[] { 1L, 0, "2f026094-fc48-4bbd-8d04-f4c74e27b1bc", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEEhRf5M7YsjzEAHrhVRyQUt3nGkMuFq7L9A2xW/NchWpzLVTLY2G8Ftni7W3gjZljA==", null, false, "311c9158-a99b-43c9-ae5f-8570ba343f99", false, "admin" });
+
+            migrationBuilder.InsertData(
+                table: "AspNetUserClaims",
+                columns: new[] { "Id", "ClaimType", "ClaimValue", "UserId" },
+                values: new object[] { 1, "Role", "superadmin", 1L });
 
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
@@ -401,6 +406,11 @@ namespace eShopOnTelegram.Persistence.Migrations
                 name: "IX_Products_PreviousVersionId",
                 table: "Products",
                 column: "PreviousVersionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserRefreshTokens_Token",
+                table: "UserRefreshTokens",
+                column: "Token");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserRefreshTokens_UserId",

@@ -3,6 +3,7 @@ using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Persistence.Entities;
 
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace eShopOnTelegram.Admin.Endpoints.Auth;
 
@@ -33,7 +34,7 @@ public class Login : EndpointBaseAsync
             var ipAddress = HttpContext.IpAddress();
             ArgumentException.ThrowIfNullOrEmpty(ipAddress);
 
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var user = await _userManager.Users.Include(u => u.Claims).FirstOrDefaultAsync(u => u.UserName == request.UserName);
             if (user == null)
             {
                 ModelState.AddModelError("", "Incorrect credentials");
@@ -70,7 +71,7 @@ public class Login : EndpointBaseAsync
 
 public class LoginRequest
 {
-    public required string Email { get; set; }
+    public required string UserName { get; set; }
     public required string Password { get; set; }
 }
 

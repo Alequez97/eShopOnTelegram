@@ -19,9 +19,19 @@ public static class AuthTokenGenerator
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new(JwtRegisteredClaimNames.Sub, user.Email!), // Email can be null
+            new(JwtRegisteredClaimNames.Sub, user.UserName), // Email can be null
             new(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
+
+        if(user.Claims.Any())
+        {
+            var roleClaim = user.Claims.Where(c => c.ClaimType == "Role").SingleOrDefault();
+            if(roleClaim is not null)
+            {
+                ArgumentException.ThrowIfNullOrEmpty(roleClaim.ClaimValue);
+                claims.Add(new Claim(ClaimTypes.Role, roleClaim.ClaimValue));
+            }
+        }
 
         var tokenDescriptor = new SecurityTokenDescriptor()
         {

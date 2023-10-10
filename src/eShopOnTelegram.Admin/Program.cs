@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text;
 
 using Azure.Core;
@@ -139,7 +140,11 @@ static void ConfigureJWTAuthentication(WebApplicationBuilder builder, AppSetting
             ClockSkew = TimeSpan.Zero
         };
     });
-    builder.Services.AddAuthorization();
+    builder.Services.AddAuthorization(options =>
+    {
+        options.AddPolicy("RequireSuperadminClaim",
+             policy => policy.RequireClaim(ClaimTypes.Role, new[] { "superadmin" }));
+    });
 }
 
 static void ConfigureIdentity(WebApplicationBuilder builder)
