@@ -7,7 +7,7 @@ import {
   ChipField,
 } from "react-admin";
 
-export default function ProductsList() {
+export const ProductsList = () => {
   return (
     <List>
       <Datagrid>
