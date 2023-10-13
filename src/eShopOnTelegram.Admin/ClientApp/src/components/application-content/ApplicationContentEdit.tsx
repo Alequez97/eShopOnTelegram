@@ -1,6 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import axios from "axios";
 import { useNotify, TextInput, SimpleForm, useRefresh } from "react-admin";
+import {
+  ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+  REFRESH_TOKEN_LOCAL_STORAGE_KEY,
+} from "../../types/auth.type";
+import { refreshAccessToken } from "../../utils/auth.utility";
 
 type ApplicationContent = Record<string, string>;
 
@@ -15,20 +20,51 @@ const ApplicationContentEdit: React.FC = () => {
   useEffect(() => {
     const fetchApplicationContent = async () => {
       try {
-        const { data } = await axios.get("/applicationContent");
+        const accessToken = localStorage.getItem(
+          ACCESS_TOKEN_LOCAL_STORAGE_KEY
+        );
+        const { data } = await axios.get("/applicationContent", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
         setApplicationContent(data);
-      } catch (error) {
-        notify("Error saving application content data", { type: "error" });
+      } catch (error: any) {
+        if (error?.status === 401) {
+          const refreshToken = localStorage.getItem(
+            REFRESH_TOKEN_LOCAL_STORAGE_KEY
+          );
+          if (refreshToken) {
+            try {
+              const newAccessToken = await refreshAccessToken(refreshToken);
+              const { data } = await axios.get("/applicationContent", {
+                headers: { Authorization: `Bearer ${newAccessToken}` },
+              });
+              setApplicationContent(data);
+            } catch {
+              notify("Error saving application content data", {
+                type: "error",
+              });
+            }
+          } else {
+            notify("Error saving application content data", { type: "error" });
+          }
+        } else {
+          notify("Error saving application content data", { type: "error" });
+        }
       }
-    };
 
-    fetchApplicationContent();
+      fetchApplicationContent();
+    };
   }, [notify]);
 
   const handleSave = async () => {
     try {
       if (applicationContent) {
-        await axios.patch("/applicationContent", applicationContent);
+        const accessToken = localStorage.getItem(
+          ACCESS_TOKEN_LOCAL_STORAGE_KEY
+        );
+        await axios.patch("/applicationContent", applicationContent, {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        });
         notify("Application content data saved", { type: "success" });
         refresh();
       }

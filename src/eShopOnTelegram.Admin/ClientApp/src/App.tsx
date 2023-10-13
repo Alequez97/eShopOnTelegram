@@ -11,20 +11,55 @@ import { ProductEdit } from "./components/products/ProductEdit";
 import ApplicationContentEdit from "./components/application-content/ApplicationContentEdit";
 import OrderDetails from "./components/orders/OrderDetails";
 import { authProvider } from "./AuthProvider";
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from "./types/auth.type";
+import {
+  ACCESS_TOKEN_LOCAL_STORAGE_KEY,
+  REFRESH_TOKEN_LOCAL_STORAGE_KEY,
+} from "./types/auth.type";
+import axios from "axios";
+import { refreshAccessToken } from "./utils/auth.utility";
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? "/api";
 
-const httpClient = (url: string, options: any) => {
+const httpClient = async (url: string, options: any) => {
   if (!options.headers) {
-      options.headers = new Headers({ Accept: 'application/json' });
-  }
-  const accessToken = localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
-  if (accessToken) {
-    options.headers.set('Authorization', `Bearer ${accessToken}`);
+    options.headers = new Headers({ Accept: "application/json" });
   }
 
-  return fetchUtils.fetchJson(url, options);
+  const accessToken = localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
+  if (accessToken) {
+    options.headers.set("Authorization", `Bearer ${accessToken}`);
+  }
+
+  try {
+    const response = await fetchUtils.fetchJson(url, options);
+    return Promise.resolve(response);
+  } catch (error: any) {
+    if (error?.status === 401) {
+      const refreshToken = localStorage.getItem(
+        REFRESH_TOKEN_LOCAL_STORAGE_KEY
+      );
+      if (refreshToken) {
+        try {
+          const newAccessToken = await refreshAccessToken(refreshToken)
+          options.headers.set("Authorization", `Bearer ${newAccessToken}`);
+
+          // Retry the original request with the new access token
+          const responseWithNewAccessToken = await fetchUtils.fetchJson(
+            url,
+            options
+          );
+
+          return Promise.resolve(responseWithNewAccessToken);
+        } catch (refreshError) {
+          // Handle refresh token failure (e.g., redirect to login)
+          return Promise.reject(refreshError);
+        }
+      }
+    }
+
+    // Handle other errors (e.g., network issues)
+    return Promise.reject(error);
+  }
 };
 
 const dataProvider = restProvider(apiBaseUrl, httpClient);
@@ -32,7 +67,11 @@ const dataProvider = restProvider(apiBaseUrl, httpClient);
 function App() {
   return (
     //@ts-ignore
-    <Admin dataProvider={dataProvider} loginPage={Login} authProvider={authProvider}>
+    <Admin
+      dataProvider={dataProvider}
+      loginPage={Login}
+      authProvider={authProvider}
+    >
       <Resource
         name="products"
         list={ProductsList}
