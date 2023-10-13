@@ -17,6 +17,7 @@ import {
 } from "./types/auth.type";
 import axios from "axios";
 import { refreshAccessToken } from "./utils/auth.utility";
+import { UserCreate } from "./components/users/UserCreate";
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? "/api";
 
@@ -40,7 +41,7 @@ const httpClient = async (url: string, options: any) => {
       );
       if (refreshToken) {
         try {
-          const newAccessToken = await refreshAccessToken(refreshToken)
+          const newAccessToken = await refreshAccessToken(refreshToken);
           options.headers.set("Authorization", `Bearer ${newAccessToken}`);
 
           // Retry the original request with the new access token
@@ -91,6 +92,11 @@ function App() {
         name="applicationContent"
         list={ApplicationContentEdit}
         options={{ label: "Application content" }}
+      />
+      <Resource
+        name="users"
+        list={UserCreate}
+        options={{ label: "Create user" }}
       />
     </Admin>
   );
