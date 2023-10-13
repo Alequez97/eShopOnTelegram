@@ -28,7 +28,7 @@ const ApplicationContentEdit: React.FC = () => {
         });
         setApplicationContent(data);
       } catch (error: any) {
-        if (error?.status === 401) {
+        if (error?.response.status === 401) {
           const refreshToken = localStorage.getItem(
             REFRESH_TOKEN_LOCAL_STORAGE_KEY
           );
@@ -40,20 +40,19 @@ const ApplicationContentEdit: React.FC = () => {
               });
               setApplicationContent(data);
             } catch {
-              notify("Error saving application content data", {
+              notify("Network error", {
                 type: "error",
               });
             }
           } else {
-            notify("Error saving application content data", { type: "error" });
+            notify("Network error", { type: "error" });
           }
         } else {
-          notify("Error saving application content data", { type: "error" });
+          notify("Network error", { type: "error" });
         }
       }
-
-      fetchApplicationContent();
     };
+    fetchApplicationContent();
   }, [notify]);
 
   const handleSave = async () => {
@@ -68,8 +67,30 @@ const ApplicationContentEdit: React.FC = () => {
         notify("Application content data saved", { type: "success" });
         refresh();
       }
-    } catch (error) {
-      notify("Error saving application content data", { type: "error" });
+    } catch (error: any) {
+      if (error?.response.status === 401) {
+        const refreshToken = localStorage.getItem(
+          REFRESH_TOKEN_LOCAL_STORAGE_KEY
+        );
+
+        if (refreshToken) {
+          try {
+            const newAccessToken = await refreshAccessToken(refreshToken);
+            await axios.patch("/applicationContent", applicationContent, {
+              headers: { Authorization: `Bearer ${newAccessToken}` },
+            });
+            notify("Application content data saved", { type: "success" });
+          } catch {
+            notify("Error saving application content data", {
+              type: "error",
+            });
+          }
+        } else {
+          notify("Error saving application content data", { type: "error" });
+        }
+      } else {
+        notify("Error saving application content data", { type: "error" });
+      }
     }
   };
 
