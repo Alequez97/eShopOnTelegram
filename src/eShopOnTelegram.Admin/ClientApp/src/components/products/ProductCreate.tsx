@@ -2,7 +2,6 @@ import {
 	ArrayInput,
 	FileInput,
 	NumberInput,
-	ReferenceInput,
 	required,
 	SelectInput,
 	SimpleForm,
@@ -11,13 +10,14 @@ import {
 	useNotify,
 	useRedirect,
 } from 'react-admin';
-import axios from 'axios';
 import { replaceEmptyKeysWithNull } from '../../utils/object.utility';
 import { fileToBase64 } from '../../utils/file.utility';
 import {
 	validateFileExtension,
 	validatePriceWithDiscountShouldBeLessThanOriginalPrice,
 } from '../../validations/product.validation';
+import { axiosGet, axiosPost } from '../../utils/axios.utility';
+import { useEffect, useState } from 'react';
 
 function ProductCreate() {
 	const notify = useNotify();
@@ -41,7 +41,7 @@ function ProductCreate() {
 					request.productAttributes[index],
 				);
 			}
-			await axios.post('/products', request);
+			await axiosPost('/products', request);
 			notify('New product created', { type: 'success' });
 			redirect('/products');
 		} catch (error) {
@@ -49,15 +49,30 @@ function ProductCreate() {
 		}
 	};
 
+	const [productCategories, setProductCategories] = useState(null);
+	const getProductCategories = async () => {
+		return await axiosGet('/productCategories');
+	};
+
+	useEffect(() => {
+		getProductCategories().then((productCategories) =>
+			setProductCategories(productCategories),
+		);
+	}, []);
+
+	if (!productCategories) {
+		return <div>Loading...</div>;
+	}
+
 	return (
 		<SimpleForm onSubmit={handleProductCreate}>
-			<ReferenceInput
-				source="productCategoryId"
-				reference="productCategories"
+			<SelectInput
+				optionText="name"
 				validate={[required()]}
-			>
-				<SelectInput optionText="name" />
-			</ReferenceInput>
+				source={'productCategoryId'}
+				optionValue="id"
+				choices={productCategories}
+			/>
 			<TextInput
 				source="name"
 				label="Product name"

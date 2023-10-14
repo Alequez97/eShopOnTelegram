@@ -2,7 +2,12 @@ export const validatePriceWithDiscountShouldBeLessThanOriginalPrice = (
 	value: any,
 	allValues: any,
 ) => {
-	if (value >= allValues.originalPrice) {
+	const hasValidationError = allValues.productAttributes.some(
+		(productAttribute: any) =>
+			productAttribute.priceWithDiscount >=
+			productAttribute.originalPrice,
+	);
+	if (hasValidationError) {
 		return 'Discounted price should be less than the original price';
 	}
 	return undefined; // Return undefined if the validation passes
