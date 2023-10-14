@@ -35,6 +35,11 @@ variable "sql_admin_password" {
   description = "Sql server admin password"
 }
 
+variable "jwt_key" {
+  type = string
+  description = "JWT key"
+}
+
 variable "telegram_bot_owner_telegram_id" {
   type = string
   description = "Sql server admin password"

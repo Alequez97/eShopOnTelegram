@@ -101,14 +101,19 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Logging__LogLevel__Default"                   = "Information"
-    "Logging__ApplicationInsights"                 = "Information"
-    "Azure__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
-    "Azure__TenantId"                              = data.azurerm_client_config.eshopontelegram.tenant_id
-    "Azure__ClientId"                              = var.app_sp_client_id
-    "Azure__ClientSecret"                          = var.app_sp_client_secret
-    "Azure__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
-    "Azure__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
+    "Logging__LogLevel__Default"                               = "Information"
+    "Logging__ApplicationInsights"                             = "Information"
+    "Azure__KeyVaultUri"                                       = "https://${var.keyvault_name}.vault.azure.net"
+    "Azure__TenantId"                                          = data.azurerm_client_config.eshopontelegram.tenant_id
+    "Azure__ClientId"                                          = var.app_sp_client_id
+    "Azure__ClientSecret"                                      = var.app_sp_client_secret
+    "Azure__RuntimeConfigurationBlobContainerName"             = azurerm_storage_container.runtime_configuration_blob_storage.name
+    "Azure__ProductImagesBlobContainerName"                    = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__JWTAuthOptions__Issuer"                      = var.admin_app_name
+    "AppSettings__JWTAuthOptions__Audience"                    = var.admin_app_name
+    "AppSettings__JWTAuthOptions__Key"                         = var.jwt_key
+    "AppSettings__JWTAuthOptions__RefreshTokenLifetimeMinutes" = 10080 //1 week
+    "AppSettings__JWTAuthOptions__JTokenLifetimeMinutes"       = 5
   }
 
   tags = local.az_common_tags
