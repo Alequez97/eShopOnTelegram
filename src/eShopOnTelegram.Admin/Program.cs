@@ -21,44 +21,54 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var appSettings = ConfigureAppSettings(builder);
-ConfigureAzureKeyVault(builder);
-ConfigureServices(builder);
-ConfigureDbContext(builder);
-ConfigureApplicationInsights(builder);
-ConfigureIdentity(builder);
-ConfigureJWTAuthentication(builder, appSettings);
-
-builder.Services.AddControllersWithViews();
-
-var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
+try
 {
-    var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
-    db.Database.Migrate();
-}
+    var appSettings = ConfigureAppSettings(builder);
+    ConfigureAzureKeyVault(builder);
+    ConfigureServices(builder);
+    ConfigureDbContext(builder);
+    ConfigureApplicationInsights(builder);
+    ConfigureIdentity(builder);
+    ConfigureJWTAuthentication(builder, appSettings);
 
-// Configure the HTTP request pipeline.
-if (!app.Environment.IsDevelopment())
+    builder.Services.AddControllersWithViews();
+
+    var app = builder.Build();
+
+    using (var scope = app.Services.CreateScope())
+    {
+        var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
+        db.Database.Migrate();
+    }
+
+    // Configure the HTTP request pipeline.
+    if (!app.Environment.IsDevelopment())
+    {
+        // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+        app.UseHsts();
+    }
+
+    app.UseHttpsRedirection();
+    app.UseStaticFiles();
+    app.UseRouting();
+    app.UseAuthentication();
+    app.UseAuthorization();
+
+    app.MapControllerRoute(
+        name: "default",
+        pattern: "{controller}/{action=Index}/{id?}");
+
+    app.MapFallbackToFile("index.html");
+
+    app.Run();
+} 
+catch (Exception ex)
 {
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    var app = builder.Build();
+    using var scope = app.Services.CreateScope();
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    logger.LogError(ex, ex.Message);
 }
-
-app.UseHttpsRedirection();
-app.UseStaticFiles();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller}/{action=Index}/{id?}");
-
-app.MapFallbackToFile("index.html");
-
-app.Run();
 
 static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 {
