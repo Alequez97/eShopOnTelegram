@@ -21,8 +21,8 @@ using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var appSettings = ConfigureAppSettings(builder);
 ConfigureAzureKeyVault(builder);
+var appSettings = ConfigureAppSettings(builder);
 ConfigureServices(builder);
 ConfigureDbContext(builder);
 ConfigureApplicationInsights(builder);
@@ -60,15 +60,6 @@ app.MapFallbackToFile("index.html");
 
 app.Run();
 
-static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
-{
-    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
-    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
-
-    builder.Services.AddSingleton(appSettings);
-    return appSettings;
-}
-
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
     var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
@@ -87,6 +78,15 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 
         builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
     }
+}
+
+static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
+{
+    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
+    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
+
+    builder.Services.AddSingleton(appSettings);
+    return appSettings;
 }
 
 static void ConfigureServices(WebApplicationBuilder builder)
