@@ -1,20 +1,36 @@
-import { List, Datagrid, TextField, EditButton } from "react-admin";
+import {
+	List,
+	Datagrid,
+	TextField,
+	EditButton,
+	ArrayField,
+	ChipField,
+} from 'react-admin';
 
-export default function ProductsList() {
-  return (
-    <List>
-      <Datagrid>
-        <TextField source="name" sortable={false} />
-        <TextField source="productCategoryName" sortable={false} />
-        <TextField source="originalPrice" sortable={false} />
-        <TextField
-          source="priceWithDiscount"
-          sortable={false}
-          emptyText={"-"}
-        />
-        <TextField source="quantityLeft" sortable={false} />
-        <EditButton />
-      </Datagrid>
-    </List>
-  );
-}
+export const ProductsList = () => {
+	return (
+		<List>
+			<Datagrid>
+				<TextField source="name" sortable={false} />
+				<TextField source="productCategoryName" sortable={false} />
+				<ArrayField source="productAttributes">
+					<Datagrid bulkActionButtons={false}>
+						<ChipField source="color" />
+						<ChipField source="size" />
+						<TextField source="originalPrice" label="Price" />
+						<TextField
+							source="priceWithDiscount"
+							label="Price with discount"
+							emptyText="-"
+						/>
+						<TextField
+							source="quantityLeft"
+							label="Quantity Left"
+						/>
+					</Datagrid>
+				</ArrayField>
+				<EditButton />
+			</Datagrid>
+		</List>
+	);
+};

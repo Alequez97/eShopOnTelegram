@@ -9,6 +9,8 @@ public class EShopOnTelegramDbContext : IdentityDbContext<User, IdentityRole<lon
 
     public DbSet<Product> Products { get; set; }
 
+    public DbSet<ProductAttribute> ProductAttributes { get; set; }
+
     public DbSet<ProductCategory> ProductCategories { get; set; }
 
     public DbSet<Order> Orders { get; set; }

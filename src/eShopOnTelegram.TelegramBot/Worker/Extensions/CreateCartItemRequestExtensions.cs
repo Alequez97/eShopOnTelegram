@@ -1,6 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services.Interfaces;
 
 using Telegram.Bot.Types.Payments;
 
@@ -8,21 +7,21 @@ namespace eShopOnTelegram.TelegramBot.Worker.Extensions;
 
 public static class CreateCartItemRequestExtensions
 {
-    public static async Task<IEnumerable<LabeledPrice>> GetPaymentLabeledPricesAsync(this IEnumerable<CartItemDto> cartItems, IProductService productService, CancellationToken cancellationToken)
+    public static async Task<IEnumerable<LabeledPrice>> GetPaymentLabeledPricesAsync(this IEnumerable<CartItemDto> cartItems, IProductAttributeService productAttributeService, CancellationToken cancellationToken)
     {
         var labeledPrices = new List<LabeledPrice>();
 
         foreach (var cartItem in cartItems)
         {
-            var response = await productService.GetAsync(cartItem.ProductId, cancellationToken);
+            var response = await productAttributeService.GetAsync(cartItem.ProductAttribute.Id, cancellationToken);
 
             if (response.Status == ResponseStatus.Success)
             {
-                var existingProduct = response.Data;
+                var existingProductAttribute = response.Data;
 
                 labeledPrices.Add(
-                    new LabeledPrice($"{existingProduct.Name} ({existingProduct.PriceWithDiscount ?? existingProduct.OriginalPrice}) x{cartItem.Quantity}",
-                    (int)((existingProduct.PriceWithDiscount ?? existingProduct.OriginalPrice) * cartItem.Quantity * 100)));
+                    new LabeledPrice(cartItem.GetFormattedMessage(' '),
+                    (int)((existingProductAttribute.PriceWithDiscount ?? existingProductAttribute.OriginalPrice) * cartItem.Quantity * 100)));
             }
         }
 

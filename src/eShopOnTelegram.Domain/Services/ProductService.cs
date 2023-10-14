@@ -35,19 +35,11 @@ public class ProductService : IProductService
             var products = await _dbContext.Products
                 .Where(product => product.IsDeleted == false)
                 .Include(product => product.Category)
+                .Include(product => product.ProductAttributes)
                 .WithPagination(request.PaginationModel)
-                .ToListAsync(cancellationToken);
+            .ToListAsync(cancellationToken);
 
-            var getProductsResponse = products.Select(product => new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            });
+            var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
 
             return new Response<IEnumerable<ProductDto>>()
             {
@@ -73,19 +65,11 @@ public class ProductService : IProductService
         {
             var products = await _dbContext.Products
                 .Where(product => product.IsDeleted == false)
+                .Include(product => product.ProductAttributes)
                 .Include(product => product.Category)
                 .ToListAsync(cancellationToken);
 
-            var getProductsResponse = products.Select(product => new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            });
+            var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
 
             return new Response<IEnumerable<ProductDto>>()
             {
@@ -109,6 +93,7 @@ public class ProductService : IProductService
         try
         {
             var product = await _dbContext.Products
+                .Include(product => product.ProductAttributes)
                 .Include(product => product.Category)
                 .FirstOrDefaultAsync(product => product.Id == id && product.IsDeleted == false, cancellationToken);
 
@@ -120,16 +105,7 @@ public class ProductService : IProductService
                 };
             }
 
-            var getProductResponse = new ProductDto()
-            {
-                Id = product.Id,
-                Name = product.Name,
-                ProductCategoryName = product.Category.Name,
-                OriginalPrice = product.OriginalPrice,
-                PriceWithDiscount = product.PriceWithDiscount,
-                QuantityLeft = product.QuantityLeft,
-                Image = $"{_productImagesHostname}/{product.ImageName}"
-            };
+            var getProductResponse = product.ToProductDto(_productImagesHostname);
 
             return new Response<ProductDto>()
             {
@@ -153,6 +129,15 @@ public class ProductService : IProductService
     {
         try
         {
+            if (request.ProductAttributes == null || request.ProductAttributes.Count == 0)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.ValidationFailed,
+                    Message = "Create product request should contain at least on product attribute"
+                };
+            }
+
             var existingProductCategory = await _dbContext.ProductCategories
                 .FirstOrDefaultAsync(category => category.Id == request.ProductCategoryId, cancellationToken);
 
@@ -164,21 +149,36 @@ public class ProductService : IProductService
                 };
             }
 
-            var storedImageName = await _productImagesStore.SaveAsync(request.ProductImage, CancellationToken.None);
-
             var product = new Product()
             {
                 Name = request.Name,
-                OriginalPrice = request.OriginalPrice,
-                PriceWithDiscount = request.PriceWithDiscount,
-                QuantityLeft = request.QuantityLeft,
                 Category = existingProductCategory,
                 IsDeleted = false,
-                ImageName = storedImageName
             };
 
-            _dbContext.Products.Add(product);
+            var productAttributesList = new List<ProductAttribute>();
+            foreach (var createProductAttributeRequest in request.ProductAttributes)
+            {
+                var storedImageName = await _productImagesStore.SaveAsync(createProductAttributeRequest.ImageAsBase64, createProductAttributeRequest.ImageName, cancellationToken);
 
+                var newProductAttribute = new ProductAttribute()
+                {
+                    Product = product,
+                    Color = createProductAttributeRequest.Color,
+                    Size = createProductAttributeRequest.Size,
+                    OriginalPrice = createProductAttributeRequest.OriginalPrice,
+                    PriceWithDiscount = createProductAttributeRequest.PriceWithDiscount,
+                    QuantityLeft = createProductAttributeRequest.QuantityLeft,
+                    ImageName = storedImageName,
+                    IsDeleted = false,
+                };
+
+                productAttributesList.Add(newProductAttribute);
+            }
+
+            product.ProductAttributes = productAttributesList;
+
+            _dbContext.Products.Add(product);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
@@ -198,6 +198,7 @@ public class ProductService : IProductService
         }
     }
 
+    // TODO: Fix update to update product attributes
     public async Task<ActionResponse> UpdateAsync(UpdateProductRequest updateProductRequest, CancellationToken cancellationToken)
     {
         try
@@ -209,11 +210,15 @@ public class ProductService : IProductService
                     PC.IsDeleted AS CategoryIsDeleted
                 FROM Products as P WITH (UPDLOCK)
                 INNER JOIN ProductCategories as PC on PC.Id = P.CategoryId
+                INNER JOIN ProductAttributes as PA on PA.ProductId = P.Id
                 WHERE P.Id = {0}";
 
             using var transaction = await _dbContext.Database.BeginTransactionAsync();
 
-            var existingProduct = await _dbContext.Products.FromSqlRaw(query, updateProductRequest.Id).FirstOrDefaultAsync();
+            var existingProduct = await _dbContext.Products
+                .FromSqlRaw(query, updateProductRequest.Id)
+                .Include(product => product.ProductAttributes)
+                .FirstOrDefaultAsync(cancellationToken);
 
             if (existingProduct == null)
             {
@@ -224,13 +229,45 @@ public class ProductService : IProductService
                 };
             }
 
+            // Update product attributes
+            var newProductAttributes = new List<ProductAttribute>();
+            foreach (var updateProducatAttributeRequest in updateProductRequest.ProductAttributes)
+            {
+                var existingProductAttribute = await _dbContext.ProductAttributes.FirstOrDefaultAsync(productAttribute => productAttribute.Id == updateProducatAttributeRequest.Id, cancellationToken);
+
+                if (existingProductAttribute == null)
+                {
+                    continue;
+                }
+
+                var newProductAttributeImageName = existingProductAttribute.ImageName;
+                if (updateProducatAttributeRequest.ImageAsBase64 != null && updateProducatAttributeRequest.ImageName != null)
+                {
+                    await _productImagesStore.DeleteAsync(existingProductAttribute.ImageName, cancellationToken);
+                    newProductAttributeImageName = await _productImagesStore.SaveAsync(updateProducatAttributeRequest.ImageAsBase64, updateProducatAttributeRequest.ImageName, cancellationToken);
+                }
+
+                var newProductAttribute = new ProductAttribute()
+                {
+                    Color = updateProducatAttributeRequest.Color,
+                    Size = updateProducatAttributeRequest.Size,
+                    OriginalPrice = updateProducatAttributeRequest.OriginalPrice,
+                    PriceWithDiscount = updateProducatAttributeRequest.PriceWithDiscount,
+                    QuantityLeft = updateProducatAttributeRequest.QuantityLeft,
+                    ImageName = newProductAttributeImageName,
+                    IsDeleted = false,
+                    PreviousVersionId = existingProductAttribute.Id,
+                };
+                newProductAttributes.Add(newProductAttribute);
+
+                existingProductAttribute.IsDeleted = true;
+            }
+
             var updatedProduct = new Product()
             {
                 Name = updateProductRequest.Name,
                 CategoryId = existingProduct.CategoryId,
-                OriginalPrice = updateProductRequest.OriginalPrice,
-                PriceWithDiscount = updateProductRequest.PriceWithDiscount,
-                QuantityLeft = updateProductRequest.QuantityLeft,
+                ProductAttributes = newProductAttributes,
                 IsDeleted = false,
                 PreviousVersion = existingProduct
             };
@@ -249,13 +286,6 @@ public class ProductService : IProductService
                 await transaction.RollbackAsync(cancellationToken);
                 throw;
             }
-
-            //if (updateProductRequest.ProductImage != null)
-            //{
-            //    await _productImagesRepository.DeleteAsync(existingProduct.ImageName);
-            //    var newImageName = await _productImagesRepository.SaveAsync(updateProductRequest.ProductImage, CancellationToken.None);
-            //    existingProduct.ImageName = newImageName;
-            //}
 
             return new ActionResponse()
             {
@@ -277,7 +307,9 @@ public class ProductService : IProductService
     {
         try
         {
-            var existingProduct = await _dbContext.Products.FirstOrDefaultAsync(product => product.Id == id);
+            var existingProduct = await _dbContext.Products
+                .Include(product => product.ProductAttributes)
+                .FirstOrDefaultAsync(product => product.Id == id);
 
             if (existingProduct == null)
             {
@@ -288,9 +320,14 @@ public class ProductService : IProductService
             }
 
             existingProduct.IsDeleted = true;
-            await _dbContext.SaveChangesAsync(cancellationToken);
 
-            await _productImagesStore.DeleteAsync(existingProduct.ImageName);
+            foreach (var productAttribute in existingProduct.ProductAttributes)
+            {
+                productAttribute.IsDeleted = true;
+                await _productImagesStore.DeleteAsync(productAttribute.ImageName, cancellationToken);
+            }
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
 
             return new ActionResponse()
             {

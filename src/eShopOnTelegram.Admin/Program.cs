@@ -96,6 +96,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 
     // Add services to the container.
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
     builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IOrderService, OrderService>();

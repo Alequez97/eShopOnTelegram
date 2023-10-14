@@ -2,8 +2,8 @@
 
 public class CartItem : EntityBase
 {
-    public required long ProductId { get; set; }
-    public Product Product { get; set; }
+    public required long ProductAttributeId { get; set; }
+    public ProductAttribute ProductAttribute { get; set; }
 
     public required int Quantity { get; set; }
 }

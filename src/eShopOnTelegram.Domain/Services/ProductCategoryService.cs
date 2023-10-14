@@ -13,7 +13,9 @@ public class ProductCategoryService : IProductCategoryService
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly ILogger<ProductCategoryService> _logger;
 
-    public ProductCategoryService(IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory, ILogger<ProductCategoryService> logger)
+    public ProductCategoryService(
+        IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory,
+        ILogger<ProductCategoryService> logger)
     {
         _dbContext = dbContextFactory.CreateDbContext();
         _logger = logger;

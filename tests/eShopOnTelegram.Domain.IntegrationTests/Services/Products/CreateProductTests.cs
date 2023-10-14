@@ -1,4 +1,5 @@
-﻿using eShopOnTelegram.Domain.Requests.Products;
+﻿using eShopOnTelegram.Domain.Requests.ProductAttributes;
+using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
@@ -24,9 +25,7 @@ public class CreateProductTests
         {
             Name = "Test-Name",
             ProductCategoryId = -1,
-            OriginalPrice = 0,
-            QuantityLeft = 0,
-            ProductImage = null
+            ProductAttributes = new List<CreateProductAttributeRequest>()
         };
 
         // Act

@@ -109,6 +109,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IOrderService, OrderService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IProductService, ProductService>();
+    builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
     builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 }
 

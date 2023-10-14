@@ -2,7 +2,6 @@
 
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace eShopOnTelegram.Persistence.Files.Stores;
@@ -20,19 +19,19 @@ public class AzureBlobStorageProductImagesStore : IProductImagesStore
         _blobContainer = blobServiceClient.GetBlobContainerClient(blobContainerName);
     }
 
-    public async Task<string> SaveAsync(IFormFile image, CancellationToken cancellationToken)
+    public async Task<string> SaveAsync(byte[] file, string fileName, CancellationToken cancellationToken)
     {
-        var imageName = $"{Guid.NewGuid()}.png";
-        var blobClient = _blobContainer.GetBlobClient(imageName);
+        var generatedFileName = $"{Guid.NewGuid()}{Path.GetExtension(fileName)}";
+        var blobClient = _blobContainer.GetBlobClient(generatedFileName);
 
-        await using var imageStream = image.OpenReadStream();
-        await blobClient.UploadAsync(imageStream, cancellationToken);
+        using var memoryStream = new MemoryStream(file);
+        await blobClient.UploadAsync(memoryStream, cancellationToken);
 
-        return imageName;
+        return generatedFileName;
     }
 
-    public async Task DeleteAsync(string id)
+    public async Task DeleteAsync(string id, CancellationToken cancellationToken)
     {
-        await _blobContainer.DeleteBlobIfExistsAsync(id);
+        await _blobContainer.DeleteBlobIfExistsAsync(id, cancellationToken: cancellationToken);
     }
 }

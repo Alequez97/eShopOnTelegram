@@ -1,38 +1,36 @@
 {
-  "name": "clientapp",
-  "private": true,
-  "version": "0.0.0",
-  "type": "module",
-  "scripts": {
-    "start": "typed-scss-modules src && vite",
-    "build": "typed-scss-modules src && tsc && vite build",
-    "watch": "typed-scss-modules src --watch && vite build --watch",
-    "scss-types": "typed-scss-modules src --watch",
-    "preview": "vite preview",
-    "lint": "eslint ./src/"
-  },
-  "dependencies": {
-    "axios": "^1.4.0",
-    "ra-data-simple-rest": "^4.8.4",
-    "react": "^18.2.0",
-    "react-admin": "^4.8.4",
-    "react-dom": "^18.2.0"
-  },
-  "devDependencies": {
-    "@types/node": "^18.13.0",
-    "@types/react": "^18.0.27",
-    "@types/react-dom": "^18.0.10",
-    "@vitejs/plugin-react": "^3.1.0",
-    "eslint": "^8.34.0",
-    "eslint-config-prettier": "^8.6.0",
-    "eslint-config-react-app": "^7.0.1",
-    "eslint-plugin-import": "^2.27.5",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.32.2",
-    "sass": "^1.58.0",
-    "typed-scss-modules": "^7.0.2",
-    "typescript": "^4.9.3",
-    "vite": "^4.1.0",
-    "vite-plugin-mkcert": "^1.13.0"
-  }
+	"name": "clientapp",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"scripts": {
+		"start": "vite",
+		"build": "tsc && vite build",
+		"watch": "vite build --watch",
+		"preview": "vite preview",
+		"lint": "eslint ./src/"
+	},
+	"dependencies": {
+		"axios": "^1.4.0",
+		"ra-data-simple-rest": "^4.8.4",
+		"react": "^18.2.0",
+		"react-admin": "^4.8.4",
+		"react-dom": "^18.2.0"
+	},
+	"devDependencies": {
+		"@types/node": "^18.13.0",
+		"@types/react": "^18.0.27",
+		"@types/react-dom": "^18.0.10",
+		"@vitejs/plugin-react": "^3.1.0",
+		"eslint": "^8.34.0",
+		"eslint-config-prettier": "^8.6.0",
+		"eslint-config-react-app": "^7.0.1",
+		"eslint-plugin-import": "^2.27.5",
+		"eslint-plugin-prettier": "^4.2.1",
+		"eslint-plugin-react": "^7.32.2",
+		"prettier": "^3.0.3",
+		"typescript": "^4.9.3",
+		"vite": "^4.1.0",
+		"vite-plugin-mkcert": "^1.13.0"
+	}
 }

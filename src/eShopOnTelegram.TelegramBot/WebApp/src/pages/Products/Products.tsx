@@ -1,138 +1,145 @@
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
-import { Card } from "../../components/card/card";
-import { Loader } from "../../components/loader/loader";
-import { Error } from "../../components/error/error";
-import { getCartItemsAsJsonString } from "../../utilities/cartItems";
-import { useCartItems } from "../../hooks/cartItems";
-import { useTelegramWebApp } from "../../hooks/telegram";
-import { Product } from "../../types/product";
-import { useProducts } from "../../hooks/products";
+import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { Card } from '../../components/card/card';
+import { Loader } from '../../components/loader/loader';
+import { Error } from '../../components/error/error';
+import { getCartItemsAsJsonString } from '../../utils/cart-items.utility';
+import { useCartItemsState } from '../../hooks/useCartItemsState';
+import { useTelegramWebApp } from '../../hooks/useTelegramWebApp';
+import { Product } from '../../types/product.type';
+import { useProducts } from '../../hooks/useProducts';
 import {
-  StyledCardsContainer,
-  StyledMissingProductsMessageWrapper,
-  StyledProductCategoriesSelect,
-  StyledProductCategoriesWrapper,
-} from "../styled/products.styled";
-import { useProductsMock } from "../../hooks/productsMock";
-import { ProductAttribute } from "../../types/productAttribute";
+	StyledCardsContainer,
+	StyledMissingProductsMessageWrapper,
+	StyledProductCategoriesSelect,
+	StyledProductCategoriesWrapper,
+} from './products.styled';
+import { ProductAttribute } from '../../types/product-attribute.type';
 
 export const Products = () => {
-  const { telegramWebApp } = useTelegramWebApp();
+	const telegramWebApp = useTelegramWebApp();
+	useEffect(() => {
+		telegramWebApp.expand();
+	}, [telegramWebApp]);
 
-  useEffect(() => {
-    telegramWebApp.expand();
-    // eslint-disable-next-line
-  }, []);
+	const {
+		cartItems,
+		addProductAttributeToState,
+		removeProductAttributeFromState,
+	} = useCartItemsState();
 
-  const { cartItems, addProductAttributeToState, removeProductAttributeFromState } =
-    useCartItems();
-  const { products, productCategories, error, loading } = useProductsMock();
-  const [filteredProducts, setFilteredProducts] = useState<
-    Product[] | undefined
-  >(undefined);
+	const { products, productCategories, error, loading } = useProducts();
+	const [filteredProducts, setFilteredProducts] = useState<
+		Product[] | undefined
+	>(undefined);
 
-  useEffect(() => {
-    if (cartItems.length === 0) {
-      telegramWebApp.MainButton.hide();
-    } else {
-      telegramWebApp.MainButton.show();
-    }
-  }, [cartItems]);
+	useEffect(() => {
+		const notEmptyCartItems = cartItems.filter(
+			(cartItem) => cartItem.quantity > 0,
+		);
 
-  const sendDataToTelegram = useCallback(() => {
-    const json = getCartItemsAsJsonString(cartItems);
-    telegramWebApp.sendData(json);
-  }, [cartItems]);
+		if (notEmptyCartItems.length === 0) {
+			telegramWebApp.MainButton.hide();
+		} else {
+			telegramWebApp.MainButton.show();
+		}
+	}, [cartItems]);
 
-  useEffect(() => {
-    telegramWebApp.onEvent("mainButtonClicked", sendDataToTelegram);
-    return () => {
-      telegramWebApp.offEvent("mainButtonClicked", sendDataToTelegram);
-    };
-    // eslint-disable-next-line
-  }, [sendDataToTelegram]);
+	const sendDataToTelegram = useCallback(() => {
+		const json = getCartItemsAsJsonString(cartItems);
+		telegramWebApp.sendData(json);
+	}, [cartItems]);
 
-  const onAdd = (productAttribute: ProductAttribute) => {
-    addProductAttributeToState(productAttribute);
-  };
+	useEffect(() => {
+		telegramWebApp.onEvent('mainButtonClicked', sendDataToTelegram);
+		return () => {
+			telegramWebApp.offEvent('mainButtonClicked', sendDataToTelegram);
+		};
+	}, [sendDataToTelegram]);
 
-  const onRemove = (productAttribute: ProductAttribute) => {
-    removeProductAttributeFromState(productAttribute);
-  };
+	const onAdd = (productAttribute: ProductAttribute) => {
+		addProductAttributeToState(productAttribute);
+	};
 
-  if (loading) {
-    return <Loader />;
-  }
+	const onRemove = (productAttribute: ProductAttribute) => {
+		removeProductAttributeFromState(productAttribute);
+	};
 
-  if (error) {
-    return <Error />;
-  }
+	if (loading) {
+		return <Loader />;
+	}
 
-  const DEFAULT_SELECTOR_VALUE = "All categories";
+	if (error) {
+		return <Error />;
+	}
 
-  const selectOnChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
-    const selectedOption = event.target.value;
-    if (selectedOption === DEFAULT_SELECTOR_VALUE) {
-      setFilteredProducts(undefined);
-      return;
-    }
+	const DEFAULT_SELECTOR_VALUE = 'All categories';
 
-    setFilteredProducts(
-      products.filter(
-        (product) => product.productCategoryName === selectedOption
-      )
-    );
-  };
+	const selectOnChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
+		const selectedOption = event.target.value;
+		if (selectedOption === DEFAULT_SELECTOR_VALUE) {
+			setFilteredProducts(undefined);
+			return;
+		}
 
-  return (
-    <>
-      <h2 style={{ textAlign: "center" }}>eShopOnTelegram</h2>
+		setFilteredProducts(
+			products.filter(
+				(product) => product.productCategoryName === selectedOption,
+			),
+		);
+	};
 
-      {products.length === 0 && (
-        <StyledMissingProductsMessageWrapper>
-          <span>No available products at this moment</span>
-        </StyledMissingProductsMessageWrapper>
-      )}
+	return (
+		<>
+			<h2 style={{ textAlign: 'center' }}>eShopOnTelegram</h2>
 
-      {products.length !== 0 && (
-        <StyledProductCategoriesWrapper>
-          <StyledProductCategoriesSelect
-            name="product-categories"
-            defaultValue={DEFAULT_SELECTOR_VALUE}
-            onChange={selectOnChangeHandler}
-          >
-            <option value={DEFAULT_SELECTOR_VALUE} key={DEFAULT_SELECTOR_VALUE}>
-              {DEFAULT_SELECTOR_VALUE}
-            </option>
-            {productCategories?.map((category) => (
-              <option value={category} key={category}>
-                {category}
-              </option>
-            ))}
-          </StyledProductCategoriesSelect>
-        </StyledProductCategoriesWrapper>
-      )}
+			{products.length === 0 && (
+				<StyledMissingProductsMessageWrapper>
+					<span>No available products at this moment</span>
+				</StyledMissingProductsMessageWrapper>
+			)}
 
-      <StyledCardsContainer>
-        {filteredProducts === undefined &&
-          products.map((product) => (
-            <Card
-              product={product}
-              key={product.id}
-              onAdd={onAdd}
-              onRemove={onRemove}
-            />
-          ))}
-        {filteredProducts !== undefined &&
-          filteredProducts.map((product) => (
-            <Card
-              product={product}
-              key={product.id}
-              onAdd={onAdd}
-              onRemove={onRemove}
-            />
-          ))}
-      </StyledCardsContainer>
-    </>
-  );
+			{products.length !== 0 && (
+				<StyledProductCategoriesWrapper>
+					<StyledProductCategoriesSelect
+						name="product-categories"
+						defaultValue={DEFAULT_SELECTOR_VALUE}
+						onChange={selectOnChangeHandler}
+					>
+						<option
+							value={DEFAULT_SELECTOR_VALUE}
+							key={DEFAULT_SELECTOR_VALUE}
+						>
+							{DEFAULT_SELECTOR_VALUE}
+						</option>
+						{productCategories?.map((category) => (
+							<option value={category} key={category}>
+								{category}
+							</option>
+						))}
+					</StyledProductCategoriesSelect>
+				</StyledProductCategoriesWrapper>
+			)}
+
+			<StyledCardsContainer>
+				{filteredProducts === undefined &&
+					products.map((product) => (
+						<Card
+							product={product}
+							key={product.id}
+							onAdd={onAdd}
+							onRemove={onRemove}
+						/>
+					))}
+				{filteredProducts !== undefined &&
+					filteredProducts.map((product) => (
+						<Card
+							product={product}
+							key={product.id}
+							onAdd={onAdd}
+							onRemove={onRemove}
+						/>
+					))}
+			</StyledCardsContainer>
+		</>
+	);
 };

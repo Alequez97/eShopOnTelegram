@@ -1,4 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
+using eShopOnTelegram.Domain.Dto.ProductAttributes;
 
 namespace eShopOnTelegram.Domain.Extensions;
 
@@ -17,12 +18,17 @@ public static class OrderExtenstions
             LastName = order.Customer.LastName,
             CartItems = order.CartItems.Select(cartItem => new CartItemDto()
             {
-                ProductId = cartItem.ProductId,
-                Name = cartItem.Product.Name,
-                CategoryName = cartItem.Product.Category.Name,
-                OriginalPrice = cartItem.Product.OriginalPrice,
-                PriceWithDiscount = cartItem.Product.PriceWithDiscount,
-                ImageName = cartItem.Product.ImageName,
+                ProductAttribute = new ProductAttributeDto()
+                {
+                    Id = cartItem.ProductAttribute.Id,
+                    Color = cartItem.ProductAttribute.Color,
+                    Size = cartItem.ProductAttribute.Size,
+                    ProductName = cartItem.ProductAttribute.ProductName,
+                    ProductCategoryName = cartItem.ProductAttribute.ProductCategoryName,
+                    OriginalPrice = cartItem.ProductAttribute.OriginalPrice,
+                    PriceWithDiscount = cartItem.ProductAttribute.PriceWithDiscount,
+                    QuantityLeft = cartItem.ProductAttribute.QuantityLeft,
+                },
                 Quantity = cartItem.Quantity
             }).ToList(),
             CreationDate = order.CreationDate,

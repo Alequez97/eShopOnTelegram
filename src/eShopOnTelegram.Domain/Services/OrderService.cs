@@ -25,7 +25,8 @@ public class OrderService : IOrderService
         {
             var existingOrder = await _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .FirstOrDefaultAsync(order => order.Id == Convert.ToInt64(id), cancellationToken);
@@ -61,7 +62,8 @@ public class OrderService : IOrderService
         {
             var existingOrder = await _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
@@ -97,7 +99,8 @@ public class OrderService : IOrderService
         {
             var customerOrders = _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .Where(order => order.Customer.TelegramUserUID == telegramId);
@@ -133,7 +136,8 @@ public class OrderService : IOrderService
         {
             var customerOrders = await _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .Where(order => order.Customer.TelegramUserUID == telegramId)
@@ -180,7 +184,8 @@ public class OrderService : IOrderService
         {
             var customerOrders = await _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .Where(order => order.OrderNumber == orderNumber)
@@ -227,7 +232,8 @@ public class OrderService : IOrderService
         {
             var orders = await _dbContext.Orders
                 .Include(order => order.CartItems)
-                .ThenInclude(cartItem => cartItem.Product)
+                .ThenInclude(cartItem => cartItem.ProductAttribute)
+                .ThenInclude(productAttribute => productAttribute.Product)
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .WithPagination(request.PaginationModel)
@@ -292,12 +298,12 @@ public class OrderService : IOrderService
 
             using var transaction = _dbContext.Database.BeginTransaction(); // Default Transaction Isolation Level is ReadCommited
 
-            var query = "SELECT * FROM Products WITH (UPDLOCK) WHERE Id IN ({0}) AND IsDeleted = 0"; // Fetch requested products with UPDLOCK
-            var productIds = string.Join(", ", request.CartItems.Select(ci => ci.ProductId).ToList());
+            var productAttributesIds = string.Join(",", request.CartItems.Select(cartItem => cartItem.ProductAttributeId).ToArray());
+            var query = $"SELECT * FROM ProductAttributes WITH (UPDLOCK) WHERE Id IN ({productAttributesIds}) AND IsDeleted = 0"; // Fetch requested products with UPDLOCK
 
-            var requestedProducts = await _dbContext.Products.FromSqlRaw(query, productIds).ToListAsync();
+            var requestedProductAttributes = await _dbContext.ProductAttributes.FromSqlRaw(query).ToListAsync(cancellationToken);
 
-            if (request.CartItems.Count != requestedProducts.Count) // Either deleted or does not exist
+            if (request.CartItems.Count != requestedProductAttributes.Count) // Either deleted or does not exist
             {
                 await transaction.RollbackAsync();
                 return new CreateOrderResponse()
@@ -307,24 +313,24 @@ public class OrderService : IOrderService
                 };
             }
 
-            foreach (var product in requestedProducts) // todo could be optimized probably
+            foreach (var productAttribute in requestedProductAttributes) // todo could be optimized probably
             {
-                var requestedCountToBuy = request.CartItems.Where(ci => ci.ProductId == product.Id).Select(ci => ci.Quantity).First();
-                if (product.QuantityLeft < requestedCountToBuy)
+                var requestedCountToBuy = request.CartItems.Where(ci => ci.ProductAttributeId == productAttribute.Id).Select(ci => ci.Quantity).First();
+                if (productAttribute.QuantityLeft < requestedCountToBuy)
                 {
                     await transaction.RollbackAsync();
                     return new CreateOrderResponse()
                     {
                         Status = ResponseStatus.ValidationFailed,
-                        Message = $"Requested {requestedCountToBuy} amount of product with id {product.Id}, but only {product.QuantityLeft} is available"
+                        Message = $"Requested {requestedCountToBuy} amount of productAttribute with id {productAttribute.Id}, but only {productAttribute.QuantityLeft} is available"
                     };
                 }
-                product.DecreaseQuantity(requestedCountToBuy);
+                productAttribute.DecreaseQuantity(requestedCountToBuy);
             }
 
             var orderCartItems = request.CartItems.Select(requestedCartItem => new CartItem()
             {
-                ProductId = requestedCartItem.ProductId,
+                ProductAttributeId = requestedCartItem.ProductAttributeId,
                 Quantity = requestedCartItem.Quantity
             }).ToList();
 

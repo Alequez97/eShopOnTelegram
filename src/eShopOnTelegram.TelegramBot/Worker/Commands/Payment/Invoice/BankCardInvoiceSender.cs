@@ -1,5 +1,4 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
@@ -13,7 +12,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
 public class BankCardInvoiceSender : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
-    private readonly IProductService _productService;
+    private readonly IProductAttributeService _productAttributeService;
     private readonly IOrderService _orderService;
     private readonly PaymentAppsettings _paymentAppsettings;
     private readonly IApplicationContentStore _applicationContentStore;
@@ -21,14 +20,14 @@ public class BankCardInvoiceSender : ITelegramCommand
 
     public BankCardInvoiceSender(
         ITelegramBotClient telegramBot,
-        IProductService productService,
+        IProductAttributeService productAttributeService,
         IOrderService orderService,
         PaymentAppsettings paymentAppsettings,
         IApplicationContentStore applicationContentStore,
         ILogger<BankCardInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
-        _productService = productService;
+        _productAttributeService = productAttributeService;
         _orderService = orderService;
         _paymentAppsettings = paymentAppsettings;
         _applicationContentStore = applicationContentStore;
@@ -58,7 +57,7 @@ public class BankCardInvoiceSender : ITelegramCommand
                 activeOrder.OrderNumber,
                 _paymentAppsettings.Card.ApiToken,
                 _paymentAppsettings.MainCurrency,
-                await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productService, CancellationToken.None),
+                await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productAttributeService, CancellationToken.None),
                 needShippingAddress: true,
                 needPhoneNumber: true,
                 needName: true,

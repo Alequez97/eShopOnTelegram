@@ -19,7 +19,7 @@ public class CreateUser : EndpointBaseAsync
     }
 
     [Authorize(Policy = "RequireSuperadminClaim")]
-    [HttpPost("api/users/create")]
+    [HttpPost("api/users")]
     public override async Task<ActionResult> HandleAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
     {
         try
