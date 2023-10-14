@@ -4,10 +4,9 @@
 	"version": "0.0.0",
 	"type": "module",
 	"scripts": {
-		"start": "typed-scss-modules src && vite",
-		"build": "typed-scss-modules src && tsc && vite build",
-		"watch": "typed-scss-modules src --watch && vite build --watch",
-		"scss-types": "typed-scss-modules src --watch",
+		"start": "vite",
+		"build": "tsc && vite build",
+		"watch": "vite build --watch",
 		"preview": "vite preview",
 		"lint": "eslint ./src/"
 	},
@@ -30,8 +29,6 @@
 		"eslint-plugin-prettier": "^4.2.1",
 		"eslint-plugin-react": "^7.32.2",
 		"prettier": "^3.0.3",
-		"sass": "^1.58.0",
-		"typed-scss-modules": "^7.0.2",
 		"typescript": "^4.9.3",
 		"vite": "^4.1.0",
 		"vite-plugin-mkcert": "^1.13.0"

@@ -7,12 +7,7 @@ import {
 	TextInput,
 	useNotify,
 } from 'react-admin';
-import {
-	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-} from '../../types/auth.type';
-import axios from 'axios';
-import { refreshAccessToken } from '../../utils/auth.utility';
+import { axiosPost } from '../../utils/axios.utility';
 
 const validatePassword = (value: any) => {
 	if (value.length < 6) {
@@ -35,40 +30,10 @@ export const UserCreate = () => {
 
 	const onSubmitHandler = async (request: any) => {
 		try {
-			const accessToken = localStorage.getItem(
-				ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-			);
-			await axios.post('/users', request, {
-				headers: { Authorization: `Bearer ${accessToken}` },
-			});
+			await axiosPost('/users', request);
 			notify('New user created', { type: 'success' });
 		} catch (error: any) {
-			if (error?.response.status === 401) {
-				const refreshToken = localStorage.getItem(
-					REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-				);
-
-				if (refreshToken) {
-					try {
-						const newAccessToken =
-							await refreshAccessToken(refreshToken);
-						await axios.patch('/applicationContent', request, {
-							headers: {
-								Authorization: `Bearer ${newAccessToken}`,
-							},
-						});
-						notify('New user created', { type: 'success' });
-					} catch {
-						notify('Unable to create new user', {
-							type: 'error',
-						});
-					}
-				} else {
-					notify('Unable to create new user', { type: 'error' });
-				}
-			} else {
-				notify('Unable to create new user', { type: 'error' });
-			}
+			notify('Unable to create new user', { type: 'error' });
 		}
 	};
 

@@ -1,11 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import axios from 'axios';
-import { useNotify, TextInput, SimpleForm, useRefresh } from 'react-admin';
-import {
-	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-} from '../../types/auth.type';
-import { refreshAccessToken } from '../../utils/auth.utility';
+import { SimpleForm, TextInput, useNotify, useRefresh } from 'react-admin';
+import { axiosGet, axiosPatch } from '../../utils/axios.utility';
 
 type ApplicationContent = Record<string, string>;
 
@@ -19,97 +14,26 @@ const ApplicationContentEdit: React.FC = () => {
 
 	useEffect(() => {
 		const fetchApplicationContent = async () => {
-			try {
-				const accessToken = localStorage.getItem(
-					ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-				);
-				const { data } = await axios.get('/applicationContent', {
-					headers: { Authorization: `Bearer ${accessToken}` },
-				});
-				setApplicationContent(data);
-			} catch (error: any) {
-				if (error?.response.status === 401) {
-					const refreshToken = localStorage.getItem(
-						REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-					);
-					if (refreshToken) {
-						try {
-							const newAccessToken =
-								await refreshAccessToken(refreshToken);
-							const { data } = await axios.get(
-								'/applicationContent',
-								{
-									headers: {
-										Authorization: `Bearer ${newAccessToken}`,
-									},
-								},
-							);
-							setApplicationContent(data);
-						} catch {
-							notify('Network error', {
-								type: 'error',
-							});
-						}
-					} else {
-						notify('Network error', { type: 'error' });
-					}
-				} else {
-					notify('Network error', { type: 'error' });
-				}
-			}
+			const data = await axiosGet('/applicationContent');
+			console.log(data);
+			setApplicationContent(data);
 		};
-		fetchApplicationContent();
+		fetchApplicationContent().catch(() =>
+			notify('Network error', { type: 'error' }),
+		);
 	}, [notify]);
 
 	const handleSave = async () => {
 		try {
 			if (applicationContent) {
-				const accessToken = localStorage.getItem(
-					ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-				);
-				await axios.patch('/applicationContent', applicationContent, {
-					headers: { Authorization: `Bearer ${accessToken}` },
-				});
+				await axiosPatch('/applicationContent', applicationContent);
 				notify('Application content data saved', { type: 'success' });
 				refresh();
 			}
 		} catch (error: any) {
-			if (error?.response.status === 401) {
-				const refreshToken = localStorage.getItem(
-					REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-				);
-
-				if (refreshToken) {
-					try {
-						const newAccessToken =
-							await refreshAccessToken(refreshToken);
-						await axios.patch(
-							'/applicationContent',
-							applicationContent,
-							{
-								headers: {
-									Authorization: `Bearer ${newAccessToken}`,
-								},
-							},
-						);
-						notify('Application content data saved', {
-							type: 'success',
-						});
-					} catch {
-						notify('Error saving application content data', {
-							type: 'error',
-						});
-					}
-				} else {
-					notify('Error saving application content data', {
-						type: 'error',
-					});
-				}
-			} else {
-				notify('Error saving application content data', {
-					type: 'error',
-				});
-			}
+			notify('Error saving application content data', {
+				type: 'error',
+			});
 		}
 	};
 
@@ -146,10 +70,13 @@ const ApplicationContentEdit: React.FC = () => {
 		return <div>Loading...</div>;
 	}
 
+	console.log(applicationContent);
+
 	return (
 		<SimpleForm onSubmit={handleSave}>
-			{Object.entries(applicationContent).map(
-				([key, value], index, array) => {
+			{Object.entries(applicationContent)
+				.filter(([key]) => key.includes('.'))
+				.map(([key, value], index, array) => {
 					if (
 						index === 0 ||
 						key.split('.')[0] !== array[index - 1][0].split('.')[0]
@@ -196,8 +123,7 @@ const ApplicationContentEdit: React.FC = () => {
 							fullWidth
 						/>
 					);
-				},
-			)}
+				})}
 		</SimpleForm>
 	);
 };
