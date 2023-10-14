@@ -15,7 +15,6 @@ const ApplicationContentEdit: React.FC = () => {
 	useEffect(() => {
 		const fetchApplicationContent = async () => {
 			const data = await axiosGet('/applicationContent');
-			console.log(data);
 			setApplicationContent(data);
 		};
 		fetchApplicationContent().catch(() =>
@@ -69,8 +68,6 @@ const ApplicationContentEdit: React.FC = () => {
 	if (!applicationContent) {
 		return <div>Loading...</div>;
 	}
-
-	console.log(applicationContent);
 
 	return (
 		<SimpleForm onSubmit={handleSave}>
