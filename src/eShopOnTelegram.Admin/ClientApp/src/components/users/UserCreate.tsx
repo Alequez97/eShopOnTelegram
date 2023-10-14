@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-	Create,
 	PasswordInput,
 	required,
 	SimpleForm,
@@ -38,14 +37,12 @@ export const UserCreate = () => {
 	};
 
 	return (
-		<Create title="Create new user">
-			<SimpleForm onSubmit={onSubmitHandler}>
-				<TextInput source="username" validate={required()} />
-				<PasswordInput
-					source="password"
-					validate={[required(), validatePassword]}
-				/>
-			</SimpleForm>
-		</Create>
+		<SimpleForm onSubmit={onSubmitHandler}>
+			<TextInput source="username" validate={required()} />
+			<PasswordInput
+				source="password"
+				validate={[required(), validatePassword]}
+			/>
+		</SimpleForm>
 	);
 };
