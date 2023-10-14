@@ -20,7 +20,7 @@ import { UserCreate } from './components/users/UserCreate';
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? '/api';
 
-const httpClient = async (url: string, options: any) => {
+const httpClient = async (url: string, options: any = {}) => {
 	if (!options.headers) {
 		options.headers = new Headers({ Accept: 'application/json' });
 	}
