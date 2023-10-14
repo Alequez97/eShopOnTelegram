@@ -57,7 +57,6 @@ jobs:
           echo "resourceGroupName=$(terraform output -raw resource_group_name)" >> $GITHUB_OUTPUT
           echo "resourceGroupLocation=$(terraform output -raw resource_group_location)" >> $GITHUB_OUTPUT
           echo "adminAppName=$(terraform output -raw admin_app_name)" >> $GITHUB_OUTPUT
-          echo "adminAppHostName=$(terraform output -raw admin_app_hostname)" >> $GITHUB_OUTPUT
           echo "telegramBotAppName=$(terraform output -raw telegram_bot_app_name)" >> $GITHUB_OUTPUT
           echo "keyVaultUri=$(terraform output -raw key_vault_uri)" >> $GITHUB_OUTPUT
       
@@ -65,7 +64,6 @@ jobs:
       resourceGroupName: ${{ steps.terraformoutput.outputs.resourceGroupName }}
       resourceGroupLocation: ${{ steps.terraformoutput.outputs.resourceGroupLocation }}
       adminAppName: ${{ steps.terraformoutput.outputs.adminAppName }}
-      adminAppHostName: ${{ steps.terraformoutput.outputs.adminAppHostName }}
       telegramBotAppName: ${{ steps.terraformoutput.outputs.telegramBotAppName }}
       keyVaultUri: ${{ steps.terraformoutput.outputs.keyVaultUri }}
 

@@ -142,6 +142,7 @@ resource "azurerm_linux_web_app" "telegram_bot" {
     "Azure__ClientId"                       = var.app_sp_client_id
     "Azure__ClientSecret"                   = var.app_sp_client_secret
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+    "AdminAppHostName"                      = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
 
   tags = local.az_common_tags
