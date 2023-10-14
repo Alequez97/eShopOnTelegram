@@ -111,7 +111,6 @@ resource "azurerm_linux_web_app" "admin" {
     "Azure__ProductImagesBlobContainerName"                    = azurerm_storage_container.product_images_blob_storage.name
     "AppSettings__JWTAuthOptions__Issuer"                      = var.admin_app_name
     "AppSettings__JWTAuthOptions__Audience"                    = var.admin_app_name
-    "AppSettings__JWTAuthOptions__Key"                         = var.jwt_key
     "AppSettings__JWTAuthOptions__RefreshTokenLifetimeMinutes" = 10080 //1 week
     "AppSettings__JWTAuthOptions__JTokenLifetimeMinutes"       = 5
   }
@@ -205,6 +204,12 @@ resource "azurerm_key_vault" "keyvault" {
   }
 
   tags = local.az_common_tags
+}
+
+resource "azurerm_key_vault_secret" "jwtkey" {
+  name         = "AppSettings--JWTAuthOptions--Key"
+  value        = var.jwt_key
+  key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "sqlconnectionstring" {
