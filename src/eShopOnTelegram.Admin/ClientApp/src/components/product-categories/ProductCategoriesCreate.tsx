@@ -1,12 +1,22 @@
 import React from 'react';
-import { Create, required, SimpleForm, TextInput } from 'react-admin';
+import { required, SimpleForm, TextInput, useNotify } from 'react-admin';
+import { axiosPost } from '../../utils/axios.utility';
 
 export default function ProductCategoriesCreate() {
+	const notify = useNotify();
+
+	const onSubmitHandler = async (request: any) => {
+		try {
+			await axiosPost('/productCategories', request);
+			notify('New category created', { type: 'success' });
+		} catch (error: any) {
+			notify('Unable to create new category', { type: 'error' });
+		}
+	};
+
 	return (
-		<Create title="Add new product categories">
-			<SimpleForm>
-				<TextInput source="name" validate={required()} />
-			</SimpleForm>
-		</Create>
+		<SimpleForm onSubmit={onSubmitHandler}>
+			<TextInput source="name" validate={required()} />
+		</SimpleForm>
 	);
 }
