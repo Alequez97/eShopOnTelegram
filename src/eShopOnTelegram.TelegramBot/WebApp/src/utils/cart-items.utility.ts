@@ -1,11 +1,13 @@
-import { CartItem } from "../types/cart-item.type";
+import { CartItem } from '../types/cart-item.type';
 
 export function getCartItemsAsJsonString(cartItems: CartItem[]) {
-    let products: string[] = [];
+	const products: string[] = [];
 
-    cartItems.forEach(cartItem => {
-        products.push(`{"productAttributeId":"${cartItem.productAttribute.id}", "originalPrice":${cartItem.productAttribute.originalPrice}, "priceWithDiscount":${cartItem.productAttribute?.priceWithDiscount}, "quantity":${cartItem.quantity}}`);
-    })
+	cartItems.forEach((cartItem) => {
+		products.push(
+			`{"productAttributeId":"${cartItem.productAttribute.id}", "originalPrice":${cartItem.productAttribute.originalPrice}, "priceWithDiscount":${cartItem.productAttribute?.priceWithDiscount}, "quantity":${cartItem.quantity}}`,
+		);
+	});
 
-    return `{"cartItems":[${products.join(',')}]}`;
+	return `{"cartItems":[${products.join(',')}]}`;
 }

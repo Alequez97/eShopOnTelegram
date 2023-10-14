@@ -1,8 +1,8 @@
-import { ProductAttribute } from "./product-attribute.type"
+import { ProductAttribute } from './product-attribute.type';
 
 export interface Product {
-    id: number
-    name: string
-    productCategoryName: string
-    productAttributes: ProductAttribute[]
+	id: number;
+	name: string;
+	productCategoryName: string;
+	productAttributes: ProductAttribute[];
 }
