@@ -1,13 +1,13 @@
-﻿using eShopOnTelegram.Utils.Extensions;
-
-using System.Reflection;
+﻿using System.Reflection;
 using System.Text;
+
+using eShopOnTelegram.Utils.Extensions;
 
 namespace eShopOnTelegram.Utils.TypeScriptGenerator;
 public class TypeScriptGenerator
 {
-    private List<Type> _types = new();
-    private StringBuilder _typeScriptDefinition = new();
+    private readonly List<Type> _types = new();
+    private readonly StringBuilder _typeScriptDefinition = new();
 
     public TypeScriptGenerator WithType(Type type)
     {
@@ -45,6 +45,19 @@ public class TypeScriptGenerator
         return this;
     }
 
+    public TypeScriptGenerator WithTypesContainingNamespace(Assembly assembly, string namespaceName)
+    {
+        var typesInNamespace = assembly.GetTypes()
+            .Where(type => type.Namespace != null && type.Namespace.Contains(namespaceName));
+
+        foreach (var type in typesInNamespace)
+        {
+            WithType(type);
+        }
+
+        return this;
+    }
+
     public string GenerateTypeScriptTypes()
     {
         foreach (Type csharpType in _types)
@@ -52,6 +65,10 @@ public class TypeScriptGenerator
             if (csharpType.IsEnum)
             {
                 AddTypeScriptEnum(csharpType);
+            }
+            else if (csharpType.IsInterface)
+            {
+                AddTypeScriptInterface(csharpType);
             }
             else if (csharpType.IsClass)
             {
@@ -76,6 +93,25 @@ public class TypeScriptGenerator
             string enumName = Enum.GetName(csharpEnumType, enumValues.GetValue(i));
             int enumValue = (int)enumValues.GetValue(i);
             _typeScriptDefinition.Append($"  {enumName} = {enumValue},\n");
+        }
+
+        _typeScriptDefinition.AppendLine("}");
+        _typeScriptDefinition.AppendLine();
+    }
+
+    private void AddTypeScriptInterface(Type csharpInterface)
+    {
+        _typeScriptDefinition.Append($"export interface {csharpInterface.Name} {{\n");
+
+        var interfaceProperties = csharpInterface.GetProperties();
+        foreach (var property in interfaceProperties)
+        {
+            string propertyName = property.Name;
+            Type propertyType = property.PropertyType;
+
+            string tsType = MapCSharpTypeToTypeScriptType(propertyType);
+
+            _typeScriptDefinition.Append($"  {propertyName}: {tsType};\n");
         }
 
         _typeScriptDefinition.AppendLine("}");
@@ -117,10 +153,12 @@ public class TypeScriptGenerator
             return MapCSharpTypeToTypeScriptType(underlyingType);
         }
 
+        // TODO: Support nullable reference types
+
         if (csharpType.IsGenericType)
         {
             var genericType = csharpType.GetGenericTypeDefinition();
-            if (genericType == typeof(List<>))
+            if (genericType == typeof(List<>) || genericType == typeof(IList<>))
             {
                 var genericArgumentType = csharpType.GetGenericArguments()[0];
                 var elementTypeScriptType = MapCSharpTypeToTypeScriptType(genericArgumentType);
@@ -144,8 +182,10 @@ public class TypeScriptGenerator
             Type t when t == typeof(ushort) => "number",
             Type t when t == typeof(string) => "string",
             Type t when t == typeof(object) => "any",
-            Type t when t.IsClass => t.Name,
             Type t when t.IsEnum => t.Name,
+            Type t when t.IsArray => $"{MapCSharpTypeToTypeScriptType(t.GetElementType())}[]",
+            Type t when t.IsInterface => t.Name,
+            Type t when t.IsClass => t.Name,
             _ => throw new ArgumentException($"Unsupported C# type: {csharpType.Name}")
         };
     }

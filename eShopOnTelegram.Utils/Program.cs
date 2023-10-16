@@ -1,10 +1,10 @@
-﻿using eShopOnTelegram.Domain.Requests.Products;
+﻿using eShopOnTelegram.Domain.Requests.ProductAttributes;
 using eShopOnTelegram.Utils.TypeScriptGenerator;
 
 var typeScriptGenerator = new TypeScriptGenerator();
 
 typeScriptGenerator
-    .WithTypesFromNamespace(typeof(CreateProductRequest).Namespace);
+    .WithType(typeof(CreateProductAttributeRequest));
 
 var typeScriptTypes = typeScriptGenerator.GenerateTypeScriptTypes();
 
