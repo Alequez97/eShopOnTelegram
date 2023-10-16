@@ -4,13 +4,17 @@ import {
 	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
 } from './types/auth.type';
 import { login } from './utils/auth.utility';
+import { AxiosError } from 'axios';
 
 export const authProvider = {
 	login: async (request: LoginRequest) => {
 		try {
 			await login(request);
-		} catch (error: any) {
-			if (error?.response?.status === 400) {
+		} catch (error: unknown) {
+			if (
+				error instanceof AxiosError &&
+				error?.response?.status === 400
+			) {
 				throw new Error('Wrong credentials');
 			}
 
@@ -37,7 +41,7 @@ export const authProvider = {
 		return Promise.resolve();
 	},
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	checkAuth: (_: LoginRequest) => {
 		const accessToken = localStorage.getItem(
 			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
@@ -54,7 +58,7 @@ export const authProvider = {
 	},
 
 	// when the dataProvider returns an error, check if this is an authentication error
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line
 	checkError: (_: any) => {
 		return Promise.resolve();
 	},

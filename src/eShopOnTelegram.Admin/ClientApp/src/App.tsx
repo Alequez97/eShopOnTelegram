@@ -1,5 +1,12 @@
 import restProvider from 'ra-data-simple-rest';
-import { Admin, fetchUtils, Login, Resource } from 'react-admin';
+import {
+	Admin,
+	fetchUtils,
+	HttpError,
+	Login,
+	Options,
+	Resource,
+} from 'react-admin';
 import ProductCategoriesList from './components/product-categories/ProductCategoriesList';
 import ProductCategoriesCreate from './components/product-categories/ProductCategoriesCreate';
 import ProductCreate from './components/products/ProductCreate';
@@ -20,21 +27,24 @@ import { UserCreate } from './components/users/UserCreate';
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? '/api';
 
-const httpClient = async (url: string, options: any = {}) => {
+const httpClient = async (url: string, options: Options = {}) => {
 	if (!options.headers) {
 		options.headers = new Headers({ Accept: 'application/json' });
 	}
 
 	const accessToken = localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
 	if (accessToken) {
-		options.headers.set('Authorization', `Bearer ${accessToken}`);
+		(options.headers as Headers).set(
+			'Authorization',
+			`Bearer ${accessToken}`,
+		);
 	}
 
 	try {
 		const response = await fetchUtils.fetchJson(url, options);
 		return Promise.resolve(response);
-	} catch (error: any) {
-		if (error?.status === 401) {
+	} catch (error: unknown) {
+		if (error instanceof HttpError && error?.status === 401) {
 			const refreshToken = localStorage.getItem(
 				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
 			);
@@ -42,7 +52,7 @@ const httpClient = async (url: string, options: any = {}) => {
 				try {
 					const newAccessToken =
 						await refreshAccessToken(refreshToken);
-					options.headers.set(
+					(options.headers as Headers).set(
 						'Authorization',
 						`Bearer ${newAccessToken}`,
 					);

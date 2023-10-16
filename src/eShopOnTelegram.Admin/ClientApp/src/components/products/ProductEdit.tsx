@@ -15,12 +15,13 @@ import { validatePriceWithDiscountShouldBeLessThanOriginalPrice } from '../../va
 import { fileToBase64 } from '../../utils/file.utility';
 import { replaceEmptyKeysWithNull } from '../../utils/object.utility';
 import axios from 'axios';
+import { FieldValues } from 'react-hook-form';
 
 export function ProductEdit() {
 	const notify = useNotify();
 	const redirect = useRedirect();
 
-	const handleProductUpdate = async (request: any) => {
+	const handleProductUpdate = async (request: FieldValues) => {
 		try {
 			for (
 				let index = 0;

@@ -18,12 +18,13 @@ import {
 } from '../../validations/product.validation';
 import { axiosGet, axiosPost } from '../../utils/axios.utility';
 import { useEffect, useState } from 'react';
+import { FieldValues } from 'react-hook-form';
 
 function ProductCreate() {
 	const notify = useNotify();
 	const redirect = useRedirect();
 
-	const handleProductCreate = async (request: any) => {
+	const handleProductCreate = async (request: FieldValues) => {
 		try {
 			for (
 				let index = 0;

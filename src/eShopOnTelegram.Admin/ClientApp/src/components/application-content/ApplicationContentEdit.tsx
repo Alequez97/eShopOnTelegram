@@ -29,7 +29,7 @@ const ApplicationContentEdit: React.FC = () => {
 				notify('Application content data saved', { type: 'success' });
 				refresh();
 			}
-		} catch (error: any) {
+		} catch (error: unknown) {
 			notify('Error saving application content data', {
 				type: 'error',
 			});

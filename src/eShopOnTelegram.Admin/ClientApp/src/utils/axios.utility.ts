@@ -1,6 +1,4 @@
-/* eslint-disable */
-
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
 	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
 	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
@@ -18,8 +16,12 @@ export const axiosGet = async (url: string) => {
 		});
 
 		return data;
-	} catch (error: any) {
-		if (error?.response.status === 401) {
+	} catch (error: unknown) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status === 401
+		) {
 			const refreshToken = localStorage.getItem(
 				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
 			);
@@ -39,7 +41,7 @@ export const axiosGet = async (url: string) => {
 	}
 };
 
-export const axiosPost = async (url: string, request: any) => {
+export const axiosPost = async <T>(url: string, request: T) => {
 	try {
 		const accessToken = localStorage.getItem(
 			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
@@ -50,8 +52,12 @@ export const axiosPost = async (url: string, request: any) => {
 		});
 
 		return data;
-	} catch (error: any) {
-		if (error?.response.status === 401) {
+	} catch (error: unknown) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status === 401
+		) {
 			const refreshToken = localStorage.getItem(
 				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
 			);
@@ -71,7 +77,7 @@ export const axiosPost = async (url: string, request: any) => {
 	}
 };
 
-export const axiosPatch = async (url: string, request: any) => {
+export const axiosPatch = async <T>(url: string, request: T) => {
 	try {
 		const accessToken = localStorage.getItem(
 			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
@@ -82,8 +88,12 @@ export const axiosPatch = async (url: string, request: any) => {
 		});
 
 		return data;
-	} catch (error: any) {
-		if (error?.response.status === 401) {
+	} catch (error: unknown) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status === 401
+		) {
 			const refreshToken = localStorage.getItem(
 				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
 			);

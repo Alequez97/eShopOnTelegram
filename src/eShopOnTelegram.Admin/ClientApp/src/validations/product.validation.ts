@@ -1,11 +1,15 @@
+import { CreateProductAttributeRequest } from '../types/api.type';
+import { FieldValues } from 'react-hook-form';
+
 export const validatePriceWithDiscountShouldBeLessThanOriginalPrice = (
-	value: any,
-	allValues: any,
+	_: CreateProductAttributeRequest,
+	allValues: FieldValues,
 ) => {
 	const hasValidationError = allValues.productAttributes.some(
-		(productAttribute: any) =>
-			productAttribute.priceWithDiscount >=
-			productAttribute.originalPrice,
+		(productAttribute: CreateProductAttributeRequest) =>
+			productAttribute.priceWithDiscount &&
+			productAttribute?.priceWithDiscount >=
+				productAttribute.originalPrice,
 	);
 	if (hasValidationError) {
 		return 'Discounted price should be less than the original price';
@@ -13,6 +17,7 @@ export const validatePriceWithDiscountShouldBeLessThanOriginalPrice = (
 	return undefined; // Return undefined if the validation passes
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const validateFileExtension = (imageObject: any) => {
 	const allowedExtensions = ['png', 'jpeg', 'jpg', 'gif'];
 

@@ -7,8 +7,9 @@ import {
 	useNotify,
 } from 'react-admin';
 import { axiosPost } from '../../utils/axios.utility';
+import { FieldValues } from 'react-hook-form';
 
-const validatePassword = (value: any) => {
+const validatePassword = (value: string) => {
 	if (value.length < 6) {
 		return 'Passwords must be at least 6 characters.';
 	}
@@ -27,11 +28,11 @@ const validatePassword = (value: any) => {
 export const UserCreate = () => {
 	const notify = useNotify();
 
-	const onSubmitHandler = async (request: any) => {
+	const onSubmitHandler = async (request: FieldValues) => {
 		try {
 			await axiosPost('/users', request);
 			notify('New user created', { type: 'success' });
-		} catch (error: any) {
+		} catch (error: unknown) {
 			notify('Unable to create new user', { type: 'error' });
 		}
 	};
