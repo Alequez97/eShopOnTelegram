@@ -83,6 +83,11 @@ public class TypeScriptGenerator
         return _typeScriptDefinition.ToString();
     }
 
+    public void Clear()
+    {
+        _types.Clear();
+    }
+
     private void AddTypeScriptEnum(Type csharpEnumType)
     {
         _typeScriptDefinition.Append($"export enum {csharpEnumType.Name} {{\n");

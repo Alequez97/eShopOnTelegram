@@ -30,7 +30,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.TelegramBot
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopOnTelegram.Notifications", "src\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj", "{202CF239-842A-44CA-B9FD-B39AF6D31B03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.Utils", "eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj", "{4BC19481-9F4E-4B11-A724-9BEF43D5D571}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eShopOnTelegram.Utils", "src\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj", "{4BC19481-9F4E-4B11-A724-9BEF43D5D571}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

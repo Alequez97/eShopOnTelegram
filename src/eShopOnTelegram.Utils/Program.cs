@@ -1,11 +1,13 @@
-﻿using eShopOnTelegram.Domain.Requests.ProductAttributes;
+﻿using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Utils.TypeScriptGenerator;
 
 var typeScriptGenerator = new TypeScriptGenerator();
 
 typeScriptGenerator
-    .WithType(typeof(CreateProductAttributeRequest));
+    .WithTypesContainingNamespace(typeof(GetRequest).Assembly, typeof(GetRequest).Namespace);
 
 var typeScriptTypes = typeScriptGenerator.GenerateTypeScriptTypes();
+
+File.WriteAllText("./api.type.ts", typeScriptTypes);
 
 Console.WriteLine(typeScriptTypes);
