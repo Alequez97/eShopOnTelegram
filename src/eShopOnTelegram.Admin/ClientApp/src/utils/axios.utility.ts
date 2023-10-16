@@ -6,86 +6,35 @@ import {
 import { refreshAccessToken } from './auth.utility';
 
 export const axiosGet = async (url: string) => {
-	try {
-		const accessToken = localStorage.getItem(
-			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-		);
-
-		const { data } = await axios.get(url, {
-			headers: { Authorization: `Bearer ${accessToken}` },
-		});
-
-		return data;
-	} catch (error: unknown) {
-		if (
-			error instanceof AxiosError &&
-			error.response &&
-			error.response.status === 401
-		) {
-			const refreshToken = localStorage.getItem(
-				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-			);
-			if (refreshToken) {
-				const newAccessToken = await refreshAccessToken(refreshToken);
-				const { data } = await axios.get(url, {
-					headers: {
-						Authorization: `Bearer ${newAccessToken}`,
-					},
-				});
-
-				return data;
-			}
-		}
-
-		throw error;
-	}
+	return axiosRequestWithRefreshToken('get', url);
 };
 
 export const axiosPost = async <T>(url: string, request: T) => {
-	try {
-		const accessToken = localStorage.getItem(
-			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-		);
-
-		const { data } = await axios.post(url, request, {
-			headers: { Authorization: `Bearer ${accessToken}` },
-		});
-
-		return data;
-	} catch (error: unknown) {
-		if (
-			error instanceof AxiosError &&
-			error.response &&
-			error.response.status === 401
-		) {
-			const refreshToken = localStorage.getItem(
-				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-			);
-			if (refreshToken) {
-				const newAccessToken = await refreshAccessToken(refreshToken);
-				const { data } = await axios.post(url, request, {
-					headers: {
-						Authorization: `Bearer ${newAccessToken}`,
-					},
-				});
-
-				return data;
-			}
-		}
-
-		throw error;
-	}
+	return axiosRequestWithRefreshToken('post', url, request);
 };
 
 export const axiosPatch = async <T>(url: string, request: T) => {
+	return axiosRequestWithRefreshToken('patch', url, request);
+};
+
+const axiosRequestWithRefreshToken = async <T>(
+	method: string,
+	url: string,
+	request?: T,
+) => {
 	try {
 		const accessToken = localStorage.getItem(
 			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
 		);
 
-		const { data } = await axios.patch(url, request, {
+		const config = {
+			method,
+			url,
 			headers: { Authorization: `Bearer ${accessToken}` },
-		});
+			data: request,
+		};
+
+		const { data } = await axios(config);
 
 		return data;
 	} catch (error: unknown) {
@@ -99,11 +48,15 @@ export const axiosPatch = async <T>(url: string, request: T) => {
 			);
 			if (refreshToken) {
 				const newAccessToken = await refreshAccessToken(refreshToken);
-				const { data } = await axios.patch(url, {
-					headers: {
-						Authorization: `Bearer ${newAccessToken}`,
-					},
-				});
+
+				const config = {
+					method,
+					url,
+					headers: { Authorization: `Bearer ${newAccessToken}` },
+					data: request,
+				};
+
+				const { data } = await axios(config);
 
 				return data;
 			}
