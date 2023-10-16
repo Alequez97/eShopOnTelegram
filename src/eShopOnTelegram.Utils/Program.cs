@@ -8,6 +8,6 @@ typeScriptGenerator
 
 var typeScriptTypes = typeScriptGenerator.GenerateTypeScriptTypes();
 
-File.WriteAllText("./api.type.ts", typeScriptTypes);
+File.WriteAllText("../../../../eShopOnTelegram.Admin/ClientApp/src/types/api.type.ts", typeScriptTypes);
 
-Console.WriteLine(typeScriptTypes);
+Console.WriteLine("Generation finished!!!");

@@ -1,5 +1,5 @@
 export const fileToBase64 = async (file: File): Promise<string | null> => {
-	return new Promise<string | null>((resolve) => {
+	return new Promise<string>((resolve, reject) => {
 		const reader = new FileReader();
 
 		reader.onload = (event) => {
@@ -9,12 +9,12 @@ export const fileToBase64 = async (file: File): Promise<string | null> => {
 					.split(',')[1];
 				resolve(base64String);
 			} else {
-				resolve(null);
+				reject();
 			}
 		};
 
 		reader.onerror = () => {
-			resolve(null);
+			reject();
 		};
 
 		reader.readAsDataURL(file);

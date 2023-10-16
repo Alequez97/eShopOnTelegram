@@ -132,7 +132,7 @@ public class TypeScriptGenerator
 
     private void AddTypeScriptType(Type csharpClassType)
     {
-        _typeScriptDefinition.Append($"export type {csharpClassType.Name} = {{\n");
+        _typeScriptDefinition.Append($"export interface {csharpClassType.Name} {{\n");
 
         var properties = csharpClassType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
