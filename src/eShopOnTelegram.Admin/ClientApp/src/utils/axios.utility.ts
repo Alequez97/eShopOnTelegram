@@ -22,19 +22,18 @@ const axiosRequestWithRefreshToken = async <T>(
 	url: string,
 	request?: T,
 ) => {
+	const getAxiosRequestConfig = (accessToken: string | null) => ({
+		method,
+		url,
+		headers: { Authorization: `Bearer ${accessToken}` },
+		data: request,
+	});
+
 	try {
 		const accessToken = localStorage.getItem(
 			ACCESS_TOKEN_LOCAL_STORAGE_KEY,
 		);
-
-		const config = {
-			method,
-			url,
-			headers: { Authorization: `Bearer ${accessToken}` },
-			data: request,
-		};
-
-		const { data } = await axios(config);
+		const { data } = await axios(getAxiosRequestConfig(accessToken));
 
 		return data;
 	} catch (error: unknown) {
@@ -49,14 +48,9 @@ const axiosRequestWithRefreshToken = async <T>(
 			if (refreshToken) {
 				const newAccessToken = await refreshAccessToken(refreshToken);
 
-				const config = {
-					method,
-					url,
-					headers: { Authorization: `Bearer ${newAccessToken}` },
-					data: request,
-				};
-
-				const { data } = await axios(config);
+				const { data } = await axios(
+					getAxiosRequestConfig(newAccessToken),
+				);
 
 				return data;
 			}
