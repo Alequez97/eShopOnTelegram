@@ -106,12 +106,19 @@ public class TypeScriptGenerator
         var interfaceProperties = csharpInterface.GetProperties();
         foreach (var property in interfaceProperties)
         {
-            string propertyName = property.Name;
+            string propertyName = property.Name.ToCamelCase();
             Type propertyType = property.PropertyType;
 
             string tsType = MapCSharpTypeToTypeScriptType(propertyType);
 
-            _typeScriptDefinition.Append($"  {propertyName}: {tsType};\n");
+            if (property.IsNullable())
+            {
+                _typeScriptDefinition.Append($"  {propertyName}?: {tsType};\n");
+            }
+            else
+            {
+                _typeScriptDefinition.Append($"  {propertyName}: {tsType};\n");
+            }
         }
 
         _typeScriptDefinition.AppendLine("}");
@@ -130,7 +137,7 @@ public class TypeScriptGenerator
             Type propertyType = property.PropertyType;
             string tsType = MapCSharpTypeToTypeScriptType(propertyType);
             
-            if (propertyType.IsNullableType())
+            if (property.IsNullable())
             {
                 _typeScriptDefinition.Append($"  {propertyName}?: {tsType};\n");
             }
@@ -183,7 +190,7 @@ public class TypeScriptGenerator
             Type t when t == typeof(string) => "string",
             Type t when t == typeof(object) => "any",
             Type t when t.IsEnum => t.Name,
-            Type t when t.IsArray => $"{MapCSharpTypeToTypeScriptType(t.GetElementType())}[]",
+            Type t when t.IsArray => $"{MapCSharpTypeToTypeScriptType(t.GetElementType())}[]", 
             Type t when t.IsInterface => t.Name,
             Type t when t.IsClass => t.Name,
             _ => throw new ArgumentException($"Unsupported C# type: {csharpType.Name}")
