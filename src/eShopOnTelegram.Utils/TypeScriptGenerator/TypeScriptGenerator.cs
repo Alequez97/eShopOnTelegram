@@ -6,8 +6,22 @@ using eShopOnTelegram.Utils.Extensions;
 namespace eShopOnTelegram.Utils.TypeScriptGenerator;
 public class TypeScriptGenerator
 {
-    private readonly List<Type> _types = new();
-    private readonly StringBuilder _typeScriptDefinition = new();
+    private List<Type> _types = new();
+    private Dictionary<string, string> _namesReplacements = new();
+    private StringBuilder _typeScriptDefinition = new();
+
+    private readonly StringComparison _stringComparison;
+
+    public TypeScriptGenerator(StringComparison stringComparison)
+    {
+        _stringComparison = stringComparison;
+    }
+
+    public TypeScriptGenerator WithTypeNameReplacement(string csharpTypeNamePart, string typeScriptTypeNamePart)
+    {
+        _namesReplacements.Add(csharpTypeNamePart, typeScriptTypeNamePart);
+        return this;
+    }
 
     public TypeScriptGenerator WithType(Type type)
     {
@@ -62,17 +76,23 @@ public class TypeScriptGenerator
     {
         foreach (Type csharpType in _types)
         {
+            string typeScriptTypeName = csharpType.Name;
+            foreach (var (cSharpTypeReplacement, typeScriptTypeReplacement) in _namesReplacements)
+            {
+                typeScriptTypeName = typeScriptTypeName.Replace(cSharpTypeReplacement, typeScriptTypeReplacement, _stringComparison);
+            }
+
             if (csharpType.IsEnum)
             {
-                AddTypeScriptEnum(csharpType);
+                AddTypeScriptEnum(csharpType, typeScriptTypeName);
             }
             else if (csharpType.IsInterface)
             {
-                AddTypeScriptInterface(csharpType);
+                AddTypeScriptInterface(csharpType, typeScriptTypeName);
             }
             else if (csharpType.IsClass)
             {
-                AddTypeScriptType(csharpType);
+                AddTypeScriptType(csharpType, typeScriptTypeName);
             }
             else
             {
@@ -83,14 +103,17 @@ public class TypeScriptGenerator
         return _typeScriptDefinition.ToString();
     }
 
-    public void Clear()
+    public TypeScriptGenerator Clear()
     {
-        _types.Clear();
+        _types = new();
+        _typeScriptDefinition = new();
+        _namesReplacements = new();
+        return this;
     }
 
-    private void AddTypeScriptEnum(Type csharpEnumType)
+    private void AddTypeScriptEnum(Type csharpEnumType, string typeScriptTypeName)
     {
-        _typeScriptDefinition.Append($"export enum {csharpEnumType.Name} {{\n");
+        _typeScriptDefinition.Append($"export enum {typeScriptTypeName} {{\n");
 
         var enumValues = Enum.GetValues(csharpEnumType);
         for (int i = 0; i < enumValues.Length; i++)
@@ -104,9 +127,9 @@ public class TypeScriptGenerator
         _typeScriptDefinition.AppendLine();
     }
 
-    private void AddTypeScriptInterface(Type csharpInterface)
+    private void AddTypeScriptInterface(Type csharpInterface, string typeScriptTypeName)
     {
-        _typeScriptDefinition.Append($"export interface {csharpInterface.Name} {{\n");
+        _typeScriptDefinition.Append($"export interface {typeScriptTypeName} {{\n");
 
         var interfaceProperties = csharpInterface.GetProperties();
         foreach (var property in interfaceProperties)
@@ -114,15 +137,19 @@ public class TypeScriptGenerator
             string propertyName = property.Name.ToCamelCase();
             Type propertyType = property.PropertyType;
 
-            string tsType = MapCSharpTypeToTypeScriptType(propertyType);
+            string tsPropertyTypeName = MapCSharpTypeToTypeScriptType(propertyType);
+            foreach (var (cSharpTypeReplacement, typeScriptTypeReplacement) in _namesReplacements)
+            {
+                tsPropertyTypeName = tsPropertyTypeName.Replace(cSharpTypeReplacement, typeScriptTypeReplacement, _stringComparison);
+            }
 
             if (property.IsNullable())
             {
-                _typeScriptDefinition.Append($"  {propertyName}?: {tsType};\n");
+                _typeScriptDefinition.Append($"  {propertyName}?: {tsPropertyTypeName};\n");
             }
             else
             {
-                _typeScriptDefinition.Append($"  {propertyName}: {tsType};\n");
+                _typeScriptDefinition.Append($"  {propertyName}: {tsPropertyTypeName};\n");
             }
         }
 
@@ -130,25 +157,30 @@ public class TypeScriptGenerator
         _typeScriptDefinition.AppendLine();
     }
 
-    private void AddTypeScriptType(Type csharpClassType)
+    private void AddTypeScriptType(Type csharpClassType, string typeScriptTypeName)
     {
-        _typeScriptDefinition.Append($"export interface {csharpClassType.Name} {{\n");
+        _typeScriptDefinition.Append($"export interface {typeScriptTypeName} {{\n");
 
         var properties = csharpClassType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
 
         foreach (var property in properties)
         {
             string propertyName = property.Name.ToCamelCase();
+
             Type propertyType = property.PropertyType;
-            string tsType = MapCSharpTypeToTypeScriptType(propertyType);
-            
+            string tsPropertyTypeName = MapCSharpTypeToTypeScriptType(propertyType);
+            foreach (var (cSharpTypeReplacement, typeScriptTypeReplacement) in _namesReplacements)
+            {
+                tsPropertyTypeName = tsPropertyTypeName.Replace(cSharpTypeReplacement, typeScriptTypeReplacement, _stringComparison);
+            }
+
             if (property.IsNullable())
             {
-                _typeScriptDefinition.Append($"  {propertyName}?: {tsType};\n");
+                _typeScriptDefinition.Append($"  {propertyName}?: {tsPropertyTypeName};\n");
             }
             else
             {
-                _typeScriptDefinition.Append($"  {propertyName}: {tsType};\n");
+                _typeScriptDefinition.Append($"  {propertyName}: {tsPropertyTypeName};\n");
             }
         }
 
@@ -170,7 +202,7 @@ public class TypeScriptGenerator
         if (csharpType.IsGenericType)
         {
             var genericType = csharpType.GetGenericTypeDefinition();
-            if (genericType == typeof(List<>) || genericType == typeof(IList<>))
+            if (genericType == typeof(List<>) || genericType == typeof(IList<>) || genericType == typeof(IEnumerable<>))
             {
                 var genericArgumentType = csharpType.GetGenericArguments()[0];
                 var elementTypeScriptType = MapCSharpTypeToTypeScriptType(genericArgumentType);
@@ -194,8 +226,9 @@ public class TypeScriptGenerator
             Type t when t == typeof(ushort) => "number",
             Type t when t == typeof(string) => "string",
             Type t when t == typeof(object) => "any",
+            Type t when t.Name == "DateTime" => "Date",
             Type t when t.IsEnum => t.Name,
-            Type t when t.IsArray => $"{MapCSharpTypeToTypeScriptType(t.GetElementType())}[]", 
+            Type t when t.IsArray => $"{MapCSharpTypeToTypeScriptType(t.GetElementType())}[]",
             Type t when t.IsInterface => t.Name,
             Type t when t.IsClass => t.Name,
             _ => throw new ArgumentException($"Unsupported C# type: {csharpType.Name}")

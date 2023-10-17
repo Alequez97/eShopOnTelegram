@@ -1,4 +1,4 @@
-export interface GetRequest {
+﻿export interface GetRequest {
   filter?: string;
   range?: string;
   sort?: string;

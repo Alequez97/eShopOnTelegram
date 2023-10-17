@@ -1,9 +1,7 @@
 ﻿namespace eShopOnTelegram.Domain.Dto.ProductAttributes;
 
-public class ProductAttributeDto
+public class ProductAttributeDto : DtoBase
 {
-    public required long Id { get; set; }
-
     public string? Color { get; set; }
 
     public string? Size { get; set; }
