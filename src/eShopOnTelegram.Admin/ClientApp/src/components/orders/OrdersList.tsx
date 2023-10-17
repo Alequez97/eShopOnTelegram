@@ -2,12 +2,29 @@ import {
 	Datagrid,
 	DateField,
 	List,
-	TextField,
 	ShowButton,
+	SimpleList,
+	TextField,
 } from 'react-admin';
+import { useMediaQuery } from 'react-responsive';
+import { Order } from '../../types/api-response.type';
 
 export default function OrdersList() {
-	return (
+	const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+
+	return isMobile ? (
+		<List>
+			<SimpleList
+				primaryText={(order: Order) => `${order.orderNumber}`}
+				secondaryText={(order: Order) =>
+					`Total price: ${order.totalPrice}`
+				}
+				tertiaryText={(order: Order) => order.status}
+				linkType={'show'}
+				rowSx={() => ({ border: '1px solid #eee' })}
+			/>
+		</List>
+	) : (
 		<List>
 			<Datagrid bulkActionButtons={false}>
 				<TextField source="orderNumber" sortable={false} />

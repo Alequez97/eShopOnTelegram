@@ -16,6 +16,7 @@ export default function CustomersList() {
 				secondaryText={(customer: Customer) =>
 					customer.username ? customer.username : ''
 				}
+				rowSx={() => ({ border: '1px solid #eee' })}
 				tertiaryText={(customer: Customer) => customer.telegramUserUID}
 			/>
 		</List>

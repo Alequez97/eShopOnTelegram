@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosError } from 'axios';
 import {
 	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
 	LoginRequest,
@@ -23,14 +23,29 @@ export const refreshAccessToken = async () => {
 		throw new Error('Does not have refresh token');
 	}
 
-	const response = await axios.post('/auth/token/refresh', {
-		refreshToken,
-	});
+	try {
+		const response = await axios.post('/auth/token/refresh', {
+			refreshToken,
+		});
 
-	const newAccessToken = response.data.accessToken;
-	const newRefreshToken = response.data.refreshToken;
-	localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, newAccessToken);
-	localStorage.setItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY, newRefreshToken);
+		const newAccessToken = response.data.accessToken;
+		const newRefreshToken = response.data.refreshToken;
+		localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, newAccessToken);
+		localStorage.setItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY, newRefreshToken);
 
-	return newAccessToken;
+		return newAccessToken;
+	} catch (error: unknown) {
+		if (
+			error instanceof AxiosError &&
+			error.response &&
+			error.response.status === 400
+		) {
+			// Refresh token expired
+			localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
+			localStorage.removeItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY);
+			return;
+		}
+
+		throw error;
+	}
 };

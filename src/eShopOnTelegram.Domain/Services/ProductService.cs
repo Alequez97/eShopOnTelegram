@@ -7,6 +7,8 @@ using eShopOnTelegram.Persistence.Files.Interfaces;
 
 using Microsoft.Extensions.Configuration;
 
+using Newtonsoft.Json;
+
 namespace eShopOnTelegram.Domain.Services;
 
 public class ProductService : IProductService
@@ -32,13 +34,28 @@ public class ProductService : IProductService
     {
         try
         {
-            var products = await _dbContext.Products
+            var productsQuery = _dbContext.Products
                 .Where(product => product.IsDeleted == false)
                 .Include(product => product.Category)
                 .Include(product => product.ProductAttributes)
-                .WithPagination(request.PaginationModel)
-            .ToListAsync(cancellationToken);
+                .WithPagination(request.PaginationModel);
 
+            if (request.Filter != null && request.Filter != "{}")
+            {
+                var filterProperties = JsonConvert.DeserializeObject<ProductFilterModel>(request.Filter);
+
+                if (!string.IsNullOrWhiteSpace(filterProperties.Name))
+                {
+                    productsQuery = productsQuery.Where(product => product.Name.StartsWith(filterProperties.Name));
+                }
+
+                if (!string.IsNullOrWhiteSpace(filterProperties.ProductCategoryName))
+                {
+                    productsQuery = productsQuery.Where(product => product.Category.Name.StartsWith(filterProperties.ProductCategoryName));
+                }
+            }
+
+            var products = await productsQuery.ToListAsync(cancellationToken);
             var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
 
             return new Response<IEnumerable<ProductDto>>()
