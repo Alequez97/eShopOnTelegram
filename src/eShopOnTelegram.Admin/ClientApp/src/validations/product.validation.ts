@@ -1,4 +1,4 @@
-import { CreateProductAttributeRequest } from '../types/api.type';
+import { CreateProductAttributeRequest } from '../types/api-request.type';
 import { FieldValues } from 'react-hook-form';
 
 export const validatePriceWithDiscountShouldBeLessThanOriginalPrice = (

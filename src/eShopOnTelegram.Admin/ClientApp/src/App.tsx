@@ -18,10 +18,7 @@ import { ProductEdit } from './components/products/ProductEdit';
 import ApplicationContentEdit from './components/application-content/ApplicationContentEdit';
 import OrderDetails from './components/orders/OrderDetails';
 import { authProvider } from './AuthProvider';
-import {
-	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-} from './types/auth.type';
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from './types/auth.type';
 import { refreshAccessToken } from './utils/auth.utility';
 import { UserCreate } from './components/users/UserCreate';
 
@@ -45,27 +42,23 @@ const httpClient = async (url: string, options: Options = {}) => {
 		return Promise.resolve(response);
 	} catch (error: unknown) {
 		if (error instanceof HttpError && error?.status === 401) {
-			const refreshToken = localStorage.getItem(
-				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-			);
-			if (refreshToken) {
-				try {
-					const newAccessToken =
-						await refreshAccessToken(refreshToken);
-					(options.headers as Headers).set(
-						'Authorization',
-						`Bearer ${newAccessToken}`,
-					);
+			try {
+				const newAccessToken = await refreshAccessToken();
+				(options.headers as Headers).set(
+					'Authorization',
+					`Bearer ${newAccessToken}`,
+				);
 
-					// Retry the original request with the new access token
-					const responseWithNewAccessToken =
-						await fetchUtils.fetchJson(url, options);
+				// Retry the original request with the new access token
+				const responseWithNewAccessToken = await fetchUtils.fetchJson(
+					url,
+					options,
+				);
 
-					return Promise.resolve(responseWithNewAccessToken);
-				} catch (refreshError) {
-					// Handle refresh token failure (e.g., redirect to login)
-					return Promise.reject(refreshError);
-				}
+				return Promise.resolve(responseWithNewAccessToken);
+			} catch (refreshError) {
+				// Handle refresh token failure (e.g., redirect to login)
+				return Promise.reject(refreshError);
 			}
 		}
 

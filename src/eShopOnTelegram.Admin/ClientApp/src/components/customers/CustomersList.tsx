@@ -1,7 +1,25 @@
-import { List, Datagrid, TextField } from 'react-admin';
+import { List, Datagrid, TextField, SimpleList } from 'react-admin';
+import { useMediaQuery } from 'react-responsive';
+import { Customer } from '../../types/api-response.type';
 
 export default function CustomersList() {
-	return (
+	const isMobile = useMediaQuery({ query: `(max-width: 760px)` });
+
+	return isMobile ? (
+		<List>
+			<SimpleList
+				primaryText={(customer: Customer) =>
+					`${customer.firstName} ${
+						customer.lastName ? customer.lastName : ''
+					}`
+				}
+				secondaryText={(customer: Customer) =>
+					customer.username ? customer.username : ''
+				}
+				tertiaryText={(customer: Customer) => customer.telegramUserUID}
+			/>
+		</List>
+	) : (
 		<List>
 			<Datagrid bulkActionButtons={false}>
 				<TextField

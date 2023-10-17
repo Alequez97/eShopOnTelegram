@@ -1,10 +1,10 @@
 import React from 'react';
-import { List, Datagrid, TextField, EditButton } from 'react-admin';
+import { Datagrid, EditButton, List, TextField } from 'react-admin';
 
 export default function ProductCategoriesList() {
 	return (
 		<List>
-			<Datagrid>
+			<Datagrid bulkActionButtons={false}>
 				<TextField source="name" sortable={true} />
 				<EditButton />
 			</Datagrid>

@@ -16,7 +16,13 @@ export const login = async (request: LoginRequest) => {
 	return auth;
 };
 
-export const refreshAccessToken = async (refreshToken: string) => {
+export const refreshAccessToken = async () => {
+	const refreshToken = localStorage.getItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY);
+
+	if (!refreshToken) {
+		throw new Error('Does not have refresh token');
+	}
+
 	const response = await axios.post('/auth/token/refresh', {
 		refreshToken,
 	});

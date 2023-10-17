@@ -1,8 +1,5 @@
-import axios, { AxiosError } from 'axios';
-import {
-	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-} from '../types/auth.type';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '../types/auth.type';
 import { refreshAccessToken } from './auth.utility';
 
 export const axiosGet = async (url: string) => {
@@ -22,7 +19,9 @@ const axiosRequestWithRefreshToken = async <T>(
 	url: string,
 	request?: T,
 ) => {
-	const getAxiosRequestConfig = (accessToken: string | null) => ({
+	const getAxiosRequestConfig = (
+		accessToken: string | null,
+	): AxiosRequestConfig => ({
 		method,
 		url,
 		headers: { Authorization: `Bearer ${accessToken}` },
@@ -42,18 +41,9 @@ const axiosRequestWithRefreshToken = async <T>(
 			error.response &&
 			error.response.status === 401
 		) {
-			const refreshToken = localStorage.getItem(
-				REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-			);
-			if (refreshToken) {
-				const newAccessToken = await refreshAccessToken(refreshToken);
-
-				const { data } = await axios(
-					getAxiosRequestConfig(newAccessToken),
-				);
-
-				return data;
-			}
+			const newAccessToken = await refreshAccessToken();
+			const { data } = await axios(getAxiosRequestConfig(newAccessToken));
+			return data;
 		}
 
 		throw error;
