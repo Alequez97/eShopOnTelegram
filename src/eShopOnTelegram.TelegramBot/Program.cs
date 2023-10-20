@@ -25,9 +25,10 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
 
+ConfigureAzureKeyVault(builder);
+
 var appSettings = ConfigureAppSettings(builder);
 
-ConfigureAzureKeyVault(builder, appSettings.AzureSettings);
 ConfigureServices(builder);
 ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
 ConfigureHostOptions(builder);
@@ -82,17 +83,24 @@ static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo r
     return appSettings;
 }
 
-static void ConfigureAzureKeyVault(WebApplicationBuilder builder, AzureSettings azureSettings)
+static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
     // Azure keyvault setup
-    if (!string.IsNullOrWhiteSpace(azureSettings.KeyVaultUri))
-    {
-        TokenCredential azureCredentials =
-            string.IsNullOrWhiteSpace(azureSettings.TenantId)
-         || string.IsNullOrWhiteSpace(azureSettings.ClientId)
-         || string.IsNullOrWhiteSpace(azureSettings.ClientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(azureSettings.TenantId, azureSettings.ClientId, azureSettings.ClientSecret);
+    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
+    var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
 
-        builder.Configuration.AddAzureKeyVault(new Uri(azureSettings.KeyVaultUri), azureCredentials);
+    if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+    {
+        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
+        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
+        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
+
+        TokenCredential azureCredentials =
+            string.IsNullOrWhiteSpace(tenantId)
+         || string.IsNullOrWhiteSpace(clientId)
+         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+
+        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
     }
 }
 

@@ -9,14 +9,6 @@ public class AppSettings
 
 public class AzureSettings
 {
-    public required string KeyVaultUri { get; init; }
-
-    public required string TenantId { get; init; }
-
-    public required string ClientId { get; init; }
-
-    public required string ClientSecret { get; init; }
-
     public required string AppInsightsConnectionString { get; init; }
 
     public required string StorageAccountConnectionString { get; init; }
