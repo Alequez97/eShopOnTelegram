@@ -1,5 +1,4 @@
-﻿using eShopOnTelegram.TelegramBot.Appsettings;
-using eShopOnTelegram.TelegramBot.Worker.Constants;
+﻿using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -13,7 +12,7 @@ public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvide
         return InlineKeyboardButton.WithCallbackData(text: "Pay with Plisio (crypto)", callbackData: PaymentMethodConstants.Plisio);
     }
 
-    public bool PaymentMethodEnabled(PaymentAppsettings paymentAppsettings)
+    public bool PaymentMethodEnabled(PaymentSettings paymentAppsettings)
     {
         return paymentAppsettings.Plisio.Enabled;
     }

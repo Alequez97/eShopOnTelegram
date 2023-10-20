@@ -4,7 +4,6 @@ using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
@@ -16,7 +15,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
     {
         private readonly ITelegramBotClient _telegramBot;
         private readonly ILogger<StartCommand> _logger;
-        private readonly TelegramAppsettings _telegramAppsettings;
+        private readonly TelegramBotSettings _telegramBotSettings;
         private readonly IApplicationContentStore _applicationContentStore;
         private readonly ICustomerService _customerService;
         private readonly IOrderService _orderService;
@@ -25,7 +24,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
         public StartCommand(
             ITelegramBotClient telegramBot,
             ILogger<StartCommand> logger,
-            TelegramAppsettings telegramAppsettings,
+            AppSettings appSettings,
             IApplicationContentStore applicationContentStore,
             ICustomerService customerService,
             IOrderService orderService,
@@ -33,7 +32,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
         {
             _telegramBot = telegramBot;
             _logger = logger;
-            _telegramAppsettings = telegramAppsettings;
+            _telegramBotSettings = appSettings.TelegramBotSettings;
             _applicationContentStore = applicationContentStore;
             _customerService = customerService;
             _orderService = orderService;
@@ -72,7 +71,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
                 }
 
                 var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
-                    .AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _telegramAppsettings.WebAppUrl });
+                    .AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _telegramBotSettings.WebAppUrl });
 
                 var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
                 if (getOrdersResponse.Status == ResponseStatus.Success)

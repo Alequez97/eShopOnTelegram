@@ -16,7 +16,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
-using eShopOnTelegram.TelegramBot.Appsettings;
+using eShopOnTelegram.TelegramBot;
 using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 
@@ -25,24 +25,25 @@ using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
 
-ConfigureAzureKeyVault(builder);
+var appSettings = ConfigureAppSettings(builder);
+
+ConfigureAzureKeyVault(builder, appSettings.AzureSettings);
 ConfigureServices(builder);
-ConfigureTelegramBotWorkerServices(builder);
+ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
 ConfigureHostOptions(builder);
-ConfigureAppSettings(builder);
 
 // External services
 builder.Services
     .AddPolicyRegistry()
     .AddHttpRetryPolicy();
 
-ConfigurePlisio(builder);
+ConfigurePlisio(builder, appSettings.PaymentSettings);
 ConfigureNotificationSenders(builder);
 
 // Controllers and views
 builder.Services.AddControllersWithViews();
 
-ConfigureApplicationInsights(builder);
+ConfigureApplicationInsights(builder, appSettings.AzureSettings);
 
 // App building
 var app = builder.Build();
@@ -72,24 +73,26 @@ app.MapFallbackToFile("index.html"); ;
 
 app.Run();
 
-static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
+static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
+{
+    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
+    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
+
+    builder.Services.AddSingleton(appSettings);
+    return appSettings;
+}
+
+static void ConfigureAzureKeyVault(WebApplicationBuilder builder, AzureSettings azureSettings)
 {
     // Azure keyvault setup
-    var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
-    var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
-
-    if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+    if (!string.IsNullOrWhiteSpace(azureSettings.KeyVaultUri))
     {
-        var tenantId = builder.Configuration["Azure:TenantId"];
-        var clientId = builder.Configuration["Azure:ClientId"];
-        var clientSecret = builder.Configuration["Azure:ClientSecret"];
-
         TokenCredential azureCredentials =
-            string.IsNullOrWhiteSpace(tenantId)
-         || string.IsNullOrWhiteSpace(clientId)
-         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+            string.IsNullOrWhiteSpace(azureSettings.TenantId)
+         || string.IsNullOrWhiteSpace(azureSettings.ClientId)
+         || string.IsNullOrWhiteSpace(azureSettings.ClientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(azureSettings.TenantId, azureSettings.ClientId, azureSettings.ClientSecret);
 
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
+        builder.Configuration.AddAzureKeyVault(new Uri(azureSettings.KeyVaultUri), azureCredentials);
     }
 }
 
@@ -113,15 +116,13 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
 }
 
-static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder)
+static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder, TelegramBotSettings telegramBotSettings)
 {
     // Telegram bot worker services
     builder.Services.AddTelegramCommandServices();
     builder.Services.AddSingleton<ITelegramBotClient>(_ =>
     {
-        var telegramAppsettings = builder.Configuration.GetSection<TelegramAppsettings>("Telegram");
-
-        return new TelegramBotClient(telegramAppsettings.Token);
+        return new TelegramBotClient(telegramBotSettings.Token);
     });
     builder.Services.AddHostedService<TelegramBot>();
 }
@@ -134,21 +135,14 @@ static void ConfigureHostOptions(WebApplicationBuilder builder)
     });
 }
 
-static void ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
-{
-    builder.Services.AddSingleton(builder.Configuration.GetSection<TelegramAppsettings>("Telegram"));
-    builder.Services.AddSingleton(builder.Configuration.GetSection<PaymentAppsettings>("Payment"));
-}
-
-static void ConfigureApplicationInsights(WebApplicationBuilder builder)
+static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSettings azureSettings)
 {
     // App insights logging
-    var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
-    if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+    if (!string.IsNullOrWhiteSpace(azureSettings.AppInsightsConnectionString))
     {
         builder.Logging.AddApplicationInsights(
                 configureTelemetryConfiguration: (config) =>
-                    config.ConnectionString = appInsightsConnectionString,
+                    config.ConnectionString = azureSettings.AppInsightsConnectionString,
                     configureApplicationInsightsLoggerOptions: (options) => { }
             );
 
@@ -169,7 +163,7 @@ static void ConfigureNotificationSenders(WebApplicationBuilder builder)
     });
 }
 
-static void ConfigurePlisio(WebApplicationBuilder builder)
+static void ConfigurePlisio(WebApplicationBuilder builder, PaymentSettings paymentSettings)
 {
     builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpClient) =>
     {
@@ -179,7 +173,6 @@ static void ConfigurePlisio(WebApplicationBuilder builder)
     // External services webhook validators
     builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ =>
     {
-        var plisioApiToken = builder.Configuration["Payment:Plisio:ApiToken"];
-        return new PlisioPaymentReceivedWebhookRequestValidator(plisioApiToken);
+        return new PlisioPaymentReceivedWebhookRequestValidator(paymentSettings.Plisio.ApiToken);
     });
 }

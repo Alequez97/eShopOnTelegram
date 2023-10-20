@@ -3,7 +3,6 @@
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 
@@ -18,7 +17,7 @@ public class PaymentProceedMessageSender
     private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
     private readonly CurrencyCodeToSymbolMapper _currencyCodeToSymbolMapper;
     private readonly IApplicationContentStore _applicationContentStore;
-    private readonly PaymentAppsettings _paymentAppsettings;
+    private readonly PaymentSettings _paymentSettings;
 
     public PaymentProceedMessageSender(
         ITelegramBotClient telegramBot,
@@ -26,32 +25,32 @@ public class PaymentProceedMessageSender
         IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
         CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
         IApplicationContentStore applicationContentStore,
-        PaymentAppsettings paymentAppsettings)
+        AppSettings appSettings)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;
         _paymentTelegramButtonGenerators = paymentTelegramButtonGenerators;
         _currencyCodeToSymbolMapper = currencyCodeToSymbolMapper;
         _applicationContentStore = applicationContentStore;
-        _paymentAppsettings = paymentAppsettings;
+        _paymentSettings = appSettings.PaymentSettings;
     }
 
     public async Task SendProceedToPaymentAsync(long chatId, OrderDto order, CancellationToken cancellationToken)
     {
-        if (_paymentAppsettings.AllPaymentsDisabled)
+        if (_paymentSettings.AllPaymentsDisabled)
         {
             await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.NoEnabledPayments, CancellationToken.None));
             return;
         }
 
         var paymentMethodButtons = _paymentTelegramButtonGenerators
-            .Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled(_paymentAppsettings))
+            .Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled(_paymentSettings))
             .Select(buttonGenerator => new List<InlineKeyboardButton>() { buttonGenerator.GetInvoiceGenerationButton() });
 
         InlineKeyboardMarkup inlineKeyboard = new(paymentMethodButtons);
 
         var message = new StringBuilder();
-        var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentAppsettings.MainCurrency);
+        var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_paymentSettings.MainCurrency);
 
         message
             .AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderSummaryTitle, CancellationToken.None)}")

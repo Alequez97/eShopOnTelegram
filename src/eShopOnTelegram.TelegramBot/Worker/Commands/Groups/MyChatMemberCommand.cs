@@ -1,5 +1,4 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
@@ -10,23 +9,23 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
 public class MyChatMemberCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
-    private readonly TelegramAppsettings _telegramAppsettings;
+    private readonly TelegramBotSettings _telegramBotSettings;
     private readonly IBotOwnerDataStore _botOwnerDataStore;
 
     public MyChatMemberCommand(
         ITelegramBotClient telegramBot,
-        TelegramAppsettings telegramAppsettings,
+        AppSettings appSettings,
         IBotOwnerDataStore botOwnerDataStore
         )
     {
         _telegramBot = telegramBot;
-        _telegramAppsettings = telegramAppsettings;
+        _telegramBotSettings = appSettings.TelegramBotSettings;
         _botOwnerDataStore = botOwnerDataStore;
     }
 
     public async Task SendResponseAsync(Update update)
     {
-        if (string.Equals(update.MyChatMember.From.Id.ToString(), _telegramAppsettings.BotOwnerTelegramId, StringComparison.OrdinalIgnoreCase))
+        if (string.Equals(update.MyChatMember.From.Id.ToString(), _telegramBotSettings.BotOwnerTelegramId, StringComparison.OrdinalIgnoreCase))
         {
             var groupOwnerTelegramGroupId = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(CancellationToken.None);
             if (string.IsNullOrWhiteSpace(groupOwnerTelegramGroupId))

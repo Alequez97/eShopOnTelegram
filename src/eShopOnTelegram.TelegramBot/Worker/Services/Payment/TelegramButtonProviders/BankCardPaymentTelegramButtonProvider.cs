@@ -1,5 +1,4 @@
-﻿using eShopOnTelegram.TelegramBot.Appsettings;
-using eShopOnTelegram.TelegramBot.Worker.Constants;
+﻿using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 
 using Telegram.Bot.Types.ReplyMarkups;
@@ -13,7 +12,7 @@ public class BankCardPaymentTelegramButtonProvider : IPaymentTelegramButtonProvi
         return InlineKeyboardButton.WithCallbackData(text: "Pay with bank card", callbackData: PaymentMethodConstants.BankCard);
     }
 
-    public bool PaymentMethodEnabled(PaymentAppsettings paymentAppsettings)
+    public bool PaymentMethodEnabled(PaymentSettings paymentAppsettings)
     {
         return paymentAppsettings.Card.Enabled;
     }
