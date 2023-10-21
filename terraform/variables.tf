@@ -118,7 +118,7 @@ variable "admin_app_name" {
   description = "Admin application name"
 }
 
-variable "telegram_bot_app_name" {
+variable "shop_app_name" {
   type = string
   description = "Telegram bot project name"
 }
