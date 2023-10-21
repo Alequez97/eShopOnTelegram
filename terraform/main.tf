@@ -238,55 +238,55 @@ resource "azurerm_key_vault_secret" "productimageshostname" {
 }
 
 resource "azurerm_key_vault_secret" "telegramownerid" {
-  name         = "Telegram--BotOwnerTelegramId"
+  name         = "AppSettings--TelegramBotSettings--BotOwnerTelegramId"
   value        = var.telegram_bot_owner_telegram_id
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "telegramtoken" {
-  name         = "Telegram--Token"
+  name         = "AppSettings--TelegramBotSettings--Token"
   value        = var.telegram_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
-  name         = "Telegram--WebAppUrl"
+  name         = "AppSettings--TelegramBotSettings--WebAppUrl"
   value        = "https://${azurerm_linux_web_app.telegram_bot.name}.azurewebsites.net"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "paymentcurrency" {
-  name         = "Payment--MainCurrency"
+  name         = "AppSettings--PaymentSettings--MainCurrency"
   value        = "EUR"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentenabled" {
-  name         = "Payment--Card--Enabled"
+  name         = "AppSettings--PaymentSettings--Card--Enabled"
   value        = var.payment_card_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
-  name         = "Payment--Card--ApiToken"
+  name         = "AppSettings--PaymentSettings--Card--ApiToken"
   value        = var.payment_card_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentenabled" {
-  name         = "Payment--Plisio--Enabled"
+  name         = "AppSettings--PaymentSettings--Plisio--Enabled"
   value        = var.payment_plicio_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
-  name         = "Payment--Plisio--ApiToken"
+  name         = "AppSettings--PaymentSettings--Plisio--ApiToken"
   value        = var.payment_plicio_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
-  name         = "Payment--Plisio--CryptoCurrency"
+  name         = "AppSettings--PaymentSettings--Plisio--CryptoCurrency"
   value        = "BTC"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
