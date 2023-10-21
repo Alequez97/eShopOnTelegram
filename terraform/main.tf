@@ -103,12 +103,12 @@ resource "azurerm_linux_web_app" "admin" {
   app_settings = {
     "Logging__LogLevel__Default"                               = "Information"
     "Logging__ApplicationInsights"                             = "Information"
-    "Azure__KeyVaultUri"                                       = "https://${var.keyvault_name}.vault.azure.net"
-    "Azure__TenantId"                                          = data.azurerm_client_config.eshopontelegram.tenant_id
-    "Azure__ClientId"                                          = var.app_sp_client_id
-    "Azure__ClientSecret"                                      = var.app_sp_client_secret
-    "Azure__RuntimeConfigurationBlobContainerName"             = azurerm_storage_container.runtime_configuration_blob_storage.name
-    "Azure__ProductImagesBlobContainerName"                    = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__AzureSettings__KeyVaultUri"                                       = "https://${var.keyvault_name}.vault.azure.net"
+    "AppSettings__AzureSettings__TenantId"                                          = data.azurerm_client_config.eshopontelegram.tenant_id
+    "AppSettings__AzureSettings__ClientId"                                          = var.app_sp_client_id
+    "AppSettings__AzureSettings__ClientSecret"                                      = var.app_sp_client_secret
+    "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName"             = azurerm_storage_container.runtime_configuration_blob_storage.name
+    "AppSettings__AzureSettings__ProductImagesBlobContainerName"                    = azurerm_storage_container.product_images_blob_storage.name
     "AppSettings__JWTAuthOptions__Issuer"                      = var.admin_app_name
     "AppSettings__JWTAuthOptions__Audience"                    = var.admin_app_name
     "AppSettings__JWTAuthOptions__RefreshTokenLifetimeMinutes" = 10080 //1 week
@@ -220,13 +220,13 @@ resource "azurerm_key_vault_secret" "sqlconnectionstring" {
 }
 
 resource "azurerm_key_vault_secret" "storageaccountconnectionstring" {
-  name         = "Azure--StorageAccountConnectionString"
+  name         = "AppSettings--AzureSettings--StorageAccountConnectionString"
   value        = azurerm_storage_account.storageaccount.primary_connection_string
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "appinsightsconnectionstring" {
-  name         = "Azure--AppInsightsConnectionString"
+  name         = "AppSettings--AzureSettings--AppInsightsConnectionString"
   value        = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
@@ -238,55 +238,55 @@ resource "azurerm_key_vault_secret" "productimageshostname" {
 }
 
 resource "azurerm_key_vault_secret" "telegramownerid" {
-  name         = "Telegram--BotOwnerTelegramId"
+  name         = "AppSettings--TelegramBotSettings--BotOwnerTelegramId"
   value        = var.telegram_bot_owner_telegram_id
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "telegramtoken" {
-  name         = "Telegram--Token"
+  name         = "AppSettings--TelegramBotSettings--Token"
   value        = var.telegram_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
-  name         = "Telegram--WebAppUrl"
+  name         = "AppSettings--TelegramBotSettings--WebAppUrl"
   value        = "https://${azurerm_linux_web_app.telegram_bot.name}.azurewebsites.net"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "paymentcurrency" {
-  name         = "Payment--MainCurrency"
+  name         = "AppSettings--PaymentSettings--MainCurrency"
   value        = "EUR"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentenabled" {
-  name         = "Payment--Card--Enabled"
+  name         = "AppSettings--PaymentSettings--Card--Enabled"
   value        = var.payment_card_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
-  name         = "Payment--Card--ApiToken"
+  name         = "AppSettings--PaymentSettings--Card--ApiToken"
   value        = var.payment_card_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentenabled" {
-  name         = "Payment--Plisio--Enabled"
+  name         = "AppSettings--PaymentSettings--Plisio--Enabled"
   value        = var.payment_plicio_api_token == "" ? "false" : "true"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
-  name         = "Payment--Plisio--ApiToken"
+  name         = "AppSettings--PaymentSettings--Plisio--ApiToken"
   value        = var.payment_plicio_api_token
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
-  name         = "Payment--Plisio--CryptoCurrency"
+  name         = "AppSettings--PaymentSettings--Plisio--CryptoCurrency"
   value        = "BTC"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
