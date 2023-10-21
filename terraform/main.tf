@@ -118,8 +118,8 @@ resource "azurerm_linux_web_app" "admin" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_linux_web_app" "telegram_bot" {
-  name                = var.telegram_bot_app_name
+resource "azurerm_linux_web_app" "shop" {
+  name                = var.shop_app_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_service_plan.serviceplan.location
   service_plan_id     = azurerm_service_plan.serviceplan.id
@@ -307,8 +307,8 @@ output "admin_app_hostname" {
   value = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
 }
 
-output "telegram_bot_app_name" {
-  value = azurerm_linux_web_app.telegram_bot.name
+output "shop_app_name" {
+  value = azurerm_linux_web_app.shop.name
 }
 
 output "key_vault_uri" {
