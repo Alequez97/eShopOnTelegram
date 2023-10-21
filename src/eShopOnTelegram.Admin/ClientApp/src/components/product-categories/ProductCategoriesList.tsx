@@ -10,6 +10,7 @@ export default function ProductCategoriesList() {
 		<List>
 			<SimpleList
 				primaryText={(category: ProductCategory) => `${category.name}`}
+				tertiaryText={() => <EditButton />}
 				rowSx={() => ({ border: '1px solid #eee' })}
 				linkType={'edit'}
 			/>
