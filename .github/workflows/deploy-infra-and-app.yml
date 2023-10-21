@@ -115,10 +115,10 @@ jobs:
           app-name: ${{ needs.deploy_infrastructure.outputs.adminAppName }}
           package: ${{ env.ADMIN_APP_LOCATION }}/publish
 
-  deploy_telegram_webapp:
+  deploy_shop_app:
     runs-on: windows-latest
     
-    name: 'Deploy telegram webapp'
+    name: Deploy shop app to ${{ github.event.inputs.environment || 'dev' }} env
     needs: [deploy_infrastructure]
     environment:
       name: ${{ github.event.inputs.environment || 'dev' }}
@@ -152,11 +152,11 @@ jobs:
         working-directory: ${{ env.SHOP_APP_LOCATION }}
         run: dotnet restore
 
-      - name: Build telegram bot project
+      - name: Build shop project
         working-directory: ${{ env.SHOP_APP_LOCATION }}
         run: dotnet build --configuration Release --no-restore
       
-      - name: Publish telegram bot project
+      - name: Publish shop project
         working-directory: ${{ env.SHOP_APP_LOCATION }}
         run: dotnet publish --configuration Release --no-build --output publish
 
