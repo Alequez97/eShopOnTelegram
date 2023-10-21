@@ -5,6 +5,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot.Types.ReplyMarkups;
 

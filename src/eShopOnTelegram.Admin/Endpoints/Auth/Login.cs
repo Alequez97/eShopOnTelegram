@@ -1,6 +1,7 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
 using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Utils.Configuration;
 
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +13,7 @@ public class Login : EndpointBaseAsync
     .WithActionResult<LoginResponse>
 {
     private readonly UserManager<User> _userManager;
-    private readonly JWTAuthOptions _authOptions;
+    private readonly JWTAuthSettings _authSettings;
     private readonly ILogger<LoginRequest> _logger;
 
     public Login(
@@ -21,7 +22,7 @@ public class Login : EndpointBaseAsync
         ILogger<LoginRequest> logger)
     {
         _userManager = userManager;
-        _authOptions = appSettings.JWTAuthOptions;
+        _authSettings = appSettings.JWTAuthSettings;
         _logger = logger;
     }
 
@@ -47,8 +48,8 @@ public class Login : EndpointBaseAsync
                 return ValidationProblem(ModelState);
             }
 
-            var jwtToken = AuthTokenGenerator.GenerateJToken(user, _authOptions);
-            var refreshToken = AuthTokenGenerator.GenerateRefreshToken(ipAddress, _authOptions);
+            var jwtToken = AuthTokenGenerator.GenerateJToken(user, _authSettings);
+            var refreshToken = AuthTokenGenerator.GenerateRefreshToken(ipAddress, _authSettings);
 
             user.UserRefreshTokens.Add(refreshToken);
             await _userManager.UpdateAsync(user);

@@ -16,9 +16,10 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
-using eShopOnTelegram.TelegramBot;
 using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Utils.Configuration;
+using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.ApplicationInsights;
@@ -29,7 +30,7 @@ ConfigureAzureKeyVault(builder);
 
 var appSettings = ConfigureAppSettings(builder);
 
-ConfigureServices(builder);
+ConfigureServices(builder, appSettings.AzureSettings);
 ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
 ConfigureHostOptions(builder);
 
@@ -76,8 +77,7 @@ app.Run();
 
 static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
 {
-    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
-    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
+    var appSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
 
     builder.Services.AddSingleton(appSettings);
     return appSettings;
@@ -104,7 +104,7 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
     }
 }
 
-static void ConfigureServices(WebApplicationBuilder builder)
+static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azureSettings)
 {
     // Persistence layer services
     builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
