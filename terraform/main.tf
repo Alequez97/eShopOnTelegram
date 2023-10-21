@@ -158,7 +158,7 @@ resource "azurerm_key_vault" "keyvault" {
 
   depends_on   = [
     azurerm_linux_web_app.admin,
-    azurerm_linux_web_app.telegram_bot
+    azurerm_linux_web_app.shop
   ]
 
   # App identity access to keyvault
@@ -251,7 +251,7 @@ resource "azurerm_key_vault_secret" "telegramtoken" {
 
 resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
   name         = "AppSettings--TelegramBotSettings--WebAppUrl"
-  value        = "https://${azurerm_linux_web_app.telegram_bot.name}.azurewebsites.net"
+  value        = "https://${azurerm_linux_web_app.shop.name}.azurewebsites.net"
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
