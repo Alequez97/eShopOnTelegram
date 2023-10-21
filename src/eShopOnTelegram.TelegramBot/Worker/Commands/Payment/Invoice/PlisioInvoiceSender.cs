@@ -2,7 +2,6 @@
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Appsettings;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
@@ -18,7 +17,7 @@ public class PlisioInvoiceSender : ITelegramCommand
     private readonly ITelegramBotClient _telegramBot;
     private readonly IPlisioClient _plisioClient;
     private readonly IOrderService _orderService;
-    private readonly PaymentAppsettings _paymentAppsettings;
+    private readonly PaymentSettings _paymentSettings;
     private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<PlisioInvoiceSender> _logger;
 
@@ -26,14 +25,14 @@ public class PlisioInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IPlisioClient plisioClient,
         IOrderService orderService,
-        PaymentAppsettings paymentAppsettings,
+        AppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<PlisioInvoiceSender> logger)
     {
         _telegramBot = telegramBot;
         _plisioClient = plisioClient;
         _orderService = orderService;
-        _paymentAppsettings = paymentAppsettings;
+        _paymentSettings = appSettings.PaymentSettings;
         _applicationContentStore = applicationContentStore;
         _logger = logger;
     }
@@ -55,11 +54,11 @@ public class PlisioInvoiceSender : ITelegramCommand
             var activeOrder = getOrdersResponse.Data;
 
             var createPlisioInvoiceResponse = await _plisioClient.CreateInvoiceAsync(
-                _paymentAppsettings.Plisio.ApiToken,
-                _paymentAppsettings.MainCurrency,
+                _paymentSettings.Plisio.ApiToken,
+                _paymentSettings.MainCurrency,
                 (int)Math.Ceiling(activeOrder.TotalPrice),
                 activeOrder.OrderNumber,
-                _paymentAppsettings.Plisio.CryptoCurrency);
+                _paymentSettings.Plisio.CryptoCurrency);
 
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {
