@@ -5,6 +5,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Utils.Configuration;
 
 using Refit;
 
@@ -25,7 +26,7 @@ public class PlisioInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IPlisioClient plisioClient,
         IOrderService orderService,
-        AppSettings appSettings,
+        ShopAppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<PlisioInvoiceSender> logger)
     {

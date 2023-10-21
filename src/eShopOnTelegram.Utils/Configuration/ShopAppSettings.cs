@@ -1,6 +1,6 @@
-﻿namespace eShopOnTelegram.TelegramBot;
+﻿namespace eShopOnTelegram.Utils.Configuration;
 
-public class AppSettings
+public class ShopAppSettings
 {
     public required AzureSettings AzureSettings { get; init; }
     public required PaymentSettings PaymentSettings { get; init; }

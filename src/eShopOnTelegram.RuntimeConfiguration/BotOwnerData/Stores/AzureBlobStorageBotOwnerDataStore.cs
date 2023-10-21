@@ -4,8 +4,8 @@ using Azure.Storage.Blobs;
 
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
@@ -18,16 +18,13 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
     private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageBotOwnerDataStore(
-        IConfiguration configuration,
+        ShopAppSettings appSettings,
         ILogger<AzureBlobStorageApplicationContentStore> logger)
     {
-        var connectionString = configuration["Azure:StorageAccountConnectionString"];
-        var blobContainerName = configuration["Azure:RuntimeConfigurationBlobContainerName"];
+        var blobServiceClient = new BlobServiceClient(appSettings.AzureSettings.StorageAccountConnectionString);
+        _blobContainerClient = blobServiceClient.GetBlobContainerClient(appSettings.AzureSettings.RuntimeConfigurationBlobContainerName);
 
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
-
-        _botOwnerTelegramId = configuration["Telegram:BotOwnerTelegramId"];
+        _botOwnerTelegramId = appSettings.TelegramBotSettings.BotOwnerTelegramId;
 
         _logger = logger;
     }

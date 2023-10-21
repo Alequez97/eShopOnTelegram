@@ -8,6 +8,7 @@ using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 using eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands
 {
@@ -24,7 +25,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
         public StartCommand(
             ITelegramBotClient telegramBot,
             ILogger<StartCommand> logger,
-            AppSettings appSettings,
+            ShopAppSettings appSettings,
             IApplicationContentStore applicationContentStore,
             ICustomerService customerService,
             IOrderService orderService,

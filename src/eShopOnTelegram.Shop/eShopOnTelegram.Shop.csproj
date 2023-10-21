@@ -1,5 +1,4 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
-
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
@@ -47,6 +46,7 @@
     <ProjectReference Include="..\eShopOnTelegram.ExternalServices\eShopOnTelegram.ExternalServices.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.RuntimeConfiguration\eShopOnTelegram.RuntimeConfiguration.csproj" />
+    <ProjectReference Include="..\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj" />
   </ItemGroup>
 
   <ItemGroup>

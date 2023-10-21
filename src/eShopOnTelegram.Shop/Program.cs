@@ -16,9 +16,10 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
-using eShopOnTelegram.TelegramBot;
 using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Utils.Configuration;
+using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.ApplicationInsights;
@@ -29,7 +30,7 @@ ConfigureAzureKeyVault(builder);
 
 var appSettings = ConfigureAppSettings(builder);
 
-ConfigureServices(builder);
+ConfigureServices(builder, appSettings.AzureSettings);
 ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
 ConfigureHostOptions(builder);
 
@@ -74,10 +75,9 @@ app.MapFallbackToFile("index.html"); ;
 
 app.Run();
 
-static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
+static ShopAppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
 {
-    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
-    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
+    var appSettings = builder.Configuration.GetSection<ShopAppSettings>("ShopAppSettings");
 
     builder.Services.AddSingleton(appSettings);
     return appSettings;
@@ -86,14 +86,14 @@ static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo r
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
     // Azure keyvault setup
-    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
+    var azureKeyVaultUriConfigValueSelector = "ShopAppSettings:AzureSettings:KeyVaultUri";
     var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
 
     if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
     {
-        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
-        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
-        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
+        var tenantId = builder.Configuration["ShopAppSettings:AzureSettings:TenantId"];
+        var clientId = builder.Configuration["ShopAppSettings:AzureSettings:ClientId"];
+        var clientSecret = builder.Configuration["ShopAppSettings:AzureSettings:ClientSecret"];
 
         TokenCredential azureCredentials =
             string.IsNullOrWhiteSpace(tenantId)
@@ -104,10 +104,10 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
     }
 }
 
-static void ConfigureServices(WebApplicationBuilder builder)
+static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azureSettings)
 {
     // Persistence layer services
-    builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
+    builder.Services.AddScoped<IProductImagesStore>((_) => new AzureBlobStorageProductImagesStore(azureSettings.StorageAccountConnectionString, azureSettings.RuntimeConfigurationBlobContainerName));
     builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
     builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
     builder.Services.AddScoped<IBotOwnerDataStore, AzureBlobStorageBotOwnerDataStore>();

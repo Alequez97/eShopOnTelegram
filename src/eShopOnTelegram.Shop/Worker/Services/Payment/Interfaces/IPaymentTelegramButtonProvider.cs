@@ -1,4 +1,6 @@
-﻿using Telegram.Bot.Types.ReplyMarkups;
+﻿using eShopOnTelegram.Utils.Configuration;
+
+using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
 

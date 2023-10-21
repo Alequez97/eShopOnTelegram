@@ -2,19 +2,14 @@
 
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
-using Microsoft.Extensions.Configuration;
-
 namespace eShopOnTelegram.Persistence.Files.Stores;
 
 public class AzureBlobStorageProductImagesStore : IProductImagesStore
 {
     private readonly BlobContainerClient _blobContainer;
 
-    public AzureBlobStorageProductImagesStore(IConfiguration configuration)
+    public AzureBlobStorageProductImagesStore(string connectionString, string blobContainerName)
     {
-        var connectionString = configuration["Azure:StorageAccountConnectionString"];
-        var blobContainerName = configuration["Azure:ProductImagesBlobContainerName"];
-        
         var blobServiceClient = new BlobServiceClient(connectionString);
         _blobContainer = blobServiceClient.GetBlobContainerClient(blobContainerName);
     }

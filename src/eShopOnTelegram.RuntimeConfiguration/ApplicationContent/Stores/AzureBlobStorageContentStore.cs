@@ -3,8 +3,8 @@
 using Azure.Storage.Blobs;
 
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 using Newtonsoft.Json.Linq;
@@ -13,23 +13,20 @@ namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 
 public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 {
-    private const string _applicationContentFileName = "application-content.json";
+    private const string APPLICATION_CONTENT_FILE_NAME = "application-content.json";
 
     private readonly BlobContainerClient _blobContainerClient;
     private readonly IApplicationDefaultContentStore _applicationDefaultContentStore;
     private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageApplicationContentStore(
-        IConfiguration configuration,
+        ShopAppSettings appSettings,
         IApplicationDefaultContentStore applicationDefaultContentStore,
         ILogger<AzureBlobStorageApplicationContentStore> logger
         )
     {
-        var connectionString = configuration["Azure:StorageAccountConnectionString"];
-        var blobContainerName = configuration["Azure:RuntimeConfigurationBlobContainerName"];
-
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        _blobContainerClient = blobServiceClient.GetBlobContainerClient(blobContainerName);
+        var blobServiceClient = new BlobServiceClient(appSettings.AzureSettings.StorageAccountConnectionString);
+        _blobContainerClient = blobServiceClient.GetBlobContainerClient(appSettings.AzureSettings.RuntimeConfigurationBlobContainerName);
         _applicationDefaultContentStore = applicationDefaultContentStore;
         _logger = logger;
     }
@@ -93,7 +90,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
     private async Task<string> ReadApplicationContentFromBlobContainerAsync(CancellationToken cancellationToken)
     {
-        var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
+        var blobClient = _blobContainerClient.GetBlobClient(APPLICATION_CONTENT_FILE_NAME);
         var defaultApplicatonContent = await _applicationDefaultContentStore.GetDefaultApplicationContentAsJsonStringAsync(cancellationToken);
 
         using var memoryStream = new MemoryStream();
@@ -159,7 +156,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
 
     private async Task UploadApplicationContentToBlobContainerAsync(string contentJson, CancellationToken cancellationToken)
     {
-        var blobClient = _blobContainerClient.GetBlobClient(_applicationContentFileName);
+        var blobClient = _blobContainerClient.GetBlobClient(APPLICATION_CONTENT_FILE_NAME);
 
         using var memoryStream = new MemoryStream(Encoding.UTF8.GetBytes(contentJson));
         await blobClient.UploadAsync(memoryStream, overwrite: true, cancellationToken: cancellationToken);

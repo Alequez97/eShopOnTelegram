@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
 
@@ -14,7 +15,7 @@ public class MyChatMemberCommand : ITelegramCommand
 
     public MyChatMemberCommand(
         ITelegramBotClient telegramBot,
-        AppSettings appSettings,
+        ShopAppSettings appSettings,
         IBotOwnerDataStore botOwnerDataStore
         )
     {

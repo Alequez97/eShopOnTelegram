@@ -4,7 +4,6 @@ using System.Text;
 using Azure.Core;
 using Azure.Identity;
 
-using eShopOnTelegram.Admin;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Entities;
@@ -12,6 +11,8 @@ using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
+using eShopOnTelegram.Utils.Configuration;
+using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -25,9 +26,9 @@ ConfigureAzureKeyVault(builder);
 var appSettings = ConfigureAppSettings(builder);
 ConfigureServices(builder);
 ConfigureDbContext(builder);
-ConfigureApplicationInsights(builder);
+ConfigureApplicationInsights(builder, appSettings.AzureAppSettings);
 ConfigureIdentity(builder);
-ConfigureJWTAuthentication(builder, appSettings);
+ConfigureJWTAuthentication(builder, appSettings.JWTAuthOptions);
 
 builder.Services.AddControllersWithViews();
 
@@ -80,13 +81,11 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
     }
 }
 
-static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
+static AdminAppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 {
-    var appSettingsSection = builder.Configuration.GetSection("AppSettings");
-    var appSettings = appSettingsSection.Get<AppSettings>() ?? throw new Exception("Failed to load AppSettings");
-
-    builder.Services.AddSingleton(appSettings);
-    return appSettings;
+    var adminAppSettings = builder.Configuration.GetSection<AdminAppSettings>("AdminAppSettings");
+    builder.Services.AddSingleton(adminAppSettings);
+    return adminAppSettings;
 }
 
 static void ConfigureServices(WebApplicationBuilder builder)
@@ -104,14 +103,14 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 }
 
-static void ConfigureApplicationInsights(WebApplicationBuilder builder)
+static void ConfigureApplicationInsights(WebApplicationBuilder builder, AdminAzureSettings azureAppSettings)
 {
-    var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
-    if (!string.IsNullOrWhiteSpace(appInsightsConnectionString))
+    //var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
+    if (!string.IsNullOrWhiteSpace(azureAppSettings.appInsightsConnectionString))
     {
         builder.Logging.AddApplicationInsights(
                 configureTelemetryConfiguration: (config) =>
-                    config.ConnectionString = appInsightsConnectionString,
+                    config.ConnectionString = azureAppSettings.appInsightsConnectionString,
                     configureApplicationInsightsLoggerOptions: (options) => { }
             );
 
@@ -119,7 +118,7 @@ static void ConfigureApplicationInsights(WebApplicationBuilder builder)
     }
 }
 
-static void ConfigureJWTAuthentication(WebApplicationBuilder builder, AppSettings appSettings)
+static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthOptions authOptions)
 {
     builder.Services.AddAuthentication(x =>
     {
@@ -135,9 +134,9 @@ static void ConfigureJWTAuthentication(WebApplicationBuilder builder, AppSetting
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = appSettings.JWTAuthOptions.Issuer,
-            ValidAudience = appSettings.JWTAuthOptions.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(appSettings.JWTAuthOptions.Key)),
+            ValidIssuer = authOptions.Issuer,
+            ValidAudience = authOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)),
             ClockSkew = TimeSpan.Zero
         };
     });

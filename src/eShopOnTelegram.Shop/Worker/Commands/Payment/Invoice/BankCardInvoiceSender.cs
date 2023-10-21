@@ -5,6 +5,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
 using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
 
@@ -21,7 +22,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IProductAttributeService productAttributeService,
         IOrderService orderService,
-        AppSettings appSettings,
+        ShopAppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<BankCardInvoiceSender> logger)
     {

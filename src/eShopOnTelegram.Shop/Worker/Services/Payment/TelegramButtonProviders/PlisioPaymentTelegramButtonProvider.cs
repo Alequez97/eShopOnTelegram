@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.TelegramBot.Worker.Constants;
 using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
