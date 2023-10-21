@@ -26,9 +26,9 @@ ConfigureAzureKeyVault(builder);
 var appSettings = ConfigureAppSettings(builder);
 ConfigureServices(builder);
 ConfigureDbContext(builder);
-ConfigureApplicationInsights(builder, appSettings.AzureAppSettings);
+ConfigureApplicationInsights(builder, appSettings.AzureSettings);
 ConfigureIdentity(builder);
-ConfigureJWTAuthentication(builder, appSettings.JWTAuthOptions);
+ConfigureJWTAuthentication(builder, appSettings.JWTAuthSettings);
 
 builder.Services.AddControllersWithViews();
 
@@ -63,14 +63,14 @@ app.Run();
 
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
-    var azureKeyVaultUriConfigValueSelector = "Azure:KeyVaultUri";
+    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
     var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
 
     if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
     {
-        var tenantId = builder.Configuration["Azure:TenantId"];
-        var clientId = builder.Configuration["Azure:ClientId"];
-        var clientSecret = builder.Configuration["Azure:ClientSecret"];
+        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
+        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
+        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
 
         TokenCredential azureCredentials =
             string.IsNullOrWhiteSpace(tenantId)
@@ -81,9 +81,9 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
     }
 }
 
-static AdminAppSettings ConfigureAppSettings(WebApplicationBuilder builder)
+static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 {
-    var adminAppSettings = builder.Configuration.GetSection<AdminAppSettings>("AdminAppSettings");
+    var adminAppSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
     builder.Services.AddSingleton(adminAppSettings);
     return adminAppSettings;
 }
@@ -103,14 +103,14 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 }
 
-static void ConfigureApplicationInsights(WebApplicationBuilder builder, AdminAzureSettings azureAppSettings)
+static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSettings azureAppSettings)
 {
     //var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
-    if (!string.IsNullOrWhiteSpace(azureAppSettings.appInsightsConnectionString))
+    if (!string.IsNullOrWhiteSpace(azureAppSettings.AppInsightsConnectionString))
     {
         builder.Logging.AddApplicationInsights(
                 configureTelemetryConfiguration: (config) =>
-                    config.ConnectionString = azureAppSettings.appInsightsConnectionString,
+                    config.ConnectionString = azureAppSettings.AppInsightsConnectionString,
                     configureApplicationInsightsLoggerOptions: (options) => { }
             );
 
@@ -118,7 +118,7 @@ static void ConfigureApplicationInsights(WebApplicationBuilder builder, AdminAzu
     }
 }
 
-static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthOptions authOptions)
+static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthSettings authOptions)
 {
     builder.Services.AddAuthentication(x =>
     {

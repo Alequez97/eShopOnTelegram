@@ -8,7 +8,7 @@
     }
   },
   "profiles": {
-    "eShopOnTelegram.TelegramBot": {
+    "eShopOnTelegram.Shop": {
       "commandName": "Project",
       "launchBrowser": true,
       "applicationUrl": "https://localhost:7223;http://localhost:5223",

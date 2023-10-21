@@ -1,24 +1,20 @@
-﻿using System.Text;
+﻿Console.WriteLine("Hello, World");
 
-using eShopOnTelegram.Domain.Dto;
-using eShopOnTelegram.Domain.Requests;
-using eShopOnTelegram.Utils.TypeScriptGenerator;
+//var typeScriptGenerator = new TypeScriptGenerator(StringComparison.OrdinalIgnoreCase);
+//var generatedFilesStoragePlace = "../../../../eShopOnTelegram.Admin/ClientApp/src/types";
 
-var typeScriptGenerator = new TypeScriptGenerator(StringComparison.OrdinalIgnoreCase);
-var generatedFilesStoragePlace = "../../../../eShopOnTelegram.Admin/ClientApp/src/types";
+//typeScriptGenerator
+//    .WithTypesContainingNamespace(typeof(GetRequest).Assembly, typeof(GetRequest).Namespace);
 
-typeScriptGenerator
-    .WithTypesContainingNamespace(typeof(GetRequest).Assembly, typeof(GetRequest).Namespace);
+//var typeScriptApiRequestTypes = typeScriptGenerator.GenerateTypeScriptTypes();
+//File.WriteAllText($"{generatedFilesStoragePlace}/api-request.type.ts", typeScriptApiRequestTypes, Encoding.UTF8);
 
-var typeScriptApiRequestTypes = typeScriptGenerator.GenerateTypeScriptTypes();
-File.WriteAllText($"{generatedFilesStoragePlace}/api-request.type.ts", typeScriptApiRequestTypes, Encoding.UTF8);
+//typeScriptGenerator
+//    .Clear()
+//    .WithTypeNameReplacement("Dto", "")
+//    .WithTypesContainingNamespace(typeof(DtoBase).Assembly, typeof(DtoBase).Namespace);
 
-typeScriptGenerator
-    .Clear()
-    .WithTypeNameReplacement("Dto", "")
-    .WithTypesContainingNamespace(typeof(DtoBase).Assembly, typeof(DtoBase).Namespace);
+//var typeScriptApiResponseTypes = typeScriptGenerator.GenerateTypeScriptTypes();
+//File.WriteAllText($"{generatedFilesStoragePlace}/api-response.type.ts", typeScriptApiResponseTypes, Encoding.UTF8);
 
-var typeScriptApiResponseTypes = typeScriptGenerator.GenerateTypeScriptTypes();
-File.WriteAllText($"{generatedFilesStoragePlace}/api-response.type.ts", typeScriptApiResponseTypes, Encoding.UTF8);
-
-Console.WriteLine("Generation finished!!!");
+//Console.WriteLine("Generation finished!!!");

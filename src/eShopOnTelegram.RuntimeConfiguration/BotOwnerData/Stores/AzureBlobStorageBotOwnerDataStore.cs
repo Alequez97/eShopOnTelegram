@@ -18,7 +18,7 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
     private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageBotOwnerDataStore(
-        ShopAppSettings appSettings,
+        AppSettings appSettings,
         ILogger<AzureBlobStorageApplicationContentStore> logger)
     {
         var blobServiceClient = new BlobServiceClient(appSettings.AzureSettings.StorageAccountConnectionString);

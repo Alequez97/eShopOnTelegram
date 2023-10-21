@@ -26,7 +26,7 @@ public class PaymentProceedMessageSender
         IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
         CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
         IApplicationContentStore applicationContentStore,
-        ShopAppSettings appSettings)
+        AppSettings appSettings)
     {
         _telegramBot = telegramBot;
         _orderService = orderService;

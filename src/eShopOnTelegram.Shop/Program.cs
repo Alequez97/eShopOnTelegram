@@ -75,9 +75,9 @@ app.MapFallbackToFile("index.html"); ;
 
 app.Run();
 
-static ShopAppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
+static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
 {
-    var appSettings = builder.Configuration.GetSection<ShopAppSettings>("ShopAppSettings");
+    var appSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
 
     builder.Services.AddSingleton(appSettings);
     return appSettings;
@@ -86,14 +86,14 @@ static ShopAppSettings ConfigureAppSettings(WebApplicationBuilder builder) // to
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
     // Azure keyvault setup
-    var azureKeyVaultUriConfigValueSelector = "ShopAppSettings:AzureSettings:KeyVaultUri";
+    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
     var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
 
     if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
     {
-        var tenantId = builder.Configuration["ShopAppSettings:AzureSettings:TenantId"];
-        var clientId = builder.Configuration["ShopAppSettings:AzureSettings:ClientId"];
-        var clientSecret = builder.Configuration["ShopAppSettings:AzureSettings:ClientSecret"];
+        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
+        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
+        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
 
         TokenCredential azureCredentials =
             string.IsNullOrWhiteSpace(tenantId)
@@ -107,7 +107,7 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azureSettings)
 {
     // Persistence layer services
-    builder.Services.AddScoped<IProductImagesStore>((_) => new AzureBlobStorageProductImagesStore(azureSettings.StorageAccountConnectionString, azureSettings.RuntimeConfigurationBlobContainerName));
+    builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
     builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
     builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
     builder.Services.AddScoped<IBotOwnerDataStore, AzureBlobStorageBotOwnerDataStore>();

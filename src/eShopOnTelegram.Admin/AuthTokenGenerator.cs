@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 
 using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Utils.Configuration;
 
 using Microsoft.IdentityModel.Tokens;
 
@@ -11,10 +12,10 @@ namespace eShopOnTelegram.Admin;
 
 public static class AuthTokenGenerator
 {
-    public static string GenerateJToken(User user, JWTAuthOptions authOptions)
+    public static string GenerateJToken(User user, JWTAuthSettings authSettings)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.UTF8.GetBytes(authOptions.Key);
+        var key = Encoding.UTF8.GetBytes(authSettings.Key);
 
         var claims = new List<Claim>
         {
@@ -36,10 +37,10 @@ public static class AuthTokenGenerator
         var tokenDescriptor = new SecurityTokenDescriptor()
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.UtcNow.AddMinutes(authOptions.JTokenLifetimeMinutes),
+            Expires = DateTime.UtcNow.AddMinutes(authSettings.JTokenLifetimeMinutes),
             SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature),
-            Issuer = authOptions.Issuer,
-            Audience = authOptions.Audience
+            Issuer = authSettings.Issuer,
+            Audience = authSettings.Audience
         };
 
         var token = tokenHandler.CreateToken(tokenDescriptor);
@@ -48,7 +49,7 @@ public static class AuthTokenGenerator
         return jwt;
     }
 
-    public static UserRefreshToken GenerateRefreshToken(string ipAddress, JWTAuthOptions authOptions)
+    public static UserRefreshToken GenerateRefreshToken(string ipAddress, JWTAuthSettings authOptions)
     {
         var randomBytes = new byte[64];
 

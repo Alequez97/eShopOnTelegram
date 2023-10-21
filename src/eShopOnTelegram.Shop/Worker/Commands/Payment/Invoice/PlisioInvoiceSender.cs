@@ -26,7 +26,7 @@ public class PlisioInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IPlisioClient plisioClient,
         IOrderService orderService,
-        ShopAppSettings appSettings,
+        AppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<PlisioInvoiceSender> logger)
     {

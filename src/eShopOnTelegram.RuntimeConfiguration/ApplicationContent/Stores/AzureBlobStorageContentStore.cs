@@ -20,7 +20,7 @@ public class AzureBlobStorageApplicationContentStore : IApplicationContentStore
     private readonly ILogger<AzureBlobStorageApplicationContentStore> _logger;
 
     public AzureBlobStorageApplicationContentStore(
-        ShopAppSettings appSettings,
+        AppSettings appSettings,
         IApplicationDefaultContentStore applicationDefaultContentStore,
         ILogger<AzureBlobStorageApplicationContentStore> logger
         )

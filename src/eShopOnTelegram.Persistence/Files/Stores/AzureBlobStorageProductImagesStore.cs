@@ -1,4 +1,5 @@
 ﻿using Azure.Storage.Blobs;
+using eShopOnTelegram.Utils.Configuration;
 
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
@@ -8,10 +9,10 @@ public class AzureBlobStorageProductImagesStore : IProductImagesStore
 {
     private readonly BlobContainerClient _blobContainer;
 
-    public AzureBlobStorageProductImagesStore(string connectionString, string blobContainerName)
+    public AzureBlobStorageProductImagesStore(AppSettings appSettings)
     {
-        var blobServiceClient = new BlobServiceClient(connectionString);
-        _blobContainer = blobServiceClient.GetBlobContainerClient(blobContainerName);
+        var blobServiceClient = new BlobServiceClient(appSettings.AzureSettings.StorageAccountConnectionString);
+        _blobContainer = blobServiceClient.GetBlobContainerClient(appSettings.AzureSettings.RuntimeConfigurationBlobContainerName);
     }
 
     public async Task<string> SaveAsync(byte[] file, string fileName, CancellationToken cancellationToken)

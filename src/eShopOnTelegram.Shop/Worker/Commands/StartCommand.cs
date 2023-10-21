@@ -25,7 +25,7 @@ namespace eShopOnTelegram.TelegramBot.Worker.Commands
         public StartCommand(
             ITelegramBotClient telegramBot,
             ILogger<StartCommand> logger,
-            ShopAppSettings appSettings,
+            AppSettings appSettings,
             IApplicationContentStore applicationContentStore,
             ICustomerService customerService,
             IOrderService orderService,

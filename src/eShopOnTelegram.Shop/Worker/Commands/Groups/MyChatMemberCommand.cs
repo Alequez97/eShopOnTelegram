@@ -15,7 +15,7 @@ public class MyChatMemberCommand : ITelegramCommand
 
     public MyChatMemberCommand(
         ITelegramBotClient telegramBot,
-        ShopAppSettings appSettings,
+        AppSettings appSettings,
         IBotOwnerDataStore botOwnerDataStore
         )
     {

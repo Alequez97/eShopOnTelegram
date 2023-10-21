@@ -1,8 +1,9 @@
 ﻿namespace eShopOnTelegram.Utils.Configuration;
 
-public class ShopAppSettings
+public class AppSettings
 {
     public required AzureSettings AzureSettings { get; init; }
+    public required JWTAuthSettings JWTAuthSettings { get; init; }
     public required PaymentSettings PaymentSettings { get; init; }
     public required TelegramBotSettings TelegramBotSettings { get; init; }
 }
@@ -15,7 +16,19 @@ public class AzureSettings
 
     public required string RuntimeConfigurationBlobContainerName { get; init; }
 
-    public required string ApplicationContentFileName { get; init; }
+}
+
+public class JWTAuthSettings
+{
+    public required string Issuer { get; init; }
+
+    public required string Audience { get; init; }
+
+    public required string Key { get; init; }
+
+    public required int RefreshTokenLifetimeMinutes { get; init; }
+
+    public required int JTokenLifetimeMinutes { get; init; }
 }
 
 public class PaymentSettings

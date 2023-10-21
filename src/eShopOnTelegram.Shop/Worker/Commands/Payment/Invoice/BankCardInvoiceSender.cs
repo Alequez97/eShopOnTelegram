@@ -22,7 +22,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IProductAttributeService productAttributeService,
         IOrderService orderService,
-        ShopAppSettings appSettings,
+        AppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<BankCardInvoiceSender> logger)
     {
