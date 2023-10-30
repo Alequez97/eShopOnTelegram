@@ -118,7 +118,7 @@ static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSet
     }
 }
 
-static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthSettings authOptions)
+static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthSettings authSettings)
 {
     builder.Services.AddAuthentication(x =>
     {
@@ -134,9 +134,9 @@ static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthSet
             ValidateAudience = true,
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
-            ValidIssuer = authOptions.Issuer,
-            ValidAudience = authOptions.Audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authOptions.Key)),
+            ValidIssuer = authSettings.Issuer,
+            ValidAudience = authSettings.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authSettings.Key)),
             ClockSkew = TimeSpan.Zero
         };
     });

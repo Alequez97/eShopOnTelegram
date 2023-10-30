@@ -101,18 +101,18 @@ resource "azurerm_linux_web_app" "admin" {
   }
 
   app_settings = {
-    "Logging__LogLevel__Default"                               = "Information"
-    "Logging__ApplicationInsights"                             = "Information"
-    "AppSettings__AzureSettings__KeyVaultUri"                                       = "https://${var.keyvault_name}.vault.azure.net"
-    "AppSettings__AzureSettings__TenantId"                                          = data.azurerm_client_config.eshopontelegram.tenant_id
-    "AppSettings__AzureSettings__ClientId"                                          = var.app_sp_client_id
-    "AppSettings__AzureSettings__ClientSecret"                                      = var.app_sp_client_secret
-    "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName"             = azurerm_storage_container.runtime_configuration_blob_storage.name
-    "AppSettings__AzureSettings__ProductImagesBlobContainerName"                    = azurerm_storage_container.product_images_blob_storage.name
-    "AppSettings__JWTAuthOptions__Issuer"                      = var.admin_app_name
-    "AppSettings__JWTAuthOptions__Audience"                    = var.admin_app_name
-    "AppSettings__JWTAuthOptions__RefreshTokenLifetimeMinutes" = 10080 //1 week
-    "AppSettings__JWTAuthOptions__JTokenLifetimeMinutes"       = 5
+    "Logging__LogLevel__Default"                                        = "Information"
+    "Logging__ApplicationInsights"                                      = "Information"
+    "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
+    "AppSettings__AzureSettings__TenantId"                              = data.azurerm_client_config.eshopontelegram.tenant_id
+    "AppSettings__AzureSettings__ClientId"                              = var.app_sp_client_id
+    "AppSettings__AzureSettings__ClientSecret"                          = var.app_sp_client_secret
+    "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
+    "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__JWTAuthSettings__Issuer"                               = var.admin_app_name
+    "AppSettings__JWTAuthSettings__Audience"                             = var.admin_app_name
+    "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"          = 10080 // 1 week
+    "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"                = 5
   }
 
   tags = local.az_common_tags
