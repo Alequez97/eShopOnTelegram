@@ -208,7 +208,7 @@ resource "azurerm_key_vault" "keyvault" {
 }
 
 resource "azurerm_key_vault_secret" "jwtkey" {
-  name         = "AppSettings--JWTAuthOptions--Key"
+  name         = "AppSettings--JWTAuthSettings--Key"
   value        = var.jwt_key
   key_vault_id = azurerm_key_vault.keyvault.id
 }
