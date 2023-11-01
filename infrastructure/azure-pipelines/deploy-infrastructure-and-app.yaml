@@ -33,11 +33,11 @@ stages:
           TfVarFile: "$(Build.SourcesDirectory)/infrastrucutre/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: tellus-web-${{lower(parameters.environmentName)}}
           SubscriptionId: ${{parameters.SubscriptionId}}
-          TfBackendResourceGroup:  $(TFBackendResourceGroup)
-          TfBackendStorageAccountName: $(TFBackendStorageAccountName)
-          TfBackendContainerName: $(TFBackendContainerName)
-          TfBackendAccessKey: $(tfado-key1)
-          TfWorkingDirectory: $(TFWorkingDirectory)
+          TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
+          TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
+          TfBackendContainerName: $(terraform-backend-blob-container-name)
+          TfBackendAccessKey: $(terraform-backend-access-key)
+          TfWorkingDirectory: $(Build.SourcesDirectory)/infrastrucutre/terraform
           TfOutputVars:
             - "app_service_name"
             - "app_resource_group_name"
