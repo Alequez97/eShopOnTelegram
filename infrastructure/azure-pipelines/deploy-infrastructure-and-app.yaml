@@ -32,7 +32,7 @@ stages:
           PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
           TfVarFile: "$(Build.SourcesDirectory)/infrastrucutre/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: tellus-web-${{lower(parameters.environmentName)}}
-          SubscriptionId: ${{parameters.SubscriptionId}}
+          SubscriptionId: $(azure-subsription-id)
           TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
           TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
           TfBackendContainerName: $(terraform-backend-blob-container-name)
