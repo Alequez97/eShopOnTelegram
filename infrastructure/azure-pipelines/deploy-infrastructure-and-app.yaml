@@ -32,7 +32,7 @@ stages:
           Environment: ${{parameters.environmentName}}
           PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
           TfVarFile: "$(Build.SourcesDirectory)/infrastrucutre/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
-          TfBackendStateFile: tellus-web-${{lower(parameters.environmentName)}}
+          TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
           SubscriptionId: $(azure-subsription-id)
           TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
           TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
@@ -40,7 +40,9 @@ stages:
           TfBackendAccessKey: $(terraform-backend-access-key)
           TfWorkingDirectory: $(Build.SourcesDirectory)/infrastrucutre/terraform
           TfOutputVars:
-            - "app_service_name"
-            - "app_resource_group_name"
-            - "webcomponent_storage_account_name"
-            - "webcomponent_primary_web_endpoint"
+            - "resource_group_name"
+            - "resource_group_location"
+            - "admin_app_name"
+            - "admin_app_hostname"
+            - "shop_app_name"
+            - "key_vault_uri"
