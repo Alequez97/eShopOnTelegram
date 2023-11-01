@@ -1,0 +1,65 @@
+parameters:
+- name: Environment 
+- name: TfVersion 
+  default: 1.3.3 
+- name: TfBackendResourceGroup 
+- name: TfBackendStorageAccountName 
+- name: TfBackendContainerName 
+- name: TfBackendAccessKey 
+- name: TfBackendStateFile 
+- name: TfWorkingDirectory 
+- name: TfPlanName
+  default: tfplan
+- name: SpnClientId 
+  default: $(ado-spn-client-id)
+- name: SpnClientSecret 
+  default: $(ado-spn-client-secret)
+- name: SpnTenantId 
+  default: $(ado-spn-tenant-id)
+- name: SubscriptionId 
+- name: TfVarFile 
+- name: PipelineEnvironment
+- name: TfOutputVars
+  type: object
+  default: ''
+
+jobs:
+  - job: terraform_plan
+    steps:
+    - template: terraform-plan-steps.yml  
+      parameters:
+        Environment: ${{parameters.Environment}}
+        TfVersion: ${{parameters.TfVersion}}
+        TfBackendResourceGroup: ${{parameters.TfBackendResourceGroup}}
+        TfBackendStorageAccountName: ${{parameters.TfBackendStorageAccountName}}
+        TfBackendContainerName: ${{parameters.TfBackendContainerName}}
+        TfBackendAccessKey: ${{parameters.TfBackendAccessKey}}
+        TfBackendStateFile: ${{parameters.TfBackendStateFile}}
+        TfWorkingDirectory: ${{parameters.TfWorkingDirectory}}
+        TfPlanName: ${{parameters.TfPlanName}}
+        SpnClientId: ${{parameters.SpnClientId}}
+        SpnClientSecret: ${{parameters.SpnClientSecret}}
+        SpnTenantId: ${{parameters.SpnTenantId}}
+        SubscriptionId: ${{parameters.SubscriptionId}}
+        TfVarFile: ${{parameters.TfVarFile}}
+
+  - deployment: terraform_apply
+    dependsOn: terraform_plan
+    continueOnError: false
+    environment: ${{parameters.PipelineEnvironment}}
+    timeoutInMinutes: 120
+    strategy:
+      runOnce:
+        deploy: 
+          steps:
+          - template: terraform-apply-steps.yml
+            parameters:
+              Environment: ${{parameters.Environment}}
+              TfVersion: ${{parameters.TfVersion}}
+              TfBackendResourceGroup: ${{parameters.TfBackendResourceGroup}}
+              TfBackendStorageAccountName: ${{parameters.TfBackendStorageAccountName}}
+              TfBackendContainerName: ${{parameters.TfBackendContainerName}}
+              TfBackendAccessKey: ${{parameters.TfBackendAccessKey}}
+              TfBackendStateFile: ${{parameters.TfBackendStateFile}}
+              TfWorkingDirectory: ${{parameters.TfWorkingDirectory}}
+              TfOutputVars: ${{parameters.TfOutputVars}}         

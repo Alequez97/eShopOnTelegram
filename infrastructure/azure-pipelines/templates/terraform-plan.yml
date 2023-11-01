@@ -1,0 +1,69 @@
+parameters:
+- name: environment 
+- name: tfVersion 
+  default: 1.3.3 
+- name: tfBackendResourceGroup 
+- name: tfBackendStorageAccountName 
+- name: tfBackendContainerName 
+- name: tfBackendAccessKey 
+- name: tfBackendStateFile 
+- name: tfWorkingDirectory 
+- name: tfPlanName
+  default: tfplan
+- name: spnClientId 
+  default: $(ado-spn-client-id)
+- name: spnClientSecret 
+  default: $(ado-spn-client-secret)
+- name: spnTenantId 
+  default: $(ado-spn-tenant-id)
+- name: subscriptionId 
+- name: tfVarFile 
+
+jobs:
+  - job: terraform_plan
+    steps:
+      - checkout: self
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+        displayName: "Install Terraform version ${{parameters.tfWorkingDirectory}}"
+        inputs:
+          terraformVersion: ${{parameters.tfVersion}}
+      - script: | 
+          echo "__DEBUG TF DIR__"
+          tree ${{parameters.tfWorkingDirectory}} /f
+      - task: CmdLine@2
+        displayName: Terraform Init
+        inputs:
+          script: terraform init -backend-config=resource_group_name=${{parameters.tfBackendResourceGroup}} -backend-config="storage_account_name=${{parameters.tfBackendStorageAccountName}}" -backend-config="container_name=${{parameters.tfBackendContainerName}}" -backend-config="access_key=${{parameters.tfBackendAccessKey}}" -backend-config="key=${{parameters.tfBackendStateFile}}" -reconfigure
+          workingDirectory: ${{parameters.tfWorkingDirectory}}
+      - task: CmdLine@2
+        displayName: Terraform Validate
+        inputs:
+          script: >
+            terraform validate
+          workingDirectory: ${{parameters.tfWorkingDirectory}}
+      - task: CmdLine@2
+        displayName: Terraform Plan
+        inputs:
+          script: terraform plan -input=false -out=${{parameters.tfPlanName}} -var="spn-client-id=${{parameters.spnClientId}}" -var="spn-client-secret=${{parameters.spnClientSecret}}" -var="spn-tenant-id=${{parameters.spnTenantId}}" -var="subscription_id=${{parameters.subscriptionId}}" -var-file="${{parameters.tfVarFile}}"
+          workingDirectory: ${{parameters.tfWorkingDirectory}}
+      - task: ArchiveFiles@2
+        inputs:
+          rootFolderOrFile: "$(Build.SourcesDirectory)"
+          includeRootFolder: false
+          archiveType: "tar"
+          tarCompression: "gz"
+          archiveFile: "$(Build.ArtifactStagingDirectory)/$(Build.BuildId)${{parameters.environment}}.tgz"
+          replaceExistingArchive: true
+          displayName: "Create Plan Artifact"
+      - task: PublishBuildArtifacts@1
+        inputs:
+          PathtoPublish: "$(Build.ArtifactStagingDirectory)"
+          ArtifactName: "$(Build.BuildId)${{parameters.environment}}-tfplan"
+          publishLocation: "Container"
+          displayName: "Publish Plan Artifact"
+      - task: DeleteFiles@1
+        displayName: "Remove unneeded files"
+        inputs:
+          contents: |
+            .terraform
+            ${{parameters.tfPlanName}}

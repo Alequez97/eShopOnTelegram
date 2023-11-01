@@ -1,0 +1,45 @@
+parameters:
+  - name: environmentName
+    displayName: Environment name
+    type: string
+    default: dev
+
+pool:
+  vmImage: ubuntu-latest
+
+trigger:
+  branches:
+    include:
+      - master
+
+variables:
+  - name: ADMIN_APP_LOCATION
+    value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Admin
+  - name: SHOP_APP_LOCATION
+    value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Shop
+  - name: DOTNET_VERSION
+    value: 7.x
+  - name: NODE_VERSION
+    value: 18.x
+
+stages:
+  - stage: TerraformPlanAndApply${{parameters.environmentName}}
+    displayName: Deploy azure infrastructure
+    jobs:
+      - template: ./templates/terraform-plan-and-apply.yml
+        parameters: 
+          Environment: ${{parameters.environmentName}}
+          PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
+          TfVarFile: "$(Build.SourcesDirectory)/infrastrucutre/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
+          TfBackendStateFile: tellus-web-${{lower(parameters.environmentName)}}
+          SubscriptionId: ${{parameters.SubscriptionId}}
+          TfBackendResourceGroup:  $(TFBackendResourceGroup)
+          TfBackendStorageAccountName: $(TFBackendStorageAccountName)
+          TfBackendContainerName: $(TFBackendContainerName)
+          TfBackendAccessKey: $(tfado-key1)
+          TfWorkingDirectory: $(TFWorkingDirectory)
+          TfOutputVars:
+            - "app_service_name"
+            - "app_resource_group_name"
+            - "webcomponent_storage_account_name"
+            - "webcomponent_primary_web_endpoint"
