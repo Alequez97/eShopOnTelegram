@@ -13,6 +13,7 @@ trigger:
       - master
 
 variables:
+  - group: infrastructure-config
   - name: ADMIN_APP_LOCATION
     value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Admin
   - name: SHOP_APP_LOCATION
