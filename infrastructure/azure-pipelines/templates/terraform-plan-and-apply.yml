@@ -15,7 +15,9 @@ parameters:
 - name: SpnClientSecret 
   default: $(azure-spn-client-secret)
 - name: SpnTenantId 
-  default: $(ado-spn-tenant-id)
+  default: $(azure-spn-tenant-id)
+- name: SpnObjectId 
+  default: $(azure-spn-tenant-id)
 - name: SubscriptionId 
 - name: TfVarFile 
 - name: PipelineEnvironment
@@ -40,6 +42,7 @@ jobs:
         SpnClientId: ${{parameters.SpnClientId}}
         SpnClientSecret: ${{parameters.SpnClientSecret}}
         SpnTenantId: ${{parameters.SpnTenantId}}
+        SpnObjectId: ${{parameters.SpnObjectId}}
         SubscriptionId: ${{parameters.SubscriptionId}}
         TfVarFile: ${{parameters.TfVarFile}}
 
