@@ -22,7 +22,7 @@ jobs:
         performMultiLevelLookup: true
 
     - task: NodeTool@0
-      displayName: 'Use NodeJS version ${{parameters.nodeVersion}} '
+      displayName: 'Use NodeJS version ${{parameters.nodeVersion}}'
       inputs:
         versionSpec: ${{parameters.nodeVersion}}
 
@@ -46,7 +46,7 @@ jobs:
         command: publish
         projects:  ${{parameters.dotnetProjectPath}}
         publishWebProjects: false
-        arguments: '--no-restore --configuration ${{parameters.buildConfiguration}} --output ${{ parameters.publishOutputPath }}'
+        arguments: '--no-restore --configuration Release --output ${{ parameters.publishOutputPath }}'
         zipAfterPublish: true
 
     - task: AzureWebApp@1
@@ -54,6 +54,6 @@ jobs:
       inputs:
         appType: webApp
         azureSubscription: ${{ parameters.azureSubscription }} 
-        appName: ${{ parameters.webApplicationName }}
+        appName: ${{ parameters.webAppName }}
         package: ${{ parameters.publishOutputPath }}
         resourceGroupName: ${{ parameters.webAppResourceGroup }}
