@@ -44,14 +44,10 @@ jobs:
         arguments: '-c Release -o ${{ parameters.dotnetProjectPath }}/publish'
         zipAfterPublish: true
 
-    - script: |
-        cd ${{ parameters.dotnetProjectPath }}/publish
-        ls
-
     - task: AzureWebApp@1
       displayName: Deploy app to azure
       inputs:
-        azureSubscription: "Azure subscription 1 (349526ee-2859-455b-8a10-1ffc02973465)"
+        azureSubscription: "Azure subscription 1 (349526ee-2859-455b-8a10-1ffc02973465)" # Service connection in AzureDevOps project settings
         appType: webAppLinux
         appName: ${{ parameters.webAppName }}
         package: ${{ parameters.dotnetProjectPath }}/publish/${{ parameters.dotnetProjectName }}.zip
