@@ -49,11 +49,11 @@ stages:
             - "key_vault_uri"
           
   - stage: BuildAndDeploy${{parameters.environmentName}}
+    dependsOn: ['TerraformPlanAndApply${{parameters.Environment}}']
     displayName: Build and deploy admin app
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
         parameters:
-          dependsOn: TerraformPlanAndApply${{parameters.environmentName}}
           azureSubscription: $(azure-subscription-id)
           webAppName: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
           webAppResourceGroup: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]

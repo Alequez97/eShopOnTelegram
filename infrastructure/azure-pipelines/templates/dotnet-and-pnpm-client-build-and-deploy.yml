@@ -7,12 +7,10 @@ parameters:
   - name: clientAppPath
   - name: dotnetProjectPath
   - name: publishOutputPath
-  - name: dependsOn
     default: ''
 
 jobs:
   - job: build_and_deploy
-    dependsOn: ${{parameters.dependsOn}}
     displayName: Build and deploy ${{ parameters.webAppName }}
     steps:
     - task: UseDotNet@2
