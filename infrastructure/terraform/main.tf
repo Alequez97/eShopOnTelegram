@@ -105,14 +105,14 @@ resource "azurerm_linux_web_app" "admin" {
     "Logging__ApplicationInsights"                                      = "Information"
     "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
     "AppSettings__AzureSettings__TenantId"                              = data.azurerm_client_config.eshopontelegram.tenant_id
-    "AppSettings__AzureSettings__ClientId"                              = var.app_sp_client_id
-    "AppSettings__AzureSettings__ClientSecret"                          = var.app_sp_client_secret
+    "AppSettings__AzureSettings__ClientId"                              = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
-    "AppSettings__JWTAuthSettings__Issuer"                               = var.admin_app_name
-    "AppSettings__JWTAuthSettings__Audience"                             = var.admin_app_name
-    "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"          = 10080 // 1 week
-    "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"                = 5
+    "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
+    "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
+    "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
+    "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"               = 5
   }
 
   tags = local.az_common_tags
@@ -139,8 +139,8 @@ resource "azurerm_linux_web_app" "shop" {
     "Logging__ApplicationInsights"          = "Information"
     "Azure__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
     "Azure__TenantId"                       = data.azurerm_client_config.eshopontelegram.tenant_id
-    "Azure__ClientId"                       = var.app_sp_client_id
-    "Azure__ClientSecret"                   = var.app_sp_client_secret
+    "Azure__ClientId"                       = var.azure_spn_client_id
+    "Azure__ClientSecret"                   = var.azure_spn_client_secret
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "AdminAppHostName"                      = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
@@ -164,7 +164,7 @@ resource "azurerm_key_vault" "keyvault" {
   # App identity access to keyvault
   access_policy {
     tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id  =  var.app_sp_object_id
+    object_id  =  var.azure_spn_object_id
 
     secret_permissions = [
       "Get",

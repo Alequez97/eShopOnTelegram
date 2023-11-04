@@ -5,19 +5,19 @@
 ##########################################################################
 
 # SECRET VARIABLES #
-variable "app_sp_object_id" {
+variable "azure_spn_object_id" {
   type = string
-  description = "Object id of service principal that is used to access keyvault keys from application"
+  description = "Service principal that is used by terraform"
 }
 
-variable "app_sp_client_id" {
+variable "azure_spn_client_id" {
   type = string
-  description = "Object id of service principal that is used to access keyvault keys from application"
+  description = "Service principal that is used by terraform"
 }
 
-variable "app_sp_client_secret" {
+variable "azure_spn_client_secret" {
   type = string
-  description = "Object id of service principal that is used to access keyvault keys from application"
+  description = "Service principal that is used by terraform"
 }
 
 variable "admin_object_id" {
