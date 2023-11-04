@@ -20,46 +20,9 @@ variable "azure_spn_client_secret" {
   description = "Service principal that is used by terraform"
 }
 
-variable "admin_object_id" {
+variable "eshopontelegram_common_kv_name" {
   type = string
-  description = "Admin azure object id"
-}
-
-variable "sp_object_id" {
-  type = string
-  description = "Service principal azure object id"
-}
-
-variable "sql_admin_password" {
-  type = string
-  description = "Sql server admin password"
-}
-
-variable "jwt_key" {
-  type = string
-  description = "JWT key"
-}
-
-variable "telegram_bot_owner_telegram_id" {
-  type = string
-  description = "Sql server admin password"
-}
-
-variable "telegram_token" {
-  type = string
-  description = "Sql server admin password"
-}
-
-variable "payment_card_api_token" {
-  type = string
-  description = "Sql server admin password"
-  default = ""
-}
-
-variable "payment_plicio_api_token" {
-  type = string
-  description = "Sql server admin password"
-  default = ""
+  description = "Keyvault where initial deployment keys will be stored, like passwords, api keys and so on"
 }
 
 # INFRASTRUCTURE VARIABLES #
