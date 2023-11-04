@@ -64,4 +64,18 @@ stages:
           nodeVersion: ${{ variables.NODE_VERSION }}
           clientAppPath: ${{ variables.SHOP_APP_LOCATION }}/ClientApp
           dotnetProjectPath: ${{ variables.SHOP_APP_LOCATION }}
+          dotnetProjectName: ${{ variables.ADMIN_APP_PROJECT_NAME }}
+
+  - stage: BuildAndDeploy${{parameters.environmentName}}
+    dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+    displayName: Build and deploy admin app
+    jobs:
+      - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
+        parameters:
+          webAppName: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
+          webAppResourceGroup: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
+          dotnetVersion: ${{ variables.DOTNET_VERSION }}
+          nodeVersion: ${{ variables.NODE_VERSION }}
+          clientAppPath: ${{ variables.SHOP_APP_LOCATION }}/WebApp
+          dotnetProjectPath: ${{ variables.SHOP_APP_LOCATION }}
           dotnetProjectName: ${{ variables.SHOP_APP_PROJECT_NAME }}
