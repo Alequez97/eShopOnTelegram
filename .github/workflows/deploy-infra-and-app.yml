@@ -1,9 +1,6 @@
 name: Deploy infrastructure and application
 
 on:
-  push:
-    branches:
-      - master
   workflow_dispatch:
     inputs:
       environment:
