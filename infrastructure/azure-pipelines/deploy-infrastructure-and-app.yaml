@@ -17,8 +17,8 @@ variables:
   - group: infrastructure-config
   - name: ADMIN_APP_LOCATION
     value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Admin
-  - name: ADMIN_APP_CSPROJ_LOCATION
-    value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Admin/eShopOnTelegram.Admin.csproj
+  - name: ADMIN_APP_PROJECT_NAME
+    value: eShopOnTelegram.Admin
   - name: SHOP_APP_LOCATION
     value: $(Build.SourcesDirectory)/src/eShopOnTelegram.Shop
   - name: DOTNET_VERSION
@@ -63,5 +63,5 @@ stages:
           dotnetVersion: ${{ variables.DOTNET_VERSION }}
           nodeVersion: ${{ variables.NODE_VERSION }}
           clientAppPath: ${{ variables.ADMIN_APP_LOCATION }}/ClientApp
-          dotnetProjectPath: ${{ variables.ADMIN_APP_CSPROJ_LOCATION }}
-          publishOutputPath: ${{ variables.ADMIN_APP_LOCATION }}/publish
+          dotnetProjectPath: ${{ variables.ADMIN_APP_LOCATION }}
+          dotnetProjectName: ${{ variables.ADMIN_APP_PROJECT_NAME }}
