@@ -44,10 +44,6 @@ jobs:
         arguments: '-c Release -o publish'
         zipAfterPublish: true
 
-    - script: |
-        cd ${{ parameters.publishOutputPath }}
-        ls
-
     - task: AzureWebApp@1
       displayName: Deploy app to azure
       inputs:
