@@ -61,5 +61,5 @@ stages:
           dotnetVersion: ${{ variables.DOTNET_VERSION }}
           nodeVersion: ${{ variables.NODE_VERSION }}
           clientAppPath: ${{ variables.ADMIN_APP_LOCATION }}/ClientApp
-          dotnetProjectPath: ${{ variables.ADMIN_APP_LOCATION }}/eShopOnTelegram.Admin.csproj
+          dotnetProjectPath: ${{ variables.ADMIN_APP_LOCATION }}
           publishOutputPath: ${{ variables.ADMIN_APP_LOCATION }}/publish

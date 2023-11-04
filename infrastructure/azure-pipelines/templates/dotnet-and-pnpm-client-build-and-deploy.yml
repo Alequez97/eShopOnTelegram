@@ -32,21 +32,13 @@ jobs:
       workingDirectory: ${{parameters.clientAppPath}}
       displayName: 'Install node modules'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Restore projects ${{parameters.dotnetProjectPath}}'
-      inputs:
-        projects: |
-          ${{parameters.dotnetProjectPath}}
-        command: 'restore'
+    - script: pnpm build
+      workingDirectory: ${{parameters.clientAppPath}}
+      displayName: 'Build client app'
 
-    - task: DotNetCoreCLI@2
-      displayName: 'Build ${{parameters.dotnetProjectPath}}'
-      inputs:
-        command: publish
-        projects:  ${{parameters.dotnetProjectPath}}
-        publishWebProjects: true
-        arguments: '--no-restore --configuration Release --output ${{ parameters.publishOutputPath }}'
-        # zipAfterPublish: true
+    - script: dotnet publish -c Release --output ${{ parameters.publishOutputPath }}
+      workingDirectory: ${{parameters.dotnetProjectPath}}
+      displayName: 'Publish dotnet project'
 
     - task: AzureWebApp@1
       displayName: Deploy app to azure
