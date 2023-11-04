@@ -11,11 +11,11 @@ parameters:
 - name: TfPlanName
   default: tfplan
 - name: SpnClientId 
-  default: $(ado-spn-client-id)
+  default: $(azure-spn-client-id)
 - name: SpnClientSecret 
-  default: $(ado-spn-client-secret)
+  default: $(azure-spn-client-secret)
 - name: SpnTenantId 
-  default: $(ado-spn-tenant-id)
+  default: $(azure-spn-tenant-id)
 - name: SubscriptionId 
 - name: TfVarFile 
 
@@ -39,7 +39,7 @@ steps:
   - task: CmdLine@2
     displayName: Terraform Plan
     inputs:
-      script: terraform plan -input=false -out=${{parameters.TfPlanName}} -var="spn-client-id=${{parameters.SpnClientId}}" -var="spn-client-secret=${{parameters.SpnClientSecret}}" -var="spn-tenant-id=${{parameters.SpnTenantId}}" -var="subscription_id=${{parameters.SubscriptionId}}" -var-file="${{parameters.TfVarFile}}"
+      script: terraform plan -input=false -out=${{parameters.TfPlanName}} -var="azure_spn_client_id=${{parameters.SpnClientId}}" -var="azure_spn_client_secret=${{parameters.SpnClientSecret}}" -var="azure_spn_tenant_id=${{parameters.SpnTenantId}}" -var="azure_subscription_id=${{parameters.SubscriptionId}}" -var-file="${{parameters.TfVarFile}}"
       workingDirectory: ${{parameters.TfWorkingDirectory}}
   - task: ArchiveFiles@2
     inputs:

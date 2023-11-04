@@ -11,9 +11,9 @@ parameters:
 - name: TfPlanName
   default: tfplan
 - name: SpnClientId 
-  default: $(ado-spn-client-id)
+  default: $(azure-spn-client-id)
 - name: SpnClientSecret 
-  default: $(ado-spn-client-secret)
+  default: $(azure-spn-client-secret)
 - name: SpnTenantId 
   default: $(ado-spn-tenant-id)
 - name: SubscriptionId 
