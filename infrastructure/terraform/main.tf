@@ -187,6 +187,22 @@ resource "azurerm_key_vault" "keyvault" {
     ]
   }
 
+  # Azure DevOps pipeline agent
+  access_policy {
+    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
+    object_id  =  "dd4ddfa4-74b2-4385-8fb8-f9d2f06c92d8"
+
+    secret_permissions = [
+      "Get",
+      "List",
+      "Set",
+      "Delete",
+      "Purge",
+      "Recover",
+      "Restore"
+    ]
+  }
+
   tags = local.az_common_tags
 }
 
