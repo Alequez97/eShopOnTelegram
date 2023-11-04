@@ -17,7 +17,7 @@ parameters:
 - name: SpnTenantId 
   default: $(azure-spn-tenant-id)
 - name: SpnObjectId 
-  default: $(azure-spn-tenant-id)
+  default: $(azure-spn-object-id)
 - name: SubscriptionId 
 - name: TfVarFile 
 - name: PipelineEnvironment
