@@ -37,13 +37,17 @@ jobs:
       displayName: 'Build client app'
 
     - task: DotNetCoreCLI@2
-      displayName: 'Build publish artifacts ${{parameters.publishProject}}'
-      workingDirectory: ${{parameters.dotnetProjectPath}}
+      displayName: 'Build publish artifacts ${{parameters.dotnetProjectPath}}'
       inputs:
         command: publish
-        publishWebProjects: true
+        projects:  ${{parameters.dotnetProjectPath}}
+        publishWebProjects: false
         arguments: '-c Release -o ${{ parameters.publishOutputPath }}'
         zipAfterPublish: true
+
+    - script: |
+        cd ${{ parameters.publishOutputPath }}
+        ls
 
     - task: AzureWebApp@1
       displayName: Deploy app to azure
