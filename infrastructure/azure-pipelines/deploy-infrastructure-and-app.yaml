@@ -52,7 +52,7 @@ stages:
             - "shop_app_name"
             - "key_vault_uri"
           
-  - stage: BuildAndDeploy${{parameters.environmentName}}
+  - stage: BuildAndDeployAdmin${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
     displayName: Build and deploy admin app
     jobs:
@@ -66,7 +66,7 @@ stages:
           dotnetProjectPath: ${{ variables.SHOP_APP_LOCATION }}
           dotnetProjectName: ${{ variables.ADMIN_APP_PROJECT_NAME }}
 
-  - stage: BuildAndDeploy${{parameters.environmentName}}
+  - stage: BuildAndDeployShop${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
     displayName: Build and deploy admin app
     jobs:
