@@ -1,11 +1,12 @@
 parameters:
-  - name: azureSubscription
   - name: webAppName
   - name: webAppResourceGroup
   - name: dotnetVersion
   - name: nodeVersion
   - name: clientAppPath
   - name: dotnetProjectPath
+  - name: azureSubscription
+    default: $(azure-subscription-id)
   - name: publishOutputPath
     default: ''
 
@@ -39,7 +40,7 @@ jobs:
         command: 'restore'
 
     - task: DotNetCoreCLI@2
-      displayName: 'Build publish artifacts ${{parameters.dotnetProjectPath}}'
+      displayName: 'Build ${{parameters.dotnetProjectPath}}'
       inputs:
         command: publish
         projects:  ${{parameters.dotnetProjectPath}}

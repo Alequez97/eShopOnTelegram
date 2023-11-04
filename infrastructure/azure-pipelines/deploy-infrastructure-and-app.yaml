@@ -54,7 +54,6 @@ stages:
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
         parameters:
-          azureSubscription: $(azure-subscription-id)
           webAppName: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
           webAppResourceGroup: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
           dotnetVersion: ${{ variables.DOTNET_VERSION }}
