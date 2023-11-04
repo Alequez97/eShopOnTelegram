@@ -11,7 +11,7 @@ parameters:
 
 jobs:
   - job: build_and_deploy
-    displayName: Build and deploy ${{ parameters.webAppName }}
+    displayName: Build and deploy app
     steps:
     - task: UseDotNet@2
       displayName: 'Use .NET ${{parameters.dotnetVersion}} SDK'
@@ -28,7 +28,7 @@ jobs:
       displayName: 'Install pnpm'
 
     - script: pnpm install
-      workingDirectory: clientAppPath
+      workingDirectory: ${{parameters.clientAppPath}}
       displayName: 'Install node modules'
 
     - task: DotNetCoreCLI@2

@@ -1,5 +1,3 @@
-data "azurerm_client_config" "eshopontelegram" {}
-
 data "azurerm_key_vault" "kv_eshopontelegram_common" {
   name                = var.eshopontelegram_common_kv_name
   resource_group_name = "rg-eshopontelegram-common"
@@ -114,7 +112,7 @@ resource "azurerm_linux_web_app" "admin" {
     "Logging__LogLevel__Default"                                        = "Information"
     "Logging__ApplicationInsights"                                      = "Information"
     "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
-    "AppSettings__AzureSettings__TenantId"                              = data.azurerm_client_config.eshopontelegram.tenant_id
+    "AppSettings__AzureSettings__TenantId"                              = var.azure_spn_tenant_id
     "AppSettings__AzureSettings__ClientId"                              = var.azure_spn_client_id
     "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
@@ -148,7 +146,7 @@ resource "azurerm_linux_web_app" "shop" {
     "Logging__LogLevel__Default"            = "Information"
     "Logging__ApplicationInsights"          = "Information"
     "Azure__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
-    "Azure__TenantId"                       = data.azurerm_client_config.eshopontelegram.tenant_id
+    "Azure__TenantId"                       = var.azure_spn_tenant_id
     "Azure__ClientId"                       = var.azure_spn_client_id
     "Azure__ClientSecret"                   = var.azure_spn_client_secret
     "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
@@ -162,7 +160,7 @@ resource "azurerm_key_vault" "keyvault" {
   name                            = var.keyvault_name
   location                        = azurerm_resource_group.rg.location
   resource_group_name             = azurerm_resource_group.rg.name
-  tenant_id                       = data.azurerm_client_config.eshopontelegram.tenant_id
+  tenant_id                       = var.azure_spn_tenant_id
   soft_delete_retention_days      = "7"
   sku_name                        = "standard"
 
@@ -173,7 +171,7 @@ resource "azurerm_key_vault" "keyvault" {
 
   # App identity access to keyvault
   access_policy {
-    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
+    tenant_id  =  var.azure_spn_tenant_id
     object_id  =  var.azure_spn_object_id
 
     secret_permissions = [
@@ -189,7 +187,7 @@ resource "azurerm_key_vault" "keyvault" {
 
   # Aleksandrs Vaguscenko
   access_policy {
-    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
+    tenant_id  =  var.azure_spn_tenant_id
     object_id  =  "aacc76fd-4210-4008-bb76-ba5869439d38"
 
     secret_permissions = [
