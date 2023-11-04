@@ -187,10 +187,10 @@ resource "azurerm_key_vault" "keyvault" {
     ]
   }
 
-  # Azure DevOps pipeline agent
+  # Aleksandrs Vaguscenko
   access_policy {
     tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id  =  "dd4ddfa4-74b2-4385-8fb8-f9d2f06c92d8"
+    object_id  =  "aacc76fd-4210-4008-bb76-ba5869439d38"
 
     secret_permissions = [
       "Get",

@@ -1,5 +1,8 @@
-1) terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate"
-2) terraform validate
-3) terraform plan -input=false -out=plan -var="subscription_id=349526ee-2859-455b-8a10-1ffc02973465" -var-file="vars/dev.tfvars"
-3) (with spn) terraform plan -input=false -out=${{parameters.tfPlanName}} -var="spn-client-id=${{parameters.spnClientId}}" -var="spn-client-secret=${{parameters.spnClientSecret}}" -var="spn-tenant-id=${{parameters.spnTenantId}}" -var="subscription_id=${{parameters.subscriptionId}}" -var-file="${{parameters.tfVarFile}}"
-4) terraform apply "plan"
+1) 
+terraform init -backend-config=resource_group_name=rg-infrastructure-administration -backend-config="storage_account_name=stcommonterraformstate" -backend-config="container_name=eshopontelegram-terraform-state" -backend-config="key=terraform-state-dev.tfstate" -backend-config="access_key="
+2) 
+terraform validate
+3) 
+terraform plan -input=false -out=plan -var="azure_subscription_id=349526ee-2859-455b-8a10-1ffc02973465" -var="azure_spn_tenant_id=bf6ef353-a632-470c-8235-e122f2ebf99d" -var="azure_spn_object_id=c3c08ec2-5c1a-4a58-9d2a-242588f99f11" -var="azure_spn_client_id=2754870b-2943-4657-bd32-707885d7d168" -var="azure_spn_client_secret=" -var-file="vars/dev.tfvars"
+4) 
+terraform apply "plan"
