@@ -11,6 +11,7 @@ trigger:
   branches:
     include:
       - master
+      - azure-devops-pipelines
 
 variables:
   - group: infrastructure-config
