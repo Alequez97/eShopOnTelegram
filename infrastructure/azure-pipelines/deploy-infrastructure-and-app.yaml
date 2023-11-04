@@ -25,37 +25,39 @@ variables:
     value: 18.x
 
 stages:
-  - stage: TerraformPlanAndApply${{parameters.environmentName}}
-    displayName: Deploy azure infrastructure
-    jobs:
-      - template: ./templates/terraform-plan-and-apply.yml
-        parameters: 
-          Environment: ${{parameters.environmentName}}
-          PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
-          TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
-          TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
-          SubscriptionId: $(azure-subscription-id)
-          TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
-          TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
-          TfBackendContainerName: $(terraform-backend-blob-container-name)
-          TfBackendAccessKey: $(terraform-backend-access-key)
-          TfWorkingDirectory: $(Build.SourcesDirectory)/infrastructure/terraform
-          TfOutputVars:
-            - "resource_group_name"
-            - "resource_group_location"
-            - "admin_app_name"
-            - "admin_app_hostname"
-            - "shop_app_name"
-            - "key_vault_uri"
+  # - stage: TerraformPlanAndApply${{parameters.environmentName}}
+  #   displayName: Deploy azure infrastructure
+  #   jobs:
+  #     - template: ./templates/terraform-plan-and-apply.yml
+  #       parameters: 
+  #         Environment: ${{parameters.environmentName}}
+  #         PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
+  #         TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
+  #         TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
+  #         SubscriptionId: $(azure-subscription-id)
+  #         TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
+  #         TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
+  #         TfBackendContainerName: $(terraform-backend-blob-container-name)
+  #         TfBackendAccessKey: $(terraform-backend-access-key)
+  #         TfWorkingDirectory: $(Build.SourcesDirectory)/infrastructure/terraform
+  #         TfOutputVars:
+  #           - "resource_group_name"
+  #           - "resource_group_location"
+  #           - "admin_app_name"
+  #           - "admin_app_hostname"
+  #           - "shop_app_name"
+  #           - "key_vault_uri"
           
   - stage: BuildAndDeploy${{parameters.environmentName}}
-    dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+    # dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
     displayName: Build and deploy admin app
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
         parameters:
-          webAppName: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
-          webAppResourceGroup: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
+          # webAppName: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
+          # webAppResourceGroup: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
+          webAppName: "app-admin-eshopontelegram-dev"
+          webAppResourceGroup: "rg-eshopontelegram-dev"
           dotnetVersion: ${{ variables.DOTNET_VERSION }}
           nodeVersion: ${{ variables.NODE_VERSION }}
           clientAppPath: ${{ variables.ADMIN_APP_LOCATION }}/ClientApp

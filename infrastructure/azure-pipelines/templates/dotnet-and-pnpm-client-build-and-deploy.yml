@@ -44,15 +44,15 @@ jobs:
       inputs:
         command: publish
         projects:  ${{parameters.dotnetProjectPath}}
-        publishWebProjects: false
+        publishWebProjects: true
         arguments: '--no-restore --configuration Release --output ${{ parameters.publishOutputPath }}'
-        zipAfterPublish: true
+        # zipAfterPublish: true
 
     - task: AzureWebApp@1
       displayName: Deploy app to azure
       inputs:
-        appType: webApp
-        azureSubscription: ${{ parameters.azureSubscription }} 
+        azureSubscription: "Azure subscription 1"
+        appType: webAppLinux
         appName: ${{ parameters.webAppName }}
         package: ${{ parameters.publishOutputPath }}
         resourceGroupName: ${{ parameters.webAppResourceGroup }}
