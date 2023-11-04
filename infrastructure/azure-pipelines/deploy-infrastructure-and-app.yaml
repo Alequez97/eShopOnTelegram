@@ -49,7 +49,7 @@ stages:
             - "key_vault_uri"
           
   - stage: BuildAndDeploy${{parameters.environmentName}}
-    dependsOn: ['TerraformPlanAndApply${{parameters.Environment}}']
+    dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
     displayName: Build and deploy admin app
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
