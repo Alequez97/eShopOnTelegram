@@ -5,6 +5,11 @@
 ##########################################################################
 
 # SECRET VARIABLES #
+variable "azure_spn_tenant_id" {
+  type = string
+  description = "Service principal tenant id that is used by terraform"
+}
+
 variable "azure_spn_object_id" {
   type = string
   description = "Service principal that is used by terraform"
