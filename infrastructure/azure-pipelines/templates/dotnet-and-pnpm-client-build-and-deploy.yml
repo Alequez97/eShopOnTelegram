@@ -41,7 +41,7 @@ jobs:
         command: publish
         projects:  ${{parameters.dotnetProjectPath}}/${{ parameters.dotnetProjectName }}.csproj
         publishWebProjects: false
-        arguments: '-c Release -o publish'
+        arguments: '-c Release -o ${{ parameters.dotnetProjectPath }}/publish'
         zipAfterPublish: true
 
     - script: |
