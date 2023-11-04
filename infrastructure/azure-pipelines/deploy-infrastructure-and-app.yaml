@@ -28,9 +28,11 @@ stages:
   - stage: TerraformPlanAndApply${{parameters.environmentName}}
     displayName: Deploy azure infrastructure
     jobs:
-      - script: | 
-          cd $(Build.SourcesDirectory)
-          ls
+      - job: PushVersionUpdateCommit
+        steps:
+          - script: | 
+              cd $(Build.SourcesDirectory)
+              ls
 
       # - template: ./templates/terraform-plan-and-apply.yml
       #   parameters: 
