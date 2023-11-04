@@ -11,7 +11,6 @@ trigger:
   branches:
     include:
       - master
-      - azure-devops-pipelines # TODO: Remove
 
 variables:
   - group: infrastructure-config
@@ -28,28 +27,22 @@ stages:
   - stage: TerraformPlanAndApply${{parameters.environmentName}}
     displayName: Deploy azure infrastructure
     jobs:
-      - job: PushVersionUpdateCommit
-        steps:
-          - script: | 
-              cd $(Build.SourcesDirectory)
-              ls
-
-      # - template: ./templates/terraform-plan-and-apply.yml
-      #   parameters: 
-      #     Environment: ${{parameters.environmentName}}
-      #     PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
-      #     TfVarFile: "$(Build.SourcesDirectory)/infrastrucutre/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
-      #     TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
-      #     SubscriptionId: $(azure-subsription-id)
-      #     TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
-      #     TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
-      #     TfBackendContainerName: $(terraform-backend-blob-container-name)
-      #     TfBackendAccessKey: $(terraform-backend-access-key)
-      #     TfWorkingDirectory: $(Build.SourcesDirectory)/infrastrucutre/terraform
-      #     TfOutputVars:
-      #       - "resource_group_name"
-      #       - "resource_group_location"
-      #       - "admin_app_name"
-      #       - "admin_app_hostname"
-      #       - "shop_app_name"
-      #       - "key_vault_uri"
+      - template: ./templates/terraform-plan-and-apply.yml
+        parameters: 
+          Environment: ${{parameters.environmentName}}
+          PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
+          TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
+          TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
+          SubscriptionId: $(azure-subsription-id)
+          TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
+          TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
+          TfBackendContainerName: $(terraform-backend-blob-container-name)
+          TfBackendAccessKey: $(terraform-backend-access-key)
+          TfWorkingDirectory: $(Build.SourcesDirectory)/infrastructure/terraform
+          TfOutputVars:
+            - "resource_group_name"
+            - "resource_group_location"
+            - "admin_app_name"
+            - "admin_app_hostname"
+            - "shop_app_name"
+            - "key_vault_uri"
