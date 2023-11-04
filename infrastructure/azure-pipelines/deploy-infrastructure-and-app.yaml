@@ -34,7 +34,7 @@ stages:
           PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
           TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
-          SubscriptionId: $(azure-subsription-id)
+          SubscriptionId: $(azure-subscription-id)
           TfBackendResourceGroup:  $(terraform-backend-resource-group-name)
           TfBackendStorageAccountName: $(terraform-backend-storage-account-name)
           TfBackendContainerName: $(terraform-backend-blob-container-name)
