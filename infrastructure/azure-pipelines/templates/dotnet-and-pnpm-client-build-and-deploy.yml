@@ -51,7 +51,7 @@ jobs:
     - task: AzureWebApp@1
       displayName: Deploy app to azure
       inputs:
-        azureSubscription: "Azure subscription 1"
+        azureSubscription: "Azure subscription 1 (349526ee-2859-455b-8a10-1ffc02973465)"
         appType: webAppLinux
         appName: ${{ parameters.webAppName }}
         package: ${{ parameters.publishOutputPath }}
