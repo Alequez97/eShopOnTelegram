@@ -27,6 +27,7 @@ parameters:
 
 jobs:
   - job: terraform_plan
+    displayName: Terraform plan
     steps:
     - template: terraform-plan-steps.yml  
       parameters:
@@ -47,6 +48,7 @@ jobs:
         TfVarFile: ${{parameters.TfVarFile}}
 
   - deployment: terraform_apply
+    displayName: Terraform apply
     dependsOn: terraform_plan
     continueOnError: false
     environment: ${{parameters.PipelineEnvironment}}

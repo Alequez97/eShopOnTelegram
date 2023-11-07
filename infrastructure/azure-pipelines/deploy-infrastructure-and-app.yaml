@@ -26,6 +26,8 @@ variables:
     value: 7.x
   - name: NODE_VERSION
     value: 18.x
+  - name: PIPELINE_ENVIRONMENT
+    value: eshopontelegram-${{lower(parameters.environmentName)}}
 
 stages:
   - stage: TerraformPlanAndApply${{parameters.environmentName}}
@@ -34,7 +36,7 @@ stages:
       - template: ./templates/terraform-plan-and-apply.yml
         parameters: 
           Environment: ${{parameters.environmentName}}
-          PipelineEnvironment: eshopontelegram-${{lower(parameters.environmentName)}}
+          PipelineEnvironment: $(PIPELINE_ENVIRONMENT)
           TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
           SubscriptionId: $(azure-subscription-id)
@@ -53,6 +55,7 @@ stages:
           
   - stage: BuildAndDeployAdmin${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+    environment: $(PIPELINE_ENVIRONMENT)
     variables:
       - name: AppName
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
@@ -72,6 +75,7 @@ stages:
 
   - stage: BuildAndDeployShop${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+    environment: $(PIPELINE_ENVIRONMENT)
     variables:
       - name: AppName
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
