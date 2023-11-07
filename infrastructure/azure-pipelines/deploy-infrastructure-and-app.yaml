@@ -55,7 +55,6 @@ stages:
           
   - stage: BuildAndDeployAdmin${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
-    environment: $(PIPELINE_ENVIRONMENT)
     variables:
       - name: AppName
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
@@ -75,7 +74,6 @@ stages:
 
   - stage: BuildAndDeployShop${{parameters.environmentName}}
     dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
-    environment: $(PIPELINE_ENVIRONMENT)
     variables:
       - name: AppName
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
