@@ -115,6 +115,7 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
     "AppSettings__AzureSettings__TenantId"                              = var.azure_spn_tenant_id
     "AppSettings__AzureSettings__ClientId"                              = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
     "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
@@ -149,6 +150,7 @@ resource "azurerm_linux_web_app" "shop" {
     "AppSettings__AzureSettings__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
     "AppSettings__AzureSettings__TenantId"                       = var.azure_spn_tenant_id
     "AppSettings__AzureSettings__ClientId"                       = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ClientSecret"                   = var.azure_spn_client_secret
     "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "AdminAppHostName"                                           = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
@@ -203,12 +205,6 @@ resource "azurerm_key_vault" "keyvault" {
   }
 
   tags = local.az_common_tags
-}
-
-resource "azurerm_key_vault_secret" "azure_settings_client_secret" {
-  name         = "AppSettings--AzureSettings--ClientSecret"
-  value        = var.azure_spn_client_secret
-  key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 data "azurerm_key_vault_secret" "common_kv_jwt_key" {
