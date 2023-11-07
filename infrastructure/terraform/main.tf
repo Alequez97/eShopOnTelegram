@@ -1,4 +1,7 @@
-data "azurerm_client_config" "eshopontelegram" {}
+data "azurerm_key_vault" "kv_eshopontelegram_common" {
+  name                = var.eshopontelegram_common_kv_name
+  resource_group_name = "rg-eshopontelegram-common"
+}
 
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
@@ -7,13 +10,18 @@ resource "azurerm_resource_group" "rg" {
   tags = local.az_common_tags
 }
 
+data "azurerm_key_vault_secret" "common_kv_mssql_database_password" {
+  name         = "sql-admin-password"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
+}
+
 resource "azurerm_mssql_server" "mssqlserver" {
   name                         = var.sql_server_name
   resource_group_name          = azurerm_resource_group.rg.name
   location                     = azurerm_resource_group.rg.location
   version                      = "12.0"
   administrator_login          = "eshopontelegram"
-  administrator_login_password = var.sql_admin_password
+  administrator_login_password = data.azurerm_key_vault_secret.common_kv_mssql_database_password.value
 
   tags = local.az_common_tags
 }
@@ -93,6 +101,7 @@ resource "azurerm_linux_web_app" "admin" {
 
   site_config {
     always_on           = var.app_service_plan_sku_name == "F1" ? false : true
+    app_command_line    = "dotnet eShopOnTelegram.Admin.dll"
     minimum_tls_version = 1.2
 
     application_stack {
@@ -104,15 +113,15 @@ resource "azurerm_linux_web_app" "admin" {
     "Logging__LogLevel__Default"                                        = "Information"
     "Logging__ApplicationInsights"                                      = "Information"
     "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
-    "AppSettings__AzureSettings__TenantId"                              = data.azurerm_client_config.eshopontelegram.tenant_id
-    "AppSettings__AzureSettings__ClientId"                              = var.app_sp_client_id
-    "AppSettings__AzureSettings__ClientSecret"                          = var.app_sp_client_secret
+    "AppSettings__AzureSettings__TenantId"                              = var.azure_spn_tenant_id
+    "AppSettings__AzureSettings__ClientId"                              = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
-    "AppSettings__JWTAuthSettings__Issuer"                               = var.admin_app_name
-    "AppSettings__JWTAuthSettings__Audience"                             = var.admin_app_name
-    "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"          = 10080 // 1 week
-    "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"                = 5
+    "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
+    "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
+    "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
+    "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"               = 5
   }
 
   tags = local.az_common_tags
@@ -126,23 +135,24 @@ resource "azurerm_linux_web_app" "shop" {
   https_only          = true
 
   site_config {
-    always_on = var.app_service_plan_sku_name == "F1" ? false : true
+    always_on           = var.app_service_plan_sku_name == "F1" ? false : true
+    app_command_line    = "dotnet eShopOnTelegram.Shop.dll"
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version = "7.0"
     }
   }
 
   app_settings = {
-    "Logging__LogLevel__Default"            = "Information"
-    "Logging__ApplicationInsights"          = "Information"
-    "Azure__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
-    "Azure__TenantId"                       = data.azurerm_client_config.eshopontelegram.tenant_id
-    "Azure__ClientId"                       = var.app_sp_client_id
-    "Azure__ClientSecret"                   = var.app_sp_client_secret
-    "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
-    "AdminAppHostName"                      = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
+    "Logging__LogLevel__Default"                                 = "Information"
+    "Logging__ApplicationInsights"                               = "Information"
+    "AppSettings__AzureSettings__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
+    "AppSettings__AzureSettings__TenantId"                       = var.azure_spn_tenant_id
+    "AppSettings__AzureSettings__ClientId"                       = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ClientSecret"                   = var.azure_spn_client_secret
+    "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+    "AdminAppHostName"                                           = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
 
   tags = local.az_common_tags
@@ -152,7 +162,7 @@ resource "azurerm_key_vault" "keyvault" {
   name                            = var.keyvault_name
   location                        = azurerm_resource_group.rg.location
   resource_group_name             = azurerm_resource_group.rg.name
-  tenant_id                       = data.azurerm_client_config.eshopontelegram.tenant_id
+  tenant_id                       = var.azure_spn_tenant_id
   soft_delete_retention_days      = "7"
   sku_name                        = "standard"
 
@@ -162,20 +172,10 @@ resource "azurerm_key_vault" "keyvault" {
   ]
 
   # App identity access to keyvault
+  # Same service principal uses terraform
   access_policy {
-    tenant_id  =  data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id  =  var.app_sp_object_id
-
-    secret_permissions = [
-      "Get",
-      "List",
-    ]
-  }
-
-  # Azure admin access to keyvault
-  access_policy {
-    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id = var.admin_object_id
+    tenant_id  =  var.azure_spn_tenant_id
+    object_id  =  var.azure_spn_object_id
 
     secret_permissions = [
       "Get",
@@ -188,10 +188,10 @@ resource "azurerm_key_vault" "keyvault" {
     ]
   }
 
-  # Github service principal access to keyvault
+  # Aleksandrs Vaguscenko
   access_policy {
-    tenant_id = data.azurerm_client_config.eshopontelegram.tenant_id
-    object_id = var.sp_object_id
+    tenant_id  =  var.azure_spn_tenant_id
+    object_id  =  "aacc76fd-4210-4008-bb76-ba5869439d38"
 
     secret_permissions = [
       "Get",
@@ -207,9 +207,14 @@ resource "azurerm_key_vault" "keyvault" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_key_vault_secret" "jwtkey" {
+data "azurerm_key_vault_secret" "common_kv_jwt_key" {
+  name         = "jwt-key"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
+}
+
+resource "azurerm_key_vault_secret" "jwt_key" {
   name         = "AppSettings--JWTAuthSettings--Key"
-  value        = var.jwt_key
+  value        = data.azurerm_key_vault_secret.common_kv_jwt_key.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
@@ -237,15 +242,25 @@ resource "azurerm_key_vault_secret" "productimageshostname" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
+data "azurerm_key_vault_secret" "common_kv_telegram_bot_owner_telegram_id" {
+  name         = "telegram-bot-owner-telegram-id"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
+}
+
 resource "azurerm_key_vault_secret" "telegramownerid" {
   name         = "AppSettings--TelegramBotSettings--BotOwnerTelegramId"
-  value        = var.telegram_bot_owner_telegram_id
+  value        = data.azurerm_key_vault_secret.common_kv_telegram_bot_owner_telegram_id.value
   key_vault_id = azurerm_key_vault.keyvault.id
+}
+
+data "azurerm_key_vault_secret" "common_kv_telegram_token" {
+  name         = "telegram-token"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
 }
 
 resource "azurerm_key_vault_secret" "telegramtoken" {
   name         = "AppSettings--TelegramBotSettings--Token"
-  value        = var.telegram_token
+  value        = data.azurerm_key_vault_secret.common_kv_telegram_token.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
@@ -261,27 +276,25 @@ resource "azurerm_key_vault_secret" "paymentcurrency" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
-resource "azurerm_key_vault_secret" "cardpaymentenabled" {
-  name         = "AppSettings--PaymentSettings--Card--Enabled"
-  value        = var.payment_card_api_token == "" ? "false" : "true"
-  key_vault_id = azurerm_key_vault.keyvault.id
+data "azurerm_key_vault_secret" "common_kv_payment_card_api_token" {
+  name         = "payment-card-api-token"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
 }
 
 resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
   name         = "AppSettings--PaymentSettings--Card--ApiToken"
-  value        = var.payment_card_api_token
+  value        = data.azurerm_key_vault_secret.common_kv_payment_card_api_token.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
-resource "azurerm_key_vault_secret" "pliciopaymentenabled" {
-  name         = "AppSettings--PaymentSettings--Plisio--Enabled"
-  value        = var.payment_plicio_api_token == "" ? "false" : "true"
-  key_vault_id = azurerm_key_vault.keyvault.id
+data "azurerm_key_vault_secret" "common_kv_payment_plisio_api_token" {
+  name         = "payment-plisio-api-token"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
   name         = "AppSettings--PaymentSettings--Plisio--ApiToken"
-  value        = var.payment_plicio_api_token
+  value        = data.azurerm_key_vault_secret.common_kv_payment_plisio_api_token.value
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button } from '../button/button';
+import { Button } from '../Button/Button';
 import { Product } from '../../types/product.type';
 import {
 	StyledButtonContainer,

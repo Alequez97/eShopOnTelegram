@@ -1,0 +1,54 @@
+parameters:
+  - name: webAppName
+  - name: webAppResourceGroup
+  - name: dotnetVersion
+  - name: nodeVersion
+  - name: clientAppPath
+  - name: dotnetProjectPath
+  - name: dotnetProjectName
+  - name: azureSubscription
+    default: $(azure-subscription-id)
+
+jobs:
+  - job: build_and_deploy
+    displayName: Build and deploy app
+    steps:
+    - task: UseDotNet@2
+      displayName: 'Use .NET ${{parameters.dotnetVersion}} SDK'
+      inputs:
+        version: ${{parameters.dotnetVersion}}
+        performMultiLevelLookup: true
+
+    - task: NodeTool@0
+      displayName: 'Use NodeJS version ${{parameters.nodeVersion}}'
+      inputs:
+        versionSpec: ${{parameters.nodeVersion}}
+
+    - script: npm install -g pnpm
+      displayName: 'Install pnpm'
+
+    - script: pnpm install
+      workingDirectory: ${{parameters.clientAppPath}}
+      displayName: 'Install node modules'
+
+    - script: pnpm build
+      workingDirectory: ${{parameters.clientAppPath}}
+      displayName: 'Build client app'
+
+    - task: DotNetCoreCLI@2
+      displayName: 'Build publish artifacts ${{parameters.dotnetProjectPath}}/${{ parameters.dotnetProjectName }}.csproj'
+      inputs:
+        command: publish
+        projects:  ${{parameters.dotnetProjectPath}}/${{ parameters.dotnetProjectName }}.csproj
+        publishWebProjects: false
+        arguments: '-c Release -o ${{ parameters.dotnetProjectPath }}/publish'
+        zipAfterPublish: true
+
+    - task: AzureWebApp@1
+      displayName: Deploy app to azure
+      inputs:
+        azureSubscription: "Azure subscription 1 (349526ee-2859-455b-8a10-1ffc02973465)" # Service connection in AzureDevOps project settings
+        appType: webAppLinux
+        appName: ${{ parameters.webAppName }}
+        package: ${{ parameters.dotnetProjectPath }}/publish/${{ parameters.dotnetProjectName }}.zip
+        resourceGroupName: ${{ parameters.webAppResourceGroup }}

@@ -1,0 +1,56 @@
+parameters:
+- name: environment 
+- name: deploymentEnvironment
+- name: tfVersion 
+  default: 1.3.3 
+- name: tfBackendResourceGroup 
+- name: tfBackendStorageAccountName 
+- name: tfBackendContainerName 
+- name: tfBackendAccessKey 
+- name: tfBackendStateFile 
+- name: tfWorkingDirectory 
+- name: tfOutputVars
+  type: object
+  default: ''
+
+jobs:
+  - deployment: terraform_apply
+    continueOnError: false
+    environment: ${{parameters.deploymentEnvironment}}
+    timeoutInMinutes: 120
+    strategy:
+      runOnce:
+        deploy: 
+          steps:
+            - download: none
+            - checkout: none
+            - task: DownloadBuildArtifacts@0
+              inputs:
+                artifactName: "$(Build.BuildId)${{parameters.environment}}-tfplan"
+                displayName: "Download Plan Artifact"
+            - task: ExtractFiles@1
+              inputs:
+                archiveFilePatterns: "$(System.ArtifactsDirectory)/$(Build.BuildId)${{parameters.environment}}-tfplan/$(Build.BuildId)${{parameters.environment}}.tgz"
+                destinationFolder: "$(System.DefaultWorkingDirectory)/"
+                cleanDestinationFolder: false
+                overwriteExistingFiles: true
+                displayName: "Extract Terraform Plan Artifact"
+            - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+              displayName: "Install Terraform version ${{parameters.tfWorkingDirectory}}"
+              inputs:
+                terraformVersion: ${{parameters.tfVersion}}
+            - task: CmdLine@2
+              displayName: Terraform Init
+              inputs:
+                script: terraform init -backend-config=resource_group_name=${{parameters.tfBackendResourceGroup}} -backend-config="storage_account_name=${{parameters.tfBackendStorageAccountName}}" -backend-config="container_name=${{parameters.tfBackendContainerName}}" -backend-config="access_key=${{parameters.tfBackendAccessKey}}" -backend-config="key=${{parameters.tfBackendStateFile}}" -reconfigure
+                workingDirectory: ${{parameters.tfWorkingDirectory}}
+            - task: CmdLine@2
+              displayName: Terraform Apply
+              inputs:
+                script: "terraform apply -auto-approve -input=false tfplan"
+                workingDirectory: ${{parameters.tfWorkingDirectory}}
+            - ${{if parameters.tfOutputVars}}:
+                - ${{ each tfVar in parameters.tfOutputVars }}:
+                  - pwsh: echo "##vso[task.setvariable variable=${{ tfVar }};isOutput=true]$(terraform output -raw ${{ tfVar }})"
+                    name: "tf_var_${{ tfVar }}"
+                    workingDirectory: ${{parameters.tfWorkingDirectory}}

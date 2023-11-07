@@ -1,4 +1,5 @@
 app_environment = "Stage"
+eshopontelegram_common_kv_name="kv-eshop-stage"
 resource_group_name = "rg-eshopontelegram-stage"
 resource_group_location = "swedencentral"
 sql_server_name = "sqlserver-eshopontelegram-stage"
