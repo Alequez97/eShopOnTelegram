@@ -134,7 +134,7 @@ resource "azurerm_linux_web_app" "shop" {
   https_only          = true
 
   site_config {
-    always_on           = var.app_service_plan_sku_name == "F1" ? false : true°
+    always_on           = var.app_service_plan_sku_name == "F1" ? false : true
     app_command_line    = "dotnet eShopOnTelegram.Shop.dll"
     minimum_tls_version = 1.2
 
