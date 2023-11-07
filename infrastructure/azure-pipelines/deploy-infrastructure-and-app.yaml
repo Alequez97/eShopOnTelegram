@@ -78,7 +78,7 @@ stages:
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
       - name: ResourceGroupName
         value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
-    displayName: Build and deploy admin app
+    displayName: Build and deploy shop app
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
         parameters:
