@@ -205,7 +205,7 @@ resource "azurerm_key_vault" "keyvault" {
   tags = local.az_common_tags
 }
 
-resource "azurerm_key_vault_secret" "jwt_key" {
+resource "azurerm_key_vault_secret" "azure_settings_client_secret" {
   name         = "AppSettings--AzureSettings--ClientSecret"
   value        = var.azure_spn_client_secret
   key_vault_id = azurerm_key_vault.keyvault.id
