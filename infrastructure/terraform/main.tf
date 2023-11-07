@@ -101,6 +101,7 @@ resource "azurerm_linux_web_app" "admin" {
 
   site_config {
     always_on           = var.app_service_plan_sku_name == "F1" ? false : true
+    app_command_line    = "dotnet eShopOnTelegram.Admin.dll"
     minimum_tls_version = 1.2
 
     application_stack {
@@ -114,7 +115,6 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__AzureSettings__KeyVaultUri"                           = "https://${var.keyvault_name}.vault.azure.net"
     "AppSettings__AzureSettings__TenantId"                              = var.azure_spn_tenant_id
     "AppSettings__AzureSettings__ClientId"                              = var.azure_spn_client_id
-    "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
     "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
@@ -134,23 +134,23 @@ resource "azurerm_linux_web_app" "shop" {
   https_only          = true
 
   site_config {
-    always_on = var.app_service_plan_sku_name == "F1" ? false : true
+    always_on           = var.app_service_plan_sku_name == "F1" ? false : true°
+    app_command_line    = "dotnet eShopOnTelegram.Shop.dll"
     minimum_tls_version = 1.2
 
     application_stack {
-      dotnet_version ="7.0"
+      dotnet_version = "7.0"
     }
   }
 
   app_settings = {
-    "Logging__LogLevel__Default"            = "Information"
-    "Logging__ApplicationInsights"          = "Information"
-    "Azure__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
-    "Azure__TenantId"                       = var.azure_spn_tenant_id
-    "Azure__ClientId"                       = var.azure_spn_client_id
-    "Azure__ClientSecret"                   = var.azure_spn_client_secret
-    "Azure__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
-    "AdminAppHostName"                      = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
+    "Logging__LogLevel__Default"                                 = "Information"
+    "Logging__ApplicationInsights"                               = "Information"
+    "AppSettings__AzureSettings__KeyVaultUri"                    = "https://${var.keyvault_name}.vault.azure.net"
+    "AppSettings__AzureSettings__TenantId"                       = var.azure_spn_tenant_id
+    "AppSettings__AzureSettings__ClientId"                       = var.azure_spn_client_id
+    "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+    "AdminAppHostName"                                           = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
 
   tags = local.az_common_tags
@@ -170,6 +170,7 @@ resource "azurerm_key_vault" "keyvault" {
   ]
 
   # App identity access to keyvault
+  # Same service principal uses terraform
   access_policy {
     tenant_id  =  var.azure_spn_tenant_id
     object_id  =  var.azure_spn_object_id
@@ -202,6 +203,12 @@ resource "azurerm_key_vault" "keyvault" {
   }
 
   tags = local.az_common_tags
+}
+
+resource "azurerm_key_vault_secret" "jwt_key" {
+  name         = "AppSettings--AzureSettings--ClientSecret"
+  value        = var.azure_spn_client_secret
+  key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 data "azurerm_key_vault_secret" "common_kv_jwt_key" {
