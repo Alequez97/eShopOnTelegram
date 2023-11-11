@@ -28,8 +28,12 @@
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
+    <Compile Remove="Appsettings\**" />
     <Content Remove="$(SpaRoot)**" />
+    <Content Remove="Appsettings\**" />
+    <EmbeddedResource Remove="Appsettings\**" />
     <None Remove="$(SpaRoot)**" />
+    <None Remove="Appsettings\**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
   </ItemGroup>
 
@@ -47,10 +51,6 @@
     <ProjectReference Include="..\eShopOnTelegram.Notifications\eShopOnTelegram.Notifications.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.RuntimeConfiguration\eShopOnTelegram.RuntimeConfiguration.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Appsettings\" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

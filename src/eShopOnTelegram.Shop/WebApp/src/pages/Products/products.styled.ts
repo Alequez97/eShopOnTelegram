@@ -5,10 +5,11 @@ export const StyledProductCategoriesSelect = styled.select`
 	color: var(--primary-color);
 	border-color: var(--primary-color);
 	border-radius: 10px;
-	font-size: 16px;
+	font-size: 3vh;
 	text-align: center;
-	width: 250px;
-	height: 30px;
+	width: 70vw;
+	height: 6vh;
+	margin: 2vh 0;
 
 	&:focus {
 		border-color: var(--primary-color);

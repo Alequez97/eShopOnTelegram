@@ -1,9 +1,8 @@
-import { ChangeEvent, useCallback, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { Card } from '../../components/Card/Card';
 import { Loader } from '../../components/Loader/Loader';
 import { Error } from '../../components/Error/Error';
 import { getCartItemsAsJsonString } from '../../utils/cart-items.utility';
-import { useCartItemsState } from '../../hooks/useCartItemsState';
 import { useTelegramWebApp } from '../../hooks/useTelegramWebApp';
 import { Product } from '../../types/product.type';
 import { useProducts } from '../../hooks/useProducts';
@@ -13,56 +12,49 @@ import {
 	StyledProductCategoriesSelect,
 	StyledProductCategoriesWrapper,
 } from './products.styled';
-import { ProductAttribute } from '../../types/product-attribute.type';
+import { useCartItemsStore } from '../../contexts/cart-items-store.context';
+import { observer } from 'mobx-react-lite';
+import { useNavigate } from 'react-router-dom';
 
-export const Products = () => {
+export const Products = observer(() => {
 	const telegramWebApp = useTelegramWebApp();
+
 	useEffect(() => {
 		telegramWebApp.expand();
+		telegramWebApp.MainButton.setText('CHECKOUT');
 	}, [telegramWebApp]);
-
-	const {
-		cartItems,
-		addProductAttributeToState,
-		removeProductAttributeFromState,
-	} = useCartItemsState();
 
 	const { products, productCategories, error, loading } = useProducts();
 	const [filteredProducts, setFilteredProducts] = useState<
 		Product[] | undefined
 	>(undefined);
 
+	const cartItemsStore = useCartItemsStore();
+
+	const navigate = useNavigate();
+
 	useEffect(() => {
-		const notEmptyCartItems = cartItems.filter(
+		const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
 			(cartItem) => cartItem.quantity > 0,
 		);
+		// const sendDataToTelegram = () => {
+		// 	const json = getCartItemsAsJsonString(notEmptyCartItems);
+		// 	telegramWebApp.sendData(json);
+		// };
+
+		const navigateToCheckout = () => navigate('checkout');
 
 		if (notEmptyCartItems.length === 0) {
 			telegramWebApp.MainButton.hide();
 		} else {
+			telegramWebApp.onEvent('mainButtonClicked', navigateToCheckout);
 			telegramWebApp.MainButton.show();
 		}
-	}, [cartItems]);
 
-	const sendDataToTelegram = useCallback(() => {
-		const json = getCartItemsAsJsonString(cartItems);
-		telegramWebApp.sendData(json);
-	}, [cartItems]);
-
-	useEffect(() => {
-		telegramWebApp.onEvent('mainButtonClicked', sendDataToTelegram);
 		return () => {
-			telegramWebApp.offEvent('mainButtonClicked', sendDataToTelegram);
+			telegramWebApp.offEvent('mainButtonClicked', navigateToCheckout);
 		};
-	}, [sendDataToTelegram]);
-
-	const onAdd = (productAttribute: ProductAttribute) => {
-		addProductAttributeToState(productAttribute);
-	};
-
-	const onRemove = (productAttribute: ProductAttribute) => {
-		removeProductAttributeFromState(productAttribute);
-	};
+	}, [cartItemsStore.cartItemsState]);
 
 	if (loading) {
 		return <Loader />;
@@ -90,8 +82,6 @@ export const Products = () => {
 
 	return (
 		<>
-			<h2 style={{ textAlign: 'center' }}>eShopOnTelegram</h2>
-
 			{products.length === 0 && (
 				<StyledMissingProductsMessageWrapper>
 					<span>No available products at this moment</span>
@@ -123,23 +113,13 @@ export const Products = () => {
 			<StyledCardsContainer>
 				{filteredProducts === undefined &&
 					products.map((product) => (
-						<Card
-							product={product}
-							key={product.id}
-							onAdd={onAdd}
-							onRemove={onRemove}
-						/>
+						<Card product={product} key={product.id} />
 					))}
 				{filteredProducts !== undefined &&
 					filteredProducts.map((product) => (
-						<Card
-							product={product}
-							key={product.id}
-							onAdd={onAdd}
-							onRemove={onRemove}
-						/>
+						<Card product={product} key={product.id} />
 					))}
 			</StyledCardsContainer>
 		</>
 	);
-};
+});

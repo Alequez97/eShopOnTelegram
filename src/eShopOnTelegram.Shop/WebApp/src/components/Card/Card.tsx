@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Button } from '../Button/Button';
 import { Product } from '../../types/product.type';
 import {
@@ -9,42 +8,47 @@ import {
 	StyledCardPrice,
 	StyledImageContainer,
 } from './card.styled';
-import { ProductAttribute } from '../../types/product-attribute.type';
 import { ProductAttributeSelector } from '../productAttributeSelector/productAttributeSelector';
 import { observer } from 'mobx-react-lite';
 import { CardStore } from './card.store';
 import outOfStockImage from '../../assets/out_of_stock.jpg';
+import { useCartItemsStore } from '../../contexts/cart-items-store.context';
+import { useState } from 'react';
 
 interface CardProps {
 	product: Product;
-	onAdd: (productAttribute: ProductAttribute) => void;
-	onRemove: (productAttribute: ProductAttribute) => void;
 }
 
-export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
+export const Card = observer(({ product }: CardProps) => {
+	const cartItemsStore = useCartItemsStore();
 	const [cardStore] = useState(new CardStore(product.productAttributes));
-	const { name } = product;
+
+	const selectedProductAttributeCartItem = cartItemsStore.cartItemsState.find(
+		(cartItem) =>
+			cartItem.productAttribute.id ===
+			cardStore.selectedProductAttributeState?.id,
+	);
 
 	return (
 		<StyledCard>
 			<StyledImageContainer>
-				{cardStore.getSelectedProductAttribute ? (
+				{cardStore.selectedProductAttributeState ? (
 					<img
-						src={cardStore.getSelectedProductAttribute.image}
-						alt={name}
+						src={cardStore.selectedProductAttributeState.image}
+						alt={product.name}
 					/>
 				) : (
 					<img src={outOfStockImage} alt={'Out of stock'} />
 				)}
 			</StyledImageContainer>
 			<StyledCardInfoWrapper>
-				{name}
+				{product.name}
 				<br />
 				<StyledCardPrice>
-					{cardStore.getSelectedProductAttribute && (
+					{cardStore.selectedProductAttributeState && (
 						<>
 							{
-								cardStore.getSelectedProductAttribute
+								cardStore.selectedProductAttributeState
 									.originalPrice
 							}{' '}
 							€
@@ -52,26 +56,28 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
 					)}
 				</StyledCardPrice>
 				<br />
-				{cardStore.getSelectedProductAttribute ? (
+				{cardStore.selectedProductAttributeState ? (
 					<i>
 						Available:{' '}
-						{cardStore.getSelectedProductAttribute.quantityLeft < 20
-							? cardStore.getSelectedProductAttribute.quantityLeft
+						{cardStore.selectedProductAttributeState.quantityLeft <
+						20
+							? cardStore.selectedProductAttributeState
+									.quantityLeft
 							: '20+'}
 					</i>
 				) : (
 					<i>Available: 0</i>
 				)}
 				<ProductAttributeSelector
-					productAttributeValues={cardStore.getAvailableColors}
-					selectedProductAttribute={cardStore.getSelectedColor}
+					productAttributeValues={cardStore.availableColorsState}
+					selectedProductAttribute={cardStore.selectedColorState}
 					onSelection={(color: string) =>
 						cardStore.setSelectedColor(color)
 					}
 				/>
 				<ProductAttributeSelector
-					productAttributeValues={cardStore.getAvailableSizes}
-					selectedProductAttribute={cardStore.getSelectedSize}
+					productAttributeValues={cardStore.availableSizesState}
+					selectedProductAttribute={cardStore.selectedSizeState}
 					onSelection={(color: string) =>
 						cardStore.setSelectedSize(color)
 					}
@@ -79,50 +85,59 @@ export const Card = observer(({ product, onAdd, onRemove }: CardProps) => {
 			</StyledCardInfoWrapper>
 
 			<StyledButtonContainer>
-				{cardStore.getSelectedProductAttributeQuantityAddedToCart ===
-					0 && (
+				{(!selectedProductAttributeCartItem ||
+					selectedProductAttributeCartItem.quantity === 0) && (
 					<Button
 						title={'Add'}
 						type={'add'}
 						onClick={() => {
-							cardStore.increaseSelectedProductAttributeQuantity();
-							onAdd(cardStore.getSelectedProductAttribute);
+							if (cardStore.selectedProductAttributeState) {
+								cartItemsStore.addProductAttribute(
+									cardStore.selectedProductAttributeState,
+								);
+							}
 						}}
-						disabled={!cardStore.selectionStateIsValid}
+						disabled={!cardStore.hasSelectedProductAttribute}
 					/>
 				)}
-				{cardStore.getSelectedProductAttributeQuantityAddedToCart !==
-					0 && (
-					<Button
-						title={'-'}
-						type={'remove'}
-						onClick={() => {
-							cardStore.decreaseSelectedProductAttributeQuantity();
-							onRemove(cardStore.getSelectedProductAttribute);
-						}}
-						disabled={false}
-					/>
-				)}
+				{selectedProductAttributeCartItem &&
+					selectedProductAttributeCartItem?.quantity !== 0 && (
+						<Button
+							title={'-'}
+							type={'remove'}
+							onClick={() => {
+								if (cardStore.selectedProductAttributeState) {
+									cartItemsStore.removeProductAttribute(
+										cardStore.selectedProductAttributeState,
+									);
+								}
+							}}
+							disabled={false}
+						/>
+					)}
 				<StyledCardBadge
 					$isVisible={
-						cardStore.getSelectedProductAttributeQuantityAddedToCart !==
-						0
+						selectedProductAttributeCartItem !== undefined &&
+						selectedProductAttributeCartItem.quantity !== 0
 					}
 				>
-					{cardStore.getSelectedProductAttributeQuantityAddedToCart}
+					{selectedProductAttributeCartItem?.quantity}
 				</StyledCardBadge>
-				{cardStore.getSelectedProductAttributeQuantityAddedToCart !==
-					0 && (
-					<Button
-						title={'+'}
-						type={'add'}
-						onClick={() => {
-							cardStore.increaseSelectedProductAttributeQuantity();
-							onAdd(cardStore.getSelectedProductAttribute);
-						}}
-						disabled={false}
-					/>
-				)}
+				{selectedProductAttributeCartItem &&
+					selectedProductAttributeCartItem.quantity !== 0 && (
+						<Button
+							title={'+'}
+							type={'add'}
+							onClick={() => {
+								if (cardStore.selectedProductAttributeState) {
+									cartItemsStore.addProductAttribute(
+										cardStore.selectedProductAttributeState,
+									);
+								}
+							}}
+							disabled={false}
+						/>
+					)}
 			</StyledButtonContainer>
 		</StyledCard>
 	);

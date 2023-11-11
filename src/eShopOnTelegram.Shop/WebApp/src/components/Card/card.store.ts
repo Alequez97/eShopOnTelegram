@@ -1,18 +1,15 @@
-import {makeAutoObservable} from 'mobx';
-import {ProductAttribute} from '../../types/product-attribute.type';
-import {CartItem} from '../../types/cart-item.type';
+import { makeAutoObservable } from 'mobx';
+import { ProductAttribute } from '../../types/product-attribute.type';
 
 export class CardStore {
 	private readonly productAttributes: ProductAttribute[];
-	private selectedProductAttribute: ProductAttribute;
+	private selectedProductAttribute: ProductAttribute | undefined;
 
 	private selectedColor: string | null;
 	private selectedSize: string | null;
 
 	private availableColors: string[];
 	private availableSizes: string[];
-
-	private localCartItems: CartItem[] = [];
 
 	constructor(productAttributes: ProductAttribute[]) {
 		this.productAttributes = productAttributes;
@@ -41,19 +38,19 @@ export class CardStore {
 		makeAutoObservable(this);
 	}
 
-	get getSelectedProductAttribute() {
+	get selectedProductAttributeState() {
 		return this.selectedProductAttribute;
 	}
 
-	get getAvailableColors() {
+	get availableColorsState() {
 		return this.availableColors;
 	}
 
-	get getAvailableSizes() {
+	get availableSizesState() {
 		return this.availableSizes;
 	}
 
-	get selectionStateIsValid() {
+	get hasSelectedProductAttribute() {
 		return (
 			this.selectedProductAttribute !== undefined &&
 			this.selectedProductAttribute.quantityLeft > 0
@@ -71,7 +68,7 @@ export class CardStore {
 		}
 	}
 
-	get getSelectedColor() {
+	get selectedColorState() {
 		return this.selectedColor;
 	}
 
@@ -86,66 +83,8 @@ export class CardStore {
 		}
 	}
 
-	get getSelectedSize() {
+	get selectedSizeState() {
 		return this.selectedSize;
-	}
-
-	public increaseSelectedProductAttributeQuantity() {
-		if (!this.selectedProductAttribute) {
-			return;
-		}
-
-		const selectedProductAttributeCartItem = this.localCartItems.find(
-			(cartItem) =>
-				cartItem.productAttribute.id ===
-				this.selectedProductAttribute.id,
-		);
-
-		if (!selectedProductAttributeCartItem) {
-			this.localCartItems.push({
-				productAttribute: this.selectedProductAttribute,
-				quantity: 1,
-			});
-		} else {
-			selectedProductAttributeCartItem.quantity++;
-		}
-	}
-
-	public decreaseSelectedProductAttributeQuantity() {
-		if (!this.selectedProductAttribute) {
-			return;
-		}
-
-		const selectedProductAttributeCartItem = this.localCartItems.find(
-			(cartItem) =>
-				cartItem.productAttribute.id ===
-				this.selectedProductAttribute.id,
-		);
-		if (selectedProductAttributeCartItem) {
-			selectedProductAttributeCartItem.quantity--;
-		}
-	}
-
-	get getSelectedProductAttributeQuantityAddedToCart() {
-		if (!this.selectedProductAttribute) {
-			return 0;
-		}
-
-		const localCartItem = this.localCartItems.find(
-			(cartItem) =>
-				cartItem.productAttribute.id ===
-				this.selectedProductAttribute.id,
-		);
-
-		if (!localCartItem) {
-			return 0;
-		}
-
-		return localCartItem.quantity;
-	}
-
-	get getLocalCartItems() {
-		return this.localCartItems;
 	}
 
 	private get colorIsRequired() {
@@ -166,11 +105,11 @@ export class CardStore {
 
 	private updateSelectedProductAttribute() {
 		if (this.colorIsRequired && this.sizeIsRequired) {
-            this.selectedProductAttribute = this.productAttributes.find(
-                (productAttribute) =>
-                    productAttribute.color === this.selectedColor &&
-                    productAttribute.size === this.selectedSize,
-            ) as ProductAttribute;
+			this.selectedProductAttribute = this.productAttributes.find(
+				(productAttribute) =>
+					productAttribute.color === this.selectedColor &&
+					productAttribute.size === this.selectedSize,
+			) as ProductAttribute;
 		} else if (this.colorIsRequired) {
 			this.selectedProductAttribute = this.productAttributes.find(
 				(productAttribute) =>
