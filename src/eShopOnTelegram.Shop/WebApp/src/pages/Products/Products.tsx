@@ -33,7 +33,9 @@ export const Products = observer(() => {
 		const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
 			(cartItem) => cartItem.quantity > 0,
 		);
-		const navigateToCheckout = () => navigate(RouteLocation.CHECKOUT);
+		const navigateToCheckout = () => {
+			navigate(RouteLocation.CHECKOUT);
+		};
 
 		if (notEmptyCartItems.length === 0) {
 			telegramWebApp.MainButton.hide();

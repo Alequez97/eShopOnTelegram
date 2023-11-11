@@ -1,4 +1,4 @@
-import { css, styled } from 'styled-components';
+import { styled } from 'styled-components';
 import { CSSProperties } from 'react';
 import { StyledBorderMixin } from '../../mixins/border.mixin.styled';
 
