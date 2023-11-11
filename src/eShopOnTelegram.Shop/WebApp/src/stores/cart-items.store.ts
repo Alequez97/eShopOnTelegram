@@ -51,11 +51,7 @@ export class CartItemsStore {
 			(cartItem) => cartItem.productAttribute.id === productAttribute.id,
 		);
 
-		if (existingCartItem?.quantity === 1) {
-			this.cartItems = this.cartItems.filter(
-				(cartItem) =>
-					cartItem.productAttribute.id !== productAttribute.id,
-			);
+		if (existingCartItem?.quantity === 0) {
 			return;
 		}
 
@@ -65,5 +61,11 @@ export class CartItemsStore {
 			}
 			return cartItem;
 		});
+	}
+
+	public removeEmptyCartItems() {
+		this.cartItems = this.cartItems.filter(
+			(cartItem) => cartItem.quantity > 0,
+		);
 	}
 }

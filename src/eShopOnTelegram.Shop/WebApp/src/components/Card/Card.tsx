@@ -10,8 +10,9 @@ import { observer } from 'mobx-react-lite';
 import { CardStore } from './card.store';
 import outOfStockImage from '../../assets/out_of_stock.jpg';
 import { useCartItemsStore } from '../../contexts/cart-items-store.context';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Counter } from '../counter/Counter';
+import { CartItem } from '../../types/cart-item.type';
 
 interface CardProps {
 	product: Product;
@@ -21,11 +22,27 @@ export const Card = observer(({ product }: CardProps) => {
 	const cartItemsStore = useCartItemsStore();
 	const [cardStore] = useState(new CardStore(product.productAttributes));
 
-	const selectedProductAttributeCartItem = cartItemsStore.cartItemsState.find(
-		(cartItem) =>
-			cartItem.productAttribute.id ===
-			cardStore.selectedProductAttributeState?.id,
-	);
+	const [
+		selectedProductAttributeCartItem,
+		setSelectedProductAttributeCartItem,
+	] = useState<CartItem | undefined>(undefined);
+
+	useEffect(() => {
+		setSelectedProductAttributeCartItem(() => {
+			const cartItem = cartItemsStore.cartItemsState.find(
+				(cartItem) =>
+					cartItem.productAttribute.id ===
+					cardStore.selectedProductAttributeState?.id,
+			);
+
+			console.log({ ...cartItem });
+
+			return cartItem;
+		});
+	}, [
+		cardStore.selectedProductAttributeState,
+		cartItemsStore.cartItemsState,
+	]);
 
 	return (
 		<StyledCard>
@@ -82,7 +99,7 @@ export const Card = observer(({ product }: CardProps) => {
 				/>
 			</StyledCardInfoWrapper>
 			<Counter
-				initialValue={selectedProductAttributeCartItem?.quantity}
+				value={selectedProductAttributeCartItem?.quantity}
 				showAddButton={
 					!selectedProductAttributeCartItem ||
 					selectedProductAttributeCartItem.quantity === 0

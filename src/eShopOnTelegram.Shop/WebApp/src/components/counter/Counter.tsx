@@ -3,10 +3,9 @@ import {
 	StyledCounterContainer,
 	StyledCounterValueBadge,
 } from './counter.styled';
-import { useState } from 'react';
 
 export interface CounterProps {
-	initialValue?: number;
+	value: number | undefined;
 	showAddButton: boolean;
 	addButtonDisabled?: boolean;
 	showPlusButton: boolean;
@@ -16,7 +15,7 @@ export interface CounterProps {
 }
 
 export const Counter = ({
-	initialValue = 0,
+	value,
 	showAddButton,
 	addButtonDisabled = false,
 	showPlusButton,
@@ -24,21 +23,15 @@ export const Counter = ({
 	onAdd,
 	onRemove,
 }: CounterProps) => {
-	const [value, setValue] = useState(initialValue);
-
 	const increaseValue = () => {
-		setValue((prevValue) => prevValue + 1);
 		if (onAdd) {
 			onAdd();
 		}
 	};
 
 	const decreaseValue = () => {
-		if (value > 0) {
-			setValue((prevValue) => prevValue - 1);
-			if (onRemove) {
-				onRemove();
-			}
+		if (onRemove) {
+			onRemove();
 		}
 	};
 

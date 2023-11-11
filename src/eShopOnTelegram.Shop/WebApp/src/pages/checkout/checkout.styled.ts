@@ -1,5 +1,6 @@
 import { css, styled } from 'styled-components';
 import { CSSProperties } from 'react';
+import { StyledBorderMixin } from '../../mixins/border.mixin.styled';
 
 export const StyledCheckoutPageContainer = styled.div`
 	padding: 1vh;
@@ -18,12 +19,7 @@ export const StyledCheckoutPageCartItemContainer = styled.div<StyledCheckoutPage
 	padding: 1vh 4vw;
 	height: 10vh;
 
-	${(props) =>
-		props.hasBorder &&
-		css`
-			border-radius: 5px;
-			border: 2px solid black;
-		`}
+	${(props) => props.hasBorder && StyledBorderMixin};
 `;
 
 export const StyledCheckoutPageBoldText = styled.span`

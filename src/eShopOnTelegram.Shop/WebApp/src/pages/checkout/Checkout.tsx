@@ -18,10 +18,15 @@ export const Checkout = observer(() => {
 	const telegramWebApp = useTelegramWebApp();
 	telegramWebApp.MainButton.setText('PROCEED TO PAYMENT');
 
+	const cartItemsStore = useCartItemsStore();
+
 	useEffect(() => {
 		telegramWebApp.BackButton?.show();
 
-		const navigateToProducts = () => navigate(RouteLocation.PRODUCTS);
+		const navigateToProducts = () => {
+			cartItemsStore.removeEmptyCartItems();
+			navigate(RouteLocation.PRODUCTS);
+		};
 
 		telegramWebApp.BackButton?.onClick(navigateToProducts);
 
@@ -30,8 +35,6 @@ export const Checkout = observer(() => {
 			telegramWebApp.BackButton?.offClick(navigateToProducts);
 		};
 	}, []);
-
-	const cartItemsStore = useCartItemsStore();
 
 	useEffect(() => {
 		const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
@@ -81,7 +84,7 @@ export const Checkout = observer(() => {
 						</div>
 						<div style={{ width: '30vw' }}>
 							<Counter
-								initialValue={cartItem.quantity}
+								value={cartItem.quantity}
 								showAddButton={false}
 								showPlusButton={true}
 								showMinusButton={true}

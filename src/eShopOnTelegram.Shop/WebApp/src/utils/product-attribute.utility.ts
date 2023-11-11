@@ -1,22 +1,22 @@
 import { ProductAttribute } from '../types/product-attribute.type';
 
 export const getPropertiesLabel = (productAttribute: ProductAttribute) => {
-	if (!productAttribute.color && !productAttribute.size) {
+	const { color, size } = productAttribute;
+
+	if (!color && !size) {
 		return undefined;
 	}
 
 	let label = '(';
 
-	if (productAttribute.color) {
-		label += productAttribute.color;
+	if (color) {
+		label += color;
 
-		if (productAttribute.size) {
-			label += `, ${productAttribute.size}`;
+		if (size) {
+			label += `, ${size}`;
 		}
-	}
-
-	if (productAttribute.size) {
-		label += productAttribute.size;
+	} else if (size) {
+		label += size;
 	}
 
 	label += ')';
