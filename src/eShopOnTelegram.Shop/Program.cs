@@ -16,6 +16,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
+using eShopOnTelegram.TelegramBot.Api.Middlewares;
 using eShopOnTelegram.TelegramBot.Worker;
 using eShopOnTelegram.TelegramBot.Worker.Extensions;
 using eShopOnTelegram.Utils.Configuration;
@@ -62,6 +63,8 @@ if (!app.Environment.IsDevelopment())
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
+
+app.UseAuthorizeTelegram();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
