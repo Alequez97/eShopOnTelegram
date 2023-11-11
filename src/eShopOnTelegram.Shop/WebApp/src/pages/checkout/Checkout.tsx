@@ -8,6 +8,8 @@ import {
 	StyledCheckoutPageCartItemContainer,
 	StyledCheckoutPageContainer,
 	StyledCheckoutPageBoldText,
+	StyledCheckoutPageCartItemInformation,
+	StyledCheckoutPagePriceInformation,
 } from './checkout.styled';
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
 import { Counter } from '../../components/counter/Counter';
@@ -66,22 +68,27 @@ export const Checkout = observer(() => {
 				return (
 					<StyledCheckoutPageCartItemContainer
 						key={productAttribute.id}
-						justifyContent={'space-between'}
+						$justifyContent={'right'}
 						hasBorder={true}
 					>
-						<div>
+						<StyledCheckoutPageCartItemInformation>
 							<div>
 								<StyledCheckoutPageBoldText>
 									{productAttribute.productName}
 								</StyledCheckoutPageBoldText>{' '}
-								{getPropertiesLabel(productAttribute)}{' '}
+								<span>
+									{getPropertiesLabel(productAttribute)}{' '}
+								</span>
 							</div>
-							<div>
-								{productAttribute.priceWithDiscount
-									? productAttribute.priceWithDiscount
-									: productAttribute.originalPrice}
-							</div>
-						</div>
+							<StyledCheckoutPagePriceInformation>
+								<span>
+									{productAttribute.priceWithDiscount
+										? productAttribute.priceWithDiscount
+										: productAttribute.originalPrice}{' '}
+									€
+								</span>
+							</StyledCheckoutPagePriceInformation>
+						</StyledCheckoutPageCartItemInformation>
 						<div style={{ width: '30vw' }}>
 							<Counter
 								value={cartItem.quantity}
@@ -103,7 +110,7 @@ export const Checkout = observer(() => {
 					</StyledCheckoutPageCartItemContainer>
 				);
 			})}
-			<StyledCheckoutPageCartItemContainer justifyContent={'right'}>
+			<StyledCheckoutPageCartItemContainer $justifyContent={'right'}>
 				Total: {cartItemsStore.cartItemsTotalPrice.toFixed(2)}
 			</StyledCheckoutPageCartItemContainer>
 		</StyledCheckoutPageContainer>

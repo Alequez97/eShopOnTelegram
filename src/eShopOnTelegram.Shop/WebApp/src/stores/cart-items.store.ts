@@ -31,6 +31,10 @@ export class CartItemsStore {
 		);
 
 		if (existingCartItem) {
+			if (productAttribute.quantityLeft === existingCartItem.quantity) {
+				return;
+			}
+
 			this.cartItems = this.cartItems.map((cartItem) => {
 				if (cartItem.productAttribute.id === productAttribute.id) {
 					return {
