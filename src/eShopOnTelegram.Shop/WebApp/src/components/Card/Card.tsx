@@ -28,17 +28,13 @@ export const Card = observer(({ product }: CardProps) => {
 	] = useState<CartItem | undefined>(undefined);
 
 	useEffect(() => {
-		setSelectedProductAttributeCartItem(() => {
-			const cartItem = cartItemsStore.cartItemsState.find(
+		setSelectedProductAttributeCartItem(
+			cartItemsStore.cartItemsState.find(
 				(cartItem) =>
 					cartItem.productAttribute.id ===
 					cardStore.selectedProductAttributeState?.id,
-			);
-
-			console.log({ ...cartItem });
-
-			return cartItem;
-		});
+			),
+		);
 	}, [
 		cardStore.selectedProductAttributeState,
 		cartItemsStore.cartItemsState,

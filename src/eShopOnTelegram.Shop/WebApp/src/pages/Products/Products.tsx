@@ -34,6 +34,7 @@ export const Products = observer(() => {
 			(cartItem) => cartItem.quantity > 0,
 		);
 		const navigateToCheckout = () => {
+			cartItemsStore.removeEmptyCartItems();
 			navigate(RouteLocation.CHECKOUT);
 		};
 
