@@ -6,6 +6,7 @@ import {
 import { useState } from 'react';
 
 export interface CounterProps {
+	initialValue?: number;
 	showAddButton: boolean;
 	addButtonDisabled?: boolean;
 	showPlusButton: boolean;
@@ -15,6 +16,7 @@ export interface CounterProps {
 }
 
 export const Counter = ({
+	initialValue = 0,
 	showAddButton,
 	addButtonDisabled = false,
 	showPlusButton,
@@ -22,7 +24,7 @@ export const Counter = ({
 	onAdd,
 	onRemove,
 }: CounterProps) => {
-	const [value, setValue] = useState(0);
+	const [value, setValue] = useState(initialValue);
 
 	const increaseValue = () => {
 		setValue((prevValue) => prevValue + 1);

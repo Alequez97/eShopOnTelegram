@@ -10,8 +10,10 @@ import {
 	StyledCheckoutPageBoldText,
 } from './checkout.styled';
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
+import { Counter } from '../../components/counter/Counter';
+import { observer } from 'mobx-react-lite';
 
-export const Checkout = () => {
+export const Checkout = observer(() => {
 	const navigate = useNavigate();
 	const telegramWebApp = useTelegramWebApp();
 	telegramWebApp.MainButton.setText('PROCEED TO PAYMENT');
@@ -77,8 +79,23 @@ export const Checkout = () => {
 									: productAttribute.originalPrice}
 							</div>
 						</div>
-						<div>
-							<button type={'button'}>+</button>
+						<div style={{ width: '30vw' }}>
+							<Counter
+								initialValue={cartItem.quantity}
+								showAddButton={false}
+								showPlusButton={true}
+								showMinusButton={true}
+								onAdd={() => {
+									cartItemsStore.addProductAttribute(
+										productAttribute,
+									);
+								}}
+								onRemove={() => {
+									cartItemsStore.removeProductAttribute(
+										productAttribute,
+									);
+								}}
+							/>
 						</div>
 					</StyledCheckoutPageCartItemContainer>
 				);
@@ -88,4 +105,4 @@ export const Checkout = () => {
 			</StyledCheckoutPageCartItemContainer>
 		</StyledCheckoutPageContainer>
 	);
-};
+});

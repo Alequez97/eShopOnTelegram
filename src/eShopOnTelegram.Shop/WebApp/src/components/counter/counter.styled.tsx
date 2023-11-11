@@ -57,7 +57,7 @@ export const CounterButton = (props: CounterButtonProps) => {
 
 export const StyledCounterContainer = styled.div`
 	display: flex;
-	flex-direction: row;
+	align-items: center;
 	justify-content: center;
 
 	button {
@@ -70,16 +70,12 @@ interface StyledCounterValueBadgeProps {
 }
 
 export const StyledCounterValueBadge = styled.div<StyledCounterValueBadgeProps>`
-	position: relative;
-	top: 3px;
+	display: ${(props) => (props.$isVisible ? 'flex' : 'none')};
+	justify-content: center;
+	align-items: center;
 	width: 90px;
-	height: 30px;
-	background-color: rgb(60, 128, 255);
-	border-radius: 50%;
-	color: #fff;
+	color: var(--text-color);
 	font-weight: bold;
 	text-align: center;
-	border: 2px solid rgb(21, 0, 138);
 	font-size: 20px;
-	display: ${(props) => (props.$isVisible ? 'block' : 'none')};
 `;

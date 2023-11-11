@@ -50,7 +50,7 @@ export class CardStore {
 		return this.availableSizes;
 	}
 
-	get hasSelectedProductAttribute() {
+	get isAvailableSelectedProductAttribute() {
 		return (
 			this.selectedProductAttribute !== undefined &&
 			this.selectedProductAttribute.quantityLeft > 0

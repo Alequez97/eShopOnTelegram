@@ -81,8 +81,8 @@ export const Card = observer(({ product }: CardProps) => {
 					}
 				/>
 			</StyledCardInfoWrapper>
-
 			<Counter
+				initialValue={selectedProductAttributeCartItem?.quantity}
 				showAddButton={
 					!selectedProductAttributeCartItem ||
 					selectedProductAttributeCartItem.quantity === 0
