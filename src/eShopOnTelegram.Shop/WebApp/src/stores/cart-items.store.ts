@@ -13,6 +13,18 @@ export class CartItemsStore {
 		return this.cartItems;
 	}
 
+	get cartItemsTotalPrice() {
+		return this.cartItems.reduce(
+			(totalSum, cartItem) =>
+				totalSum +
+				cartItem.quantity *
+					(cartItem.productAttribute.priceWithDiscount
+						? cartItem.productAttribute.priceWithDiscount
+						: cartItem.productAttribute.originalPrice),
+			0,
+		);
+	}
+
 	public addProductAttribute(productAttribute: ProductAttribute) {
 		const existingCartItem = this.cartItems.find(
 			(cartItem) => cartItem.productAttribute.id === productAttribute.id,

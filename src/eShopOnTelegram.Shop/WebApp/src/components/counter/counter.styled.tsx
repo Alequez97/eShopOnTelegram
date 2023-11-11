@@ -1,7 +1,7 @@
-import { MouseEventHandler } from 'react';
 import styled from 'styled-components';
+import { MouseEventHandler } from 'react';
 
-interface ButtonProps {
+interface CounterButtonProps {
 	type: 'add' | 'remove';
 	title: string;
 	disabled: boolean;
@@ -9,7 +9,7 @@ interface ButtonProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const buttonStyles: Record<ButtonProps['type'], any> = {
+const buttonStyles: Record<CounterButtonProps['type'], any> = {
 	add: {
 		normal: 'rgb(75, 226, 75)',
 		hover: '#ad9a1c',
@@ -22,7 +22,7 @@ const buttonStyles: Record<ButtonProps['type'], any> = {
 	},
 };
 
-const StyledButton = styled.button<ButtonProps>`
+const StyledCounterButton = styled.button<CounterButtonProps>`
 	color: black;
 	padding: 0.6rem 0.8rem;
 	font-size: 1.2rem;
@@ -51,6 +51,35 @@ const StyledButton = styled.button<ButtonProps>`
 	}
 `;
 
-export const Button = (props: ButtonProps) => {
-	return <StyledButton {...props}>{props.title}</StyledButton>;
+export const CounterButton = (props: CounterButtonProps) => {
+	return <StyledCounterButton {...props}>{props.title}</StyledCounterButton>;
 };
+
+export const StyledCounterContainer = styled.div`
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+
+	button {
+		margin: 0 auto;
+	}
+`;
+
+interface StyledCounterValueBadgeProps {
+	$isVisible: boolean;
+}
+
+export const StyledCounterValueBadge = styled.div<StyledCounterValueBadgeProps>`
+	position: relative;
+	top: 3px;
+	width: 90px;
+	height: 30px;
+	background-color: rgb(60, 128, 255);
+	border-radius: 50%;
+	color: #fff;
+	font-weight: bold;
+	text-align: center;
+	border: 2px solid rgb(21, 0, 138);
+	font-size: 20px;
+	display: ${(props) => (props.$isVisible ? 'block' : 'none')};
+`;

@@ -7,6 +7,7 @@ export function useTelegramWebApp(): WebApp {
 
 	if (!isReadyCalled) {
 		telegramWebApp.ready();
+		telegramWebApp.expand();
 		isReadyCalled = true;
 	}
 

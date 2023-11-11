@@ -1,9 +1,6 @@
-import { Button } from '../Button/Button';
 import { Product } from '../../types/product.type';
 import {
-	StyledButtonContainer,
 	StyledCard,
-	StyledCardBadge,
 	StyledCardInfoWrapper,
 	StyledCardPrice,
 	StyledImageContainer,
@@ -14,6 +11,7 @@ import { CardStore } from './card.store';
 import outOfStockImage from '../../assets/out_of_stock.jpg';
 import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { useState } from 'react';
+import { Counter } from '../counter/Counter';
 
 interface CardProps {
 	product: Product;
@@ -84,61 +82,37 @@ export const Card = observer(({ product }: CardProps) => {
 				/>
 			</StyledCardInfoWrapper>
 
-			<StyledButtonContainer>
-				{(!selectedProductAttributeCartItem ||
-					selectedProductAttributeCartItem.quantity === 0) && (
-					<Button
-						title={'Add'}
-						type={'add'}
-						onClick={() => {
-							if (cardStore.selectedProductAttributeState) {
-								cartItemsStore.addProductAttribute(
-									cardStore.selectedProductAttributeState,
-								);
-							}
-						}}
-						disabled={!cardStore.hasSelectedProductAttribute}
-					/>
-				)}
-				{selectedProductAttributeCartItem &&
-					selectedProductAttributeCartItem?.quantity !== 0 && (
-						<Button
-							title={'-'}
-							type={'remove'}
-							onClick={() => {
-								if (cardStore.selectedProductAttributeState) {
-									cartItemsStore.removeProductAttribute(
-										cardStore.selectedProductAttributeState,
-									);
-								}
-							}}
-							disabled={false}
-						/>
-					)}
-				<StyledCardBadge
-					$isVisible={
-						selectedProductAttributeCartItem !== undefined &&
-						selectedProductAttributeCartItem.quantity !== 0
+			<Counter
+				showAddButton={
+					!selectedProductAttributeCartItem ||
+					selectedProductAttributeCartItem.quantity === 0
+				}
+				addButtonDisabled={
+					!cardStore.isAvailableSelectedProductAttribute
+				}
+				showPlusButton={
+					!!selectedProductAttributeCartItem &&
+					selectedProductAttributeCartItem?.quantity !== 0
+				}
+				showMinusButton={
+					!!selectedProductAttributeCartItem &&
+					selectedProductAttributeCartItem.quantity !== 0
+				}
+				onAdd={() => {
+					if (cardStore.selectedProductAttributeState) {
+						cartItemsStore.addProductAttribute(
+							cardStore.selectedProductAttributeState,
+						);
 					}
-				>
-					{selectedProductAttributeCartItem?.quantity}
-				</StyledCardBadge>
-				{selectedProductAttributeCartItem &&
-					selectedProductAttributeCartItem.quantity !== 0 && (
-						<Button
-							title={'+'}
-							type={'add'}
-							onClick={() => {
-								if (cardStore.selectedProductAttributeState) {
-									cartItemsStore.addProductAttribute(
-										cardStore.selectedProductAttributeState,
-									);
-								}
-							}}
-							disabled={false}
-						/>
-					)}
-			</StyledButtonContainer>
+				}}
+				onRemove={() => {
+					if (cardStore.selectedProductAttributeState) {
+						cartItemsStore.removeProductAttribute(
+							cardStore.selectedProductAttributeState,
+						);
+					}
+				}}
+			/>
 		</StyledCard>
 	);
 });
