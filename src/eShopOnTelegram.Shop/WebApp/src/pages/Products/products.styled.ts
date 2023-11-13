@@ -31,5 +31,5 @@ export const StyledProductCategoriesWrapper = styled.div`
 export const StyledMissingProductsMessageWrapper = styled.div`
 	text-align: center;
 	font-size: 18px;
-	margin-top: 50%;
+	margin-top: 50vh;
 `;
