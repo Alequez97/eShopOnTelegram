@@ -23,7 +23,7 @@ public class SecretsMappingConfig
             {
                 DisplayName = "Bank card payments api token",
                 PublicSecretName = SecretPublicName.Payments_BankCardToken,
-                PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Card)}--Token"
+                PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Card)}--ApiToken"
             },
             new SecretsMappingPrivateConfigItem
             {
