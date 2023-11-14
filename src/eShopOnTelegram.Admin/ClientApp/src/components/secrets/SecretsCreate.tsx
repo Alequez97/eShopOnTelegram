@@ -47,7 +47,6 @@ export const SecretsCreate = () => {
 	const handleSecretUpdate = async (request: FieldValues) => {
 		try {
 			setIsLoading(true);
-			console.log(request);
 			await axiosPost('/secretsConfig', request);
 			notify('Secret successfully updated', { type: 'success' });
 		} catch {

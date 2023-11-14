@@ -23,6 +23,10 @@ public class AzureSettings
     public required string ClientId { get; init; }
 
     public required string ClientSecret { get; init; }
+
+    public required string ResourceGroupName { get; init; }
+
+    public required string ShopAppServiceName { get; init; }
 }
 
 public class JWTAuthSettings

@@ -15,6 +15,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.Secrets;
 using eShopOnTelegram.RuntimeConfiguration.Secrets.Constants;
 using eShopOnTelegram.RuntimeConfiguration.Secrets.Interfaces;
+using eShopOnTelegram.Utils.AzureServiceManager;
+using eShopOnTelegram.Utils.AzureServiceManager.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 using eShopOnTelegram.Utils.Extensions;
 
@@ -108,6 +110,8 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IKeyVaultClient, KeyVaultClient>();
     builder.Services.AddSingleton<ISecretsNameMapper, SecretsNameMapper>();
     builder.Services.AddSingleton<SecretsMappingConfig>();
+
+    builder.Services.AddScoped<IAzureAppServiceManager, AzureAppServiceManager>();
 }
 
 static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSettings azureAppSettings)
