@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { axiosGet } from '../../utils/axios.utility';
+import { axiosGet, axiosPost } from '../../utils/axios.utility';
 import {
 	PasswordInput,
 	required,
@@ -8,6 +8,7 @@ import {
 	useAuthenticated,
 	useNotify,
 } from 'react-admin';
+import { FieldValues } from 'react-hook-form';
 
 interface SecretsConfigItem {
 	displayName: string;
@@ -43,8 +44,23 @@ export const SecretsCreate = () => {
 		return <div>Loading...</div>;
 	}
 
+	const handleSecretUpdate = async (request: FieldValues) => {
+		try {
+			setIsLoading(true);
+			console.log(request);
+			await axiosPost('/secretsConfig', request);
+			notify('Secret successfully updated', { type: 'success' });
+		} catch {
+			notify('Was not able to update secret. Try again later', {
+				type: 'error',
+			});
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	return (
-		<SimpleForm onSubmit={(request) => console.log(request)}>
+		<SimpleForm onSubmit={handleSecretUpdate}>
 			<SelectInput
 				choices={secretsConfigItems}
 				source={'publicSecretName'}
@@ -53,7 +69,11 @@ export const SecretsCreate = () => {
 				optionValue={'publicSecretName'}
 				validate={[required()]}
 			/>
-			<PasswordInput source="token" validate={[required()]} />
+			<PasswordInput
+				label="Token"
+				source="value"
+				validate={[required()]}
+			/>
 		</SimpleForm>
 	);
 };

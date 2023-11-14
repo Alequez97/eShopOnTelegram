@@ -2,6 +2,7 @@
 using Azure.Security.KeyVault.Secrets;
 
 using eShopOnTelegram.RuntimeConfiguration.Secrets.Interfaces;
+using eShopOnTelegram.RuntimeConfiguration.Secrets.Requests;
 using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.RuntimeConfiguration.Secrets;
@@ -19,15 +20,15 @@ public class KeyVaultClient : IKeyVaultClient
         _secretsNameMapper = secretsNameMapper;
     }
 
-    public async Task CreateOrUpdateAsync(string secretPublicName, string value)
+    public async Task CreateOrUpdateAsync(CreateOrUpdateSecretRequest request)
     {
-        var secretPrivateName = _secretsNameMapper.GetPrivateSecretName(secretPublicName);
+        var secretPrivateName = _secretsNameMapper.GetPrivateSecretName(request.PublicSecretName);
 
         if (secretPrivateName == null)
         {
-            throw new ArgumentException($"Tried to create or update key, by public name, that is not mapped to any {nameof(secretPublicName)}");
+            throw new ArgumentException($"Tried to create or update key, by public name, that is not mapped to any {nameof(request.PublicSecretName)}");
         }
 
-        await _secretClient.SetSecretAsync(secretPrivateName, value);
+        await _secretClient.SetSecretAsync(secretPrivateName, request.Value);
     }
 }
