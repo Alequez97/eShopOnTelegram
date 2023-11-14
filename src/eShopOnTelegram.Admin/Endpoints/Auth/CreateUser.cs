@@ -1,4 +1,5 @@
-﻿using eShopOnTelegram.Persistence.Entities;
+﻿using eShopOnTelegram.Admin.Constants;
+using eShopOnTelegram.Persistence.Entities;
 
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +19,7 @@ public class CreateUser : EndpointBaseAsync
         _logger = logger;
     }
 
-    [Authorize(Policy = "RequireSuperadminClaim")]
+    [Authorize(Policy = AuthPolicy.RequireSuperadminClaim)]
     [HttpPost("api/users")]
     public override async Task<ActionResult> HandleAsync(CreateUserRequest request, CancellationToken cancellationToken = default)
     {
