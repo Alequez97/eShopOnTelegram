@@ -118,6 +118,8 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__AzureSettings__ResourceGroupName"                     = var.resource_group_name
+    "AppSettings__AzureSettings__ShopAppServiceName"                    = var.shop_app_name
     "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
     "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
     "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
