@@ -1,8 +1,8 @@
-﻿using eShopOnTelegram.TelegramBot.Worker.Commands;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Exceptions;
+﻿using eShopOnTelegram.Shop.Worker.Commands;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Exceptions;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram;
 
 public class CommandResolver
 {

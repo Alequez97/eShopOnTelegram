@@ -1,7 +1,7 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Extensions;
+namespace eShopOnTelegram.Shop.Worker.Extensions;
 
 public static class TelegramBotClientExtensions
 {

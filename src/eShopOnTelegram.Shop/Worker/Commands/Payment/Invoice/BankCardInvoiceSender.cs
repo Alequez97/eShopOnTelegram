@@ -1,19 +1,20 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Persistence.Entities.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Constants;
-using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Constants;
+using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Utils.Configuration;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
+namespace eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
 
 public class BankCardInvoiceSender : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IProductAttributeService _productAttributeService;
     private readonly IOrderService _orderService;
+    private readonly IPaymentService _paymentService;
     private readonly PaymentSettings _paymentSettings;
     private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<BankCardInvoiceSender> _logger;
@@ -22,6 +23,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IProductAttributeService productAttributeService,
         IOrderService orderService,
+        IPaymentService paymentService,
         AppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<BankCardInvoiceSender> logger)
@@ -29,6 +31,7 @@ public class BankCardInvoiceSender : ITelegramCommand
         _telegramBot = telegramBot;
         _productAttributeService = productAttributeService;
         _orderService = orderService;
+        _paymentService = paymentService;
         _paymentSettings = appSettings.PaymentSettings;
         _applicationContentStore = applicationContentStore;
         _logger = logger;
@@ -64,7 +67,7 @@ public class BankCardInvoiceSender : ITelegramCommand
                 cancellationToken: CancellationToken.None
             );
 
-            await _orderService.UpdateStatusAsync(activeOrder.OrderNumber, OrderStatus.InvoiceSent, CancellationToken.None);
+            await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, OrderPaymentMethod.Card);
         }
         catch (Exception exception)
         {

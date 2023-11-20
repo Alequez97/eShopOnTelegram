@@ -1,8 +1,8 @@
 ﻿using eShopOnTelegram.Domain.Dto.Products;
-using eShopOnTelegram.TelegramBot.Api.Constants;
-using eShopOnTelegram.TelegramBot.Api.Extensions;
+using eShopOnTelegram.Shop.Api.Constants;
+using eShopOnTelegram.Shop.Api.Extensions;
 
-namespace eShopOnTelegram.TelegramBot.Api.Endpoints.Products;
+namespace eShopOnTelegram.Shop.Api.Endpoints.Products;
 
 public class GetProducts : EndpointBaseAsync
     .WithoutRequest

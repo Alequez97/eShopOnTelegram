@@ -1,23 +1,25 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.ExternalServices.Services.Plisio;
+using eShopOnTelegram.Persistence.Entities.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Constants;
-using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Constants;
+using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Utils.Configuration;
 
 using Refit;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
+namespace eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
 
 public class PlisioInvoiceSender : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IPlisioClient _plisioClient;
     private readonly IOrderService _orderService;
+    private readonly IPaymentService _paymentService;
     private readonly PaymentSettings _paymentSettings;
     private readonly IApplicationContentStore _applicationContentStore;
     private readonly ILogger<PlisioInvoiceSender> _logger;
@@ -26,6 +28,7 @@ public class PlisioInvoiceSender : ITelegramCommand
         ITelegramBotClient telegramBot,
         IPlisioClient plisioClient,
         IOrderService orderService,
+        IPaymentService paymentService,
         AppSettings appSettings,
         IApplicationContentStore applicationContentStore,
         ILogger<PlisioInvoiceSender> logger)
@@ -33,6 +36,7 @@ public class PlisioInvoiceSender : ITelegramCommand
         _telegramBot = telegramBot;
         _plisioClient = plisioClient;
         _orderService = orderService;
+        _paymentService = paymentService;
         _paymentSettings = appSettings.PaymentSettings;
         _applicationContentStore = applicationContentStore;
         _logger = logger;
@@ -60,6 +64,8 @@ public class PlisioInvoiceSender : ITelegramCommand
                 (int)Math.Ceiling(activeOrder.TotalPrice),
                 activeOrder.OrderNumber,
                 _paymentSettings.Plisio.CryptoCurrency);
+
+            await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, OrderPaymentMethod.Plisio);
 
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {

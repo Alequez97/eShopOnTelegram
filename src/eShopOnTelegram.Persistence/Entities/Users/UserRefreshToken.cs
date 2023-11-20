@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.Persistence.Entities;
+﻿namespace eShopOnTelegram.Persistence.Entities.Users;
 
 [Index(nameof(Token))]
 public class UserRefreshToken : EntityBase

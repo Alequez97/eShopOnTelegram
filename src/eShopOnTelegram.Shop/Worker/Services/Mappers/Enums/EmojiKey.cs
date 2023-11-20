@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Services.Mappers.Enums;
+﻿namespace eShopOnTelegram.Shop.Worker.Services.Mappers.Enums;
 
 public enum EmojiKey
 {

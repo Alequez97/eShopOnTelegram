@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.Persistence.Entities;
+﻿namespace eShopOnTelegram.Persistence.Entities.Products;
 
 public class ProductAttribute : EntityBase
 {
@@ -20,13 +20,13 @@ public class ProductAttribute : EntityBase
 
     public required bool IsDeleted { get; set; }
 
-    
+
     public long? PreviousVersionId { get; set; }
     public ProductAttribute? PreviousVersion { get; set; }
 
     public void DecreaseQuantity(int amountToDecrease)
     {
-        this.QuantityLeft -= amountToDecrease;
+        QuantityLeft -= amountToDecrease;
     }
 
     public string ProductName => Product.Name;

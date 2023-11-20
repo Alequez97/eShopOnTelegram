@@ -1,8 +1,8 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands;
+namespace eShopOnTelegram.Shop.Worker.Commands;
 
 public class UnknownCommand : ITelegramCommand
 {

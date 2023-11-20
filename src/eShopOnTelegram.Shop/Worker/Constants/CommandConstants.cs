@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Constants
+﻿namespace eShopOnTelegram.Shop.Worker.Constants
 {
     public static class CommandConstants
     {

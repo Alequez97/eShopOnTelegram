@@ -2,6 +2,7 @@
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses.Orders;
+using eShopOnTelegram.Persistence.Entities.Orders;
 
 namespace eShopOnTelegram.Domain.Services.Interfaces;
 

@@ -65,4 +65,8 @@ public class DefaultApplicationContentModel
 
     [JsonProperty(ApplicationContentKey.Payment.ErrorDuringPaymentConfirmation)]
     public string Payment_ErrorDuringPaymentConfirmation => "Error during order confirmation";
+
+    // TODO: ADD SHOP ADMINISTRATOR NAME (LINK)
+    [JsonProperty(ApplicationContentKey.Payment.PaymentThroughSeller)]
+    public string Payment_PaymentThroughSeller => "Please contact shop administrator to discuss further payment details";
 }

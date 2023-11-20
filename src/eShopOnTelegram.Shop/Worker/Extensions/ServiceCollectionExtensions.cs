@@ -1,15 +1,15 @@
-﻿using eShopOnTelegram.TelegramBot.Worker.Commands;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Orders;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Payment;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Payment.Invoice;
-using eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
-using eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Services.Payment.TelegramButtonProviders;
-using eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+﻿using eShopOnTelegram.Shop.Worker.Commands;
+using eShopOnTelegram.Shop.Worker.Commands.Groups;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Commands.Orders;
+using eShopOnTelegram.Shop.Worker.Commands.Payment;
+using eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
+using eShopOnTelegram.Shop.Worker.Services.Mappers;
+using eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
+using eShopOnTelegram.Shop.Worker.Services.Payment.TelegramButtonProviders;
+using eShopOnTelegram.Shop.Worker.Services.Telegram;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Extensions
+namespace eShopOnTelegram.Shop.Worker.Extensions
 {
     public static class ServiceCollectionExtensions
     {
@@ -35,10 +35,12 @@ namespace eShopOnTelegram.TelegramBot.Worker.Extensions
             // Invoice generation commands
             services.AddScoped<ITelegramCommand, BankCardInvoiceSender>();
             services.AddScoped<ITelegramCommand, PlisioInvoiceSender>();
+            services.AddScoped<ITelegramCommand, PaymentThroughSellerCommand>();
 
             // Payment telegram buttons generators
             services.AddSingleton<IPaymentTelegramButtonProvider, BankCardPaymentTelegramButtonProvider>();
             services.AddSingleton<IPaymentTelegramButtonProvider, PlisioPaymentTelegramButtonProvider>();
+            services.AddSingleton<IPaymentTelegramButtonProvider, PaymentThroughSellerTelegramButtonProvider>();
 
             // Telegram services
             services.AddScoped<CommandResolver>();

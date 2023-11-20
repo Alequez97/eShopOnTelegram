@@ -6,7 +6,7 @@ using Azure.Identity;
 
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
-using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Persistence.Entities.Users;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
@@ -99,6 +99,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<IPaymentService, PaymentService>();
 
     builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 }

@@ -4,13 +4,13 @@ using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Extensions;
-using eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram;
 
 using Newtonsoft.Json;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Orders;
+namespace eShopOnTelegram.Shop.Worker.Commands.Orders;
 
 /// <summary>
 /// <para>Currently this command is used to create new order.
@@ -51,6 +51,7 @@ public class CreateOrderCommand : ITelegramCommand
             Guard.Against.Null(update.Message.WebAppData.Data);
 
             var createOrderRequest = JsonConvert.DeserializeObject<CreateOrderRequest>(update.Message.WebAppData.Data);
+            Guard.Against.Null(createOrderRequest);
 
             createOrderRequest.TelegramUserUID = update.Message.From.Id;
 

@@ -1,8 +1,8 @@
 ﻿using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
+namespace eShopOnTelegram.Shop.Worker.Commands.Groups;
 
 /// <summary>
 /// Command that is executed when bot is added to telegram group

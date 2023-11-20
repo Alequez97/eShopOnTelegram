@@ -1,4 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Products;
+using eShopOnTelegram.Persistence.Entities.Users;
+
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace eShopOnTelegram.Persistence.Context;

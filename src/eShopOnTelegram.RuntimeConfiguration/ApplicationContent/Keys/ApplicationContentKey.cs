@@ -32,5 +32,6 @@ public static class ApplicationContentKey
         public const string IncorrectInvoiceChoosen = "Payment.IncorrectInvoiceChoosen";
         public const string SuccessfullPayment = "Payment.SuccessfullPayment";
         public const string ErrorDuringPaymentConfirmation = "Payment.ErrorDuringPaymentConfirmation";
+        public const string PaymentThroughSeller = "Payment.PaymentThroughSeller";
     }
 }

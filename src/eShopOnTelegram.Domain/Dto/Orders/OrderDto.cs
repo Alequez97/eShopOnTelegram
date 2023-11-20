@@ -22,6 +22,8 @@ public class OrderDto : DtoBase
     public DateTime? PaymentDate { get; set; }
 
     public required string Status { get; set; }
+    public required string PaymentStatus { get; set; }
+    public required string PaymentMethod { get; set; }
 
     public string? CountryIso2Code { get; set; }
 

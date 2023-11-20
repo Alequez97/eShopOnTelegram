@@ -8,7 +8,7 @@ using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
-using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Persistence.Entities.Orders;
 
 using Microsoft.EntityFrameworkCore;
 

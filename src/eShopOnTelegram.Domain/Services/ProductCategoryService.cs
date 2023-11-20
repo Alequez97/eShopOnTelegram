@@ -3,6 +3,7 @@ using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.ProductCategories;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Entities.Products;
 
 using Microsoft.Data.SqlClient;
 

@@ -4,6 +4,7 @@ using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Entities.Orders;
 
 namespace eShopOnTelegram.Domain.Services;
 
@@ -141,7 +142,8 @@ public class OrderService : IOrderService
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .Where(order => order.Customer.TelegramUserUID == telegramId)
-                .Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
+                .Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.AwaitingPayment)
+                //.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
                 .ToListAsync(cancellationToken);
 
             if (!customerOrders.Any())
@@ -189,7 +191,8 @@ public class OrderService : IOrderService
                 .ThenInclude(product => product.Category)
                 .Include(order => order.Customer)
                 .Where(order => order.OrderNumber == orderNumber)
-                .Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
+                .Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.AwaitingPayment)
+                //.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
                 .ToListAsync(cancellationToken);
 
             if (!customerOrders.Any())
@@ -339,7 +342,9 @@ public class OrderService : IOrderService
                 OrderNumber = GenerateOrderNumber(),
                 CustomerId = customer.Id,
                 CartItems = orderCartItems,
-                Status = OrderStatus.New
+                Status = OrderStatus.New,
+                PaymentStatus = OrderPaymentStatus.None,
+                PaymentMethod = OrderPaymentMethod.None
             };
 
             try
