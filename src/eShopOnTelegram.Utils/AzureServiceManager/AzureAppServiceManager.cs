@@ -27,6 +27,6 @@ public class AzureAppServiceManager : IAzureAppServiceManager
 
         WebSiteResource appService = await resourceGroup.GetWebSiteAsync(appServiceName, cancellationToken);
 
-        await appService.RestartAsync(cancellationToken: cancellationToken);
+        await appService.RestartAsync();
     }
 }
