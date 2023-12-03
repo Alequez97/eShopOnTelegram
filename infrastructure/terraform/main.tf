@@ -252,13 +252,14 @@ resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
 
 resource "azurerm_key_vault_secret" "paymentcurrency" {
   name         = "AppSettings--PaymentSettings--MainCurrency"
-  value        = "EUR"
+  value        = var.currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
+  count        = var.crypto_currency == null ? 0 : 1
   name         = "AppSettings--PaymentSettings--Plisio--CryptoCurrency"
-  value        = "BTC"
+  value        = var.crypto_currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
