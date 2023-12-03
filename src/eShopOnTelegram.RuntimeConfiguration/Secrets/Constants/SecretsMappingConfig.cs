@@ -25,12 +25,13 @@ public class SecretsMappingConfig
                 PublicSecretName = SecretPublicName.Payments_BankCardToken,
                 PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Card)}--ApiToken"
             },
-            new SecretsMappingPrivateConfigItem
-            {
-                DisplayName = "Plisio payments api token",
-                PublicSecretName = SecretPublicName.Payments_PlisioApiToken,
-                PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Plisio)}--ApiToken"
-            },
+            // TODO: Restore when pliso will be fully implemented
+            //new SecretsMappingPrivateConfigItem
+            //{
+            //    DisplayName = "Plisio payments api token",
+            //    PublicSecretName = SecretPublicName.Payments_PlisioApiToken,
+            //    PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Plisio)}--ApiToken"
+            //},
     };
 
     public List<SecretsMappingConfigItem> PublicConfig =>
