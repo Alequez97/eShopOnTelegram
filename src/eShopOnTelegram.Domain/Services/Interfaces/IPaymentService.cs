@@ -4,6 +4,6 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface IPaymentService
 {
-    Task UpdateOrderPaymentMethod(string orderNumber, OrderPaymentMethod paymentMethod);
-    Task ConfirmOrderPayment(string orderNumber, OrderPaymentMethod paymentMethod);
+    Task<ActionResponse> UpdateOrderPaymentMethod(string orderNumber, PaymentMethod paymentMethod);
+    Task<ActionResponse> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod);
 }

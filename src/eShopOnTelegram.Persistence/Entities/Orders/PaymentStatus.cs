@@ -1,6 +1,6 @@
 ﻿namespace eShopOnTelegram.Persistence.Entities.Orders;
 
-public enum OrderPaymentStatus
+public enum PaymentStatus
 {
     // ? Refunded
     // ? PaymentFailure

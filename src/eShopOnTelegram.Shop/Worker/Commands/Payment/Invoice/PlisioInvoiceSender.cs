@@ -55,6 +55,11 @@ public class PlisioInvoiceSender : ITelegramCommand
                 await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
                 return;
             }
+            if (getOrdersResponse.Data.PaymentMethodSelected)
+            {
+                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.PaymentMethodAlreadySelected, CancellationToken.None));
+                return;
+            }
 
             var activeOrder = getOrdersResponse.Data;
 
@@ -65,7 +70,8 @@ public class PlisioInvoiceSender : ITelegramCommand
                 activeOrder.OrderNumber,
                 _paymentSettings.Plisio.CryptoCurrency);
 
-            await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, OrderPaymentMethod.Plisio);
+            var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
+            if (response.Status != ResponseStatus.Success) throw new Exception("Failed to update order payment method in Plisio Invoice Sender TG Command.");
 
             InlineKeyboardMarkup inlineKeyboard = new(new[]
             {

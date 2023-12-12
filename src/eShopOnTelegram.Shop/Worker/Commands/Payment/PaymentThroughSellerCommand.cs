@@ -42,8 +42,15 @@ public class PaymentThroughSellerCommand : ITelegramCommand
                 await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
                 return;
             }
+            if (getOrdersResponse.Data.PaymentMethodSelected)
+            {
+                await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.PaymentMethodAlreadySelected, CancellationToken.None));
+                return;
+            }
 
-            await _paymentService.UpdateOrderPaymentMethod(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.OrderPaymentMethod.PaymentThroughSeller);
+            var response = await _paymentService.UpdateOrderPaymentMethod(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.PaymentMethod.PaymentThroughSeller);
+            if(response.Status != ResponseStatus.Success) throw new Exception("Failed to update order payment method in PaymentThroughSeller TG Command.");
+
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,

@@ -12,30 +12,40 @@ public class PaymentService : IPaymentService
         _eShopOnTelegramDbContext = eShopOnTelegramDbContext;
     }
 
-    public async Task UpdateOrderPaymentMethod(string orderNumber, OrderPaymentMethod paymentMethod)
+    public async Task<ActionResponse> UpdateOrderPaymentMethod(string orderNumber, PaymentMethod paymentMethod)
     {
-        var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber) ?? throw new Exception("Order not found.");
+        var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber); /* ?? throw new Exception("Order not found.");*/
 
-        if (order.Status != OrderStatus.New || order.PaymentMethod != OrderPaymentMethod.None)
+        if(order == null) return new ActionResponse { Status = ResponseStatus.NotFound };
+
+        if (order.Status != OrderStatus.New || order.PaymentMethod != PaymentMethod.None)
         {
-            throw new Exception("Failed to assign order payment method");
+            return new ActionResponse { Status = ResponseStatus.ValidationFailed };
+            //throw new Exception("Failed to assign order payment method");
         }
 
         order.SetPaymentMethod(paymentMethod);
         await _eShopOnTelegramDbContext.SaveChangesAsync();
+
+        return new ActionResponse { Status = ResponseStatus.Success };
     }
 
-    public async Task ConfirmOrderPayment(string orderNumber, OrderPaymentMethod paymentMethod)
+    public async Task<ActionResponse> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod)
     {
         // TODO: UPDLOCK ?
-        var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber) ?? throw new Exception("Order not found.");
+        var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+        if (order == null) return new ActionResponse { Status = ResponseStatus.NotFound };
+            /*throw new Exception("Order not found.");*/
 
         if (order.Status != OrderStatus.AwaitingPayment || order.PaymentMethod != paymentMethod)
         {
-            throw new Exception("Failed to confirm order payment: status mismatch.");
+            return new ActionResponse() { Status = ResponseStatus.ValidationFailed };
+            //throw new Exception("Failed to confirm order payment: status mismatch.");
         }
 
         order.ConfirmPayment();
         await _eShopOnTelegramDbContext.SaveChangesAsync();
+
+        return new ActionResponse { Status = ResponseStatus.Success };
     }
 }

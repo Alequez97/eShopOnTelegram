@@ -51,9 +51,8 @@ public class CreateOrderCommand : ITelegramCommand
             Guard.Against.Null(update.Message.WebAppData.Data);
 
             var createOrderRequest = JsonConvert.DeserializeObject<CreateOrderRequest>(update.Message.WebAppData.Data);
-            Guard.Against.Null(createOrderRequest);
 
-            createOrderRequest.TelegramUserUID = update.Message.From.Id;
+            createOrderRequest!.TelegramUserUID = update.Message.From.Id;
 
             var createOrderResponse = await _orderService.CreateAsync(createOrderRequest, cancellationToken: CancellationToken.None);
 

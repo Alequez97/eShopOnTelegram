@@ -343,8 +343,8 @@ public class OrderService : IOrderService
                 CustomerId = customer.Id,
                 CartItems = orderCartItems,
                 Status = OrderStatus.New,
-                PaymentStatus = OrderPaymentStatus.None,
-                PaymentMethod = OrderPaymentMethod.None
+                PaymentStatus = PaymentStatus.None,
+                PaymentMethod = PaymentMethod.None
             };
 
             try

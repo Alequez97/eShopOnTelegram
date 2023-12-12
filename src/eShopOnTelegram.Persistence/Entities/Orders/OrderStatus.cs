@@ -8,5 +8,5 @@ public enum OrderStatus
     Paid = 2,
     Delivering = 3,
     Delivered = 4,
-    Finished = 5
+    Completed = 5
 }

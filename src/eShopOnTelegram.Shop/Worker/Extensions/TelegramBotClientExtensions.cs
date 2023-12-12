@@ -25,10 +25,18 @@ public static class TelegramBotClientExtensions
 
             var fallbackErrorMessage = "Something went wrong. Try again later";
 
-            await telegramBot.SendTextMessageAsync(
-                chatId: chatId,
-                text: fallbackErrorMessage,
-                cancellationToken: cancellationToken);
+            // TODO: Possible exceptions
+            try
+            {
+                await telegramBot.SendTextMessageAsync(
+                    chatId: chatId,
+                    text: fallbackErrorMessage,
+                    cancellationToken: cancellationToken);
+            }
+            catch (Exception exception2) 
+            { 
+                logger.LogError(exception2, "Failed to send fallback TG error message.");
+            }
         }
 
     }

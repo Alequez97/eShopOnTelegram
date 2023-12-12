@@ -15,8 +15,8 @@ public class Order : EntityBase
     public DateTime? PaymentDate { get; set; }
 
     public required OrderStatus Status { get; set; }
-    public required OrderPaymentStatus PaymentStatus { get; set; }
-    public required OrderPaymentMethod PaymentMethod { get; set; }
+    public required PaymentStatus PaymentStatus { get; set; }
+    public required PaymentMethod PaymentMethod { get; set; }
 
 
     [StringLength(2, MinimumLength = 2)]
@@ -34,16 +34,16 @@ public class Order : EntityBase
     [MaxLength(20)]
     public string? PostCode { get; set; }
 
-    public void SetPaymentMethod(OrderPaymentMethod paymentMethod)
+    public void SetPaymentMethod(PaymentMethod paymentMethod)
     {
         Status = OrderStatus.AwaitingPayment;
-        if (paymentMethod == OrderPaymentMethod.Card) PaymentStatus = OrderPaymentStatus.InvoiceSent;
+        if (paymentMethod == PaymentMethod.Card) PaymentStatus = PaymentStatus.InvoiceSent;
         PaymentMethod = paymentMethod;
     }
 
     public void ConfirmPayment()
     {
         Status = OrderStatus.Paid;
-        PaymentStatus = OrderPaymentStatus.PaymentSuccessful;
+        PaymentStatus = PaymentStatus.PaymentSuccessful;
     }
 }

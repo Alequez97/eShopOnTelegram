@@ -1,6 +1,6 @@
 ﻿namespace eShopOnTelegram.Persistence.Entities.Orders;
 
-public enum OrderPaymentMethod
+public enum PaymentMethod
 {
     None = 0,
     PaymentThroughSeller = 1,

@@ -21,6 +21,7 @@ public static class ApplicationContentKey
         public const string OrderNumberTitle = "Order.OrderNumberTitle";
         public const string OrderSummaryTitle = "Order.OrderSummaryTitle";
         public const string TotalPriceTitle = "Order.TotalPriceTitle";
+        public const string PaymentMethodAlreadySelected = "Order.PaymentMethodAlreadySelected";
     }
 
     public static class Payment
