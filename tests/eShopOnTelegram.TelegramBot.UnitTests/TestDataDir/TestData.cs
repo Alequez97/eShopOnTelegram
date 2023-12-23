@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.UnitTests.Extensions;
+﻿namespace eShopOnTelegram.TelegramBot.UnitTests.TestDataDir;
 
 public static class TestData
 {

@@ -2,7 +2,7 @@
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Services.Payment.Interfaces;
+namespace eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
 
 public interface IPaymentTelegramButtonProvider
 {

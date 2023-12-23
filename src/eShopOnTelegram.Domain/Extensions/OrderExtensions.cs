@@ -1,9 +1,10 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Domain.Dto.ProductAttributes;
+using eShopOnTelegram.Persistence.Entities.Orders;
 
 namespace eShopOnTelegram.Domain.Extensions;
 
-public static class OrderExtenstions
+public static class OrderExtensions
 {
     public static OrderDto ToOrderDto(this Order order)
     {
@@ -34,6 +35,8 @@ public static class OrderExtenstions
             CreationDate = order.CreationDate,
             PaymentDate = order.PaymentDate,
             Status = order.Status.ToString(),
+            PaymentStatus = order.PaymentStatus.ToString(),
+            PaymentMethod = order.PaymentMethod.ToString(),
             CountryIso2Code = order.CountryIso2Code,
             City = order.City,
             StreetLine1 = order.StreetLine1,

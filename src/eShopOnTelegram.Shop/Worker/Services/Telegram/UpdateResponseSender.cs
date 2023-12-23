@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+﻿namespace eShopOnTelegram.Shop.Worker.Services.Telegram;
 
 public class UpdateResponseSender
 {

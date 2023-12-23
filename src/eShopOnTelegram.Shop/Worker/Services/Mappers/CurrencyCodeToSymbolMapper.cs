@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
+﻿namespace eShopOnTelegram.Shop.Worker.Services.Mappers;
 
 public class CurrencyCodeToSymbolMapper
 {

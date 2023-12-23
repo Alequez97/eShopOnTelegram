@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Api.Attributes;
+﻿namespace eShopOnTelegram.Shop.Api.Attributes;
 
 public class AuthorizeTelegramAttribute : Attribute
 {

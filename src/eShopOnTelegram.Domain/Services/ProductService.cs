@@ -3,6 +3,7 @@ using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Services.Interfaces;
+using eShopOnTelegram.Persistence.Entities.Products;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 
 using Microsoft.Extensions.Configuration;

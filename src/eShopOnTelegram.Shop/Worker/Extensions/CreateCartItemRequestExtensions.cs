@@ -3,7 +3,7 @@ using eShopOnTelegram.Domain.Responses;
 
 using Telegram.Bot.Types.Payments;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Extensions;
+namespace eShopOnTelegram.Shop.Worker.Extensions;
 
 public static class CreateCartItemRequestExtensions
 {

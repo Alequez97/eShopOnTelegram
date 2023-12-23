@@ -1,6 +1,6 @@
 ﻿using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Admin.Extensions;
-using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Persistence.Entities.Users;
 using eShopOnTelegram.Utils.Configuration;
 
 using Microsoft.AspNetCore.Identity;

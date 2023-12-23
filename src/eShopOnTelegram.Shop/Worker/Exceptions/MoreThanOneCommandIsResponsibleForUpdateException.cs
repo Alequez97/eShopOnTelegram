@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Exceptions;
+﻿namespace eShopOnTelegram.Shop.Worker.Exceptions;
 
 public class MoreThanOneCommandIsResponsibleForUpdateException : Exception
 {

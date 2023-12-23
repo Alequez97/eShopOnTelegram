@@ -1,4 +1,6 @@
-﻿namespace eShopOnTelegram.Persistence.Entities;
+﻿using eShopOnTelegram.Persistence.Entities.Products;
+
+namespace eShopOnTelegram.Persistence.Entities;
 
 public class CartItem : EntityBase
 {

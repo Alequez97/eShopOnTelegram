@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Http;
 
 namespace eShopOnTelegram.Domain.Validation.Attributes;
 
+// TODO: хорошая тема, из будущих улучшений - проверка по экстеншену не очень секьюрно, можно будет внедрить проверку по сигнатуре файла.
+// https://stackoverflow.com/a/73068336
 public class AllowedExtensionsAttribute : ValidationAttribute
 {
     private readonly string[] _extensions;

@@ -4,13 +4,13 @@ using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
-using eShopOnTelegram.TelegramBot.Worker.Constants;
-using eShopOnTelegram.TelegramBot.Worker.Extensions;
-using eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Constants;
+using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram;
 using eShopOnTelegram.Utils.Configuration;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands
+namespace eShopOnTelegram.Shop.Worker.Commands
 {
     public class StartCommand : ITelegramCommand
     {

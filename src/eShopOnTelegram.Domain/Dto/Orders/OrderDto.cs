@@ -22,6 +22,10 @@ public class OrderDto : DtoBase
     public DateTime? PaymentDate { get; set; }
 
     public required string Status { get; set; }
+    public required string PaymentStatus { get; set; }
+    public required string PaymentMethod { get; set; }
+
+    public bool PaymentMethodSelected => !PaymentMethod.Equals(Persistence.Entities.Orders.PaymentMethod.None.ToString());
 
     public string? CountryIso2Code { get; set; }
 
