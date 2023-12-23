@@ -16,36 +16,57 @@ public class PaymentService : IPaymentService
     {
         var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber); /* ?? throw new Exception("Order not found.");*/
 
-        if(order == null) return new ActionResponse { Status = ResponseStatus.NotFound };
+        if (order == null)
+        {
+            return new ActionResponse
+            {
+                Status = ResponseStatus.NotFound
+            };
+        };
 
         if (order.Status != OrderStatus.New || order.PaymentMethod != PaymentMethod.None)
         {
-            return new ActionResponse { Status = ResponseStatus.ValidationFailed };
-            //throw new Exception("Failed to assign order payment method");
+            return new ActionResponse
+            {
+                Status = ResponseStatus.ValidationFailed
+            };
         }
 
         order.SetPaymentMethod(paymentMethod);
         await _eShopOnTelegramDbContext.SaveChangesAsync();
 
-        return new ActionResponse { Status = ResponseStatus.Success };
+        return new ActionResponse
+        {
+            Status = ResponseStatus.Success
+        };
     }
 
     public async Task<ActionResponse> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod)
     {
         // TODO: UPDLOCK ?
         var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
-        if (order == null) return new ActionResponse { Status = ResponseStatus.NotFound };
-            /*throw new Exception("Order not found.");*/
+        if (order == null)
+        {
+            return new ActionResponse
+            {
+                Status = ResponseStatus.NotFound
+            };
+        }
 
         if (order.Status != OrderStatus.AwaitingPayment || order.PaymentMethod != paymentMethod)
         {
-            return new ActionResponse() { Status = ResponseStatus.ValidationFailed };
-            //throw new Exception("Failed to confirm order payment: status mismatch.");
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.ValidationFailed
+            };
         }
 
         order.ConfirmPayment();
         await _eShopOnTelegramDbContext.SaveChangesAsync();
 
-        return new ActionResponse { Status = ResponseStatus.Success };
+        return new ActionResponse
+        {
+            Status = ResponseStatus.Success
+        };
     }
 }

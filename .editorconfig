@@ -107,7 +107,7 @@ csharp_prefer_static_local_function = true:warning
 csharp_preferred_modifier_order = public,private,protected,internal,static,extern,new,virtual,abstract,sealed,override,readonly,unsafe,volatile,async:silent
 
 # Code-block preferences
-csharp_prefer_braces = true:silent
+csharp_prefer_braces = true:error
 csharp_prefer_simple_using_statement = true:suggestion
 
 # Expression-level preferences
@@ -185,6 +185,7 @@ csharp_style_allow_blank_line_after_colon_in_constructor_initializer_experimenta
 csharp_style_allow_blank_line_after_token_in_conditional_expression_experimental = true:silent
 csharp_style_allow_blank_line_after_token_in_arrow_expression_clause_experimental = true:silent
 csharp_style_prefer_extended_property_pattern = true:suggestion
+csharp_style_prefer_primary_constructors = true:suggestion
 
 #### Naming styles ####
 [*.{cs,vb}]
@@ -391,3 +392,4 @@ dotnet_diagnostic.IDE0051.severity = error
 #
 # IDE0005: Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = error
+dotnet_style_prefer_collection_expression = true:suggestion
