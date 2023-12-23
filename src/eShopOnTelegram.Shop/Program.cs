@@ -16,9 +16,9 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
-using eShopOnTelegram.TelegramBot.Api.Middlewares;
-using eShopOnTelegram.TelegramBot.Worker;
-using eShopOnTelegram.TelegramBot.Worker.Extensions;
+using eShopOnTelegram.Shop.Api.Middlewares;
+using eShopOnTelegram.Shop.Worker;
+using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Utils.Configuration;
 using eShopOnTelegram.Utils.Extensions;
 

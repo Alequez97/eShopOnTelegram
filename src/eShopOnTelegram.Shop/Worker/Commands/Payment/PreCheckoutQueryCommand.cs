@@ -1,10 +1,9 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Payment;
+namespace eShopOnTelegram.Shop.Worker.Commands.Payment;
 
 public class PreCheckoutQueryCommand : ITelegramCommand
 {

@@ -3,9 +3,9 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 
-using eShopOnTelegram.TelegramBot.Api.Attributes;
+using eShopOnTelegram.Shop.Api.Attributes;
 
-namespace eShopOnTelegram.TelegramBot.Api.Middlewares;
+namespace eShopOnTelegram.Shop.Api.Middlewares;
 
 public static class AuthorizeTelegramMiddlewareExtensions
 {

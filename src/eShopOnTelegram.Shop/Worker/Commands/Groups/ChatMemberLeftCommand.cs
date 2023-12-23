@@ -1,6 +1,6 @@
-﻿using eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+﻿using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Commands.Groups;
+namespace eShopOnTelegram.Shop.Worker.Commands.Groups;
 
 public class ChatMemberLeftCommand : ITelegramCommand
 {

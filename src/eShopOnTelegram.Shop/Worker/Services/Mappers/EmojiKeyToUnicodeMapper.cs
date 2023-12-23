@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using System.Text.RegularExpressions;
 
-using eShopOnTelegram.TelegramBot.Worker.Services.Mappers.Enums;
+using eShopOnTelegram.Shop.Worker.Services.Mappers.Enums;
 
-namespace eShopOnTelegram.TelegramBot.Worker.Services.Mappers;
+namespace eShopOnTelegram.Shop.Worker.Services.Mappers;
 
 public class EmojiKeyToUnicodeMapper
 {

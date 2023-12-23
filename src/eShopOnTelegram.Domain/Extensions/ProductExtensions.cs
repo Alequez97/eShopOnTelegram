@@ -1,5 +1,6 @@
 ﻿using eShopOnTelegram.Domain.Dto.ProductAttributes;
 using eShopOnTelegram.Domain.Dto.Products;
+using eShopOnTelegram.Persistence.Entities.Products;
 
 namespace eShopOnTelegram.Domain.Extensions;
 public static class ProductExtensions

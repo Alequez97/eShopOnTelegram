@@ -3,7 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-using eShopOnTelegram.Persistence.Entities;
+using eShopOnTelegram.Persistence.Entities.Users;
 using eShopOnTelegram.Utils.Configuration;
 
 using Microsoft.IdentityModel.Tokens;

@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.Persistence.Entities;
+﻿namespace eShopOnTelegram.Persistence.Entities.Products;
 
 [Index(nameof(Name), IsUnique = true)]
 public class ProductCategory : EntityBase

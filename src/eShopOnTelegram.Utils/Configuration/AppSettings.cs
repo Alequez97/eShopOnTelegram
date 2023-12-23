@@ -52,7 +52,9 @@ public class PaymentSettings
 
     public required Plisio Plisio { get; init; }
 
-    public bool AllPaymentsDisabled => !Card.Enabled && !Plisio.Enabled;
+    public required bool PaymentThroughSellerEnabled { get; init; }
+
+    public bool AllPaymentsDisabled => !Card.Enabled && !Plisio.Enabled && !PaymentThroughSellerEnabled;
 }
 
 public class Card

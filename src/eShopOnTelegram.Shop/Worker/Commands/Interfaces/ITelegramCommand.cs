@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Commands.Interfaces;
+﻿namespace eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 
 public interface ITelegramCommand
 {

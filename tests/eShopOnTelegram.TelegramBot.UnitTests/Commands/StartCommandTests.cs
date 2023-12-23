@@ -2,8 +2,8 @@
 using eShopOnTelegram.Domain.Requests.Customers;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.TelegramBot.UnitTests.Extensions;
-using eShopOnTelegram.TelegramBot.Worker.Commands;
+using eShopOnTelegram.Shop.Worker.Commands;
+using eShopOnTelegram.TelegramBot.UnitTests.TestDataDir;
 
 using FluentAssertions;
 

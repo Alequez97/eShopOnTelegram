@@ -1,9 +1,9 @@
 ﻿using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 using eShopOnTelegram.Notifications.Interfaces;
-using eShopOnTelegram.TelegramBot.Api.Constants;
+using eShopOnTelegram.Shop.Api.Constants;
 
-namespace eShopOnTelegram.TelegramBot.Api.Endpoints.Webhooks;
+namespace eShopOnTelegram.Shop.Api.Endpoints.Webhooks;
 
 public class PlisioWebhook : EndpointBaseAsync
     .WithRequest<PlisioPaymentReceivedWebhookRequest>

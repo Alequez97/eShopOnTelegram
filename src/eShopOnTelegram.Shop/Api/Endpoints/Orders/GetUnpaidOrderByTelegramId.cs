@@ -1,9 +1,9 @@
-﻿using eShopOnTelegram.TelegramBot.Api.Attributes;
-using eShopOnTelegram.TelegramBot.Api.Constants;
+﻿using eShopOnTelegram.Shop.Api.Attributes;
+using eShopOnTelegram.Shop.Api.Constants;
 
 using Newtonsoft.Json;
 
-namespace eShopOnTelegram.TelegramBot.Api.Endpoints.Orders;
+namespace eShopOnTelegram.Shop.Api.Endpoints.Orders;
 
 public class GetUnpaidOrderByTelegramId : EndpointBaseAsync
     .WithRequest<string>

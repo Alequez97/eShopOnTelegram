@@ -1,9 +1,9 @@
-using eShopOnTelegram.TelegramBot.Worker.Services.Telegram;
+using eShopOnTelegram.Shop.Worker.Services.Telegram;
 
 using Telegram.Bot.Exceptions;
 using Telegram.Bot.Polling;
 
-namespace eShopOnTelegram.TelegramBot.Worker;
+namespace eShopOnTelegram.Shop.Worker;
 
 public class TelegramBot : BackgroundService
 {

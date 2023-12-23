@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.TelegramBot.Worker.Extensions;
+﻿namespace eShopOnTelegram.Shop.Worker.Extensions;
 
 public static class StringExtensions
 {
