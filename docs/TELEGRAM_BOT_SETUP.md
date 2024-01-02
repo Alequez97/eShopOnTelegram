@@ -1,3 +1,5 @@
+# How to setup telegram bot
+
 1. Find @BotFather bot in Telegram
 
 ![Bot father](assets/common/bot-father.png "Bot father")
