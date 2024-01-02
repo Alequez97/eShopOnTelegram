@@ -1,6 +1,6 @@
 1. Find @BotFather bot in Telegram
 
-![Bot father](assets/telegram-bot-setup/bot-father.png "Bot father")
+![Bot father](assets/common/bot-father.png "Bot father")
 
 2. Open bot and click /start.
 
