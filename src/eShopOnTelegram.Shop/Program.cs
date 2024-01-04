@@ -167,9 +167,14 @@ static void ConfigureNotificationSenders(WebApplicationBuilder builder)
     {
         var telegramBot = provider.GetRequiredService<ITelegramBotClient>();
         var botOwnerDataStore = provider.GetRequiredService<IBotOwnerDataStore>();
+        var appSettings = provider.GetRequiredService<AppSettings>();
         var adminAppHostName = builder.Configuration["AdminAppHostName"];
 
-        return new TelegramNotificationSender(telegramBot, botOwnerDataStore, adminAppHostName);
+        return new TelegramNotificationSender(
+            telegramBot,
+            botOwnerDataStore,
+            appSettings,
+            adminAppHostName);
     });
 }
 
