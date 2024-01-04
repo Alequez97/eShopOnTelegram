@@ -231,6 +231,8 @@ namespace eShopOnTelegram.Persistence.Migrations
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
                     CountryIso2Code = table.Column<string>(type: "nvarchar(2)", maxLength: 2, nullable: true),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     StreetLine1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -336,7 +338,7 @@ namespace eShopOnTelegram.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1L, 0, "ae78f909-91fc-4847-97cf-15b4bdec858f", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEBe8uyh/SjvpWdx1ZIynSywhr25HU96sBwYfnu7oz84M9YiUXJV37/CW+snxoqPufQ==", null, false, "6ae3154f-c85e-41f1-a719-dda0b57f528b", false, "admin" });
+                values: new object[] { 1L, 0, "5606d2a4-4a36-499b-a358-5cc3ebd54488", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAELjIFz4lWJHksJ7Q1cIeb2eiPDn/bWlmIQtfRHKH7wE1Bs83ZC/0VttO7D9+mLaymQ==", null, false, "5b7bfa82-3d9e-4cfb-91c2-24253763a4b1", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
