@@ -119,6 +119,7 @@ static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azure
 
     // Domain layer services
     builder.Services.AddScoped<IOrderService, OrderService>();
+    builder.Services.AddScoped<IPaymentService, PaymentService>();
     builder.Services.AddScoped<ICustomerService, CustomerService>();
     builder.Services.AddScoped<IProductService, ProductService>();
     builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
