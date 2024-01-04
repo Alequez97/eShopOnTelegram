@@ -72,7 +72,7 @@ stages:
           dotnetProjectPath: ${{ variables.ADMIN_APP_LOCATION }}
           dotnetProjectName: ${{ variables.ADMIN_APP_PROJECT_NAME }}
 
-  - stage: BuildAndDeployShop$
+  - stage: BuildAndDeployShop
     dependsOn: ['TerraformPlanAndApply']
     variables:
       - name: AppName
