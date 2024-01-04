@@ -3,6 +3,10 @@ parameters:
     displayName: Environment name
     type: string
     default: dev
+  - name: pipelineEnvironmentName
+    displayName: Pipeline environment name
+    type: string
+    default: eshopontelegram-dev
 
 pool:
   vmImage: ubuntu-latest
@@ -26,17 +30,15 @@ variables:
     value: 7.x
   - name: NODE_VERSION
     value: 18.x
-  - name: PIPELINE_ENVIRONMENT
-    value: eshopontelegram-${{lower(parameters.environmentName)}}
 
 stages:
-  - stage: TerraformPlanAndApply${{parameters.environmentName}}
+  - stage: TerraformPlanAndApply
     displayName: "[${{ parameters.environmentName }}] Deploy azure infrastructure"
     jobs:
       - template: ./templates/terraform-plan-and-apply.yml
         parameters: 
           Environment: ${{parameters.environmentName}}
-          PipelineEnvironment: $(PIPELINE_ENVIRONMENT)
+          PipelineEnvironment: ${{ parameters.pipelineEnvironmentName }}
           TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
           SubscriptionId: $(azure-subscription-id)
@@ -53,13 +55,13 @@ stages:
             - "shop_app_name"
             - "key_vault_uri"
           
-  - stage: BuildAndDeployAdmin${{parameters.environmentName}}
-    dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+  - stage: BuildAndDeployAdmin
+    dependsOn: ['TerraformPlanAndApply']
     variables:
       - name: AppName
-        value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
+        value: $[stageDependencies.TerraformPlanAndApply.terraform_apply.outputs['terraform_apply.tf_var_admin_app_name.admin_app_name']]
       - name: ResourceGroupName
-        value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
+        value: $[stageDependencies.TerraformPlanAndApply.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
     displayName: "[${{ parameters.environmentName }}] Build and deploy admin app"
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml
@@ -72,13 +74,13 @@ stages:
           dotnetProjectPath: ${{ variables.ADMIN_APP_LOCATION }}
           dotnetProjectName: ${{ variables.ADMIN_APP_PROJECT_NAME }}
 
-  - stage: BuildAndDeployShop${{parameters.environmentName}}
-    dependsOn: ['TerraformPlanAndApply${{parameters.environmentName}}']
+  - stage: BuildAndDeployShop
+    dependsOn: ['TerraformPlanAndApply']
     variables:
       - name: AppName
-        value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
+        value: $[stageDependencies.TerraformPlanAndApply.terraform_apply.outputs['terraform_apply.tf_var_shop_app_name.shop_app_name']]
       - name: ResourceGroupName
-        value: $[stageDependencies.TerraformPlanAndApply${{parameters.environmentName}}.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
+        value: $[stageDependencies.TerraformPlanAndApply.terraform_apply.outputs['terraform_apply.tf_var_resource_group_name.resource_group_name']]
     displayName: "[${{ parameters.environmentName }}] Build and deploy shop app"
     jobs:
       - template: ./templates/dotnet-and-pnpm-client-build-and-deploy.yml

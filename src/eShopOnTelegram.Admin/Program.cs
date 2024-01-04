@@ -4,6 +4,7 @@ using System.Text;
 using Azure.Core;
 using Azure.Identity;
 
+using eShopOnTelegram.Admin.Constants;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Entities.Users;
@@ -11,6 +12,11 @@ using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
+using eShopOnTelegram.RuntimeConfiguration.Secrets;
+using eShopOnTelegram.RuntimeConfiguration.Secrets.Constants;
+using eShopOnTelegram.RuntimeConfiguration.Secrets.Interfaces;
+using eShopOnTelegram.Utils.AzureServiceManager;
+using eShopOnTelegram.Utils.AzureServiceManager.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 using eShopOnTelegram.Utils.Extensions;
 
@@ -63,29 +69,28 @@ app.Run();
 
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
-    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
-    var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
+    var azureAppSettings = builder.Configuration.GetSection<AppSettings>("AppSettings").AzureSettings;
 
-    if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+    if (!string.IsNullOrWhiteSpace(azureAppSettings.KeyVaultUri))
     {
-        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
-        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
-        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
-
         TokenCredential azureCredentials =
-            string.IsNullOrWhiteSpace(tenantId)
-         || string.IsNullOrWhiteSpace(clientId)
-         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+            string.IsNullOrWhiteSpace(azureAppSettings.TenantId)
+         || string.IsNullOrWhiteSpace(azureAppSettings.ClientId)
+         || string.IsNullOrWhiteSpace(azureAppSettings.ClientSecret)
+            ?
+            new DefaultAzureCredential()
+            : 
+            new ClientSecretCredential(azureAppSettings.TenantId, azureAppSettings.ClientId, azureAppSettings.ClientSecret);
 
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
+        builder.Configuration.AddAzureKeyVault(new Uri(azureAppSettings.KeyVaultUri), azureCredentials);
     }
 }
 
 static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 {
-    var adminAppSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
-    builder.Services.AddSingleton(adminAppSettings);
-    return adminAppSettings;
+    var appSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
+    builder.Services.AddSingleton(appSettings);
+    return appSettings;
 }
 
 static void ConfigureServices(WebApplicationBuilder builder)
@@ -102,11 +107,16 @@ static void ConfigureServices(WebApplicationBuilder builder)
     builder.Services.AddScoped<IPaymentService, PaymentService>();
 
     builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
+
+    builder.Services.AddScoped<IKeyVaultClient, KeyVaultClient>();
+    builder.Services.AddSingleton<ISecretsNameMapper, SecretsNameMapper>();
+    builder.Services.AddSingleton<SecretsMappingConfig>();
+
+    builder.Services.AddScoped<IAzureAppServiceManager, AzureAppServiceManager>();
 }
 
 static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSettings azureAppSettings)
 {
-    //var appInsightsConnectionString = builder.Configuration["Azure:AppInsightsConnectionString"];
     if (!string.IsNullOrWhiteSpace(azureAppSettings.AppInsightsConnectionString))
     {
         builder.Logging.AddApplicationInsights(
@@ -143,7 +153,7 @@ static void ConfigureJWTAuthentication(WebApplicationBuilder builder, JWTAuthSet
     });
     builder.Services.AddAuthorization(options =>
     {
-        options.AddPolicy("RequireSuperadminClaim",
+        options.AddPolicy(AuthPolicy.RequireSuperadminClaim,
              policy => policy.RequireClaim(ClaimTypes.Role, new[] { "superadmin" }));
     });
 }

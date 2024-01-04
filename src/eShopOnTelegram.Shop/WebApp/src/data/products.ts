@@ -13,6 +13,8 @@ export const getProducts = (): Product[] => {
 					originalPrice: 9.99,
 					quantityLeft: 100,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/03/600-pink-lemonade-web-300x300.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 2,
@@ -21,6 +23,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 5.99,
 					quantityLeft: 0,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/03/600-grape-ice-web-600x600.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 3,
@@ -29,6 +33,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 5.99,
 					quantityLeft: 10,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/04/600-lychee-ice-web-300x300.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 4,
@@ -37,6 +43,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 7.99,
 					quantityLeft: 5,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/04/600-strawberry-and-watermelon-ice-web-600x600.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 			],
 		},
@@ -52,6 +60,8 @@ export const getProducts = (): Product[] => {
 					originalPrice: 9.99,
 					quantityLeft: 100,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/03/600-pink-lemonade-web-300x300.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 6,
@@ -61,6 +71,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 5.99,
 					quantityLeft: 100,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/03/600-grape-ice-web-600x600.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 7,
@@ -70,6 +82,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 5.99,
 					quantityLeft: 10,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/04/600-lychee-ice-web-300x300.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 				{
 					id: 8,
@@ -79,6 +93,8 @@ export const getProducts = (): Product[] => {
 					priceWithDiscount: 7.99,
 					quantityLeft: 5,
 					image: 'https://royal-mmxxi.com/wp-content/uploads/2021/04/600-strawberry-and-watermelon-ice-web-600x600.jpg',
+					productName: 'JS Never Smokes',
+					productCategoryName: 'E-Cigarette',
 				},
 			],
 		},

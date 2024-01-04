@@ -4,6 +4,7 @@ import {
 	required,
 	SimpleForm,
 	TextInput,
+	useAuthenticated,
 	useNotify,
 } from 'react-admin';
 import { axiosPost } from '../../utils/axios.utility';
@@ -26,6 +27,8 @@ const validatePassword = (value: string) => {
 };
 
 export const UserCreate = () => {
+	useAuthenticated();
+
 	const notify = useNotify();
 
 	const onSubmitHandler = async (request: FieldValues) => {

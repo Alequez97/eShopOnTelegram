@@ -78,7 +78,7 @@ app.MapFallbackToFile("index.html"); ;
 
 app.Run();
 
-static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo refactor
+static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 {
     var appSettings = builder.Configuration.GetSection<AppSettings>("AppSettings");
 
@@ -88,22 +88,20 @@ static AppSettings ConfigureAppSettings(WebApplicationBuilder builder) // todo r
 
 static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 {
-    // Azure keyvault setup
-    var azureKeyVaultUriConfigValueSelector = "AppSettings:AzureSettings:KeyVaultUri";
-    var azureKeyVaultUri = builder.Configuration[azureKeyVaultUriConfigValueSelector];
+    var azureAppSettings = builder.Configuration.GetSection<AppSettings>("AppSettings").AzureSettings;
 
-    if (!string.IsNullOrWhiteSpace(azureKeyVaultUri))
+    if (!string.IsNullOrWhiteSpace(azureAppSettings.KeyVaultUri))
     {
-        var tenantId = builder.Configuration["AppSettings:AzureSettings:TenantId"];
-        var clientId = builder.Configuration["AppSettings:AzureSettings:ClientId"];
-        var clientSecret = builder.Configuration["AppSettings:AzureSettings:ClientSecret"];
-
         TokenCredential azureCredentials =
-            string.IsNullOrWhiteSpace(tenantId)
-         || string.IsNullOrWhiteSpace(clientId)
-         || string.IsNullOrWhiteSpace(clientSecret) ? new DefaultAzureCredential() : new ClientSecretCredential(tenantId, clientId, clientSecret);
+            string.IsNullOrWhiteSpace(azureAppSettings.TenantId)
+         || string.IsNullOrWhiteSpace(azureAppSettings.ClientId)
+         || string.IsNullOrWhiteSpace(azureAppSettings.ClientSecret)
+         ?
+         new DefaultAzureCredential()
+         :
+         new ClientSecretCredential(azureAppSettings.TenantId, azureAppSettings.ClientId, azureAppSettings.ClientSecret);
 
-        builder.Configuration.AddAzureKeyVault(new Uri(azureKeyVaultUri), azureCredentials);
+        builder.Configuration.AddAzureKeyVault(new Uri(azureAppSettings.KeyVaultUri), azureCredentials);
     }
 }
 

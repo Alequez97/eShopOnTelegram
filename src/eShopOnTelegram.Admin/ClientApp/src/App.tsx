@@ -21,6 +21,7 @@ import { authProvider } from './AuthProvider';
 import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from './types/auth.type';
 import { refreshAccessToken } from './utils/auth.utility';
 import { UserCreate } from './components/users/UserCreate';
+import { SecretsCreate } from './components/secrets/SecretsCreate';
 
 const apiBaseUrl = import.meta.env.VITE_BACKEND_API_BASE_URL ?? '/api';
 
@@ -100,6 +101,11 @@ function App() {
 				name="users"
 				list={UserCreate}
 				options={{ label: 'Create user' }}
+			/>
+			<Resource
+				name="secrets"
+				list={SecretsCreate}
+				options={{ label: 'Secrets' }}
 			/>
 		</Admin>
 	);

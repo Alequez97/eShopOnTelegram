@@ -12,7 +12,7 @@ public class AzureBlobStorageProductImagesStore : IProductImagesStore
     public AzureBlobStorageProductImagesStore(AppSettings appSettings)
     {
         var blobServiceClient = new BlobServiceClient(appSettings.AzureSettings.StorageAccountConnectionString);
-        _blobContainer = blobServiceClient.GetBlobContainerClient(appSettings.AzureSettings.RuntimeConfigurationBlobContainerName);
+        _blobContainer = blobServiceClient.GetBlobContainerClient(appSettings.AzureSettings.ProductImagesBlobContainerName);
     }
 
     public async Task<string> SaveAsync(byte[] file, string fileName, CancellationToken cancellationToken)

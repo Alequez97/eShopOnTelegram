@@ -95,3 +95,12 @@ variable "keyvault_name" {
   type = string
   description = "App service name"
 }
+
+variable "currency" {
+  type = string
+}
+
+variable "crypto_currency" {
+  type = string
+  default = null
+}

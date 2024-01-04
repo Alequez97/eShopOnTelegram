@@ -28,10 +28,14 @@ public class PlisioWebhook : EndpointBaseAsync
 
         if (requestIsFromPlisio)
         {
+            // TODO: Check payment status
+
             foreach (var notificationSender in _notificationSenders)
             {
                 await notificationSender.SendOrderReceivedNotificationAsync(request.OrderNumber, cancellationToken);
             }
+
+            // TODO: Update order status
 
             return Ok();
         }

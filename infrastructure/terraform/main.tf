@@ -118,6 +118,8 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__AzureSettings__ClientSecret"                          = var.azure_spn_client_secret
     "AppSettings__AzureSettings__RuntimeConfigurationBlobContainerName" = azurerm_storage_container.runtime_configuration_blob_storage.name
     "AppSettings__AzureSettings__ProductImagesBlobContainerName"        = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__AzureSettings__ResourceGroupName"                     = var.resource_group_name
+    "AppSettings__AzureSettings__ShopAppServiceName"                    = var.shop_app_name
     "AppSettings__JWTAuthSettings__Issuer"                              = var.admin_app_name
     "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
     "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
@@ -242,28 +244,6 @@ resource "azurerm_key_vault_secret" "productimageshostname" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
-data "azurerm_key_vault_secret" "common_kv_telegram_bot_owner_telegram_id" {
-  name         = "telegram-bot-owner-telegram-id"
-  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
-}
-
-resource "azurerm_key_vault_secret" "telegramownerid" {
-  name         = "AppSettings--TelegramBotSettings--BotOwnerTelegramId"
-  value        = data.azurerm_key_vault_secret.common_kv_telegram_bot_owner_telegram_id.value
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "common_kv_telegram_token" {
-  name         = "telegram-token"
-  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
-}
-
-resource "azurerm_key_vault_secret" "telegramtoken" {
-  name         = "AppSettings--TelegramBotSettings--Token"
-  value        = data.azurerm_key_vault_secret.common_kv_telegram_token.value
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
 resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
   name         = "AppSettings--TelegramBotSettings--WebAppUrl"
   value        = "https://${azurerm_linux_web_app.shop.name}.azurewebsites.net"
@@ -272,35 +252,14 @@ resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
 
 resource "azurerm_key_vault_secret" "paymentcurrency" {
   name         = "AppSettings--PaymentSettings--MainCurrency"
-  value        = "EUR"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "common_kv_payment_card_api_token" {
-  name         = "payment-card-api-token"
-  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
-}
-
-resource "azurerm_key_vault_secret" "cardpaymentapitoken" {
-  name         = "AppSettings--PaymentSettings--Card--ApiToken"
-  value        = data.azurerm_key_vault_secret.common_kv_payment_card_api_token.value
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-data "azurerm_key_vault_secret" "common_kv_payment_plisio_api_token" {
-  name         = "payment-plisio-api-token"
-  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
-}
-
-resource "azurerm_key_vault_secret" "pliciopaymentapitoken" {
-  name         = "AppSettings--PaymentSettings--Plisio--ApiToken"
-  value        = data.azurerm_key_vault_secret.common_kv_payment_plisio_api_token.value
+  value        = var.currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
 resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
+  count        = var.crypto_currency == null ? 0 : 1
   name         = "AppSettings--PaymentSettings--Plisio--CryptoCurrency"
-  value        = "BTC"
+  value        = var.crypto_currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
