@@ -3,6 +3,10 @@ parameters:
     displayName: Environment name
     type: string
     default: dev
+  - name: pipelineEnvironmentName
+    displayName: Pipeline environment name
+    type: string
+    default: eshopontelegram-dev
 
 pool:
   vmImage: ubuntu-latest
@@ -26,8 +30,6 @@ variables:
     value: 7.x
   - name: NODE_VERSION
     value: 18.x
-  - name: PIPELINE_ENVIRONMENT
-    value: eshopontelegram-${{lower(parameters.environmentName)}}
 
 stages:
   - stage: TerraformPlanAndApply
@@ -36,7 +38,7 @@ stages:
       - template: ./templates/terraform-plan-and-apply.yml
         parameters: 
           Environment: ${{parameters.environmentName}}
-          PipelineEnvironment: $(PIPELINE_ENVIRONMENT)
+          PipelineEnvironment: ${{ parameters.pipelineEnvironmentName }}
           TfVarFile: "$(Build.SourcesDirectory)/infrastructure/terraform/vars/${{lower(parameters.environmentName)}}.tfvars"
           TfBackendStateFile: terraform-state-${{lower(parameters.environmentName)}}.tfstate
           SubscriptionId: $(azure-subscription-id)
