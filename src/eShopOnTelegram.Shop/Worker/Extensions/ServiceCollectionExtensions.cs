@@ -21,6 +21,7 @@ namespace eShopOnTelegram.Shop.Worker.Extensions
 
             // Telegram groups commands
             services.AddScoped<ITelegramCommand, MyChatMemberCommand>();
+            services.AddScoped<ITelegramCommand, GroupCreatedCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberAddedCommand>();
             services.AddScoped<ITelegramCommand, ChatMemberLeftCommand>();
 

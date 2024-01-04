@@ -29,7 +29,7 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
         _logger = logger;
     }
 
-    public async Task<string> GetBotOwnerTelegramGroupIdAsync(CancellationToken cancellationToken)
+    public async Task<string?> GetBotOwnerTelegramGroupIdAsync(CancellationToken cancellationToken)
     {
         var blobClient = _blobContainerClient.GetBlobClient(BOT_OWNER_GROUP_ID_FILE_NAME);
 
@@ -38,7 +38,7 @@ public class AzureBlobStorageBotOwnerDataStore : IBotOwnerDataStore
         var blobExists = await blobClient.ExistsAsync(cancellationToken);
         if (!blobExists)
         {
-            return _botOwnerTelegramId;
+            return null;
         }
 
         await blobClient.DownloadToAsync(memoryStream, cancellationToken);

@@ -2,6 +2,7 @@
 
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot;
 using Telegram.Bot.Types.Enums;
@@ -13,15 +14,18 @@ public class TelegramNotificationSender : INotificationSender
 {
     private readonly ITelegramBotClient _telegramBot;
     private readonly IBotOwnerDataStore _botOwnerDataStore;
+    private readonly TelegramBotSettings _telegramBotSettings;
     private readonly string _adminAppHostName;
 
     public TelegramNotificationSender(
         ITelegramBotClient telegramBot,
         IBotOwnerDataStore botOwnerDataStore,
+        AppSettings appSettings,
         string adminAppHostName)
     {
         _telegramBot = telegramBot;
         _botOwnerDataStore = botOwnerDataStore;
+        _telegramBotSettings = appSettings.TelegramBotSettings;
         _adminAppHostName = adminAppHostName;
     }
 
@@ -57,7 +61,13 @@ public class TelegramNotificationSender : INotificationSender
             });
         }
 
-        var chatIdAsString = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(cancellationToken);
+        var chatIdAsString = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(cancellationToken) ?? _telegramBotSettings.BotOwnerTelegramId;
+
+        if (string.IsNullOrWhiteSpace(chatIdAsString))
+        {
+            throw new ArgumentException("Can't send notification about new order. No group id and bot owner telegram id were found.");
+        }
+
         var chatId = Convert.ToInt64(chatIdAsString);
 
         await _telegramBot.SendTextMessageAsync(
