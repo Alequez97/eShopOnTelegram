@@ -12,15 +12,16 @@ export const StyledCard = styled.div`
 	${StyledBorderMixin}
 `;
 
-export const StyledCardInfoWrapper = styled.h4`
+export const StyledCardInfoWrapper = styled.div`
+    margin: 6px 0 12px;
 	font-weight: 400;
 	text-align: center;
 `;
 
 export const StyledImageContainer = styled.div`
-	width: 100px;
-	height: 100px;
-	margin: 0 auto;
+    display: flex;
+    align-items: center;
+    height: 100%;
 
 	img {
 		width: 100%;

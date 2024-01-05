@@ -52,80 +52,82 @@ export const Card = observer(({ product }: CardProps) => {
 					<img src={outOfStockImage} alt={'Out of stock'} />
 				)}
 			</StyledImageContainer>
-			<StyledCardInfoWrapper>
-				{product.name}
-				<br />
-				<StyledCardPrice>
-					{cardStore.selectedProductAttributeState && (
-						<>
-							{
-								cardStore.selectedProductAttributeState
-									.originalPrice
-							}{' '}
-							€
-						</>
+			<div>
+				<StyledCardInfoWrapper>
+					{product.name}
+					<br />
+					<StyledCardPrice>
+						{cardStore.selectedProductAttributeState && (
+							<>
+								{
+									cardStore.selectedProductAttributeState
+										.originalPrice
+								}{' '}
+								€
+							</>
+						)}
+					</StyledCardPrice>
+					<br />
+					{cardStore.selectedProductAttributeState ? (
+						<i>
+							Available:{' '}
+							{cardStore.selectedProductAttributeState
+								.quantityLeft < 20
+								? cardStore.selectedProductAttributeState
+										.quantityLeft
+								: '20+'}
+						</i>
+					) : (
+						<i>Available: 0</i>
 					)}
-				</StyledCardPrice>
-				<br />
-				{cardStore.selectedProductAttributeState ? (
-					<i>
-						Available:{' '}
-						{cardStore.selectedProductAttributeState.quantityLeft <
-						20
-							? cardStore.selectedProductAttributeState
-									.quantityLeft
-							: '20+'}
-					</i>
-				) : (
-					<i>Available: 0</i>
-				)}
-				<ProductAttributeSelector
-					productAttributeValues={cardStore.availableColorsState}
-					selectedProductAttribute={cardStore.selectedColorState}
-					onSelection={(color: string) =>
-						cardStore.setSelectedColor(color)
+					<ProductAttributeSelector
+						productAttributeValues={cardStore.availableColorsState}
+						selectedProductAttribute={cardStore.selectedColorState}
+						onSelection={(color: string) =>
+							cardStore.setSelectedColor(color)
+						}
+					/>
+					<ProductAttributeSelector
+						productAttributeValues={cardStore.availableSizesState}
+						selectedProductAttribute={cardStore.selectedSizeState}
+						onSelection={(color: string) =>
+							cardStore.setSelectedSize(color)
+						}
+					/>
+				</StyledCardInfoWrapper>
+				<Counter
+					value={selectedProductAttributeCartItem?.quantity}
+					showAddButton={
+						!selectedProductAttributeCartItem ||
+						selectedProductAttributeCartItem.quantity === 0
 					}
+					addButtonDisabled={
+						!cardStore.isAvailableSelectedProductAttribute
+					}
+					showPlusButton={
+						!!selectedProductAttributeCartItem &&
+						selectedProductAttributeCartItem?.quantity !== 0
+					}
+					showMinusButton={
+						!!selectedProductAttributeCartItem &&
+						selectedProductAttributeCartItem.quantity !== 0
+					}
+					onAdd={() => {
+						if (cardStore.selectedProductAttributeState) {
+							cartItemsStore.addProductAttribute(
+								cardStore.selectedProductAttributeState,
+							);
+						}
+					}}
+					onRemove={() => {
+						if (cardStore.selectedProductAttributeState) {
+							cartItemsStore.removeProductAttribute(
+								cardStore.selectedProductAttributeState,
+							);
+						}
+					}}
 				/>
-				<ProductAttributeSelector
-					productAttributeValues={cardStore.availableSizesState}
-					selectedProductAttribute={cardStore.selectedSizeState}
-					onSelection={(color: string) =>
-						cardStore.setSelectedSize(color)
-					}
-				/>
-			</StyledCardInfoWrapper>
-			<Counter
-				value={selectedProductAttributeCartItem?.quantity}
-				showAddButton={
-					!selectedProductAttributeCartItem ||
-					selectedProductAttributeCartItem.quantity === 0
-				}
-				addButtonDisabled={
-					!cardStore.isAvailableSelectedProductAttribute
-				}
-				showPlusButton={
-					!!selectedProductAttributeCartItem &&
-					selectedProductAttributeCartItem?.quantity !== 0
-				}
-				showMinusButton={
-					!!selectedProductAttributeCartItem &&
-					selectedProductAttributeCartItem.quantity !== 0
-				}
-				onAdd={() => {
-					if (cardStore.selectedProductAttributeState) {
-						cartItemsStore.addProductAttribute(
-							cardStore.selectedProductAttributeState,
-						);
-					}
-				}}
-				onRemove={() => {
-					if (cardStore.selectedProductAttributeState) {
-						cartItemsStore.removeProductAttribute(
-							cardStore.selectedProductAttributeState,
-						);
-					}
-				}}
-			/>
+			</div>
 		</StyledCard>
 	);
 });
