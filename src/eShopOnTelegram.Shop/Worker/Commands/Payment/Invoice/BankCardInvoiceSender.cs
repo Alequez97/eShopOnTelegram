@@ -60,8 +60,8 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,
-                await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None) + getOrdersResponse.Data.OrderNumber,
-                "", // TODO: Add list of purchasing products
+                await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None) + " " + getOrdersResponse.Data.OrderNumber,
+                " ", // TODO: Add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentSettings.Card.ApiToken,
                 _paymentSettings.MainCurrency,
@@ -73,7 +73,10 @@ public class BankCardInvoiceSender : ITelegramCommand
             );
 
             var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
-            if (response.Status != ResponseStatus.Success) throw new Exception("Failed to update order payment method in BankCardInvoiceSender TG Command.");
+            if (response.Status != ResponseStatus.Success)
+            {
+                throw new Exception("Failed to update order payment method in BankCardInvoiceSender TG Command.");
+            }
         }
         catch (Exception exception)
         {
