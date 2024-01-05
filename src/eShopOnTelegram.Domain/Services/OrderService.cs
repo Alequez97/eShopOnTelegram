@@ -420,6 +420,45 @@ public class OrderService : IOrderService
         }
     }
 
+    public async Task<ActionResponse> UpdateDeliveryAddressAsync(string orderNumber, UpdateDeliveryAddressRequest request, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+
+            if (existingOrder == null)
+            {
+                return new ActionResponse()
+                {
+                    Status = ResponseStatus.NotFound
+                };
+            }
+
+            existingOrder.CountryIso2Code = request.CountryIso2Code;
+            existingOrder.City = request.City;
+            existingOrder.StreetLine1 = request.StreetLine1;
+            existingOrder.StreetLine2 = request.StreetLine2;
+            existingOrder.PostCode = request.PostCode;
+
+            await _dbContext.SaveChangesAsync(cancellationToken);
+
+            return new ActionResponse
+            {
+                Status = ResponseStatus.Success
+            };
+        }
+        catch (Exception exception)
+        {
+            _logger.LogError(exception, exception.Message);
+
+            return new ActionResponse()
+            {
+                Status = ResponseStatus.Exception
+            };
+        }
+    }
+
+
     public async Task<ActionResponse> DeleteByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
     {
         try 

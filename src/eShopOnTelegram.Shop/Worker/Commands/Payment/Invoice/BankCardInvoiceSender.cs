@@ -60,8 +60,8 @@ public class BankCardInvoiceSender : ITelegramCommand
 
             await _telegramBot.SendInvoiceAsync(
                 chatId,
-                await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None),
-                "Description", // TODO: Add list of purchasing products
+                await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None) + getOrdersResponse.Data.OrderNumber,
+                "", // TODO: Add list of purchasing products
                 activeOrder.OrderNumber,
                 _paymentSettings.Card.ApiToken,
                 _paymentSettings.MainCurrency,

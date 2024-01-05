@@ -13,8 +13,10 @@ export default function OrderDetails() {
 	return (
 		<Show>
 			<SimpleShowLayout>
+				<h2>Order information</h2>
 				<TextField source="orderNumber" />
 				<TextField source="status" />
+				<TextField source="paymentMethod" />
 				<DateField source="paymentDate" showTime emptyText="-" />
 				<ArrayField source="cartItems">
 					<Datagrid bulkActionButtons={false}>
@@ -70,6 +72,15 @@ export default function OrderDetails() {
 					source="totalPrice"
 					style={{ fontWeight: 'bold', fontSize: 20 }}
 				/>
+			</SimpleShowLayout>
+
+			<SimpleShowLayout>
+				<h2>Delivery information</h2>
+				<TextField source="countryIso2Code" label="Country" />
+				<TextField source="city" />
+				<TextField source="postCode" />
+				<TextField source="streetLine1" />
+				<TextField source="streetLine2" />
 			</SimpleShowLayout>
 		</Show>
 	);

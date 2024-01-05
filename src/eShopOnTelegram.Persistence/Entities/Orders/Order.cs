@@ -37,7 +37,12 @@ public class Order : EntityBase
     public void SetPaymentMethod(PaymentMethod paymentMethod)
     {
         Status = OrderStatus.AwaitingPayment;
-        if (paymentMethod == PaymentMethod.Card) PaymentStatus = PaymentStatus.InvoiceSent;
+        
+        if (paymentMethod == PaymentMethod.Card)
+        {
+            PaymentStatus = PaymentStatus.InvoiceSent;
+        }
+
         PaymentMethod = paymentMethod;
     }
 
@@ -45,5 +50,6 @@ public class Order : EntityBase
     {
         Status = OrderStatus.Paid;
         PaymentStatus = PaymentStatus.PaymentSuccessful;
+        PaymentDate = DateTime.UtcNow;
     }
 }

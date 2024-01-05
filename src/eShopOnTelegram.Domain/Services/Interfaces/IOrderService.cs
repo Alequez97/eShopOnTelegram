@@ -24,5 +24,7 @@ public interface IOrderService
 
     public Task<ActionResponse> UpdateStatusAsync(string orderNumber, OrderStatus orderStatus, CancellationToken cancellationToken);
 
+    public Task<ActionResponse> UpdateDeliveryAddressAsync(string orderNumber, UpdateDeliveryAddressRequest request, CancellationToken cancellationToken);
+
     public Task<ActionResponse> DeleteByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken);
 }

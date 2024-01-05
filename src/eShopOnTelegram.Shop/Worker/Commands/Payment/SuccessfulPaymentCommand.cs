@@ -1,17 +1,21 @@
 ﻿using Ardalis.GuardClauses;
 
+using eShopOnTelegram.Domain.Requests.Orders;
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Utils.Extensions;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment;
 
 public class SuccessfulPaymentCommand : ITelegramCommand
 {
     private readonly ITelegramBotClient _telegramBot;
+    private readonly IOrderService _orderService;
     private readonly IPaymentService _paymentService;
     private readonly IApplicationContentStore _applicationContentStore;
     private readonly IEnumerable<INotificationSender> _notificationSenders;
@@ -19,12 +23,14 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 
     public SuccessfulPaymentCommand(
         ITelegramBotClient telegramBot,
+        IOrderService orderService,
         IPaymentService paymentService,
         IApplicationContentStore applicationContentStore,
         IEnumerable<INotificationSender> notificationSenders,
         ILogger<SuccessfulPaymentCommand> logger)
     {
         _telegramBot = telegramBot;
+        _orderService = orderService;
         _paymentService = paymentService;
         _applicationContentStore = applicationContentStore;
         _notificationSenders = notificationSenders;
@@ -44,7 +50,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 
             var response = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.Card);
 
-            if(response.Status != Domain.Responses.ResponseStatus.Success)
+            if(response.Status != ResponseStatus.Success)
             {
                 throw new Exception("Failed to confirm order payment in SuccessfulPayment TG Command.");
             }
@@ -57,6 +63,24 @@ public class SuccessfulPaymentCommand : ITelegramCommand
             foreach (var notificationSender in _notificationSenders)
             {
                 await notificationSender.SendOrderReceivedNotificationAsync(orderNumber, CancellationToken.None);
+            }
+
+            var deliveryAddress = new UpdateDeliveryAddressRequest()
+            {
+                CountryIso2Code = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.CountryCode.ToNullIfEmptyOrWhiteSpace(),
+                City = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.City.ToNullIfEmptyOrWhiteSpace(),
+                StreetLine1 = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.StreetLine1.ToNullIfEmptyOrWhiteSpace(),
+                StreetLine2 = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.StreetLine2.ToNullIfEmptyOrWhiteSpace(),
+                PostCode = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.PostCode.ToNullIfEmptyOrWhiteSpace()
+            };
+            var updateAddressResponse = await _orderService.UpdateDeliveryAddressAsync(orderNumber, deliveryAddress, CancellationToken.None);
+
+            if (updateAddressResponse.Status != ResponseStatus.Success)
+            {
+                await _telegramBot.SendTextMessageAsync(
+                    chatId,
+                    await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.UnableToGetShippingAddress, CancellationToken.None)
+                );
             }
         }
         catch (Exception exception)

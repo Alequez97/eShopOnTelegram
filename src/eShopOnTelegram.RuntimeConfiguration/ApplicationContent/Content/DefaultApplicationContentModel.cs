@@ -6,6 +6,8 @@ namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
 
 public class DefaultApplicationContentModel
 {
+    // TELEGRAM BOT
+
     [JsonProperty(ApplicationContentKey.TelegramBot.StartError)]
     public string TelegramBot_StartError => "Error. Try again later";
 
@@ -20,6 +22,8 @@ public class DefaultApplicationContentModel
 
     [JsonProperty(ApplicationContentKey.TelegramBot.DefaultErrorMessage)]
     public string TelegramBot_DefaultErrorMessage => "Error. Something went wrong. Please try again later";
+
+    // ORDER
 
     [JsonProperty(ApplicationContentKey.Order.ShowUnpaidOrder)]
     public string Order_ShowUnpaidOrder => "Show unpaid order";
@@ -44,6 +48,14 @@ public class DefaultApplicationContentModel
 
     [JsonProperty(ApplicationContentKey.Order.TotalPriceTitle)]
     public string Order_TotalPriceTitle => "Total price";
+
+    [JsonProperty(ApplicationContentKey.Order.PaymentMethodAlreadySelected)]
+    public string Order_PaymentMethodAlreadySelected => "Payment method already selected";
+
+    [JsonProperty(ApplicationContentKey.Order.UnableToGetShippingAddress)]
+    public string Order_UnableToGetShippingAddress => "Unable to get shipping address. Please contact bot support team and precise where you want to receive your order";
+
+    // PAYMENT
 
     [JsonProperty(ApplicationContentKey.Payment.NoEnabledPayments)]
     public string Payment_NoEnabledPayments => "Thank you for your purchase";
