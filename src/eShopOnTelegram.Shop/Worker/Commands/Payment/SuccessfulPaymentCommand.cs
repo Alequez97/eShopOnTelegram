@@ -50,7 +50,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 
             var response = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.Card);
 
-            if(response.Status != ResponseStatus.Success)
+            if (response.Status != ResponseStatus.Success)
             {
                 throw new Exception("Failed to confirm order payment in SuccessfulPayment TG Command.");
             }

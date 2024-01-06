@@ -33,8 +33,8 @@ public static class TelegramBotClientExtensions
                     text: fallbackErrorMessage,
                     cancellationToken: cancellationToken);
             }
-            catch (Exception exception2) 
-            { 
+            catch (Exception exception2)
+            {
                 logger.LogError(exception2, "Failed to send fallback TG error message.");
             }
         }

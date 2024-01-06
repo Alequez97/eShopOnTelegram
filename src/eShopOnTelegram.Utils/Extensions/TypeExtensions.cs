@@ -14,7 +14,9 @@ public static class TypeExtensions
     private static bool IsNullableHelper(Type memberType, MemberInfo? declaringType, IEnumerable<CustomAttributeData> customAttributes)
     {
         if (memberType.IsValueType)
+        {
             return Nullable.GetUnderlyingType(memberType) != null;
+        }
 
         var nullable = customAttributes
             .FirstOrDefault(x => x.AttributeType.FullName == "System.Runtime.CompilerServices.NullableAttribute");

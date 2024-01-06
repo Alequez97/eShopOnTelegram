@@ -79,7 +79,7 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
          || string.IsNullOrWhiteSpace(azureAppSettings.ClientSecret)
             ?
             new DefaultAzureCredential()
-            : 
+            :
             new ClientSecretCredential(azureAppSettings.TenantId, azureAppSettings.ClientId, azureAppSettings.ClientSecret);
 
         builder.Configuration.AddAzureKeyVault(new Uri(azureAppSettings.KeyVaultUri), azureCredentials);

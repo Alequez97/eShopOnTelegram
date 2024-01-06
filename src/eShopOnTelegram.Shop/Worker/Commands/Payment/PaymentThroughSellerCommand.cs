@@ -49,8 +49,10 @@ public class PaymentThroughSellerCommand : ITelegramCommand
             }
 
             var response = await _paymentService.UpdateOrderPaymentMethod(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.PaymentMethod.PaymentThroughSeller);
-            if(response.Status != ResponseStatus.Success) throw new Exception("Failed to update order payment method in PaymentThroughSeller TG Command.");
-
+            if (response.Status != ResponseStatus.Success)
+            {
+                throw new Exception("Failed to update order payment method in PaymentThroughSeller TG Command.");
+            }
 
             await _telegramBot.SendTextMessageAsync(
                 chatId: chatId,

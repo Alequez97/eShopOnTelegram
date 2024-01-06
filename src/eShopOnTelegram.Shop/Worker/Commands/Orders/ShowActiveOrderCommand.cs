@@ -1,5 +1,4 @@
-﻿using eShopOnTelegram.Domain.Services.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
+﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Services.Telegram;

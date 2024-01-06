@@ -31,7 +31,7 @@ public class GetOrderByIdOrByOrderNumber : EndpointBaseAsync
         }
 
         var getByOrderNumberResponse = await _orderService.GetByOrderNumberAsync(idOrOrderNumber, cancellationToken);
-        
+
         if (getByOrderNumberResponse.Status == ResponseStatus.ValidationFailed)
         {
             return new BadRequestResult();

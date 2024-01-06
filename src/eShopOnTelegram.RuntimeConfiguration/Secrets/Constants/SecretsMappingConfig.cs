@@ -35,9 +35,9 @@ public class SecretsMappingConfig
     };
 
     public List<SecretsMappingConfigItem> PublicConfig =>
-        PrivateConfig.Select(privateConfigItem => 
+        PrivateConfig.Select(privateConfigItem =>
             new SecretsMappingConfigItem()
-            { 
+            {
                 DisplayName = privateConfigItem.DisplayName,
                 PublicSecretName = privateConfigItem.PublicSecretName
             }).ToList();

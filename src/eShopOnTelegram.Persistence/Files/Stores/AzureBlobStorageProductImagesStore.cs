@@ -1,7 +1,7 @@
 ﻿using Azure.Storage.Blobs;
-using eShopOnTelegram.Utils.Configuration;
 
 using eShopOnTelegram.Persistence.Files.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.Persistence.Files.Stores;
 

@@ -7,7 +7,7 @@ public static class StringExtensions
         {
             return str;
         }
-        
+
         return char.ToLowerInvariant(str[0]) + str[1..];
     }
 

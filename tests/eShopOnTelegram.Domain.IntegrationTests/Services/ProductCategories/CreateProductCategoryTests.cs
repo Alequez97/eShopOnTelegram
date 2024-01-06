@@ -27,7 +27,7 @@ public class CreateProductCategoryTests
             .Generate();
 
         // Act
-        
+
         var response = await _productCategoryService.CreateAsync(request, CancellationToken.None);
 
         // Assert

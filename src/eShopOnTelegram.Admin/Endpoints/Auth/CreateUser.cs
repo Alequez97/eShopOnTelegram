@@ -25,8 +25,8 @@ public class CreateUser : EndpointBaseAsync
     {
         try
         {
-            var newAdmin = new User 
-            { 
+            var newAdmin = new User
+            {
                 UserName = request.UserName,
                 Claims = new List<IdentityUserClaim<long>> { new IdentityUserClaim<long> { ClaimType = "Role", ClaimValue = "admin" } }
             };

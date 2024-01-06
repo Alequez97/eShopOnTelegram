@@ -20,7 +20,7 @@ public class GetCustomers : EndpointBaseAsync
 
     [Authorize]
     [HttpGet("/api/customers")]
-    [SwaggerOperation(Tags = new[] { SwaggerGroup.Customers})]
+    [SwaggerOperation(Tags = new[] { SwaggerGroup.Customers })]
     public override async Task<ActionResult<IEnumerable<CustomerDto>>> HandleAsync([FromQuery] GetRequest request, CancellationToken cancellationToken = default)
     {
         var response = await _customerService.GetMultipleAsync(request, cancellationToken);

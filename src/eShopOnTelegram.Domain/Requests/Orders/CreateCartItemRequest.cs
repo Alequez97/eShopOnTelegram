@@ -3,6 +3,6 @@
 public class CreateCartItemRequest
 {
     public required long ProductAttributeId { get; set; }
-   
+
     public required int Quantity { get; set; }
 }

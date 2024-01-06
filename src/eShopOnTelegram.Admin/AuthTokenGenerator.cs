@@ -24,10 +24,10 @@ public static class AuthTokenGenerator
             new(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
 
-        if(user.Claims.Any())
+        if (user.Claims.Any())
         {
             var roleClaim = user.Claims.Where(c => c.ClaimType == "Role").SingleOrDefault();
-            if(roleClaim is not null)
+            if (roleClaim is not null)
             {
                 ArgumentException.ThrowIfNullOrEmpty(roleClaim.ClaimValue);
                 claims.Add(new Claim(ClaimTypes.Role, roleClaim.ClaimValue));

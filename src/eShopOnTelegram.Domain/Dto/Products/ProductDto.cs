@@ -1,6 +1,6 @@
 ﻿using eShopOnTelegram.Domain.Dto.ProductAttributes;
 
-namespace eShopOnTelegram.Domain.Dto.Products; 
+namespace eShopOnTelegram.Domain.Dto.Products;
 
 public class ProductDto : DtoBase
 {
