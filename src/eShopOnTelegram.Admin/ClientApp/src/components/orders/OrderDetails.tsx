@@ -6,14 +6,41 @@ import {
 	Datagrid,
 	ArrayField,
 	FunctionField,
+	useNotify,
+	useShowController,
 } from 'react-admin';
 import { CartItem } from '../../types/orders.type';
+import { Order } from '../../types/api-response.type';
 
 export default function OrderDetails() {
+	const notify = useNotify();
+	const { record } = useShowController<Order>();
+
+	const copyDeliveryInformationToClipboard = () => {
+		try {
+			const deliveryInformationArray = [
+				record?.countryIso2Code,
+				record?.city,
+				record?.postCode,
+				record?.streetLine1,
+				record?.streetLine2,
+			];
+			const deliveryInformation = deliveryInformationArray
+				.filter((deliveryInformationItem) => !!deliveryInformationItem)
+				.join(', ');
+
+			navigator.clipboard.writeText(deliveryInformation);
+			notify('Copied to clipboard', { type: 'success' });
+		} catch {
+			console.error('Cannot copy text to clipboard');
+			notify('Try again later', { type: 'error' });
+		}
+	};
+
 	return (
 		<Show>
 			<SimpleShowLayout>
-				<h2>Order information</h2>
+				<h2 id="order-information">Order information</h2>
 				<TextField source="orderNumber" />
 				<TextField source="status" />
 				<TextField source="paymentMethod" />
@@ -75,7 +102,10 @@ export default function OrderDetails() {
 			</SimpleShowLayout>
 
 			<SimpleShowLayout>
-				<h2>Delivery information</h2>
+				<h2>Delivery information</h2>{' '}
+				<button onClick={copyDeliveryInformationToClipboard}>
+					Copy to clipboard
+				</button>
 				<TextField source="countryIso2Code" label="Country" />
 				<TextField source="city" />
 				<TextField source="postCode" />
