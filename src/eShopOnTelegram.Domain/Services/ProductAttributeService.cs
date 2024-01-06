@@ -1,4 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Dto.ProductAttributes;
+using eShopOnTelegram.Domain.Requests.ProductAttributes;
 using eShopOnTelegram.Domain.Services.Interfaces;
 
 using Microsoft.Extensions.Configuration;
@@ -21,6 +22,7 @@ public class ProductAttributeService : IProductAttributeService
 		_logger = logger;
 
 	}
+
 	public async Task<Response<ProductAttributeDto>> GetAsync(long id, CancellationToken cancellationToken)
 	{
 		try
@@ -67,5 +69,10 @@ public class ProductAttributeService : IProductAttributeService
 				Status = ResponseStatus.Exception
 			};
 		}
+	}
+
+	public async Task<ActionResponse> UpdateAsync(UpdateProductAttributeRequest request, CancellationToken cancellationToken)
+	{
+		throw new NotImplementedException();
 	}
 }
