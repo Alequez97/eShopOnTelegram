@@ -2,5 +2,5 @@
 
 public class ProductCategoryDto : DtoBase
 {
-    public required string Name { get; set; }
+	public required string Name { get; set; }
 }

@@ -2,8 +2,8 @@
 
 public enum ResponseStatus
 {
-    Success,
-    ValidationFailed,
-    NotFound,
-    Exception
+	Success,
+	ValidationFailed,
+	NotFound,
+	Exception
 }

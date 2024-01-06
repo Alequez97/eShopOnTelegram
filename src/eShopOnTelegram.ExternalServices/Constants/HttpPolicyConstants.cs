@@ -2,5 +2,5 @@
 
 public class HttpPolicyConstants
 {
-    public const string RetryPolicyKey = "DefaultHttpRetryPolicy";
+	public const string RetryPolicyKey = "DefaultHttpRetryPolicy";
 }

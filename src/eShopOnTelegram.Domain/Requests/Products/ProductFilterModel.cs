@@ -2,7 +2,7 @@
 
 public class ProductFilterModel
 {
-    public string Name { get; set; }
+	public string Name { get; set; }
 
-    public string ProductCategoryName { get; set; }
+	public string ProductCategoryName { get; set; }
 }

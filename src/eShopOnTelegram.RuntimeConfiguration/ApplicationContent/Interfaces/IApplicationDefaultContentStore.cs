@@ -2,7 +2,7 @@
 
 public interface IApplicationDefaultContentStore
 {
-    Task<string> GetDefaultApplicationContentAsJsonStringAsync(CancellationToken cancellationToken);
+	Task<string> GetDefaultApplicationContentAsJsonStringAsync(CancellationToken cancellationToken);
 
-    Task<string> GetDefaultValueAsync(string key, CancellationToken cancellationToken);
+	Task<string> GetDefaultValueAsync(string key, CancellationToken cancellationToken);
 }

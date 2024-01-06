@@ -2,9 +2,9 @@
 
 public enum PaymentStatus
 {
-    // ? Refunded
-    // ? PaymentFailure
-    None = 0,
-    InvoiceSent = 1,
-    PaymentSuccessful = 2,
+	// ? Refunded
+	// ? PaymentFailure
+	None = 0,
+	InvoiceSent = 1,
+	PaymentSuccessful = 2,
 }

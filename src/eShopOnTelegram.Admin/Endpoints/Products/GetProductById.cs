@@ -7,23 +7,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class GetProductById : EndpointBaseAsync
-    .WithRequest<long>
-    .WithActionResult<ProductDto>
+	.WithRequest<long>
+	.WithActionResult<ProductDto>
 {
-    private readonly IProductService _productService;
+	private readonly IProductService _productService;
 
-    public GetProductById(IProductService productService)
-    {
-        _productService = productService;
-    }
+	public GetProductById(IProductService productService)
+	{
+		_productService = productService;
+	}
 
-    [Authorize]
-    [HttpGet("/api/products/{id}")]
-    [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
-    public override async Task<ActionResult<ProductDto>> HandleAsync([FromRoute] long id, CancellationToken cancellationToken = default)
-    {
-        var response = await _productService.GetAsync(id, cancellationToken);
+	[Authorize]
+	[HttpGet("/api/products/{id}")]
+	[SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
+	public override async Task<ActionResult<ProductDto>> HandleAsync([FromRoute] long id, CancellationToken cancellationToken = default)
+	{
+		var response = await _productService.GetAsync(id, cancellationToken);
 
-        return response.AsActionResult();
-    }
+		return response.AsActionResult();
+	}
 }

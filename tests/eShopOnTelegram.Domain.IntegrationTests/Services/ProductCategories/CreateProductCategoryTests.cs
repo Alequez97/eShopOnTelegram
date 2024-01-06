@@ -9,28 +9,28 @@ namespace eShopOnTelegram.Domain.IntegrationTests.Services.ProductCategories;
 
 public class CreateProductCategoryTests
 {
-    private readonly IProductCategoryService _productCategoryService;
-    private readonly EShopOnTelegramDbContext _dbContext;
+	private readonly IProductCategoryService _productCategoryService;
+	private readonly EShopOnTelegramDbContext _dbContext;
 
-    public CreateProductCategoryTests(IProductCategoryService productCategoryService, EShopOnTelegramDbContext dbContext)
-    {
-        _productCategoryService = productCategoryService;
-        _dbContext = dbContext;
-    }
+	public CreateProductCategoryTests(IProductCategoryService productCategoryService, EShopOnTelegramDbContext dbContext)
+	{
+		_productCategoryService = productCategoryService;
+		_dbContext = dbContext;
+	}
 
-    [Fact]
-    public async Task CreateProductCategory_WhenRequestIsValid_ShouldReturnSuccess()
-    {
-        // Arrange 
-        var request = new Faker<CreateProductCategoryRequest>()
-            .RuleFor(request => request.Name, faker => faker.Commerce.Categories(1)[0])
-            .Generate();
+	[Fact]
+	public async Task CreateProductCategory_WhenRequestIsValid_ShouldReturnSuccess()
+	{
+		// Arrange 
+		var request = new Faker<CreateProductCategoryRequest>()
+			.RuleFor(request => request.Name, faker => faker.Commerce.Categories(1)[0])
+			.Generate();
 
-        // Act
+		// Act
 
-        var response = await _productCategoryService.CreateAsync(request, CancellationToken.None);
+		var response = await _productCategoryService.CreateAsync(request, CancellationToken.None);
 
-        // Assert
-        response.Status.Should().Be(ResponseStatus.Success);
-    }
+		// Assert
+		response.Status.Should().Be(ResponseStatus.Success);
+	}
 }

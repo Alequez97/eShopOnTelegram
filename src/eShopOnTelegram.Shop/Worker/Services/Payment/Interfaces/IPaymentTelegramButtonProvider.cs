@@ -6,7 +6,7 @@ namespace eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
 
 public interface IPaymentTelegramButtonProvider
 {
-    InlineKeyboardButton GetInvoiceGenerationButton();
+	InlineKeyboardButton GetInvoiceGenerationButton();
 
-    bool PaymentMethodEnabled(PaymentSettings paymentAppsettings);
+	bool PaymentMethodEnabled(PaymentSettings paymentAppsettings);
 }

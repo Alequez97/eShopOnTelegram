@@ -2,5 +2,5 @@
 
 public interface IWebhookRequestValidator<T>
 {
-    bool Validate(T request);
+	bool Validate(T request);
 }

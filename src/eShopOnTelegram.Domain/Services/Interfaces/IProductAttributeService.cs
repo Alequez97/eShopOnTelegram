@@ -3,5 +3,5 @@
 namespace eShopOnTelegram.Domain.Services.Interfaces;
 public interface IProductAttributeService
 {
-    Task<Response<ProductAttributeDto>> GetAsync(long id, CancellationToken cancellationToken);
+	Task<Response<ProductAttributeDto>> GetAsync(long id, CancellationToken cancellationToken);
 }

@@ -2,8 +2,8 @@
 
 public class GroupIsNotCreatedException : Exception
 {
-    public GroupIsNotCreatedException() : base("Telegram group to receive notifications is not created")
-    {
+	public GroupIsNotCreatedException() : base("Telegram group to receive notifications is not created")
+	{
 
-    }
+	}
 }

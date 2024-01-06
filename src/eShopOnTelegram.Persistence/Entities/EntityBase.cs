@@ -2,6 +2,6 @@
 
 public class EntityBase
 {
-    [Key]
-    public long Id { get; set; }
+	[Key]
+	public long Id { get; set; }
 }

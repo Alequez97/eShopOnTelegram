@@ -4,5 +4,5 @@ namespace eShopOnTelegram.Domain.Responses.Orders;
 
 public class CreateOrderResponse : ActionResponse
 {
-    public OrderDto? CreatedOrder { get; set; }
+	public OrderDto? CreatedOrder { get; set; }
 }

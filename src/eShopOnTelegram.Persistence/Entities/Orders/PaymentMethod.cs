@@ -2,8 +2,8 @@
 
 public enum PaymentMethod
 {
-    None = 0,
-    PaymentThroughSeller = 1,
-    Card = 2,
-    Plisio = 3,
+	None = 0,
+	PaymentThroughSeller = 1,
+	Card = 2,
+	Plisio = 3,
 }

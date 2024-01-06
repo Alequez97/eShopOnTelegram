@@ -4,5 +4,5 @@ namespace eShopOnTelegram.RuntimeConfiguration.Secrets.Interfaces;
 
 public interface IKeyVaultClient
 {
-    Task CreateOrUpdateAsync(CreateOrUpdateSecretRequest request);
+	Task CreateOrUpdateAsync(CreateOrUpdateSecretRequest request);
 }

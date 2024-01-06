@@ -8,22 +8,22 @@ using Microsoft.AspNetCore.Authorization;
 namespace eShopOnTelegram.Admin.Endpoints.ProductCategories;
 
 public class CreateProductCategory : EndpointBaseAsync
-    .WithRequest<CreateProductCategoryRequest>
-    .WithActionResult<Response>
+	.WithRequest<CreateProductCategoryRequest>
+	.WithActionResult<Response>
 {
-    private readonly IProductCategoryService _productCategoryService;
+	private readonly IProductCategoryService _productCategoryService;
 
-    public CreateProductCategory(IProductCategoryService productCategoryService)
-    {
-        _productCategoryService = productCategoryService;
-    }
+	public CreateProductCategory(IProductCategoryService productCategoryService)
+	{
+		_productCategoryService = productCategoryService;
+	}
 
-    [Authorize]
-    [HttpPost("/api/productCategories")]
-    [SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
-    public override async Task<ActionResult<Response>> HandleAsync([FromBody] CreateProductCategoryRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await _productCategoryService.CreateAsync(request, cancellationToken);
-        return response.AsActionResult();
-    }
+	[Authorize]
+	[HttpPost("/api/productCategories")]
+	[SwaggerOperation(Tags = new[] { SwaggerGroup.ProductCategories })]
+	public override async Task<ActionResult<Response>> HandleAsync([FromBody] CreateProductCategoryRequest request, CancellationToken cancellationToken = default)
+	{
+		var response = await _productCategoryService.CreateAsync(request, cancellationToken);
+		return response.AsActionResult();
+	}
 }

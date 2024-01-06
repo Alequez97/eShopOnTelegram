@@ -9,24 +9,24 @@ using eShopOnTelegram.Utils.Configuration;
 namespace eShopOnTelegram.Utils.AzureServiceManager;
 public class AzureAppServiceManager : IAzureAppServiceManager
 {
-    private readonly ArmClient _armClient;
+	private readonly ArmClient _armClient;
 
-    public AzureAppServiceManager(AppSettings appSettings)
-    {
-        var azureSettings = appSettings.AzureSettings;
-        var credentials = new ClientSecretCredential(azureSettings.TenantId, azureSettings.ClientId, azureSettings.ClientSecret);
+	public AzureAppServiceManager(AppSettings appSettings)
+	{
+		var azureSettings = appSettings.AzureSettings;
+		var credentials = new ClientSecretCredential(azureSettings.TenantId, azureSettings.ClientId, azureSettings.ClientSecret);
 
-        _armClient = new ArmClient(credentials);
-    }
+		_armClient = new ArmClient(credentials);
+	}
 
-    public async Task RestartAppServiceAsync(string resourceGroupName, string appServiceName, CancellationToken cancellationToken)
-    {
-        SubscriptionResource subscription = await _armClient.GetDefaultSubscriptionAsync(cancellationToken);
-        ResourceGroupCollection resourceGroups = subscription.GetResourceGroups();
-        ResourceGroupResource resourceGroup = await resourceGroups.GetAsync(resourceGroupName, cancellationToken);
+	public async Task RestartAppServiceAsync(string resourceGroupName, string appServiceName, CancellationToken cancellationToken)
+	{
+		SubscriptionResource subscription = await _armClient.GetDefaultSubscriptionAsync(cancellationToken);
+		ResourceGroupCollection resourceGroups = subscription.GetResourceGroups();
+		ResourceGroupResource resourceGroup = await resourceGroups.GetAsync(resourceGroupName, cancellationToken);
 
-        WebSiteResource appService = await resourceGroup.GetWebSiteAsync(appServiceName, cancellationToken);
+		WebSiteResource appService = await resourceGroup.GetWebSiteAsync(appServiceName, cancellationToken);
 
-        await appService.RestartAsync();
-    }
+		await appService.RestartAsync();
+	}
 }

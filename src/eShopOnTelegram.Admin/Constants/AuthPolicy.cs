@@ -2,5 +2,5 @@
 
 public static class AuthPolicy
 {
-    public const string RequireSuperadminClaim = nameof(RequireSuperadminClaim);
+	public const string RequireSuperadminClaim = nameof(RequireSuperadminClaim);
 }

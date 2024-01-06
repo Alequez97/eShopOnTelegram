@@ -10,27 +10,27 @@ namespace eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
 
 public class PlisioPaymentReceivedWebhookRequestValidator : IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>
 {
-    private readonly string _plisioApiToken;
+	private readonly string _plisioApiToken;
 
-    public PlisioPaymentReceivedWebhookRequestValidator(string plisioApiToken)
-    {
-        _plisioApiToken = plisioApiToken;
-    }
+	public PlisioPaymentReceivedWebhookRequestValidator(string plisioApiToken)
+	{
+		_plisioApiToken = plisioApiToken;
+	}
 
-    public bool Validate(PlisioPaymentReceivedWebhookRequest request)
-    {
-        var serializedRequest = JsonConvert.SerializeObject(request);
+	public bool Validate(PlisioPaymentReceivedWebhookRequest request)
+	{
+		var serializedRequest = JsonConvert.SerializeObject(request);
 
-        var calculatedHash = HMAC_SHA1(Encoding.UTF8.GetBytes(_plisioApiToken), Encoding.UTF8.GetBytes(serializedRequest));
-        var calculatedHashHex = BitConverter.ToString(calculatedHash).Replace("-", string.Empty);
-        var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHashHex, StringComparison.OrdinalIgnoreCase);
+		var calculatedHash = HMAC_SHA1(Encoding.UTF8.GetBytes(_plisioApiToken), Encoding.UTF8.GetBytes(serializedRequest));
+		var calculatedHashHex = BitConverter.ToString(calculatedHash).Replace("-", string.Empty);
+		var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHashHex, StringComparison.OrdinalIgnoreCase);
 
-        return requestReceivedFromPlisio;
-    }
+		return requestReceivedFromPlisio;
+	}
 
-    private static byte[] HMAC_SHA1(byte[] key, byte[] data)
-    {
-        using HMACSHA1 hmac = new HMACSHA1(key);
-        return hmac.ComputeHash(data);
-    }
+	private static byte[] HMAC_SHA1(byte[] key, byte[] data)
+	{
+		using HMACSHA1 hmac = new HMACSHA1(key);
+		return hmac.ComputeHash(data);
+	}
 }

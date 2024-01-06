@@ -2,7 +2,7 @@
 
 public interface ISecretsNameMapper
 {
-    string? GetPublicSecretName(string privateSecretName);
+	string? GetPublicSecretName(string privateSecretName);
 
-    string? GetPrivateSecretName(string publicSecretName);
+	string? GetPrivateSecretName(string publicSecretName);
 }

@@ -2,13 +2,13 @@
 
 public class MoreThanOneCommandIsResponsibleForUpdateException : Exception
 {
-    public MoreThanOneCommandIsResponsibleForUpdateException()
-    {
+	public MoreThanOneCommandIsResponsibleForUpdateException()
+	{
 
-    }
+	}
 
-    public MoreThanOneCommandIsResponsibleForUpdateException(string message) : base(message)
-    {
+	public MoreThanOneCommandIsResponsibleForUpdateException(string message) : base(message)
+	{
 
-    }
+	}
 }

@@ -19,66 +19,66 @@ namespace eShopOnTelegram.Shop.Worker.Commands.Orders;
 /// </summary>
 public class CreateOrderCommand : ITelegramCommand
 {
-    private readonly ILogger<CreateOrderCommand> _logger;
-    private readonly ITelegramBotClient _telegramBot;
-    private readonly IOrderService _orderService;
-    private readonly PaymentProceedMessageSender _paymentMethodsSender;
-    private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ILogger<CreateOrderCommand> _logger;
+	private readonly ITelegramBotClient _telegramBot;
+	private readonly IOrderService _orderService;
+	private readonly PaymentProceedMessageSender _paymentMethodsSender;
+	private readonly IApplicationContentStore _applicationContentStore;
 
-    public CreateOrderCommand(
-        ILogger<CreateOrderCommand> logger,
-        ITelegramBotClient telegramBot,
-        IOrderService orderService,
-        PaymentProceedMessageSender paymentMethodsSender,
-        IApplicationContentStore applicationContentStore)
-    {
-        _logger = logger;
-        _telegramBot = telegramBot;
-        _orderService = orderService;
-        _paymentMethodsSender = paymentMethodsSender;
-        _applicationContentStore = applicationContentStore;
-    }
+	public CreateOrderCommand(
+		ILogger<CreateOrderCommand> logger,
+		ITelegramBotClient telegramBot,
+		IOrderService orderService,
+		PaymentProceedMessageSender paymentMethodsSender,
+		IApplicationContentStore applicationContentStore)
+	{
+		_logger = logger;
+		_telegramBot = telegramBot;
+		_orderService = orderService;
+		_paymentMethodsSender = paymentMethodsSender;
+		_applicationContentStore = applicationContentStore;
+	}
 
-    public async Task SendResponseAsync(Update update)
-    {
-        var chatId = update.Message.Chat.Id;
+	public async Task SendResponseAsync(Update update)
+	{
+		var chatId = update.Message.Chat.Id;
 
-        try
-        {
-            Guard.Against.Null(update.Message);
-            Guard.Against.Null(update.Message.From);
-            Guard.Against.Null(update.Message.WebAppData);
-            Guard.Against.Null(update.Message.WebAppData.Data);
+		try
+		{
+			Guard.Against.Null(update.Message);
+			Guard.Against.Null(update.Message.From);
+			Guard.Against.Null(update.Message.WebAppData);
+			Guard.Against.Null(update.Message.WebAppData.Data);
 
-            var createOrderRequest = JsonConvert.DeserializeObject<CreateOrderRequest>(update.Message.WebAppData.Data);
+			var createOrderRequest = JsonConvert.DeserializeObject<CreateOrderRequest>(update.Message.WebAppData.Data);
 
-            createOrderRequest!.TelegramUserUID = update.Message.From.Id;
+			createOrderRequest!.TelegramUserUID = update.Message.From.Id;
 
-            var createOrderResponse = await _orderService.CreateAsync(createOrderRequest, cancellationToken: CancellationToken.None);
+			var createOrderResponse = await _orderService.CreateAsync(createOrderRequest, cancellationToken: CancellationToken.None);
 
-            if (createOrderResponse.Status != ResponseStatus.Success)
-            {
-                _logger.LogError("Unable to create order. {createOrderResponse}", createOrderResponse);
+			if (createOrderResponse.Status != ResponseStatus.Success)
+			{
+				_logger.LogError("Unable to create order. {createOrderResponse}", createOrderResponse);
 
-                await _telegramBot.SendTextMessageAsync(
-                    chatId,
-                    await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.CreateErrorMessage, CancellationToken.None),
-                    parseMode: ParseMode.Html
-                );
-                return;
-            }
+				await _telegramBot.SendTextMessageAsync(
+					chatId,
+					await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.CreateErrorMessage, CancellationToken.None),
+					parseMode: ParseMode.Html
+				);
+				return;
+			}
 
-            await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
-        }
-        catch (Exception exception)
-        {
-            _logger.LogError(exception, exception.Message);
-            await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
-        }
-    }
+			await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, exception.Message);
+			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+		}
+	}
 
-    public Task<bool> IsResponsibleForUpdateAsync(Update update)
-    {
-        return Task.FromResult(update.Message?.Type == MessageType.WebAppData);
-    }
+	public Task<bool> IsResponsibleForUpdateAsync(Update update)
+	{
+		return Task.FromResult(update.Message?.Type == MessageType.WebAppData);
+	}
 }

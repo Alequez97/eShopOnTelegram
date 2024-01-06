@@ -8,30 +8,30 @@ namespace eShopOnTelegram.Domain.IntegrationTests.Services.Products;
 
 public class CreateProductTests
 {
-    private readonly IProductService _productService;
-    private readonly EShopOnTelegramDbContext _dbContext;
+	private readonly IProductService _productService;
+	private readonly EShopOnTelegramDbContext _dbContext;
 
-    public CreateProductTests(IProductService productService, EShopOnTelegramDbContext dbContext)
-    {
-        _productService = productService;
-        _dbContext = dbContext;
-    }
+	public CreateProductTests(IProductService productService, EShopOnTelegramDbContext dbContext)
+	{
+		_productService = productService;
+		_dbContext = dbContext;
+	}
 
-    [Fact]
-    public async Task CreateProduct_WhenProductCategoryNotExists_ShouldReturnNotFound()
-    {
-        // Arrange 
-        var request = new CreateProductRequest()
-        {
-            Name = "Test-Name",
-            ProductCategoryId = -1,
-            ProductAttributes = new List<CreateProductAttributeRequest>()
-        };
+	[Fact]
+	public async Task CreateProduct_WhenProductCategoryNotExists_ShouldReturnNotFound()
+	{
+		// Arrange 
+		var request = new CreateProductRequest()
+		{
+			Name = "Test-Name",
+			ProductCategoryId = -1,
+			ProductAttributes = new List<CreateProductAttributeRequest>()
+		};
 
-        // Act
-        var response = await _productService.CreateAsync(request, CancellationToken.None);
+		// Act
+		var response = await _productService.CreateAsync(request, CancellationToken.None);
 
-        // Assert
-        response.Status.Should().Be(ResponseStatus.NotFound);
-    }
+		// Assert
+		response.Status.Should().Be(ResponseStatus.NotFound);
+	}
 }

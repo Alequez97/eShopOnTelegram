@@ -8,23 +8,23 @@ using Microsoft.AspNetCore.Authorization;
 namespace eShopOnTelegram.Admin.Endpoints.Products;
 
 public class UpdateProduct : EndpointBaseAsync
-    .WithRequest<UpdateProductRequest>
-    .WithActionResult<ActionResponse>
+	.WithRequest<UpdateProductRequest>
+	.WithActionResult<ActionResponse>
 {
-    private readonly IProductService _productService;
+	private readonly IProductService _productService;
 
-    public UpdateProduct(IProductService productService)
-    {
-        _productService = productService;
-    }
+	public UpdateProduct(IProductService productService)
+	{
+		_productService = productService;
+	}
 
-    [Authorize]
-    [HttpPut("/api/products/{id}")]
-    [SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
-    public override async Task<ActionResult<ActionResponse>> HandleAsync([FromBody] UpdateProductRequest request, CancellationToken cancellationToken = default)
-    {
-        var response = await _productService.UpdateAsync(request, cancellationToken);
+	[Authorize]
+	[HttpPut("/api/products/{id}")]
+	[SwaggerOperation(Tags = new[] { SwaggerGroup.Products })]
+	public override async Task<ActionResult<ActionResponse>> HandleAsync([FromBody] UpdateProductRequest request, CancellationToken cancellationToken = default)
+	{
+		var response = await _productService.UpdateAsync(request, cancellationToken);
 
-        return response.AsActionResult();
-    }
+		return response.AsActionResult();
+	}
 }

@@ -2,5 +2,5 @@
 
 public enum EmojiKey
 {
-    EU_Flag
+	EU_Flag
 }

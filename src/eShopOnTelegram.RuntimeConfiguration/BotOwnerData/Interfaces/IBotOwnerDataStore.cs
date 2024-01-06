@@ -2,7 +2,7 @@
 
 public interface IBotOwnerDataStore
 {
-    Task<string?> GetBotOwnerTelegramGroupIdAsync(CancellationToken cancellationToken);
+	Task<string?> GetBotOwnerTelegramGroupIdAsync(CancellationToken cancellationToken);
 
-    Task<bool> SaveBotOwnerTelegramGroupIdAsync(string telegramGroupId, CancellationToken cancellationToken);
+	Task<bool> SaveBotOwnerTelegramGroupIdAsync(string telegramGroupId, CancellationToken cancellationToken);
 }

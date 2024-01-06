@@ -2,5 +2,5 @@
 
 public class DtoBase
 {
-    public required long Id { get; set; }
+	public required long Id { get; set; }
 }
