@@ -393,3 +393,4 @@ dotnet_diagnostic.IDE0051.severity = error
 # IDE0005: Remove unnecessary usings
 dotnet_diagnostic.IDE0005.severity = error
 dotnet_style_prefer_collection_expression = true:suggestion
+insert_final_newline = true
