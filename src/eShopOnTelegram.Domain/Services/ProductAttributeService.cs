@@ -1,8 +1,7 @@
 ﻿using eShopOnTelegram.Domain.Dto.ProductAttributes;
 using eShopOnTelegram.Domain.Requests.ProductAttributes;
 using eShopOnTelegram.Domain.Services.Interfaces;
-
-using Microsoft.Extensions.Configuration;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.Domain.Services;
 
@@ -14,13 +13,12 @@ public class ProductAttributeService : IProductAttributeService
 
 	public ProductAttributeService(
 		IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory,
-		IConfiguration configuration,
+		AppSettings appSettings,
 		ILogger<ProductAttributeService> logger)
 	{
 		_dbContext = dbContextFactory.CreateDbContext();
-		_productImagesHostname = configuration["ProductImagesHostName"];
+		_productImagesHostname = appSettings.ProductImagesHostName;
 		_logger = logger;
-
 	}
 
 	public async Task<Response<ProductAttributeDto>> GetAsync(long id, CancellationToken cancellationToken)

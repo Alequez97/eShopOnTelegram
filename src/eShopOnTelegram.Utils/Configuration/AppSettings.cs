@@ -6,6 +6,7 @@ public class AppSettings
 	public required JWTAuthSettings JWTAuthSettings { get; init; }
 	public required PaymentSettings PaymentSettings { get; init; }
 	public required TelegramBotSettings TelegramBotSettings { get; init; }
+	public required string ProductImagesHostName { get; set; }
 }
 
 public class AzureSettings

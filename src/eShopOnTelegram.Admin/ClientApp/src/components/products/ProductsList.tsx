@@ -45,7 +45,7 @@ export const ProductsList = () => {
 				<Datagrid>
 					<TextField source="name" sortable={false} />
 					<TextField source="productCategoryName" sortable={false} />
-					<ArrayField source="productAttributes">
+					<ArrayField source="productAttributes" sortable={false}>
 						<Datagrid bulkActionButtons={false}>
 							<ChipField source="color" />
 							<ChipField source="size" />
