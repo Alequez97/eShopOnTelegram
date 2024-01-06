@@ -71,6 +71,20 @@ const ApplicationContentEdit: React.FC = () => {
 
 	return (
 		<SimpleForm onSubmit={handleSave}>
+			<p>
+				In our bot we are using HTML like syntax for text editing, that
+				telegram provides in their documentation. Example is welcome
+				text with telegram spoiler text. More details what tags can be
+				used can be found in{' '}
+				<a
+					href="https://core.telegram.org/bots/api#html-style"
+					target="_blank"
+					rel="noopener noreferrer"
+				>
+					Telegram documentation
+				</a>
+			</p>
+			<br />
 			{Object.entries(applicationContent)
 				.filter(([key]) => key.includes('.'))
 				.map(([key, value], index, array) => {

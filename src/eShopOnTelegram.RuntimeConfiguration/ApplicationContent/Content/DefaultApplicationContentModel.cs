@@ -12,7 +12,7 @@ public class DefaultApplicationContentModel
     public string TelegramBot_StartError => "Error. Try again later";
 
     [JsonProperty(ApplicationContentKey.TelegramBot.WelcomeText)]
-    public string TelegramBot_WelcomeText => "Welcome to our shop";
+    public string TelegramBot_WelcomeText => "Welcome to our shop <tg-spoiler>Spoiler</tg-spoiler>";
 
     [JsonProperty(ApplicationContentKey.TelegramBot.OpenShopButtonText)]
     public string TelegramBot_OpenShopButtonText => "*** Click here to open shop ***";

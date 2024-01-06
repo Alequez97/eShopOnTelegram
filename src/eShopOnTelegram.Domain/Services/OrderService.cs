@@ -476,6 +476,8 @@ public class OrderService : IOrderService
             _dbContext.Orders.Remove(existingOrder);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
+            // TODO: Recover products quantity if deleted order was not completed
+
             return new ActionResponse
             {
                 Status = ResponseStatus.Success
