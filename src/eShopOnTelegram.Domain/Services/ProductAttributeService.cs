@@ -71,6 +71,35 @@ public class ProductAttributeService : IProductAttributeService
 
 	public async Task<ActionResponse> UpdateAsync(UpdateProductAttributeRequest request, CancellationToken cancellationToken)
 	{
-		throw new NotImplementedException();
+		try
+		{
+			var productAttribute = await _dbContext.ProductAttributes
+				.FirstOrDefaultAsync(productAttribute => productAttribute.Id == request.Id && productAttribute.IsDeleted == false);
+
+			if (productAttribute == null)
+			{
+				return new ActionResponse()
+				{
+					Status = ResponseStatus.NotFound
+				};
+			}
+
+			// TODO: Implement product attribute update
+			throw new NotImplementedException("Update product attribute method is not implemented");
+
+			return new ActionResponse()
+			{
+				Status = ResponseStatus.Success,
+			};
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, "Exception: Unable to update productAttribute");
+
+			return new ActionResponse()
+			{
+				Status = ResponseStatus.Exception
+			};
+		}
 	}
 }
