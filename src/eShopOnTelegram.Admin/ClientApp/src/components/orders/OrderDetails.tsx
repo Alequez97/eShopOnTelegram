@@ -8,6 +8,7 @@ import {
 	FunctionField,
 	useNotify,
 	useShowController,
+	Button,
 } from 'react-admin';
 import { CartItem } from '../../types/orders.type';
 import { Order } from '../../types/api-response.type';
@@ -102,10 +103,12 @@ export default function OrderDetails() {
 			</SimpleShowLayout>
 
 			<SimpleShowLayout>
-				<h2>Delivery information</h2>{' '}
-				<button onClick={copyDeliveryInformationToClipboard}>
-					Copy to clipboard
-				</button>
+				<h2>
+					Delivery information{' '}
+					<Button onClick={copyDeliveryInformationToClipboard}>
+						<span style={{fontSize: '16px'}}>Copy to clipboard</span>
+					</Button>
+				</h2>{' '}
 				<TextField source="countryIso2Code" label="Country" />
 				<TextField source="city" />
 				<TextField source="postCode" />
