@@ -249,9 +249,9 @@ public class ProductService : IProductService
 
             // Update product attributes
             var newProductAttributes = new List<ProductAttribute>();
-            foreach (var updateProducatAttributeRequest in updateProductRequest.ProductAttributes)
+            foreach (var updateProductAttributeRequest in updateProductRequest.ProductAttributes)
             {
-                var existingProductAttribute = await _dbContext.ProductAttributes.FirstOrDefaultAsync(productAttribute => productAttribute.Id == updateProducatAttributeRequest.Id, cancellationToken);
+                var existingProductAttribute = await _dbContext.ProductAttributes.FirstOrDefaultAsync(productAttribute => productAttribute.Id == updateProductAttributeRequest.Id, cancellationToken);
 
                 if (existingProductAttribute == null)
                 {
@@ -259,19 +259,19 @@ public class ProductService : IProductService
                 }
 
                 var newProductAttributeImageName = existingProductAttribute.ImageName;
-                if (updateProducatAttributeRequest.ImageAsBase64 != null && updateProducatAttributeRequest.ImageName != null)
+                if (updateProductAttributeRequest.ImageAsBase64 != null && updateProductAttributeRequest.ImageName != null)
                 {
                     await _productImagesStore.DeleteAsync(existingProductAttribute.ImageName, cancellationToken);
-                    newProductAttributeImageName = await _productImagesStore.SaveAsync(updateProducatAttributeRequest.ImageAsBase64, updateProducatAttributeRequest.ImageName, cancellationToken);
+                    newProductAttributeImageName = await _productImagesStore.SaveAsync(updateProductAttributeRequest.ImageAsBase64, updateProductAttributeRequest.ImageName, cancellationToken);
                 }
 
                 var newProductAttribute = new ProductAttribute()
                 {
-                    Color = updateProducatAttributeRequest.Color,
-                    Size = updateProducatAttributeRequest.Size,
-                    OriginalPrice = updateProducatAttributeRequest.OriginalPrice,
-                    PriceWithDiscount = updateProducatAttributeRequest.PriceWithDiscount,
-                    QuantityLeft = updateProducatAttributeRequest.QuantityLeft,
+                    Color = updateProductAttributeRequest.Color,
+                    Size = updateProductAttributeRequest.Size,
+                    OriginalPrice = updateProductAttributeRequest.OriginalPrice,
+                    PriceWithDiscount = updateProductAttributeRequest.PriceWithDiscount,
+                    QuantityLeft = updateProductAttributeRequest.QuantityLeft,
                     ImageName = newProductAttributeImageName,
                     IsDeleted = false,
                     PreviousVersionId = existingProductAttribute.Id,
