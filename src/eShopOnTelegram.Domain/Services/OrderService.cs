@@ -2,6 +2,7 @@
 using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Requests;
 using eShopOnTelegram.Domain.Requests.Orders;
+using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
@@ -461,7 +462,7 @@ public class OrderService : IOrderService
 
     public async Task<ActionResponse> DeleteByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken)
     {
-        try 
+        try
         {
             var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
 
@@ -476,13 +477,24 @@ public class OrderService : IOrderService
             _dbContext.Orders.Remove(existingOrder);
             await _dbContext.SaveChangesAsync(cancellationToken);
 
-            // TODO: Recover products quantity if deleted order was not completed
+            if (existingOrder.Status != OrderStatus.Completed)
+            {
+                // TODO: Recover product attributes quantity if deleted order was not completed
+                foreach (var orderCartItem in existingOrder.CartItems)
+                {
+                    var updateProductRequest = new UpdateProductRequest()
+                    {
+                        Id = orderCartItem.Id,
+                        Name = orderCartItem.ProductAttribute.ProductName,
+                    };
+                }
+            }
 
             return new ActionResponse
             {
                 Status = ResponseStatus.Success
             };
-        } 
+        }
         catch (Exception exception)
         {
             _logger.LogError(exception, exception.Message);
