@@ -14,6 +14,10 @@ export const axiosPatch = async <T>(url: string, request: T) => {
 	return axiosRequestWithRefreshToken('patch', url, request);
 };
 
+export const axiosPut = async <T>(url: string, request: T) => {
+	return axiosRequestWithRefreshToken('put', url, request);
+};
+
 const axiosRequestWithRefreshToken = async <T>(
 	method: string,
 	url: string,

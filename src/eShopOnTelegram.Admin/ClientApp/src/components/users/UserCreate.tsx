@@ -23,6 +23,10 @@ const validatePassword = (value: string) => {
 		return "Passwords must have at least one uppercase ('A'-'Z').";
 	}
 
+	if (!/\W/.test(value)) {
+		return 'Passwords must have at least one special character.';
+	}
+
 	return undefined;
 };
 

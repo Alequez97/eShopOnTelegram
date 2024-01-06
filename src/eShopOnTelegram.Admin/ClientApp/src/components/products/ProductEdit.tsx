@@ -14,8 +14,8 @@ import {
 import { validatePriceWithDiscountShouldBeLessThanOriginalPrice } from '../../validations/product.validation';
 import { fileToBase64 } from '../../utils/file.utility';
 import { replaceEmptyKeysWithNull } from '../../utils/object.utility';
-import axios from 'axios';
 import { FieldValues } from 'react-hook-form';
+import { axiosPut } from '../../utils/axios.utility';
 
 export function ProductEdit() {
 	const notify = useNotify();
@@ -44,7 +44,7 @@ export function ProductEdit() {
 					request.productAttributes[index],
 				);
 			}
-			await axios.put(`/products/${request.id}`, request);
+			await axiosPut(`/products/${request.id}`, request);
 			notify('Product updated', { type: 'info' });
 			redirect('/products');
 		} catch (error) {

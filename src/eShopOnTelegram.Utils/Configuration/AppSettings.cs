@@ -7,6 +7,7 @@ public class AppSettings
 	public required PaymentSettings PaymentSettings { get; init; }
 	public required TelegramBotSettings TelegramBotSettings { get; init; }
 	public required string ProductImagesHostName { get; set; }
+	public required string AdminAppHostName { get; set; }
 }
 
 public class AzureSettings

@@ -154,7 +154,7 @@ resource "azurerm_linux_web_app" "shop" {
     "AppSettings__AzureSettings__ClientId"                       = var.azure_spn_client_id
     "AppSettings__AzureSettings__ClientSecret"                   = var.azure_spn_client_secret
     "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
-    "AdminAppHostName"                                           = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
+    "AppSettings__AdminAppHostName"                              = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
   }
 
   tags = local.az_common_tags
@@ -239,7 +239,7 @@ resource "azurerm_key_vault_secret" "appinsightsconnectionstring" {
 }
 
 resource "azurerm_key_vault_secret" "productimageshostname" {
-  name         = "ProductImagesHostName"
+  name         = "AppSettings--ProductImagesHostName"
   value        = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
   key_vault_id = azurerm_key_vault.keyvault.id
 }

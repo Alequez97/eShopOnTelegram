@@ -14,19 +14,16 @@ public class TelegramNotificationSender : INotificationSender
 {
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IBotOwnerDataStore _botOwnerDataStore;
-	private readonly TelegramBotSettings _telegramBotSettings;
-	private readonly string _adminAppHostName;
+	private readonly AppSettings _appSettings;
 
 	public TelegramNotificationSender(
 		ITelegramBotClient telegramBot,
 		IBotOwnerDataStore botOwnerDataStore,
-		AppSettings appSettings,
-		string adminAppHostName)
+		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
 		_botOwnerDataStore = botOwnerDataStore;
-		_telegramBotSettings = appSettings.TelegramBotSettings;
-		_adminAppHostName = adminAppHostName;
+		_appSettings = appSettings;
 	}
 
 	public async Task SendNotificationAsync(string title, string message, CancellationToken cancellationToken)
@@ -45,9 +42,9 @@ public class TelegramNotificationSender : INotificationSender
 		InlineKeyboardMarkup inlineKeyboard = null;
 		var orderReceivedMessage = new StringBuilder("New order received!!!");
 
-		if (!string.IsNullOrEmpty(_adminAppHostName))
+		if (!string.IsNullOrEmpty(_appSettings.AdminAppHostName))
 		{
-			var orderLink = $"{_adminAppHostName}/#/orders/{orderNumber}/show";
+			var orderLink = $"{_appSettings.AdminAppHostName}/#/orders/{orderNumber}/show";
 
 			orderReceivedMessage
 				.AppendLine()
@@ -61,7 +58,7 @@ public class TelegramNotificationSender : INotificationSender
 			});
 		}
 
-		var chatIdAsString = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(cancellationToken) ?? _telegramBotSettings.BotOwnerTelegramId;
+		var chatIdAsString = await _botOwnerDataStore.GetBotOwnerTelegramGroupIdAsync(cancellationToken) ?? _appSettings.TelegramBotSettings.BotOwnerTelegramId;
 
 		if (string.IsNullOrWhiteSpace(chatIdAsString))
 		{
