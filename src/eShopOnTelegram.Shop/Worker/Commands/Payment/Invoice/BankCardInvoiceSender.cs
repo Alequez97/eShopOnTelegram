@@ -76,7 +76,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
 			if (response.Status != ResponseStatus.Success)
 			{
-				throw new Exception("Failed to update order payment method in BankCardInvoiceSender TG Command.");
+				throw new Exception("Failed to update order payment method in BankCardInvoiceSender telegram command.");
 			}
 		}
 		catch (Exception exception)

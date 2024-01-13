@@ -8,9 +8,13 @@ namespace eShopOnTelegram.Shop.Worker.Services.Payment.TelegramButtonProviders;
 
 public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvider
 {
-	public InlineKeyboardButton GetInvoiceGenerationButton()
+	public async Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken)
 	{
-		return InlineKeyboardButton.WithCallbackData(text: "Pay with Plisio (crypto)", callbackData: PaymentMethodConstants.Plisio);
+		// TODO: Replace button text with text from ApplicationContentStore when Plisio integration is fully implemented
+		var buttonText = "Pay with Plisio (crypto)";
+		var button = InlineKeyboardButton.WithCallbackData(text: buttonText, callbackData: PaymentMethodConstants.Plisio);
+
+		return await Task.FromResult(button);
 	}
 
 	public bool PaymentMethodEnabled(PaymentSettings paymentAppsettings)

@@ -46,7 +46,8 @@ public class PaymentProceedMessageSender
 
 		var paymentMethodButtons = _paymentTelegramButtonGenerators
 			.Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled(_paymentSettings))
-			.Select(buttonGenerator => new List<InlineKeyboardButton>() { buttonGenerator.GetInvoiceGenerationButton() });
+			.Select(async buttonGenerator => new List<InlineKeyboardButton>() { await buttonGenerator.GetInvoiceGenerationButtonAsync(cancellationToken) })
+			.Select(task => task.Result);
 
 		InlineKeyboardMarkup inlineKeyboard = new(paymentMethodButtons);
 
@@ -60,7 +61,7 @@ public class PaymentProceedMessageSender
 		foreach (var orderCartItem in order.CartItems)
 		{
 			message
-			.AppendLine(orderCartItem.GetFormattedMessage(currencySymbol));
+				.AppendLine(orderCartItem.GetFormattedMessage(currencySymbol));
 		};
 
 		message
