@@ -59,14 +59,8 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Payment.InvoiceReceiveMessage)]
 	public string Payment_InvoiceReceiveMessage => "Please receive your invoice";
 
-	[JsonProperty(ApplicationContentKey.Payment.IncorrectInvoiceChoosen)]
-	public string Payment_IncorrectInvoiceChoosen => "You chose an incorrect invoice to pay for";
-
 	[JsonProperty(ApplicationContentKey.Payment.SuccessfullPayment)]
 	public string Payment_SuccessfullPayment => "Thank you for your purchase";
-
-	[JsonProperty(ApplicationContentKey.Payment.ErrorDuringPaymentConfirmation)]
-	public string Payment_ErrorDuringPaymentConfirmation => "Error during order confirmation";
 
 	// TODO: ADD SHOP ADMINISTRATOR NAME (LINK)
 	[JsonProperty(ApplicationContentKey.Payment.PaymentThroughSeller)]

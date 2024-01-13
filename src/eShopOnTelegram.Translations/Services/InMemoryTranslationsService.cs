@@ -17,6 +17,7 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.ProceedToPayment, "Proceed to payment" },
 				{ TranslationsKeys.UnpaidOrderNotFound, "Unpaid order not found. Visit our shop to create new order" },
 				{ TranslationsKeys.ErrorDuringOrderCreation, "Error during order creation. Try again later" },
+				{ TranslationsKeys.IncorrectInvoiceChoosen, "You chose an incorrect invoice to pay for. Chose to pay for invoice, that is last in all created" },
 			}
 		},
 		{
@@ -30,6 +31,7 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.ProceedToPayment, "Перейти к оплате" },
 				{ TranslationsKeys.UnpaidOrderNotFound, "Неоплаченный заказ не найден. Перейдите в наш магазин, чтобы создать новый заказ" },
 				{ TranslationsKeys.ErrorDuringOrderCreation, "Ошибка при создании заказа. Повторите попытку позже" },
+				{ TranslationsKeys.IncorrectInvoiceChoosen, "Вы выбрали неверную квитанцию для оплаты. Оплатите последнюю квитанцию" },
 			}
 		}
 	};
