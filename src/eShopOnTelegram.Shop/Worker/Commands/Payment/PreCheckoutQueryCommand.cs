@@ -1,6 +1,4 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
@@ -12,21 +10,18 @@ public class PreCheckoutQueryCommand : ITelegramCommand
 {
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
-	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
 	public PreCheckoutQueryCommand(
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
-		IApplicationContentStore applicationContentStore,
 		ITranslationsService translationsService,
 		AppSettings appSettings
 		)
 	{
 		_telegramBot = telegramBot;
 		_orderService = orderService;
-		_applicationContentStore = applicationContentStore;
 		_translationsService = translationsService;
 		_appSettings = appSettings;
 	}
@@ -52,7 +47,7 @@ public class PreCheckoutQueryCommand : ITelegramCommand
 			return;
 		}
 
-		await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.AlreadyPaidOrExpired, CancellationToken.None));
+		await _telegramBot.SendTextMessageAsync(preCheckoutQuery.From.Id, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderAlreadyPaidOrExpired, CancellationToken.None));
 	}
 
 	public Task<bool> IsResponsibleForUpdateAsync(Update update)

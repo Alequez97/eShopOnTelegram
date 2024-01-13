@@ -13,8 +13,6 @@ public static class ApplicationContentKey
 	public static class Order
 	{
 		public const string ShowUnpaidOrder = "Order.ShowUnpaidOrder";
-		public const string AlreadyPaidOrExpired = "Order.AlreadyPaidOrExpired";
-		public const string InvoiceGenerationFailedErrorMessage = "Order.InvoiceGenerationFailedErrorMessage";
 		public const string TotalPriceTitle = "Order.TotalPriceTitle";
 		public const string PaymentMethodAlreadySelected = "Order.PaymentMethodAlreadySelected";
 	}

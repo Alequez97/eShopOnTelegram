@@ -23,11 +23,13 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.UnableToGetShippingAddress, "Unable to get shipping address. Please contact bot support team and precise where you want to receive your order delivery" },
 				{ TranslationsKeys.ChoosePaymentMethod, "Please select a payment method" },
 				{ TranslationsKeys.PayWithBankCard, "Pay with bank card" },
+				{ TranslationsKeys.OrderAlreadyPaidOrExpired, "You already paid for this order, or time to accomplish expired. Try again to create a new order" },
+				{ TranslationsKeys.InvoiceGenerationFailedErrorMessage, "Error during invoice generation. Try again later" },
 			}
 		},
 		{
 			Language.RU,
-			new()
+			new ()
 			{
 				{ TranslationsKeys.Error_TryAgainLater, "Ошибка. Повторите попытку позже"},
 				{ TranslationsKeys.NoAvailableProducts, "На данный момент нет доступных товаров" },
@@ -42,11 +44,13 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.UnableToGetShippingAddress, "Возникла ошибка при проверке адреса доставки. Сважитесь с командой поддержки и уточните куда вы хотите получить доставку своего заказа" },
 				{ TranslationsKeys.ChoosePaymentMethod, "Выберете способ оплаты" },
 				{ TranslationsKeys.PayWithBankCard, "Оплата банковской картой" },
+				{ TranslationsKeys.OrderAlreadyPaidOrExpired, "Заказ уже был оплачен или время для подтверждения закончилось. Перейдите в магазин и создайте новый заказ" },
+				{ TranslationsKeys.InvoiceGenerationFailedErrorMessage, "Возникла ошибка при отправке квитанции об оплате. Попробуйте повторить попытку позже" },
 			}
 		}
 	};
 
-	public async Task<string> TranslateAsync(string language,string translationsKey, CancellationToken cancellationToken)
+	public async Task<string> TranslateAsync(string language, string translationsKey, CancellationToken cancellationToken)
 	{
 		var translationsForLanguage = _translations[language];
 

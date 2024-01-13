@@ -4,6 +4,9 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment;
 
@@ -13,6 +16,8 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 	private readonly IPaymentService _paymentService;
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ITranslationsService _translationsService;
+	private readonly AppSettings _appSettings;
 	private readonly ILogger<PaymentThroughSellerCommand> _logger;
 
 	public PaymentThroughSellerCommand(
@@ -20,12 +25,16 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 		IPaymentService paymentService,
 		ITelegramBotClient telegramBot,
 		IApplicationContentStore applicationContentStore,
+		ITranslationsService translationsService,
+		AppSettings appSettings,
 		ILogger<PaymentThroughSellerCommand> logger)
 	{
 		_orderService = orderService;
 		_paymentService = paymentService;
 		_telegramBot = telegramBot;
 		_applicationContentStore = applicationContentStore;
+		_translationsService = translationsService;
+		_appSettings = appSettings;
 		_logger = logger;
 	}
 
@@ -39,7 +48,7 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
 			if (getOrdersResponse.Data.PaymentMethodSelected)

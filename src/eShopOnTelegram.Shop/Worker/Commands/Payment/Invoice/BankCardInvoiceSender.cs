@@ -52,7 +52,7 @@ public class BankCardInvoiceSender : ITelegramCommand
 
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
 

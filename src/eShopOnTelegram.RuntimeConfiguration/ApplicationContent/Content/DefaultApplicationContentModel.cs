@@ -24,12 +24,6 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Order.ShowUnpaidOrder)]
 	public string Order_ShowUnpaidOrder => "Show unpaid order";
 
-	[JsonProperty(ApplicationContentKey.Order.AlreadyPaidOrExpired)]
-	public string Order_AlreadyPaidOrExpired => "You already paid for this order, or time to accomplish expired. Try again to create a new order";
-
-	[JsonProperty(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage)]
-	public string Order_InvoiceGenerationFailedErrorMessage => "Error during invoice generation. Try again later";
-
 	[JsonProperty(ApplicationContentKey.Order.TotalPriceTitle)]
 	public string Order_TotalPriceTitle => "Total price";
 
