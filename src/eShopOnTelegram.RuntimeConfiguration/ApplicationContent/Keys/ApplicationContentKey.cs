@@ -14,7 +14,6 @@ public static class ApplicationContentKey
 	{
 		public const string ShowUnpaidOrder = "Order.ShowUnpaidOrder";
 		public const string AlreadyPaidOrExpired = "Order.AlreadyPaidOrExpired";
-		public const string CreateErrorMessage = "Order.CreateErrorMessage";
 		public const string InvoiceGenerationFailedErrorMessage = "Order.InvoiceGenerationFailedErrorMessage";
 		public const string OrderNumberTitle = "Order.OrderNumberTitle";
 		public const string OrderSummaryTitle = "Order.OrderSummaryTitle";

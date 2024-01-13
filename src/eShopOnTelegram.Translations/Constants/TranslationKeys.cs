@@ -8,4 +8,5 @@ public static class TranslationsKeys
 	public const string Continue = nameof(Continue);
 	public const string ProceedToPayment = nameof(ProceedToPayment);
 	public const string UnpaidOrderNotFound = nameof(UnpaidOrderNotFound);
+	public const string ErrorDuringOrderCreation = nameof(ErrorDuringOrderCreation);
 }

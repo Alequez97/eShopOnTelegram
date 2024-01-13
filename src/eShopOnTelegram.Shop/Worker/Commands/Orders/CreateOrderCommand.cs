@@ -3,10 +3,12 @@
 using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Shop.Worker.Services.Telegram;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 
 using Newtonsoft.Json;
 
@@ -24,19 +26,25 @@ public class CreateOrderCommand : ITelegramCommand
 	private readonly IOrderService _orderService;
 	private readonly PaymentProceedMessageSender _paymentMethodsSender;
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ITranslationsService _translationsService;
+	private readonly AppSettings _appSettings;
 
 	public CreateOrderCommand(
 		ILogger<CreateOrderCommand> logger,
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		PaymentProceedMessageSender paymentMethodsSender,
-		IApplicationContentStore applicationContentStore)
+		IApplicationContentStore applicationContentStore,
+		ITranslationsService translationsService,
+		AppSettings appSettings)
 	{
 		_logger = logger;
 		_telegramBot = telegramBot;
 		_orderService = orderService;
 		_paymentMethodsSender = paymentMethodsSender;
 		_applicationContentStore = applicationContentStore;
+		_translationsService = translationsService;
+		_appSettings = appSettings;
 	}
 
 	public async Task SendResponseAsync(Update update)
@@ -62,7 +70,7 @@ public class CreateOrderCommand : ITelegramCommand
 
 				await _telegramBot.SendTextMessageAsync(
 					chatId,
-					await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.CreateErrorMessage, CancellationToken.None),
+					await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ErrorDuringOrderCreation, CancellationToken.None),
 					parseMode: ParseMode.Html
 				);
 				return;

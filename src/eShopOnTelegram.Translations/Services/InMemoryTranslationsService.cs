@@ -16,6 +16,7 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.Continue, "Continue" },
 				{ TranslationsKeys.ProceedToPayment, "Proceed to payment" },
 				{ TranslationsKeys.UnpaidOrderNotFound, "Unpaid order not found. Visit our shop to create new order" },
+				{ TranslationsKeys.ErrorDuringOrderCreation, "Error during order creation. Try again later" },
 			}
 		},
 		{
@@ -28,6 +29,7 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.Continue, "Продолжить" },
 				{ TranslationsKeys.ProceedToPayment, "Перейти к оплате" },
 				{ TranslationsKeys.UnpaidOrderNotFound, "Неоплаченный заказ не найден. Перейдите в наш магазин, чтобы создать новый заказ" },
+				{ TranslationsKeys.ErrorDuringOrderCreation, "Ошибка при создании заказа. Повторите попытку позже" },
 			}
 		}
 	};
