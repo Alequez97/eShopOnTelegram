@@ -8,104 +8,108 @@ using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Shop.Worker.Services.Telegram;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
-namespace eShopOnTelegram.Shop.Worker.Commands
+namespace eShopOnTelegram.Shop.Worker.Commands;
+
+public class StartCommand : ITelegramCommand
 {
-	public class StartCommand : ITelegramCommand
+	private readonly ITelegramBotClient _telegramBot;
+	private readonly ILogger<StartCommand> _logger;
+	private readonly AppSettings _appSettings;
+	private readonly ITranslationsService _translationsService;
+	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ICustomerService _customerService;
+	private readonly IOrderService _orderService;
+	private readonly PaymentProceedMessageSender _paymentMethodsSender;
+
+	public StartCommand(
+		ITelegramBotClient telegramBot,
+		ILogger<StartCommand> logger,
+		AppSettings appSettings,
+		ITranslationsService translationsService,
+		IApplicationContentStore applicationContentStore,
+		ICustomerService customerService,
+		IOrderService orderService,
+		PaymentProceedMessageSender paymentMethodsSender)
 	{
-		private readonly ITelegramBotClient _telegramBot;
-		private readonly ILogger<StartCommand> _logger;
-		private readonly TelegramBotSettings _telegramBotSettings;
-		private readonly IApplicationContentStore _applicationContentStore;
-		private readonly ICustomerService _customerService;
-		private readonly IOrderService _orderService;
-		private readonly PaymentProceedMessageSender _paymentMethodsSender;
+		_telegramBot = telegramBot;
+		_logger = logger;
+		_translationsService = translationsService;
+		_appSettings = appSettings;
+		_applicationContentStore = applicationContentStore;
+		_customerService = customerService;
+		_orderService = orderService;
+		_paymentMethodsSender = paymentMethodsSender;
+	}
 
-		public StartCommand(
-			ITelegramBotClient telegramBot,
-			ILogger<StartCommand> logger,
-			AppSettings appSettings,
-			IApplicationContentStore applicationContentStore,
-			ICustomerService customerService,
-			IOrderService orderService,
-			PaymentProceedMessageSender paymentMethodsSender)
+	public async Task SendResponseAsync(Update update)
+	{
+		try
 		{
-			_telegramBot = telegramBot;
-			_logger = logger;
-			_telegramBotSettings = appSettings.TelegramBotSettings;
-			_applicationContentStore = applicationContentStore;
-			_customerService = customerService;
-			_orderService = orderService;
-			_paymentMethodsSender = paymentMethodsSender;
-		}
+			Guard.Against.Null(update.Message);
+			Guard.Against.Null(update.Message.From);
 
-		public async Task SendResponseAsync(Update update)
-		{
-			try
+			var createCustomerRequest = new CreateCustomerRequest()
 			{
-				Guard.Against.Null(update.Message);
-				Guard.Against.Null(update.Message.From);
+				TelegramUserUID = update.Message.From.Id,
+				Username = update.Message.From.Username,
+				FirstName = update.Message.From.FirstName,
+				LastName = update.Message.From.LastName
+			};
 
-				var createCustomerRequest = new CreateCustomerRequest()
-				{
-					TelegramUserUID = update.Message.From.Id,
-					Username = update.Message.From.Username,
-					FirstName = update.Message.From.FirstName,
-					LastName = update.Message.From.LastName
-				};
+			var createCustomerResponse = await _customerService.CreateIfNotPresentAsync(createCustomerRequest);
+			var chatId = update.Message.Chat.Id;
 
-				var createCustomerResponse = await _customerService.CreateIfNotPresentAsync(createCustomerRequest);
-				var chatId = update.Message.Chat.Id;
-
-				if (createCustomerResponse.Status != ResponseStatus.Success)
-				{
-					_logger.LogError("Unable to persist new customer.");
-
-					await _telegramBot.SendTextMessageAsync(
-						chatId,
-						await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.StartError, CancellationToken.None),
-						parseMode: ParseMode.Html
-					);
-
-					return;
-				}
-
-				var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
-					.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _telegramBotSettings.WebAppUrl });
-
-				var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
-				if (getOrdersResponse.Status == ResponseStatus.Success)
-				{
-					var activeOrder = getOrdersResponse.Data;
-
-					if (activeOrder != null)
-					{
-						keyboardMarkupBuilder
-							.StartNewRow()
-							.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
-					}
-				}
+			if (createCustomerResponse.Status != ResponseStatus.Success)
+			{
+				_logger.LogError("Unable to persist new customer.");
 
 				await _telegramBot.SendTextMessageAsync(
 					chatId,
-					await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.WelcomeText, CancellationToken.None),
-					parseMode: ParseMode.Html,
-					replyMarkup: keyboardMarkupBuilder.Build(resizeKeyboard: true)
+					await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.Error_TryAgainLater, CancellationToken.None),
+					parseMode: ParseMode.Html
 				);
+
+				return;
 			}
-			catch (Exception exception)
+
+			var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
+				.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _appSettings.TelegramBotSettings.WebAppUrl });
+
+			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
+			if (getOrdersResponse.Status == ResponseStatus.Success)
 			{
-				var chatId = update.Message.Chat.Id;
+				var activeOrder = getOrdersResponse.Data;
 
-				_logger.LogError(exception, exception.Message);
-				await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+				if (activeOrder != null)
+				{
+					keyboardMarkupBuilder
+						.StartNewRow()
+						.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
+				}
 			}
-		}
 
-		public Task<bool> IsResponsibleForUpdateAsync(Update update)
-		{
-			return Task.FromResult(update.Message?.Text?.Contains(CommandConstants.Start) ?? false);
+			await _telegramBot.SendTextMessageAsync(
+				chatId,
+				await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.WelcomeText, CancellationToken.None),
+				parseMode: ParseMode.Html,
+				replyMarkup: keyboardMarkupBuilder.Build(resizeKeyboard: true)
+			);
 		}
+		catch (Exception exception)
+		{
+			var chatId = update.Message.Chat.Id;
+
+			_logger.LogError(exception, exception.Message);
+			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+		}
+	}
+
+	public Task<bool> IsResponsibleForUpdateAsync(Update update)
+	{
+		return Task.FromResult(update.Message?.Text?.Contains(CommandConstants.Start) ?? false);
 	}
 }

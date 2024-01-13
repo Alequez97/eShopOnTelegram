@@ -10,6 +10,7 @@ public class InMemoryTranslationsService : ITranslationsService
 			Language.EN,
 			new()
 			{
+				{ TranslationsKeys.Error_TryAgainLater, "Error. Try again later"},
 				{ TranslationsKeys.NoAvailableProducts, "No available products at this moment" },
 				{ TranslationsKeys.AllCategories, "All categories" },
 				{ TranslationsKeys.Continue, "Continue" },
@@ -20,6 +21,7 @@ public class InMemoryTranslationsService : ITranslationsService
 			Language.RU,
 			new()
 			{
+				{ TranslationsKeys.Error_TryAgainLater, "Ошибка. Повторите попытку позже"},
 				{ TranslationsKeys.NoAvailableProducts, "На данный момент нет доступных товаров" },
 				{ TranslationsKeys.AllCategories, "Все категории" },
 				{ TranslationsKeys.Continue, "Продолжить" },

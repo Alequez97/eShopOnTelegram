@@ -7,10 +7,6 @@ namespace eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Content;
 public class DefaultApplicationContentModel
 {
 	// TELEGRAM BOT
-
-	[JsonProperty(ApplicationContentKey.TelegramBot.StartError)]
-	public string TelegramBot_StartError => "Error. Try again later";
-
 	[JsonProperty(ApplicationContentKey.TelegramBot.WelcomeText)]
 	public string TelegramBot_WelcomeText => "Welcome to our shop <tg-spoiler>Spoiler</tg-spoiler>";
 

@@ -4,7 +4,6 @@ public static class ApplicationContentKey
 {
 	public static class TelegramBot
 	{
-		public const string StartError = "TelegramBot.StartError";
 		public const string WelcomeText = "TelegramBot.WelcomeText";
 		public const string OpenShopButtonText = "TelegramBot.OpenShopButtonText";
 		public const string UnknownCommandText = "TelegramBot.UnknownCommandText";
