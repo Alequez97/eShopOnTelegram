@@ -50,7 +50,7 @@ public class PaymentProceedMessageSender
 		}
 
 		var paymentMethodButtons = _paymentTelegramButtonGenerators
-			.Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled(_appSettings.PaymentSettings))
+			.Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled())
 			.Select(async buttonGenerator => new List<InlineKeyboardButton>() { await buttonGenerator.GetInvoiceGenerationButtonAsync(cancellationToken) })
 			.Select(task => task.Result);
 
@@ -75,7 +75,7 @@ public class PaymentProceedMessageSender
 			.AppendLine(new string('~', 20));
 
 		message
-			.AppendLine(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ChoosePaymentMethod, CancellationToken.None));
+			.AppendLine(await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ChoosePaymentMethod, CancellationToken.None));
 
 		await _telegramBot.SendTextMessageAsync(
 			chatId: chatId,

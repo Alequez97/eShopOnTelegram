@@ -8,6 +8,9 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
+using eShopOnTelegram.Utils.Configuration;
 using eShopOnTelegram.Utils.Extensions;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment;
@@ -18,23 +21,29 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 	private readonly IOrderService _orderService;
 	private readonly IPaymentService _paymentService;
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ITranslationsService _translationsService;
 	private readonly IEnumerable<INotificationSender> _notificationSenders;
 	private readonly ILogger<SuccessfulPaymentCommand> _logger;
+	private readonly AppSettings _appSettings;
 
 	public SuccessfulPaymentCommand(
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		IPaymentService paymentService,
 		IApplicationContentStore applicationContentStore,
+		ITranslationsService translationsService,
 		IEnumerable<INotificationSender> notificationSenders,
-		ILogger<SuccessfulPaymentCommand> logger)
+		ILogger<SuccessfulPaymentCommand> logger,
+		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
 		_orderService = orderService;
 		_paymentService = paymentService;
 		_applicationContentStore = applicationContentStore;
+		_translationsService = translationsService;
 		_notificationSenders = notificationSenders;
 		_logger = logger;
+		_appSettings = appSettings;
 	}
 
 	public async Task SendResponseAsync(Update update)
@@ -79,7 +88,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 			{
 				await _telegramBot.SendTextMessageAsync(
 					chatId,
-					await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.UnableToGetShippingAddress, CancellationToken.None)
+					await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.UnableToGetShippingAddress, CancellationToken.None)
 				);
 			}
 		}

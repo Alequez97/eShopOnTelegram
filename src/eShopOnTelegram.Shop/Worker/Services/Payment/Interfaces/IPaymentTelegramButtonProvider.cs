@@ -8,5 +8,5 @@ public interface IPaymentTelegramButtonProvider
 {
 	Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken);
 
-	bool PaymentMethodEnabled(PaymentSettings paymentAppsettings);
+	bool PaymentMethodEnabled();
 }

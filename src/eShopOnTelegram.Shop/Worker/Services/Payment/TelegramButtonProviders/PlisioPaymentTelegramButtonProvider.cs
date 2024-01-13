@@ -8,6 +8,13 @@ namespace eShopOnTelegram.Shop.Worker.Services.Payment.TelegramButtonProviders;
 
 public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvider
 {
+	private readonly AppSettings _appSettings;
+
+	public PlisioPaymentTelegramButtonProvider(AppSettings appSettings)
+	{
+		_appSettings = appSettings;
+	}
+
 	public async Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken)
 	{
 		// TODO: Replace button text with text from ApplicationContentStore when Plisio integration is fully implemented
@@ -17,8 +24,8 @@ public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvide
 		return await Task.FromResult(button);
 	}
 
-	public bool PaymentMethodEnabled(PaymentSettings paymentAppsettings)
+	public bool PaymentMethodEnabled()
 	{
-		return paymentAppsettings.Plisio.Enabled;
+		return _appSettings.PaymentSettings.Plisio.Enabled;
 	}
 }

@@ -20,6 +20,9 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.IncorrectInvoiceChoosen, "You chose an incorrect invoice to pay for. Chose to pay for invoice, that is last in all created" },
 				{ TranslationsKeys.OrderNumber, "Order number" },
 				{ TranslationsKeys.OrderSummary, "Your order summary" },
+				{ TranslationsKeys.UnableToGetShippingAddress, "Unable to get shipping address. Please contact bot support team and precise where you want to receive your order delivery" },
+				{ TranslationsKeys.ChoosePaymentMethod, "Please select a payment method" },
+				{ TranslationsKeys.PayWithBankCard, "Pay with bank card" },
 			}
 		},
 		{
@@ -36,6 +39,9 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.IncorrectInvoiceChoosen, "Вы выбрали неверную квитанцию для оплаты. Оплатите последнюю квитанцию" },
 				{ TranslationsKeys.OrderNumber, "Заказ номер" },
 				{ TranslationsKeys.OrderSummary, "Ваш заказ" },
+				{ TranslationsKeys.UnableToGetShippingAddress, "Возникла ошибка при проверке адреса доставки. Сважитесь с командой поддержки и уточните куда вы хотите получить доставку своего заказа" },
+				{ TranslationsKeys.ChoosePaymentMethod, "Выберете способ оплаты" },
+				{ TranslationsKeys.PayWithBankCard, "Оплата банковской картой" },
 			}
 		}
 	};

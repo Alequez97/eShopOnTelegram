@@ -12,5 +12,8 @@ public static class TranslationsKeys
 	public const string IncorrectInvoiceChoosen = nameof(IncorrectInvoiceChoosen);
 	public const string OrderNumber = nameof(OrderNumber);
 	public const string OrderSummary = nameof(OrderSummary);
+	public const string UnableToGetShippingAddress = nameof(UnableToGetShippingAddress);
+	public const string ChoosePaymentMethod = nameof(ChoosePaymentMethod);
+	public const string PayWithBankCard = nameof(PayWithBankCard);
 
 }

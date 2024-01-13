@@ -17,14 +17,11 @@ public static class ApplicationContentKey
 		public const string InvoiceGenerationFailedErrorMessage = "Order.InvoiceGenerationFailedErrorMessage";
 		public const string TotalPriceTitle = "Order.TotalPriceTitle";
 		public const string PaymentMethodAlreadySelected = "Order.PaymentMethodAlreadySelected";
-		public const string UnableToGetShippingAddress = "Order.UnableToGetShippingAddress";
 	}
 
 	public static class Payment
 	{
 		public const string NoEnabledPayments = "Payment.NoEnabledPayments";
-		public const string ChoosePaymentMethod = "Payment.ChoosePaymentMethod";
-		public const string PayWithBankCard = "Payment.PayWithBankCard";
 		public const string DiscussPaymentOptionsWithSeller = "Payment.DiscussPaymentOptionsWithSeller";
 		public const string InvoiceReceiveMessage = "Payment.InvoiceReceiveMessage";
 		public const string SuccessfullPayment = "Payment.SuccessfullPayment";

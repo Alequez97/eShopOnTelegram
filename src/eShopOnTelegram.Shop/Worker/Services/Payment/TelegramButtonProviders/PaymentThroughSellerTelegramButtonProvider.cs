@@ -11,10 +11,12 @@ namespace eShopOnTelegram.Shop.Worker.Services.Payment.TelegramButtonProviders;
 public class PaymentThroughSellerTelegramButtonProvider : IPaymentTelegramButtonProvider
 {
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly AppSettings _appSettings;
 
-	public PaymentThroughSellerTelegramButtonProvider(IApplicationContentStore applicationContentStore)
+	public PaymentThroughSellerTelegramButtonProvider(IApplicationContentStore applicationContentStore, AppSettings appSettings)
 	{
 		_applicationContentStore = applicationContentStore;
+		_appSettings = appSettings;
 	}
 
 	public async Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken)
@@ -25,5 +27,5 @@ public class PaymentThroughSellerTelegramButtonProvider : IPaymentTelegramButton
 		return button;
 	}
 
-	public bool PaymentMethodEnabled(PaymentSettings paymentAppsettings) => paymentAppsettings.PaymentThroughSellerEnabled;
+	public bool PaymentMethodEnabled() => _appSettings.PaymentSettings.PaymentThroughSellerEnabled;
 }

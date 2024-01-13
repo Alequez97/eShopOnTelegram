@@ -36,19 +36,10 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Order.PaymentMethodAlreadySelected)]
 	public string Order_PaymentMethodAlreadySelected => "Payment method already selected";
 
-	[JsonProperty(ApplicationContentKey.Order.UnableToGetShippingAddress)]
-	public string Order_UnableToGetShippingAddress => "Unable to get shipping address. Please contact bot support team and precise where you want to receive your order";
-
 	// PAYMENT
 
 	[JsonProperty(ApplicationContentKey.Payment.NoEnabledPayments)]
 	public string Payment_NoEnabledPayments => "Thank you for your purchase";
-
-	[JsonProperty(ApplicationContentKey.Payment.ChoosePaymentMethod)]
-	public string Payment_ChoosePaymentMethod => "Please select a payment method";
-
-	[JsonProperty(ApplicationContentKey.Payment.PayWithBankCard)]
-	public string Payment_PayWithBankCard => "Pay with bank card";
 
 	[JsonProperty(ApplicationContentKey.Payment.InvoiceReceiveMessage)]
 	public string Payment_InvoiceReceiveMessage => "Please receive your invoice";
