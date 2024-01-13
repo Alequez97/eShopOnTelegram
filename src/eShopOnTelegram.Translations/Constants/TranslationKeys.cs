@@ -7,4 +7,5 @@ public static class TranslationsKeys
 	public const string AllCategories = nameof(AllCategories);
 	public const string Continue = nameof(Continue);
 	public const string ProceedToPayment = nameof(ProceedToPayment);
+	public const string UnpaidOrderNotFound = nameof(UnpaidOrderNotFound);
 }

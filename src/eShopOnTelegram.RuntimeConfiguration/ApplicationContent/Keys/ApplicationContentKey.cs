@@ -13,7 +13,6 @@ public static class ApplicationContentKey
 	public static class Order
 	{
 		public const string ShowUnpaidOrder = "Order.ShowUnpaidOrder";
-		public const string NoUnpaidOrderFound = "Order.NoUnpaidOrderFound";
 		public const string AlreadyPaidOrExpired = "Order.AlreadyPaidOrExpired";
 		public const string CreateErrorMessage = "Order.CreateErrorMessage";
 		public const string InvoiceGenerationFailedErrorMessage = "Order.InvoiceGenerationFailedErrorMessage";

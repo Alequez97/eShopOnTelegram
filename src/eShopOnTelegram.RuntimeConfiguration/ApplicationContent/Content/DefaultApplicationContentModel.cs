@@ -24,9 +24,6 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Order.ShowUnpaidOrder)]
 	public string Order_ShowUnpaidOrder => "Show unpaid order";
 
-	[JsonProperty(ApplicationContentKey.Order.NoUnpaidOrderFound)]
-	public string Order_NoUnpaidOrderFound => "You don't have unpaid orders";
-
 	[JsonProperty(ApplicationContentKey.Order.AlreadyPaidOrExpired)]
 	public string Order_AlreadyPaidOrExpired => "You already paid for this order, or time to accomplish expired. Try again to create a new order";
 
