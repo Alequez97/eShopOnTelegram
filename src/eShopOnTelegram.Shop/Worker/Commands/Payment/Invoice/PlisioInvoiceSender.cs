@@ -6,6 +6,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 using Refit;
@@ -20,7 +22,8 @@ public class PlisioInvoiceSender : ITelegramCommand
 	private readonly IPlisioClient _plisioClient;
 	private readonly IOrderService _orderService;
 	private readonly IPaymentService _paymentService;
-	private readonly PaymentSettings _paymentSettings;
+	private readonly AppSettings _appSettings;
+	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ILogger<PlisioInvoiceSender> _logger;
 
@@ -30,6 +33,7 @@ public class PlisioInvoiceSender : ITelegramCommand
 		IOrderService orderService,
 		IPaymentService paymentService,
 		AppSettings appSettings,
+		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		ILogger<PlisioInvoiceSender> logger)
 	{
@@ -37,7 +41,8 @@ public class PlisioInvoiceSender : ITelegramCommand
 		_plisioClient = plisioClient;
 		_orderService = orderService;
 		_paymentService = paymentService;
-		_paymentSettings = appSettings.PaymentSettings;
+		_translationsService = translationsService;
+		_appSettings = appSettings;
 		_applicationContentStore = applicationContentStore;
 		_logger = logger;
 	}
@@ -64,11 +69,11 @@ public class PlisioInvoiceSender : ITelegramCommand
 			var activeOrder = getOrdersResponse.Data;
 
 			var createPlisioInvoiceResponse = await _plisioClient.CreateInvoiceAsync(
-				_paymentSettings.Plisio.ApiToken,
-				_paymentSettings.MainCurrency,
+				_appSettings.PaymentSettings.Plisio.ApiToken,
+				_appSettings.PaymentSettings.MainCurrency,
 				(int)Math.Ceiling(activeOrder.TotalPrice),
 				activeOrder.OrderNumber,
-				_paymentSettings.Plisio.CryptoCurrency);
+				_appSettings.PaymentSettings.Plisio.CryptoCurrency);
 
 			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
 			if (response.Status != ResponseStatus.Success)
@@ -76,12 +81,13 @@ public class PlisioInvoiceSender : ITelegramCommand
 				throw new Exception("Failed to update order payment method in Plisio Invoice Sender TG Command.");
 			}
 
+			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);
 			InlineKeyboardMarkup inlineKeyboard = new(new[]
 			{
                 // first row
                 new []
 				{
-					InlineKeyboardButton.WithUrl(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.ProceedToPayment, CancellationToken.None), createPlisioInvoiceResponse.Data.InvoiceUrl),
+					InlineKeyboardButton.WithUrl(buttonText, createPlisioInvoiceResponse.Data.InvoiceUrl),
 				},
 			});
 

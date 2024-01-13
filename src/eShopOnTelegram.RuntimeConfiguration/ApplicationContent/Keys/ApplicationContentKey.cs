@@ -30,7 +30,6 @@ public static class ApplicationContentKey
 		public const string ChoosePaymentMethod = "Payment.ChoosePaymentMethod";
 		public const string PayWithBankCard = "Payment.PayWithBankCard";
 		public const string DiscussPaymentOptionsWithSeller = "Payment.DiscussPaymentOptionsWithSeller";
-		public const string ProceedToPayment = "Payment.ProceedToPayment";
 		public const string InvoiceReceiveMessage = "Payment.InvoiceReceiveMessage";
 		public const string IncorrectInvoiceChoosen = "Payment.IncorrectInvoiceChoosen";
 		public const string SuccessfullPayment = "Payment.SuccessfullPayment";

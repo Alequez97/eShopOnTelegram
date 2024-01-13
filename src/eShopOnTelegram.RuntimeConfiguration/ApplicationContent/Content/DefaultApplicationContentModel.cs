@@ -62,9 +62,6 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Payment.PayWithBankCard)]
 	public string Payment_PayWithBankCard => "Pay with bank card";
 
-	[JsonProperty(ApplicationContentKey.Payment.ProceedToPayment)]
-	public string Payment_ProceedToPayment => "Proceed to payment";
-
 	[JsonProperty(ApplicationContentKey.Payment.InvoiceReceiveMessage)]
 	public string Payment_InvoiceReceiveMessage => "Please receive your invoice";
 
