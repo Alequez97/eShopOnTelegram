@@ -17,9 +17,12 @@ interface TranslationsProviderProps {
 export const TranslationsProvider = ({
 	children,
 }: TranslationsProviderProps) => {
-	const [translations, setTranslations] = useState<Translations | undefined>(
-		undefined,
-	);
+	const [translations, setTranslations] = useState<Translations>({
+		allCategories: 'All categories',
+		continue: 'Continue',
+		noAvailableProducts: 'No available products at this moment',
+		proceedToPayment: 'Proceed to payment',
+	});
 
 	useEffect(() => {
 		const fetchTranslations = async () => {
@@ -43,7 +46,7 @@ export const TranslationsProvider = ({
 
 export const useTranslations = () => {
 	const context = useContext(TranslationsContext);
-	
+
 	if (!context) {
 		throw new Error(
 			'useTranslations must be used within a TranslationsProvider',
