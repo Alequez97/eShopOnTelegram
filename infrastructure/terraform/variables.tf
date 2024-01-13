@@ -96,6 +96,11 @@ variable "keyvault_name" {
   description = "App service name"
 }
 
+# APP CONFIGURATION VARIABLES #
+variable "language" {
+  type = string
+}
+
 variable "currency" {
   type = string
 }

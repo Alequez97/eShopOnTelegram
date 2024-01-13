@@ -124,6 +124,7 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
     "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
     "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"               = 5
+		"AppSettings__ProductImagesHostName"                                = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
   }
 
   tags = local.az_common_tags
@@ -154,7 +155,11 @@ resource "azurerm_linux_web_app" "shop" {
     "AppSettings__AzureSettings__ClientId"                       = var.azure_spn_client_id
     "AppSettings__AzureSettings__ClientSecret"                   = var.azure_spn_client_secret
     "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
+    "AppSettings__PaymentSettings__MainCurrency"                 = var.currency
+    "AppSettings__TelegramBotSettings__WebAppUrl"                = "https://${azurerm_linux_web_app.shop.name}.azurewebsites.net"
+		"AppSettings__Language"                                      = var.language
     "AppSettings__AdminAppHostName"                              = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
+    "AppSettings__ProductImagesHostName"                         = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
   }
 
   tags = local.az_common_tags
@@ -235,24 +240,6 @@ resource "azurerm_key_vault_secret" "storageaccountconnectionstring" {
 resource "azurerm_key_vault_secret" "appinsightsconnectionstring" {
   name         = "AppSettings--AzureSettings--AppInsightsConnectionString"
   value        = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-resource "azurerm_key_vault_secret" "productimageshostname" {
-  name         = "AppSettings--ProductImagesHostName"
-  value        = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-resource "azurerm_key_vault_secret" "telegram_bot_webapp_url" {
-  name         = "AppSettings--TelegramBotSettings--WebAppUrl"
-  value        = "https://${azurerm_linux_web_app.shop.name}.azurewebsites.net"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-resource "azurerm_key_vault_secret" "paymentcurrency" {
-  name         = "AppSettings--PaymentSettings--MainCurrency"
-  value        = var.currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
