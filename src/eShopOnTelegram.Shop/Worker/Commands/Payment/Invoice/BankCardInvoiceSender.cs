@@ -5,6 +5,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Translations.Constants;
+using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
@@ -15,8 +17,9 @@ public class BankCardInvoiceSender : ITelegramCommand
 	private readonly IProductAttributeService _productAttributeService;
 	private readonly IOrderService _orderService;
 	private readonly IPaymentService _paymentService;
-	private readonly PaymentSettings _paymentSettings;
+	private readonly AppSettings _appSettings;
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly ITranslationsService _translationsService;
 	private readonly ILogger<BankCardInvoiceSender> _logger;
 
 	public BankCardInvoiceSender(
@@ -26,14 +29,16 @@ public class BankCardInvoiceSender : ITelegramCommand
 		IPaymentService paymentService,
 		AppSettings appSettings,
 		IApplicationContentStore applicationContentStore,
+		ITranslationsService translationsService,
 		ILogger<BankCardInvoiceSender> logger)
 	{
 		_telegramBot = telegramBot;
 		_productAttributeService = productAttributeService;
 		_orderService = orderService;
 		_paymentService = paymentService;
-		_paymentSettings = appSettings.PaymentSettings;
+		_appSettings = appSettings;
 		_applicationContentStore = applicationContentStore;
+		_translationsService = translationsService;
 		_logger = logger;
 	}
 
@@ -61,11 +66,11 @@ public class BankCardInvoiceSender : ITelegramCommand
 
 			await _telegramBot.SendInvoiceAsync(
 				chatId,
-				await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.OrderNumberTitle, CancellationToken.None) + " " + getOrdersResponse.Data.OrderNumber,
+				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + getOrdersResponse.Data.OrderNumber,
 				" ", // TODO: Add list of purchasing products
 				activeOrder.OrderNumber,
-				_paymentSettings.Card.ApiToken,
-				_paymentSettings.MainCurrency,
+				_appSettings.PaymentSettings.Card.ApiToken,
+				_appSettings.PaymentSettings.MainCurrency,
 				await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productAttributeService, CancellationToken.None),
 				needShippingAddress: true,
 				needPhoneNumber: true,

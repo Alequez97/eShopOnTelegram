@@ -10,4 +10,7 @@ public static class TranslationsKeys
 	public const string UnpaidOrderNotFound = nameof(UnpaidOrderNotFound);
 	public const string ErrorDuringOrderCreation = nameof(ErrorDuringOrderCreation);
 	public const string IncorrectInvoiceChoosen = nameof(IncorrectInvoiceChoosen);
+	public const string OrderNumber = nameof(OrderNumber);
+	public const string OrderSummary = nameof(OrderSummary);
+
 }

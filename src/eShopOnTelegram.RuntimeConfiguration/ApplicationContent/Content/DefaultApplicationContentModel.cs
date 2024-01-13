@@ -30,12 +30,6 @@ public class DefaultApplicationContentModel
 	[JsonProperty(ApplicationContentKey.Order.InvoiceGenerationFailedErrorMessage)]
 	public string Order_InvoiceGenerationFailedErrorMessage => "Error during invoice generation. Try again later";
 
-	[JsonProperty(ApplicationContentKey.Order.OrderNumberTitle)]
-	public string Order_OrderNumberTitle => "Order number";
-
-	[JsonProperty(ApplicationContentKey.Order.OrderSummaryTitle)]
-	public string Order_OrderSummaryTitle => "Your order summary";
-
 	[JsonProperty(ApplicationContentKey.Order.TotalPriceTitle)]
 	public string Order_TotalPriceTitle => "Total price";
 
