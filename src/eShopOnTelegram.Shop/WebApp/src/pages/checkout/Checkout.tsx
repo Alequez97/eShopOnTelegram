@@ -14,11 +14,16 @@ import {
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
 import { Counter } from '../../components/counter/Counter';
 import { observer } from 'mobx-react-lite';
+import { useTranslations } from '../../contexts/translations.context';
 
 export const Checkout = observer(() => {
 	const navigate = useNavigate();
 	const telegramWebApp = useTelegramWebApp();
-	telegramWebApp.MainButton.setText('PROCEED TO PAYMENT');
+	const translations = useTranslations();
+
+	telegramWebApp.MainButton.setText(
+		translations.proceedToPayment.toUpperCase(),
+	);
 
 	const cartItemsStore = useCartItemsStore();
 

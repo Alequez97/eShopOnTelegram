@@ -15,10 +15,13 @@ import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { RouteLocation } from '../../enums/route-location.enum';
+import { useTranslations } from '../../contexts/translations.context';
 
 export const Products = observer(() => {
 	const telegramWebApp = useTelegramWebApp();
-	telegramWebApp.MainButton.setText('CHECKOUT');
+	const translations = useTranslations();
+
+	telegramWebApp.MainButton.setText(translations.continue.toUpperCase());
 
 	const { products, productCategories, error, loading } = useProducts();
 	const [filteredProducts, setFilteredProducts] = useState<
@@ -58,7 +61,8 @@ export const Products = observer(() => {
 		return <Error />;
 	}
 
-	const DEFAULT_SELECTOR_VALUE = 'All categories';
+	const DEFAULT_SELECTOR_VALUE = translations.allCategories;
+
 	const selectOnChangeHandler = (event: ChangeEvent<HTMLSelectElement>) => {
 		const selectedOption = event.target.value;
 		if (selectedOption === DEFAULT_SELECTOR_VALUE) {
@@ -77,7 +81,7 @@ export const Products = observer(() => {
 		<>
 			{products.length === 0 && (
 				<StyledMissingProductsMessageWrapper>
-					<span>No available products at this moment</span>
+					<span>{translations.noAvailableProducts}</span>
 				</StyledMissingProductsMessageWrapper>
 			)}
 
