@@ -8,6 +8,7 @@ public class AppSettings
 	public required TelegramBotSettings TelegramBotSettings { get; init; }
 	public required string ProductImagesHostName { get; set; }
 	public required string AdminAppHostName { get; set; }
+	public required string Language { get; set; }
 }
 
 public class AzureSettings

@@ -19,6 +19,8 @@ using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
 using eShopOnTelegram.Shop.Api.Middlewares;
 using eShopOnTelegram.Shop.Worker;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Translations.Interfaces;
+using eShopOnTelegram.Translations.Services;
 using eShopOnTelegram.Utils.Configuration;
 using eShopOnTelegram.Utils.Extensions;
 
@@ -124,6 +126,9 @@ static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azure
 	builder.Services.AddScoped<IProductService, ProductService>();
 	builder.Services.AddScoped<IProductAttributeService, ProductAttributeService>();
 	builder.Services.AddScoped<IProductCategoryService, ProductCategoryService>();
+
+	// Translations
+	builder.Services.AddScoped<ITranslationsService, InMemoryTranslationsService>();
 }
 
 static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder, TelegramBotSettings telegramBotSettings)
