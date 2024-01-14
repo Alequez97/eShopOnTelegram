@@ -1,8 +1,6 @@
 ﻿using System.Text;
 
 using eShopOnTelegram.Domain.Dto.Orders;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Services.Mappers;
 using eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
 using eShopOnTelegram.Translations.Constants;
@@ -16,27 +14,21 @@ namespace eShopOnTelegram.Shop.Worker.Services.Telegram;
 public class PaymentProceedMessageSender
 {
 	private readonly ITelegramBotClient _telegramBot;
-	private readonly IOrderService _orderService;
 	private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
 	private readonly CurrencyCodeToSymbolMapper _currencyCodeToSymbolMapper;
-	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
 	public PaymentProceedMessageSender(
 		ITelegramBotClient telegramBot,
-		IOrderService orderService,
 		IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
 		CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
-		IApplicationContentStore applicationContentStore,
 		ITranslationsService translationsService,
 		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
-		_orderService = orderService;
 		_paymentTelegramButtonGenerators = paymentTelegramButtonGenerators;
 		_currencyCodeToSymbolMapper = currencyCodeToSymbolMapper;
-		_applicationContentStore = applicationContentStore;
 		_translationsService = translationsService;
 		_appSettings = appSettings;
 	}
@@ -45,7 +37,7 @@ public class PaymentProceedMessageSender
 	{
 		if (_appSettings.PaymentSettings.AllPaymentsDisabled)
 		{
-			await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.NoEnabledPaymentMethods, CancellationToken.None));
+			await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.NoEnabledPaymentMethods, CancellationToken.None));
 			return;
 		}
 

@@ -21,7 +21,7 @@ public class PaymentThroughSellerTelegramButtonProvider : IPaymentTelegramButton
 
 	public async Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken)
 	{
-		var buttonText = await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.DiscussPaymentOptionsWithSeller, cancellationToken);
+		var buttonText = await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.PaymentThroughSeller, cancellationToken);
 		var button = InlineKeyboardButton.WithCallbackData(text: buttonText, callbackData: PaymentMethodConstants.PaymentThroughSeller);
 
 		return button;

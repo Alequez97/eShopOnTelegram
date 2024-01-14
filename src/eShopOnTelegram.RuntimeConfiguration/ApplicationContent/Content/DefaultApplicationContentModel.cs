@@ -17,13 +17,6 @@ public class DefaultApplicationContentModel
 	public string TelegramBot_DefaultErrorMessage => "Error. Something went wrong. Please try again later";
 
 	// PAYMENT
-
-	[JsonProperty(ApplicationContentKey.Payment.NoEnabledPaymentMethods)]
-	public string Payment_NoEnabledPayments => "No enabled payment methods";
-
-	[JsonProperty(ApplicationContentKey.Payment.InvoiceReceiveMessage)]
-	public string Payment_InvoiceReceiveMessage => "Please receive your invoice";
-
 	[JsonProperty(ApplicationContentKey.Payment.SuccessfullPayment)]
 	public string Payment_SuccessfullPayment => "Thank you for your purchase";
 

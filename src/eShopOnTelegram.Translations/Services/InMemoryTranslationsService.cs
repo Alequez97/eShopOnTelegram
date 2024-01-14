@@ -29,6 +29,8 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.OpenShop, "🛒 Open shop 🛒" },
 				{ TranslationsKeys.ShowUnpaidOrder, "Show unpaid order" },
 				{ TranslationsKeys.PaymentMethodAlreadySelected, "Payment method already selected. Pay for invoice you received or create new order" },
+				{ TranslationsKeys.NoEnabledPaymentMethods, "No enabled payment methods" },
+				{ TranslationsKeys.InvoiceReceived, "Please receive your invoice" },
 			}
 		},
 		{
@@ -54,6 +56,8 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.OpenShop, "🛒 Открыть магазин 🛒" },
 				{ TranslationsKeys.ShowUnpaidOrder, "Посмотреть неоплаченный заказ" },
 				{ TranslationsKeys.PaymentMethodAlreadySelected, "Способ оплаты уже выбран. Оплатите полученную квитанцию или создайте новый заказ" },
+				{ TranslationsKeys.NoEnabledPaymentMethods, "Нет доступных способов оплаты" },
+				{ TranslationsKeys.InvoiceReceived, "Ваша квитанция для оплаты" },
 			}
 		}
 	};

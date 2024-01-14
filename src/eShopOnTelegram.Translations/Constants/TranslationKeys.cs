@@ -21,4 +21,6 @@ public static class TranslationsKeys
 	public const string OpenShop = nameof(OpenShop);
 	public const string ShowUnpaidOrder = nameof(ShowUnpaidOrder);
 	public const string PaymentMethodAlreadySelected = nameof(PaymentMethodAlreadySelected);
+	public const string NoEnabledPaymentMethods = nameof(NoEnabledPaymentMethods);
+	public const string InvoiceReceived = nameof(InvoiceReceived);
 }

@@ -2,7 +2,6 @@
 using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Entities.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
@@ -93,7 +92,7 @@ public class PlisioInvoiceSender : ITelegramCommand
 
 			await _telegramBot.SendTextMessageAsync(
 				chatId: chatId,
-				text: await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.InvoiceReceiveMessage, CancellationToken.None),
+				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
 				replyMarkup: inlineKeyboard,
 				cancellationToken: CancellationToken.None);
 		}

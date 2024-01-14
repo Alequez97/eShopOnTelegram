@@ -3,6 +3,8 @@ using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Context;
 using eShopOnTelegram.Persistence.Files.Interfaces;
 using eShopOnTelegram.Persistence.Files.Stores;
+using eShopOnTelegram.Utils.Configuration;
+using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,8 +23,10 @@ public class Startup
 			.AddEnvironmentVariables()
 			.Build();
 
+		var appSettings = config.GetSection<AppSettings>("AppSettings");
+
 		services
-			.AddSingleton<IConfiguration>(config)
+			.AddSingleton(appSettings)
 			.AddDbContextFactory<EShopOnTelegramDbContext>(options => options.UseSqlServer(config.GetConnectionString("Sql")))
 			.AddSingleton<ILoggerFactory, LoggerFactory>()
 			.AddTransient(typeof(ILogger<>), typeof(Logger<>))
