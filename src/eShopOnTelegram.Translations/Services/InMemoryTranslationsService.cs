@@ -10,6 +10,14 @@ public class InMemoryTranslationsService : ITranslationsService
 			Language.EN,
 			new()
 			{
+				// Values, that can be overriden later by shop administrator
+				{ TranslationsKeys.WelcomeToOurShop, "Welcome to our shop👋 <tg-spoiler>Use this as welcome message of your shop and give customer more information what you offer, in which regions you work, etc.</tg-spoiler>"},
+				{ TranslationsKeys.UnknownCommand, "We glad to help you with good products and fast delivery. Open button on keyboard to open shop and look for our products"},
+				{ TranslationsKeys.DefaultErrorMessage, "Something went wrong. Please try again later or contact our support"},
+				{ TranslationsKeys.ThankYouForPurchase, "Thank you for your purchase"},
+				{ TranslationsKeys.PaymentThroughSeller, "Please contact support team to discuss further payment details"},
+
+				// Constants, that can't be changed by shop administrator
 				{ TranslationsKeys.Error_TryAgainLater, "Error. Try again later"},
 				{ TranslationsKeys.NoAvailableProducts, "No available products at this moment" },
 				{ TranslationsKeys.AllCategories, "All categories" },
@@ -37,6 +45,14 @@ public class InMemoryTranslationsService : ITranslationsService
 			Language.RU,
 			new ()
 			{
+				// Values, that can be overriden later by shop administrator
+				{ TranslationsKeys.WelcomeToOurShop, "Добро пожаловать в наш магазин👋 <tg-spoiler>Используйте это сообщение для того, чтобы сообщить пользователям о том, в каком регионе вы работаете, какой товар предлагаете и т.д.</tg-spoiler>"},
+				{ TranslationsKeys.UnknownCommand, "Мы всегда рады помочь нашим клиентам быстрой доставкой и качественными продуктами. Нажмите кнопку внизу и перейдите в каталог товаров"},
+				{ TranslationsKeys.DefaultErrorMessage, "Произошла ошибка. Повторите попытку позже или свяжитесь с нашей командой поддержки"},
+				{ TranslationsKeys.ThankYouForPurchase, "Благодарим, ваш заказ получен!"},
+				{ TranslationsKeys.PaymentThroughSeller, "Пожалуйста, свяжитесь с командой поддержки, чтобы обсудить дальнейшие детали оплаты"},
+
+				// Constants, that can't be changed by shop administrator
 				{ TranslationsKeys.Error_TryAgainLater, "Ошибка. Повторите попытку позже"},
 				{ TranslationsKeys.NoAvailableProducts, "На данный момент нет доступных товаров" },
 				{ TranslationsKeys.AllCategories, "Все категории" },

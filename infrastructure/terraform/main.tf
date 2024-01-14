@@ -124,7 +124,8 @@ resource "azurerm_linux_web_app" "admin" {
     "AppSettings__JWTAuthSettings__Audience"                            = var.admin_app_name
     "AppSettings__JWTAuthSettings__RefreshTokenLifetimeMinutes"         = 10080 // 1 week
     "AppSettings__JWTAuthSettings__JTokenLifetimeMinutes"               = 5
-		"AppSettings__ProductImagesHostName"                                = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
+    "AppSettings__Language"                                             = var.language
+    "AppSettings__ProductImagesHostName"                                = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
   }
 
   tags = local.az_common_tags

@@ -2,6 +2,14 @@
 
 public static class TranslationsKeys
 {
+	// Values, that can be overriden later by shop administrator
+	public const string WelcomeToOurShop = nameof(WelcomeToOurShop);
+	public const string UnknownCommand = nameof(UnknownCommand);
+	public const string DefaultErrorMessage = nameof(DefaultErrorMessage);
+	public const string ThankYouForPurchase = nameof(ThankYouForPurchase);
+	public const string PaymentThroughSeller = nameof(PaymentThroughSeller);
+
+	// Constants, that can't be changed by shop administrator
 	public const string Error_TryAgainLater = nameof(Error_TryAgainLater);
 	public const string NoAvailableProducts = nameof(NoAvailableProducts);
 	public const string AllCategories = nameof(AllCategories);

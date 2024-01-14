@@ -41,6 +41,7 @@
   <ItemGroup>
     <ProjectReference Include="..\eShopOnTelegram.Domain\eShopOnTelegram.Domain.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.RuntimeConfiguration\eShopOnTelegram.RuntimeConfiguration.csproj" />
+    <ProjectReference Include="..\eShopOnTelegram.Translations\eShopOnTelegram.Translations.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj" />
   </ItemGroup>
 

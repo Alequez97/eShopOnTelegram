@@ -2,14 +2,14 @@
 
 using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Shop.Worker.Services.Mappers;
-using eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.Shop.Worker.Services.Telegram;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
 
 public class PaymentProceedMessageSender
 {

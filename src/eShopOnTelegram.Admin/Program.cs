@@ -15,6 +15,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.Secrets;
 using eShopOnTelegram.RuntimeConfiguration.Secrets.Constants;
 using eShopOnTelegram.RuntimeConfiguration.Secrets.Interfaces;
+using eShopOnTelegram.Translations.Interfaces;
+using eShopOnTelegram.Translations.Services;
 using eShopOnTelegram.Utils.AzureServiceManager;
 using eShopOnTelegram.Utils.AzureServiceManager.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -105,6 +107,7 @@ static void ConfigureServices(WebApplicationBuilder builder)
 	builder.Services.AddScoped<ICustomerService, CustomerService>();
 	builder.Services.AddScoped<IOrderService, OrderService>();
 	builder.Services.AddScoped<IPaymentService, PaymentService>();
+	builder.Services.AddScoped<ITranslationsService, InMemoryTranslationsService>();
 
 	builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
 

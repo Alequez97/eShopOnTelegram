@@ -1,6 +1,6 @@
 ﻿using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.Shop.Worker.Services.Telegram;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Keyboard;
 
 public class KeyboardButtonsMarkupBuilder
 {

@@ -1,10 +1,10 @@
 ﻿using eShopOnTelegram.Shop.Worker.Constants;
-using eShopOnTelegram.Shop.Worker.Services.Payment.Interfaces;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.Shop.Worker.Services.Payment.TelegramButtonProviders;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment;
 
 public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvider
 {

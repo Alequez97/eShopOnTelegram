@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\eShopOnTelegram.Translations\eShopOnTelegram.Translations.csproj" />
     <ProjectReference Include="..\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj" />
   </ItemGroup>
 

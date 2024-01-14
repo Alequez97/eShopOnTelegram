@@ -1,5 +1,5 @@
 ﻿using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
-using eShopOnTelegram.Shop.Worker.Services.Telegram;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
