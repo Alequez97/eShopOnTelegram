@@ -45,7 +45,7 @@ public class PaymentProceedMessageSender
 	{
 		if (_appSettings.PaymentSettings.AllPaymentsDisabled)
 		{
-			await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.NoEnabledPayments, CancellationToken.None));
+			await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.NoEnabledPaymentMethods, CancellationToken.None));
 			return;
 		}
 
@@ -71,7 +71,7 @@ public class PaymentProceedMessageSender
 
 		message
 			.AppendLine()
-			.AppendLine($"{await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.TotalPriceTitle, CancellationToken.None)}: {order.TotalPrice}{currencySymbol}")
+			.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.TotalPrice, CancellationToken.None)}: {order.TotalPrice}{currencySymbol}")
 			.AppendLine(new string('~', 20));
 
 		message

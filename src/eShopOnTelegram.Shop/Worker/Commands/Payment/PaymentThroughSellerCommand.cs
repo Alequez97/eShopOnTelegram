@@ -53,7 +53,7 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 			}
 			if (getOrdersResponse.Data.PaymentMethodSelected)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.PaymentMethodAlreadySelected, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
 				return;
 			}
 

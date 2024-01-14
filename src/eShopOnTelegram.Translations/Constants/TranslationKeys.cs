@@ -17,4 +17,8 @@ public static class TranslationsKeys
 	public const string PayWithBankCard = nameof(PayWithBankCard);
 	public const string OrderAlreadyPaidOrExpired = nameof(OrderAlreadyPaidOrExpired);
 	public const string InvoiceGenerationFailedErrorMessage = nameof(InvoiceGenerationFailedErrorMessage);
+	public const string TotalPrice = nameof(TotalPrice);
+	public const string OpenShop = nameof(OpenShop);
+	public const string ShowUnpaidOrder = nameof(ShowUnpaidOrder);
+	public const string PaymentMethodAlreadySelected = nameof(PaymentMethodAlreadySelected);
 }

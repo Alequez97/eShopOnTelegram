@@ -25,6 +25,10 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.PayWithBankCard, "Pay with bank card" },
 				{ TranslationsKeys.OrderAlreadyPaidOrExpired, "You already paid for this order, or time to accomplish expired. Try again to create a new order" },
 				{ TranslationsKeys.InvoiceGenerationFailedErrorMessage, "Error during invoice generation. Try again later" },
+				{ TranslationsKeys.TotalPrice, "Total price" },
+				{ TranslationsKeys.OpenShop, "🛒 Open shop 🛒" },
+				{ TranslationsKeys.ShowUnpaidOrder, "Show unpaid order" },
+				{ TranslationsKeys.PaymentMethodAlreadySelected, "Payment method already selected. Pay for invoice you received or create new order" },
 			}
 		},
 		{
@@ -46,6 +50,10 @@ public class InMemoryTranslationsService : ITranslationsService
 				{ TranslationsKeys.PayWithBankCard, "Оплата банковской картой" },
 				{ TranslationsKeys.OrderAlreadyPaidOrExpired, "Заказ уже был оплачен или время для подтверждения закончилось. Перейдите в магазин и создайте новый заказ" },
 				{ TranslationsKeys.InvoiceGenerationFailedErrorMessage, "Возникла ошибка при отправке квитанции об оплате. Попробуйте повторить попытку позже" },
+				{ TranslationsKeys.TotalPrice, "Общая сумма" },
+				{ TranslationsKeys.OpenShop, "🛒 Открыть магазин 🛒" },
+				{ TranslationsKeys.ShowUnpaidOrder, "Посмотреть неоплаченный заказ" },
+				{ TranslationsKeys.PaymentMethodAlreadySelected, "Способ оплаты уже выбран. Оплатите полученную квитанцию или создайте новый заказ" },
 			}
 		}
 	};

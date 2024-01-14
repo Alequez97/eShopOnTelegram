@@ -77,7 +77,7 @@ public class StartCommand : ITelegramCommand
 			}
 
 			var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
-				.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.TelegramBot.OpenShopButtonText, CancellationToken.None), new WebAppInfo() { Url = _appSettings.TelegramBotSettings.WebAppUrl });
+				.AddButtonToCurrentRow(await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OpenShop, CancellationToken.None), new WebAppInfo() { Url = _appSettings.TelegramBotSettings.WebAppUrl });
 
 			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 			if (getOrdersResponse.Status == ResponseStatus.Success)
@@ -88,7 +88,7 @@ public class StartCommand : ITelegramCommand
 				{
 					keyboardMarkupBuilder
 						.StartNewRow()
-						.AddButtonToCurrentRow(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None));
+						.AddButtonToCurrentRow(await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ShowUnpaidOrder, CancellationToken.None));
 				}
 			}
 

@@ -1,6 +1,4 @@
-﻿using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
-using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
-using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+﻿using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Services.Telegram;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
@@ -13,7 +11,6 @@ public class ShowActiveOrderCommand : ITelegramCommand
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
 	private readonly ITranslationsService _translationsService;
-	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly PaymentProceedMessageSender _paymentProceedMessage;
 	private readonly AppSettings _appSettings;
 
@@ -21,14 +18,12 @@ public class ShowActiveOrderCommand : ITelegramCommand
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		ITranslationsService translationsService,
-		IApplicationContentStore applicationContentStore,
 		PaymentProceedMessageSender paymentProceedMessageSender,
 		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
 		_orderService = orderService;
 		_translationsService = translationsService;
-		_applicationContentStore = applicationContentStore;
 		_paymentProceedMessage = paymentProceedMessageSender;
 		_appSettings = appSettings;
 	}
@@ -51,6 +46,6 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 	public async Task<bool> IsResponsibleForUpdateAsync(Update update)
 	{
-		return update.Message?.Text?.Contains(await _applicationContentStore.GetValueAsync(ApplicationContentKey.Order.ShowUnpaidOrder, CancellationToken.None)) ?? false;
+		return update.Message?.Text?.Contains(await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ShowUnpaidOrder, CancellationToken.None)) ?? false;
 	}
 }
