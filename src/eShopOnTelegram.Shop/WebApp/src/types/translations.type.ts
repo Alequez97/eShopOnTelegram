@@ -3,4 +3,6 @@ export interface Translations {
 	allCategories: string;
 	continue: string;
 	proceedToPayment: string;
+	totalPrice: string;
+	currencySymbol: string;
 }

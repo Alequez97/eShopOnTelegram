@@ -9,13 +9,13 @@ public class CurrencyCodeToSymbolMapper
 		{ "RUB", '₽' },
 	};
 
-	public char GetCurrencySymbol(string key)
+	public char GetCurrencySymbol(string currencyCode)
 	{
-		if (_currencyCodesMap.TryGetValue(key, out var currencySymbol))
+		if (_currencyCodesMap.TryGetValue(currencyCode, out var currencySymbol))
 		{
 			return currencySymbol;
 		}
 
-		return ' ';
+		throw new NotSupportedException($"Mapping from {currencyCode} currency code to currency symbol is not supported");
 	}
 }

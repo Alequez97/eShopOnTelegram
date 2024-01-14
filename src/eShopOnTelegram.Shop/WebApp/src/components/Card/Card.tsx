@@ -13,6 +13,7 @@ import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { useEffect, useState } from 'react';
 import { Counter } from '../counter/Counter';
 import { CartItem } from '../../types/cart-item.type';
+import { useTranslations } from '../../contexts/translations.context';
 
 interface CardProps {
 	product: Product;
@@ -26,6 +27,8 @@ export const Card = observer(({ product }: CardProps) => {
 		selectedProductAttributeCartItem,
 		setSelectedProductAttributeCartItem,
 	] = useState<CartItem | undefined>(undefined);
+
+	const translations = useTranslations();
 
 	useEffect(() => {
 		setSelectedProductAttributeCartItem(
@@ -63,7 +66,7 @@ export const Card = observer(({ product }: CardProps) => {
 									cardStore.selectedProductAttributeState
 										.originalPrice
 								}{' '}
-								€
+								{translations.currencySymbol}
 							</>
 						)}
 					</StyledCardPrice>

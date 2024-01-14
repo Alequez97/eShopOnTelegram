@@ -22,6 +22,8 @@ export const TranslationsProvider = ({
 		continue: 'Continue',
 		noAvailableProducts: 'No available products at this moment',
 		proceedToPayment: 'Proceed to payment',
+		totalPrice: 'Total price',
+		currencySymbol: '€'
 	});
 
 	useEffect(() => {

@@ -90,7 +90,7 @@ export const Checkout = observer(() => {
 									{productAttribute.priceWithDiscount
 										? productAttribute.priceWithDiscount
 										: productAttribute.originalPrice}{' '}
-									€
+									{translations.currencySymbol}
 								</span>
 							</StyledCheckoutPagePriceInformation>
 						</StyledCheckoutPageCartItemInformation>
@@ -116,7 +116,7 @@ export const Checkout = observer(() => {
 				);
 			})}
 			<StyledCheckoutPageCartItemContainer $justifyContent={'right'}>
-				Total: {cartItemsStore.cartItemsTotalPrice.toFixed(2)}
+				{translations.totalPrice}: {cartItemsStore.cartItemsTotalPrice.toFixed(2)}{' '}{translations.currencySymbol}
 			</StyledCheckoutPageCartItemContainer>
 		</StyledCheckoutPageContainer>
 	);
