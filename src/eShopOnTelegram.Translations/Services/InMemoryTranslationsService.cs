@@ -12,7 +12,7 @@ public class InMemoryTranslationsService : ITranslationsService
 			{
 				// Values, that can be overriden later by shop administrator
 				{ TranslationsKeys.WelcomeToOurShop, "Welcome to our shop👋 <tg-spoiler>Use this as welcome message of your shop and give customer more information what you offer, in which regions you work, etc.</tg-spoiler>"},
-				{ TranslationsKeys.UnknownCommand, "We glad to help you with good products and fast delivery. Open button on keyboard to open shop and look for our products"},
+				{ TranslationsKeys.UnknownCommand, "We glad to help you with good products and fast delivery. Click button on keyboard to open shop and look for our products"},
 				{ TranslationsKeys.DefaultErrorMessage, "Something went wrong. Please try again later or contact our support"},
 				{ TranslationsKeys.ThankYouForPurchase, "Thank you for your purchase"},
 				{ TranslationsKeys.PaymentThroughSeller, "Please contact support team to discuss further payment details"},
