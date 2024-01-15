@@ -97,6 +97,10 @@ variable "keyvault_name" {
 }
 
 # APP CONFIGURATION VARIABLES #
+variable "telegram_shop_layout" {
+	type = string
+}
+
 variable "language" {
   type = string
 }
