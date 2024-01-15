@@ -94,6 +94,38 @@ public class ProductCategoryService : IProductCategoryService
 		}
 	}
 
+	public async Task<Response<IEnumerable<ProductCategoryDto>>> GetAllAsync(CancellationToken cancellationToken)
+	{
+		try
+		{
+			var productCategory = await _dbContext.ProductCategories
+				.Where(productCategory => productCategory.IsDeleted == false)
+				.ToListAsync(cancellationToken);
+
+			var getProductCategoriesDtoList = productCategory.Select(productCategory => new ProductCategoryDto
+			{
+				Id = productCategory.Id,
+				Name = productCategory.Name,
+			});
+
+			return new Response<IEnumerable<ProductCategoryDto>>()
+			{
+				Status = ResponseStatus.Success,
+				Data = getProductCategoriesDtoList,
+				TotalItemsInDatabase = await _dbContext.ProductCategories.CountAsync(cancellationToken)
+			};
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, "Exception: Unable to get all products");
+
+			return new Response<IEnumerable<ProductCategoryDto>>()
+			{
+				Status = ResponseStatus.Exception
+			};
+		}
+	}
+
 	public async Task<ActionResponse> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken)
 	{
 		try

@@ -2,25 +2,25 @@
 
 namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Keyboard;
 
-public class KeyboardButtonsMarkupBuilder
+public class KeyboardButtonsLayoutBuilder
 {
 	private List<KeyboardButton> _currentKeyboardMarkupRow;
 	private readonly List<List<KeyboardButton>> _replyKeyboardMarkup;
 
 
-	public KeyboardButtonsMarkupBuilder()
+	public KeyboardButtonsLayoutBuilder()
 	{
 		_currentKeyboardMarkupRow = new List<KeyboardButton>();
 		_replyKeyboardMarkup = new List<List<KeyboardButton>>();
 	}
 
-	public KeyboardButtonsMarkupBuilder AddButtonToCurrentRow(string text, WebAppInfo webAppInfo = null)
+	public KeyboardButtonsLayoutBuilder AddButtonToCurrentRow(string text, WebAppInfo webAppInfo = null)
 	{
 		_currentKeyboardMarkupRow.Add(new KeyboardButton(text) { WebApp = webAppInfo });
 		return this;
 	}
 
-	public KeyboardButtonsMarkupBuilder StartNewRow()
+	public KeyboardButtonsLayoutBuilder StartNewRow()
 	{
 		_replyKeyboardMarkup.Add(_currentKeyboardMarkupRow);
 		_currentKeyboardMarkupRow = new List<KeyboardButton>();

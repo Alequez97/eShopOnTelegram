@@ -35,7 +35,7 @@ public static class TelegramBotClientExtensions
 			}
 			catch (Exception exception2)
 			{
-				logger.LogError(exception2, "Failed to send fallback TG error message.");
+				logger.LogError(exception2, "Failed to send fallback telegram error message.");
 			}
 		}
 

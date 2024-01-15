@@ -83,4 +83,8 @@ public class TelegramBotSettings
 	public required string Token { get; init; }
 
 	public required string WebAppUrl { get; init; }
+
+	public required string ShopLayout { get; init; }
+
+	public bool HasWebAppLayout => string.Equals(ShopLayout, "WebApp", StringComparison.CurrentCultureIgnoreCase);
 }

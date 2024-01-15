@@ -27,6 +27,11 @@ public static class TranslationsKeys
 	public const string InvoiceGenerationFailedErrorMessage = nameof(InvoiceGenerationFailedErrorMessage);
 	public const string TotalPrice = nameof(TotalPrice);
 	public const string OpenShop = nameof(OpenShop);
+	public const string Category = nameof(Category);
+	public const string SelectCategory = nameof(SelectCategory);
+	public const string BackToCategories = nameof(BackToCategories);
+	public const string BackToProducts = nameof(BackToProducts);
+	public const string Product = nameof(Product);
 	public const string ShowUnpaidOrder = nameof(ShowUnpaidOrder);
 	public const string PaymentMethodAlreadySelected = nameof(PaymentMethodAlreadySelected);
 	public const string NoEnabledPaymentMethods = nameof(NoEnabledPaymentMethods);

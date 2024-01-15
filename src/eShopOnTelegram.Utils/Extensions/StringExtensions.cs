@@ -20,4 +20,9 @@ public static class StringExtensions
 
 		return str;
 	}
+
+	public static string ReplaceIfNullOrEmpty(this string value, string alternative)
+	{
+		return string.IsNullOrWhiteSpace(value) ? alternative : value;
+	}
 }

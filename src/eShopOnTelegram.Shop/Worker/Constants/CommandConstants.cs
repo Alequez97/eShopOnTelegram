@@ -1,7 +1,6 @@
-﻿namespace eShopOnTelegram.Shop.Worker.Constants
+﻿namespace eShopOnTelegram.Shop.Worker.Constants;
+
+public static class CommandConstants
 {
-	public static class CommandConstants
-	{
-		public const string Start = "/start";
-	}
+	public const string Start = "/start";
 }

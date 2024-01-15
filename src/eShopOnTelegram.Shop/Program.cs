@@ -48,6 +48,8 @@ ConfigureNotificationSenders(builder);
 // Controllers and views
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddMemoryCache();
+
 ConfigureApplicationInsights(builder, appSettings.AzureSettings);
 
 // App building

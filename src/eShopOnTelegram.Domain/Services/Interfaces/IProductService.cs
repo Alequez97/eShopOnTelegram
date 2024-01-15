@@ -12,6 +12,8 @@ public interface IProductService
 
 	Task<Response<IEnumerable<ProductDto>>> GetAllAsync(CancellationToken cancellationToken);
 
+	Task<Response<IEnumerable<ProductDto>>> GetAllByCategoryAsync(string categoryName, CancellationToken cancellationToken);
+
 	Task<ActionResponse> CreateAsync(CreateProductRequest request, CancellationToken cancellationToken);
 
 	Task<ActionResponse> UpdateAsync(UpdateProductRequest request, CancellationToken cancellationToken);

@@ -15,18 +15,21 @@ public class ProductService : IProductService
 {
     private readonly EShopOnTelegramDbContext _dbContext;
     private readonly IProductImagesStore _productImagesStore;
-    private readonly string _productImagesHostname;
+	private readonly IProductCategoryService _productCategoryService;
+	private readonly string _productImagesHostname;
     private readonly ILogger<ProductService> _logger;
 
     public ProductService(
         IDbContextFactory<EShopOnTelegramDbContext> dbContextFactory,
         IProductImagesStore productImagesStore,
+		IProductCategoryService productCategoryService,
         AppSettings appSettings,
         ILogger<ProductService> logger)
     {
         _dbContext = dbContextFactory.CreateDbContext();
         _productImagesStore = productImagesStore;
-        _productImagesHostname = appSettings.ProductImagesHostName;
+		_productCategoryService = productCategoryService;
+		_productImagesHostname = appSettings.ProductImagesHostName;
         _logger = logger;
     }
 
@@ -105,7 +108,38 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<Response<ProductDto>> GetAsync(long id, CancellationToken cancellationToken)
+	public async Task<Response<IEnumerable<ProductDto>>> GetAllByCategoryAsync(string categoryName, CancellationToken cancellationToken)
+	{
+		try
+		{
+			var products = await _dbContext.Products
+				.Where(product => product.IsDeleted == false)
+				.Include(product => product.ProductAttributes)
+				.Include(product => product.Category)
+				.Where(product => product.Category.Name == categoryName)
+				.ToListAsync(cancellationToken);
+
+			var getProductsResponse = products.Select(product => product.ToProductDto(_productImagesHostname));
+
+			return new Response<IEnumerable<ProductDto>>()
+			{
+				Status = ResponseStatus.Success,
+				Data = getProductsResponse,
+				TotalItemsInDatabase = await _dbContext.Products.CountAsync(cancellationToken)
+			};
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, "Exception: Unable to get all products");
+			return new Response<IEnumerable<ProductDto>>()
+			{
+				Status = ResponseStatus.Exception
+			};
+		}
+	}
+
+
+	public async Task<Response<ProductDto>> GetAsync(long id, CancellationToken cancellationToken)
     {
         try
         {

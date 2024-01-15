@@ -4,6 +4,8 @@ using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Orders;
 using eShopOnTelegram.Shop.Worker.Commands.Payment;
 using eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
+using eShopOnTelegram.Shop.Worker.Commands.Products;
+using eShopOnTelegram.Shop.Worker.Commands.Shop;
 using eShopOnTelegram.Shop.Worker.Services.Mappers;
 using eShopOnTelegram.Shop.Worker.Services.Telegram;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment;
@@ -28,12 +30,19 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<ITelegramCommand, ChatMemberLeftCommand>();
 
 		// Order commands
-		services.AddScoped<ITelegramCommand, CreateOrderCommand>();
+		services.AddScoped<ITelegramCommand, CreateOrderWebAppCommand>();
 		services.AddScoped<ITelegramCommand, ShowActiveOrderCommand>();
 
 		// Payment commands
 		services.AddScoped<ITelegramCommand, PreCheckoutQueryCommand>();
 		services.AddScoped<ITelegramCommand, SuccessfulPaymentCommand>();
+
+		// Inline buttons shop layout commands
+		services.AddScoped<ITelegramCommand, OpenShopCommand>();
+		services.AddScoped<ITelegramCommand, ShowProductsCommand>();
+		services.AddScoped<ITelegramCommand, ShowProductCategoriesCommand>();
+		services.AddScoped<ITelegramCommand, ShowQuantitySelectorCommand>();
+		services.AddScoped<ITelegramCommand, ShowPaymentMethodSelectorCommand>();
 
 		// Invoice generation commands
 		services.AddScoped<ITelegramCommand, BankCardInvoiceSender>();
@@ -58,5 +67,23 @@ public static class ServiceCollectionExtensions
 		services.AddSingleton<CurrencyCodeToSymbolMapper>();
 
 		return services;
+	}
+
+	public static void ValidateAllTelegramCommandsAreRegistered(this IServiceProvider serviceProvider)
+	{
+		var commandTypes = typeof(ITelegramCommand).Assembly.GetTypes()
+			.Where(type => type.IsClass && !type.IsAbstract && typeof(ITelegramCommand).IsAssignableFrom(type));
+
+		var registeredCommands = serviceProvider.GetServices<ITelegramCommand>().Select(c => c.GetType());
+
+		foreach (var commandType in commandTypes)
+		{
+			var service = serviceProvider.GetService(commandType);
+
+			if (service == null)
+			{
+				throw new InvalidOperationException($"Implementation for {commandType.Name} is not registered.");
+			}
+		}
 	}
 }

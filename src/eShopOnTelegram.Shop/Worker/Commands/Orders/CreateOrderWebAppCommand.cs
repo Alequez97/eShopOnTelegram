@@ -19,9 +19,9 @@ namespace eShopOnTelegram.Shop.Worker.Commands.Orders;
 /// This command is executed when sendData(data: string) function is executed in web app</para>
 /// <i>Note: sendData() function is available only when web app is opened with telegram keyboard button</i>
 /// </summary>
-public class CreateOrderCommand : ITelegramCommand
+public class CreateOrderWebAppCommand : ITelegramCommand
 {
-	private readonly ILogger<CreateOrderCommand> _logger;
+	private readonly ILogger<CreateOrderWebAppCommand> _logger;
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
 	private readonly PaymentProceedMessageSender _paymentMethodsSender;
@@ -29,8 +29,8 @@ public class CreateOrderCommand : ITelegramCommand
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
-	public CreateOrderCommand(
-		ILogger<CreateOrderCommand> logger,
+	public CreateOrderWebAppCommand(
+		ILogger<CreateOrderWebAppCommand> logger,
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		PaymentProceedMessageSender paymentMethodsSender,

@@ -10,6 +10,8 @@ public interface IProductCategoryService
 
 	Task<Response<IEnumerable<ProductCategoryDto>>> GetMultipleAsync(GetRequest request, CancellationToken cancellationToken);
 
+	Task<Response<IEnumerable<ProductCategoryDto>>> GetAllAsync(CancellationToken cancellationToken);
+
 	Task<ActionResponse> CreateAsync(CreateProductCategoryRequest request, CancellationToken cancellationToken);
 
 	Task<ActionResponse> UpdateAsync(UpdateProductCategoryRequest request, CancellationToken cancellationToken);

@@ -8,7 +8,6 @@ using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Keyboard;
-using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -23,8 +22,6 @@ public class StartCommand : ITelegramCommand
 	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ICustomerService _customerService;
-	private readonly IOrderService _orderService;
-	private readonly PaymentProceedMessageSender _paymentMethodsSender;
 	private readonly OpenShopKeyboardButtonsLayoutProvider _openShopKeyboardButtonsLayoutProvider;
 
 	public StartCommand(
@@ -34,8 +31,6 @@ public class StartCommand : ITelegramCommand
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		ICustomerService customerService,
-		IOrderService orderService,
-		PaymentProceedMessageSender paymentMethodsSender,
 		OpenShopKeyboardButtonsLayoutProvider openShopKeyboardButtonsLayoutProvider)
 	{
 		_telegramBot = telegramBot;
@@ -44,8 +39,6 @@ public class StartCommand : ITelegramCommand
 		_appSettings = appSettings;
 		_applicationContentStore = applicationContentStore;
 		_customerService = customerService;
-		_orderService = orderService;
-		_paymentMethodsSender = paymentMethodsSender;
 		_openShopKeyboardButtonsLayoutProvider = openShopKeyboardButtonsLayoutProvider;
 	}
 

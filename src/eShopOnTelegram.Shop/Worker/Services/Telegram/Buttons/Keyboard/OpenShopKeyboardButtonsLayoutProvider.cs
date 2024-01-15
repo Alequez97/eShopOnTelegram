@@ -25,15 +25,23 @@ public class OpenShopKeyboardButtonsLayoutProvider
 
 	public async Task<ReplyKeyboardMarkup> GetOpenShopKeyboardLayoutAsync(long telegramId, CancellationToken cancellationToken)
 	{
-		var webAppInfo = new WebAppInfo()
-		{
-			Url = _appSettings.TelegramBotSettings.WebAppUrl
-		};
-
 		var openShopButtonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OpenShop, cancellationToken);
 
-		var keyboardMarkupBuilder = new KeyboardButtonsMarkupBuilder()
-			.AddButtonToCurrentRow(openShopButtonText, webAppInfo);
+		var keyboardMarkupBuilder = new KeyboardButtonsLayoutBuilder();
+
+		if (_appSettings.TelegramBotSettings.HasWebAppLayout)
+		{
+			var webAppInfo = new WebAppInfo()
+			{
+				Url = _appSettings.TelegramBotSettings.WebAppUrl
+			};
+
+			keyboardMarkupBuilder.AddButtonToCurrentRow(openShopButtonText, webAppInfo);
+		}
+		else
+		{
+			keyboardMarkupBuilder.AddButtonToCurrentRow(openShopButtonText);
+		}
 
 		var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(telegramId, cancellationToken);
 		if (getOrdersResponse.Status == ResponseStatus.Success)
