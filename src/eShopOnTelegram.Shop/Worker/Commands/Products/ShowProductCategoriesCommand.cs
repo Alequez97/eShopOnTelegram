@@ -62,7 +62,7 @@ public class ShowProductCategoriesCommand : ITelegramCommand
 			chatId,
 			update.CallbackQuery.Message.MessageId,
 			await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.SelectCategory, CancellationToken.None),
-			parseMode: ParseMode.MarkdownV2,
+			parseMode: ParseMode.Html,
 				replyMarkup: inlineKeyboard);
 		}
 		catch (Exception exception)

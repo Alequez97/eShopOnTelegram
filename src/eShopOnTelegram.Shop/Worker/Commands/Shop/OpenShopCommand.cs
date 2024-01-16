@@ -65,7 +65,7 @@ public class OpenShopCommand : ITelegramCommand
 			await _telegramBot.SendTextMessageAsync(
 				chatId,
 				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.SelectCategory, CancellationToken.None)	,
-				parseMode: ParseMode.MarkdownV2,
+				parseMode: ParseMode.Html,
 				replyMarkup: inlineKeyboard);
 		}
 		catch (Exception exception)
