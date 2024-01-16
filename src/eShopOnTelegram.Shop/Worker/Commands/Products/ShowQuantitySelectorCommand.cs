@@ -1,5 +1,6 @@
 ﻿using System.Text;
 
+using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
@@ -16,6 +17,7 @@ namespace eShopOnTelegram.Shop.Worker.Commands.Products;
 public class ShowQuantitySelectorCommand : ITelegramCommand
 {
 	private readonly ITelegramBotClient _telegramBot;
+	private readonly IProductAttributeService _productAttributeService;
 	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly AppSettings _appSettings;
@@ -23,12 +25,14 @@ public class ShowQuantitySelectorCommand : ITelegramCommand
 
 	public ShowQuantitySelectorCommand(
 		ITelegramBotClient telegramBot,
+		IProductAttributeService productAttributeService,
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		AppSettings appSettings,
 		ILogger<ShowQuantitySelectorCommand> logger)
 	{
 		_telegramBot = telegramBot;
+		_productAttributeService = productAttributeService;
 		_translationsService = translationsService;
 		_applicationContentStore = applicationContentStore;
 		_appSettings = appSettings;
@@ -42,8 +46,15 @@ public class ShowQuantitySelectorCommand : ITelegramCommand
 		try
 		{
 			var selectedProductCategoryName = update.CallbackQuery.Data.Split(InlineButtonCallbackQueryData.DataSeparator)[1];
-			var selectedProductName = update.CallbackQuery.Data.Split(InlineButtonCallbackQueryData.DataSeparator)[2];
-			var selectedProductAttributeId = update.CallbackQuery.Data.Split(InlineButtonCallbackQueryData.DataSeparator)[3];
+			var selectedProductAttributeId = update.CallbackQuery.Data.Split(InlineButtonCallbackQueryData.DataSeparator)[2];
+
+			var getSelectedProductResponse = await _productAttributeService.GetAsync(Convert.ToInt64(selectedProductAttributeId), CancellationToken.None);
+
+			if (getSelectedProductResponse.Status != ResponseStatus.Success)
+			{
+				_logger.LogError("[ShowQuantitySelectorCommand] Failed to get product attribute by id");
+				await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+			}
 
 			InlineKeyboardMarkup inlineKeyboard = new(new[]
 			{
@@ -77,7 +88,7 @@ public class ShowQuantitySelectorCommand : ITelegramCommand
 
 			var message = new StringBuilder()
 				.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.Category, CancellationToken.None)}: {selectedProductCategoryName}")
-				.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.Product, CancellationToken.None)}: {selectedProductName}");
+				.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.Product, CancellationToken.None)}: {getSelectedProductResponse.Data.ProductName}");
 				
 			await _telegramBot.EditMessageTextAsync(chatId, update.CallbackQuery.Message.MessageId, message.ToString());
 

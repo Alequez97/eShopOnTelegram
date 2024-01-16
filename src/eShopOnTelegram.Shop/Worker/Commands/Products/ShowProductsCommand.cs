@@ -64,7 +64,7 @@ public class ShowProductsCommand : ITelegramCommand
 					.Select(product => new[] {
 						// As callback data product attribute id is used assuming, that for customers with inline buttons layout there will be only one product attribute in each product
 						InlineKeyboardButton
-							.WithCallbackData(text: $"{product.Name}", callbackData: $"{InlineButtonCallbackQueryData.ShowQuantitySelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductCategory}{InlineButtonCallbackQueryData.DataSeparator}{product.Name}{InlineButtonCallbackQueryData.DataSeparator}{product.ProductAttributes.First().Id}")
+							.WithCallbackData(text: $"{product.Name}", callbackData: $"{InlineButtonCallbackQueryData.ShowQuantitySelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductCategory}{InlineButtonCallbackQueryData.DataSeparator}{product.ProductAttributes.First().Id}")
 					})
 					.Append(new[]
 					{
