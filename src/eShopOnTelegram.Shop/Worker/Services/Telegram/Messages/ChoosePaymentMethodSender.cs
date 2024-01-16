@@ -11,7 +11,7 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
 
-public class PaymentProceedMessageSender
+public class ChoosePaymentMethodSender
 {
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
@@ -19,7 +19,7 @@ public class PaymentProceedMessageSender
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
-	public PaymentProceedMessageSender(
+	public ChoosePaymentMethodSender(
 		ITelegramBotClient telegramBot,
 		IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
 		CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
@@ -33,7 +33,7 @@ public class PaymentProceedMessageSender
 		_appSettings = appSettings;
 	}
 
-	public async Task SendProceedToPaymentAsync(long chatId, OrderDto order, CancellationToken cancellationToken)
+	public async Task SendAvailablePaymentMethods(long chatId, OrderDto order, CancellationToken cancellationToken)
 	{
 		if (_appSettings.PaymentSettings.AllPaymentsDisabled)
 		{

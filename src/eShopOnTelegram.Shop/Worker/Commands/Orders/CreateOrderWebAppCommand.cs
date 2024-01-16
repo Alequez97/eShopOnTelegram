@@ -24,7 +24,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 	private readonly ILogger<CreateOrderWebAppCommand> _logger;
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
-	private readonly PaymentProceedMessageSender _paymentMethodsSender;
+	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
@@ -33,7 +33,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 		ILogger<CreateOrderWebAppCommand> logger,
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
-		PaymentProceedMessageSender paymentMethodsSender,
+		ChoosePaymentMethodSender choosePaymentMethodSender,
 		IApplicationContentStore applicationContentStore,
 		ITranslationsService translationsService,
 		AppSettings appSettings)
@@ -41,7 +41,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 		_logger = logger;
 		_telegramBot = telegramBot;
 		_orderService = orderService;
-		_paymentMethodsSender = paymentMethodsSender;
+		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_applicationContentStore = applicationContentStore;
 		_translationsService = translationsService;
 		_appSettings = appSettings;
@@ -76,7 +76,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 				return;
 			}
 
-			await _paymentMethodsSender.SendProceedToPaymentAsync(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
+			await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{

@@ -60,7 +60,7 @@ public static class ServiceCollectionExtensions
 		// Telegram services
 		services.AddScoped<CommandResolver>();
 		services.AddScoped<UpdateResponseSender>();
-		services.AddScoped<PaymentProceedMessageSender>();
+		services.AddScoped<ChoosePaymentMethodSender>();
 
 		// Mappers
 		services.AddSingleton<EmojiKeyToUnicodeMapper>();

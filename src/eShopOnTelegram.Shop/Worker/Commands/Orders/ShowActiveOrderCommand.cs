@@ -11,20 +11,20 @@ public class ShowActiveOrderCommand : ITelegramCommand
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
 	private readonly ITranslationsService _translationsService;
-	private readonly PaymentProceedMessageSender _paymentProceedMessageSender;
+	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly AppSettings _appSettings;
 
 	public ShowActiveOrderCommand(
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		ITranslationsService translationsService,
-		PaymentProceedMessageSender paymentProceedMessageSender,
+		ChoosePaymentMethodSender choosePaymentMethodSender,
 		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
 		_orderService = orderService;
 		_translationsService = translationsService;
-		_paymentProceedMessageSender = paymentProceedMessageSender;
+		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_appSettings = appSettings;
 	}
 
@@ -36,7 +36,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 		if (getOrdersResponse.Data != null)
 		{
-			await _paymentProceedMessageSender.SendProceedToPaymentAsync(chatId, getOrdersResponse.Data, CancellationToken.None);
+			await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, getOrdersResponse.Data, CancellationToken.None);
 		}
 		else
 		{

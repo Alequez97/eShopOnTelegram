@@ -5,6 +5,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -18,6 +19,7 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly AppSettings _appSettings;
+	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly IEnumerable<INotificationSender> _notificationSenders;
 	private readonly ILogger<ShowPaymentMethodSelectorCommand> _logger;
 
@@ -27,6 +29,7 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		AppSettings appSettings,
+		ChoosePaymentMethodSender choosePaymentMethodSender,
 		IEnumerable<INotificationSender> notificationSenders,
 		ILogger<ShowPaymentMethodSelectorCommand> logger)
 	{
@@ -35,6 +38,7 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 		_translationsService = translationsService;
 		_applicationContentStore = applicationContentStore;
 		_appSettings = appSettings;
+		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_notificationSenders = notificationSenders;
 		_logger = logger;
 	}
@@ -74,17 +78,12 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 				return;
 			}
 
-			// TODO: Replace with payment method selection buttons
-			await _telegramBot.EditMessageTextAsync(
+			await _telegramBot.DeleteMessageAsync(
 				chatId,
-				update.CallbackQuery.Message.MessageId,
-				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ThankYouForPurchase, CancellationToken.None),
-				parseMode: ParseMode.Html
+				update.CallbackQuery.Message.MessageId
 			);
-			foreach (var notificationSender in _notificationSenders)
-			{
-				await notificationSender.SendOrderReceivedNotificationAsync(createOrderResponse.CreatedOrder.OrderNumber, CancellationToken.None);
-			}
+
+			await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{
