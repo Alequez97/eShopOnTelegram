@@ -75,7 +75,12 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 			}
 
 			// TODO: Replace with payment method selection buttons
-			await _telegramBot.EditMessageTextAsync(chatId, update.CallbackQuery.Message.MessageId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ThankYouForPurchase, CancellationToken.None));
+			await _telegramBot.EditMessageTextAsync(
+				chatId,
+				update.CallbackQuery.Message.MessageId,
+				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ThankYouForPurchase, CancellationToken.None),
+				parseMode: ParseMode.Html
+			);
 			foreach (var notificationSender in _notificationSenders)
 			{
 				await notificationSender.SendOrderReceivedNotificationAsync(createOrderResponse.CreatedOrder.OrderNumber, CancellationToken.None);
