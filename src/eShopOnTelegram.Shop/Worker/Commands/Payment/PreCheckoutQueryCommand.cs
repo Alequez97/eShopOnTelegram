@@ -33,6 +33,7 @@ public class PreCheckoutQueryCommand : ITelegramCommand
 		var getOrderResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(preCheckoutQuery.From.Id, CancellationToken.None);
 		if (getOrderResponse.Status == ResponseStatus.Success)
 		{
+			// TODO: Compare by order number insted of price
 			if (getOrderResponse.Data.TotalPrice * 100 != update.PreCheckoutQuery.TotalAmount)
 			{
 				// This is case when user generated multiple invoices in chat 
