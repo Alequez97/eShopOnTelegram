@@ -65,7 +65,7 @@ public class TelegramBot : BackgroundService
 			}
 			catch (Exception exception)
 			{
-				// TODO:
+				// TODO: 
 				// When shop application is initially deployed
 				// there is no telegram api token
 				// It is added later by admin app user

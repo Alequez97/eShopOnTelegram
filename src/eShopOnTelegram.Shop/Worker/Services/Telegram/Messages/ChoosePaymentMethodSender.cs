@@ -1,6 +1,4 @@
-﻿using System.Text;
-
-using eShopOnTelegram.Domain.Dto.Orders;
+﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Shop.Worker.Services.Mappers;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
 using eShopOnTelegram.Translations.Constants;
@@ -15,71 +13,45 @@ public class ChoosePaymentMethodSender
 {
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IEnumerable<IPaymentTelegramButtonProvider> _paymentTelegramButtonGenerators;
-	private readonly CurrencyCodeToSymbolMapper _currencyCodeToSymbolMapper;
+	private readonly OrderSummarySender _orderSummarySender;
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
 	public ChoosePaymentMethodSender(
 		ITelegramBotClient telegramBot,
 		IEnumerable<IPaymentTelegramButtonProvider> paymentTelegramButtonGenerators,
-		CurrencyCodeToSymbolMapper currencyCodeToSymbolMapper,
+		OrderSummarySender orderSummarySender,
 		ITranslationsService translationsService,
 		AppSettings appSettings)
 	{
 		_telegramBot = telegramBot;
 		_paymentTelegramButtonGenerators = paymentTelegramButtonGenerators;
-		_currencyCodeToSymbolMapper = currencyCodeToSymbolMapper;
+		_orderSummarySender = orderSummarySender;
 		_translationsService = translationsService;
 		_appSettings = appSettings;
 	}
 
 	public async Task SendAvailablePaymentMethods(long chatId, OrderDto order, CancellationToken cancellationToken)
 	{
-		// TODO:
-		// Refactor sending message with order summary in seperate service.
-		// Call it OrderSummarySender
-		// ChoosePaymentMethodSender should send only message from TranslationsKeys.ChoosePaymentMethod
-		// and inline buttons with available payment methods
-
 		if (_appSettings.PaymentSettings.AllPaymentsDisabled)
 		{
-			await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.NoEnabledPaymentMethods, CancellationToken.None));
+			await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.NoEnabledPaymentMethods, cancellationToken));
 			return;
 		}
+
+		await _orderSummarySender.SendOrderSummaryAsync(chatId, order, cancellationToken);
 
 		var paymentMethodButtons = _paymentTelegramButtonGenerators
 			.Where(buttonGenerator => buttonGenerator.PaymentMethodEnabled())
 			.Select(async buttonGenerator => new List<InlineKeyboardButton>() { await buttonGenerator.GetInvoiceGenerationButtonAsync(cancellationToken) })
 			.Select(task => task.Result);
 
-		InlineKeyboardMarkup inlineKeyboard = new(paymentMethodButtons);
-
-		var message = new StringBuilder();
-		var currencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_appSettings.PaymentSettings.MainCurrency);
-
-		message
-			.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderSummary, CancellationToken.None)}")
-			.AppendLine(new string('~', 20));
-
-		foreach (var orderCartItem in order.CartItems)
-		{
-			message
-				.AppendLine(orderCartItem.GetFormattedMessage(currencySymbol));
-		};
-
-		message
-			.AppendLine()
-			.AppendLine($"{await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.TotalPrice, CancellationToken.None)}: {order.TotalPrice}{currencySymbol}")
-			.AppendLine(new string('~', 20));
-
-		message
-			.AppendLine(await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ChoosePaymentMethod, CancellationToken.None));
-
 		await _telegramBot.SendTextMessageAsync(
 			chatId: chatId,
-			text: message.ToString(),
+			text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ChoosePaymentMethod, cancellationToken),
 			parseMode: ParseMode.Html,
-			replyMarkup: inlineKeyboard,
-			cancellationToken: cancellationToken);
+			replyMarkup: new InlineKeyboardMarkup(paymentMethodButtons),
+			cancellationToken: cancellationToken
+		);
 	}
 }

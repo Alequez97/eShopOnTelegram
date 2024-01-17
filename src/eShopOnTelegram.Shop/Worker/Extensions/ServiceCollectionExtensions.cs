@@ -33,7 +33,7 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<ITelegramCommand, CreateOrderWebAppCommand>();
 		services.AddScoped<ITelegramCommand, ShowActiveOrderCommand>();
 
-		// Payment commands
+		// Telegram bank card payments commands
 		services.AddScoped<ITelegramCommand, PreCheckoutQueryCommand>();
 		services.AddScoped<ITelegramCommand, SuccessfulPaymentCommand>();
 
@@ -61,6 +61,7 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<CommandResolver>();
 		services.AddScoped<UpdateResponseSender>();
 		services.AddScoped<ChoosePaymentMethodSender>();
+		services.AddScoped<OrderSummarySender>();
 
 		// Mappers
 		services.AddSingleton<EmojiKeyToUnicodeMapper>();

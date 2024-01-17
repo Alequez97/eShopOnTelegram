@@ -20,14 +20,12 @@ public static class TelegramBotClientExtensions
 		{
 			// This additional catch is required to send message in case when ApplicationContentStore contains error
 			// In case when ApplicationContentStore is implemented incorrectry user will not receive message at all
-
 			logger.LogError(exception, exception.Message);
 
-			var fallbackErrorMessage = "Something went wrong. Try again later";
-
-			// TODO: Possible exceptions
 			try
 			{
+				var fallbackErrorMessage = "Something went wrong. Try again later";
+
 				await telegramBot.SendTextMessageAsync(
 					chatId: chatId,
 					text: fallbackErrorMessage,

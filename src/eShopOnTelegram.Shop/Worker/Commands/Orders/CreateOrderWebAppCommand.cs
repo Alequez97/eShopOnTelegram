@@ -66,7 +66,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 
 			if (createOrderResponse.Status != ResponseStatus.Success)
 			{
-				_logger.LogError("Unable to create order. {createOrderResponse}", createOrderResponse);
+				_logger.LogError("[CreateOrderWebAppCommand]: Unable to create order. {createOrderResponse}", createOrderResponse);
 
 				await _telegramBot.SendTextMessageAsync(
 					chatId,

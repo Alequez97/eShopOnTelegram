@@ -54,10 +54,6 @@
     <ProjectReference Include="..\eShopOnTelegram.Utils\eShopOnTelegram.Utils.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Worker\Services\Telegram\Buttons\Inline\ProductCategories\" />
-  </ItemGroup>
-
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
     <!-- Ensure Node.js is installed -->
     <Exec Command="node --version" ContinueOnError="true">
