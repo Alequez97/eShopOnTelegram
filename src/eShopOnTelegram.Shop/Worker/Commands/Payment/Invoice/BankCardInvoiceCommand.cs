@@ -48,20 +48,29 @@ public class BankCardInvoiceCommand : ITelegramCommand
 		try
 		{
 			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
-
+			
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
 				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
 
-			if (getOrdersResponse.Data.PaymentMethodSelected)
+			var activeOrder = getOrdersResponse.Data;
+			
+			if (activeOrder.PaymentMethodSelected)
 			{
 				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
 				return;
 			}
 
-			var activeOrder = getOrdersResponse.Data;
+			var updatePaymentMethodResponse = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
+			
+			if (updatePaymentMethodResponse.Status != ResponseStatus.Success)
+			{
+				_logger.LogError("[BankCardInvoiceCommand]: Failed to update payment method for order number {orderNumber}", activeOrder.OrderNumber);
+				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				return;
+			}
 
 			await _telegramBot.SendInvoiceAsync(
 				chatId,
@@ -76,12 +85,6 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				needName: true,
 				cancellationToken: CancellationToken.None
 			);
-
-			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
-			if (response.Status != ResponseStatus.Success)
-			{
-				throw new Exception("Failed to update order payment method in BankCardInvoiceCommand telegram command.");
-			}
 		}
 		catch (Exception exception)
 		{
