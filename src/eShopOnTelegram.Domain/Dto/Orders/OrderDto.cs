@@ -25,7 +25,7 @@ public class OrderDto : DtoBase
 	public required string PaymentStatus { get; set; }
 	public required string PaymentMethod { get; set; }
 
-	public bool PaymentMethodSelected => !PaymentMethod.Equals(Persistence.Entities.Orders.PaymentMethod.None.ToString());
+
 
 	public string? CountryIso2Code { get; set; }
 
@@ -38,4 +38,8 @@ public class OrderDto : DtoBase
 	public string? PostCode { get; set; }
 
 	public decimal TotalPrice => CartItems.Sum(cartItem => cartItem.TotalPrice);
+
+	public bool PaymentMethodSelected => !PaymentMethod.Equals(Persistence.Entities.Orders.PaymentMethod.None.ToString());
+
+	public bool HasBeenPaid => PaymentStatus.Equals(Persistence.Entities.Orders.PaymentStatus.PaymentSuccessful.ToString());
 }
