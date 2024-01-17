@@ -72,7 +72,7 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				return;
 			}
 
-			await _telegramBot.SendInvoiceAsync(
+			var bankCardInvoiceMessage = await _telegramBot.SendInvoiceAsync(
 				chatId,
 				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + activeOrder.OrderNumber,
 				" ", // TODO: Add list of purchasing products
@@ -85,6 +85,7 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				needName: true,
 				cancellationToken: CancellationToken.None
 			);
+			await _telegramBot.PinChatMessageAsync(chatId, bankCardInvoiceMessage.MessageId);
 		}
 		catch (Exception exception)
 		{
