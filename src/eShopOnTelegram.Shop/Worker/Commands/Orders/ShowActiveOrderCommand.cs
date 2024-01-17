@@ -71,7 +71,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 				// TODO: Send invoice for selected payment method
 				// If for some reason it is impossible to send it again write message to pay for previous invoice
 				// or create new order
-				await _telegramBot.SendTextMessageAsync(chatId, $"PLACEHOLDER: Pay for sent invoice or create new order");
+				var message = await _telegramBot.SendTextMessageAsync(chatId, $"PLACEHOLDER: Pay for sent invoice or create new order");
 			}
 			else
 			{

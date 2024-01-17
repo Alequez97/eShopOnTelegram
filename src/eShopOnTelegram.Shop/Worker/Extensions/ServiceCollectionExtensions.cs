@@ -1,6 +1,7 @@
 ﻿using eShopOnTelegram.Shop.Worker.Commands;
 using eShopOnTelegram.Shop.Worker.Commands.Groups;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Commands.Messages;
 using eShopOnTelegram.Shop.Worker.Commands.Orders;
 using eShopOnTelegram.Shop.Worker.Commands.Payment;
 using eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
@@ -22,6 +23,9 @@ public static class ServiceCollectionExtensions
 		// Common commands
 		services.AddScoped<UnknownCommand>();
 		services.AddScoped<ITelegramCommand, StartCommand>();
+
+		// Messages commands
+		services.AddScoped<ITelegramCommand, MessagePinnedCommand>();
 
 		// Telegram groups commands
 		services.AddScoped<ITelegramCommand, MyChatMemberCommand>();
