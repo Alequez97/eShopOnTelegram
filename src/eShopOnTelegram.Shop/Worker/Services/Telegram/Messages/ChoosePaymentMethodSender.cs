@@ -1,5 +1,4 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
-using eShopOnTelegram.Shop.Worker.Services.Mappers;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
