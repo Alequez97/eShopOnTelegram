@@ -35,6 +35,12 @@ public class ChoosePaymentMethodSender
 
 	public async Task SendAvailablePaymentMethods(long chatId, OrderDto order, CancellationToken cancellationToken)
 	{
+		// TODO:
+		// Refactor sending message with order summary in seperate service.
+		// Call it OrderSummarySender
+		// ChoosePaymentMethodSender should send only message from TranslationsKeys.ChoosePaymentMethod
+		// and inline buttons with available payment methods
+
 		if (_appSettings.PaymentSettings.AllPaymentsDisabled)
 		{
 			await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.NoEnabledPaymentMethods, CancellationToken.None));

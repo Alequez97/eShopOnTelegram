@@ -65,6 +65,14 @@ public class TelegramBot : BackgroundService
 			}
 			catch (Exception exception)
 			{
+				// TODO:
+				// When shop application is initially deployed
+				// there is no telegram api token
+				// It is added later by admin app user
+				// In that case logs are spammed with thoousands of errors
+				//
+				// Task - Filter that log out and ignore it
+
 				_logger.LogError(exception, exception.Message);
 			}
 		}, cancellationToken);

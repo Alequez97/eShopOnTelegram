@@ -30,6 +30,12 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 	public async Task SendResponseAsync(Update update)
 	{
+		// TODO:
+		// Refactor this command to send available payment methods only when it is not selected
+		// When payment method is selected send invoice (or message to pay for generated invoice
+		// if for some reason it's impossible to send invoice again)
+		// for selected payment method
+
 		var chatId = update.Message.Chat.Id;
 
 		var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
