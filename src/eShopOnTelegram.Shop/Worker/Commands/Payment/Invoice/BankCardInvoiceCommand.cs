@@ -74,7 +74,7 @@ public class BankCardInvoiceCommand : ITelegramCommand
 
 			await _telegramBot.SendInvoiceAsync(
 				chatId,
-				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + getOrdersResponse.Data.OrderNumber,
+				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + activeOrder.OrderNumber,
 				" ", // TODO: Add list of purchasing products
 				activeOrder.OrderNumber,
 				_appSettings.PaymentSettings.Card.ApiToken,
