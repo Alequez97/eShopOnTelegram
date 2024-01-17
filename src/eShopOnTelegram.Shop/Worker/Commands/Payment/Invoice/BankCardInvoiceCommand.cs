@@ -1,5 +1,4 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.ExternalServices.Services.Plisio;
 using eShopOnTelegram.Persistence.Entities.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
@@ -9,40 +8,36 @@ using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
-using Refit;
-
-using Telegram.Bot.Types.ReplyMarkups;
-
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
 
-public class PlisioInvoiceSender : ITelegramCommand
+public class BankCardInvoiceCommand : ITelegramCommand
 {
 	private readonly ITelegramBotClient _telegramBot;
-	private readonly IPlisioClient _plisioClient;
+	private readonly IProductAttributeService _productAttributeService;
 	private readonly IOrderService _orderService;
 	private readonly IPaymentService _paymentService;
 	private readonly AppSettings _appSettings;
-	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
-	private readonly ILogger<PlisioInvoiceSender> _logger;
+	private readonly ITranslationsService _translationsService;
+	private readonly ILogger<BankCardInvoiceCommand> _logger;
 
-	public PlisioInvoiceSender(
+	public BankCardInvoiceCommand(
 		ITelegramBotClient telegramBot,
-		IPlisioClient plisioClient,
+		IProductAttributeService productAttributeService,
 		IOrderService orderService,
 		IPaymentService paymentService,
 		AppSettings appSettings,
-		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
-		ILogger<PlisioInvoiceSender> logger)
+		ITranslationsService translationsService,
+		ILogger<BankCardInvoiceCommand> logger)
 	{
 		_telegramBot = telegramBot;
-		_plisioClient = plisioClient;
+		_productAttributeService = productAttributeService;
 		_orderService = orderService;
 		_paymentService = paymentService;
-		_translationsService = translationsService;
 		_appSettings = appSettings;
 		_applicationContentStore = applicationContentStore;
+		_translationsService = translationsService;
 		_logger = logger;
 	}
 
@@ -59,6 +54,7 @@ public class PlisioInvoiceSender : ITelegramCommand
 				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
+
 			if (getOrdersResponse.Data.PaymentMethodSelected)
 			{
 				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
@@ -67,39 +63,25 @@ public class PlisioInvoiceSender : ITelegramCommand
 
 			var activeOrder = getOrdersResponse.Data;
 
-			var createPlisioInvoiceResponse = await _plisioClient.CreateInvoiceAsync(
-				_appSettings.PaymentSettings.Plisio.ApiToken,
-				_appSettings.PaymentSettings.MainCurrency,
-				(int)Math.Ceiling(activeOrder.TotalPrice),
+			await _telegramBot.SendInvoiceAsync(
+				chatId,
+				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + getOrdersResponse.Data.OrderNumber,
+				" ", // TODO: Add list of purchasing products
 				activeOrder.OrderNumber,
-				_appSettings.PaymentSettings.Plisio.CryptoCurrency);
+				_appSettings.PaymentSettings.Card.ApiToken,
+				_appSettings.PaymentSettings.MainCurrency,
+				await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productAttributeService, CancellationToken.None),
+				needShippingAddress: true,
+				needPhoneNumber: true,
+				needName: true,
+				cancellationToken: CancellationToken.None
+			);
 
-			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
+			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
 			if (response.Status != ResponseStatus.Success)
 			{
-				throw new Exception("Failed to update order payment method in Plisio Invoice Sender TG Command.");
+				throw new Exception("Failed to update order payment method in BankCardInvoiceCommand telegram command.");
 			}
-
-			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);
-			InlineKeyboardMarkup inlineKeyboard = new(new[]
-			{
-                // first row
-                new []
-				{
-					InlineKeyboardButton.WithUrl(buttonText, createPlisioInvoiceResponse.Data.InvoiceUrl),
-				},
-			});
-
-			await _telegramBot.SendTextMessageAsync(
-				chatId: chatId,
-				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
-				replyMarkup: inlineKeyboard,
-				cancellationToken: CancellationToken.None);
-		}
-		catch (ApiException apiException)
-		{
-			_logger.LogError(apiException, $"{apiException.Message}\n{apiException.Content}");
-			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{
@@ -110,6 +92,6 @@ public class PlisioInvoiceSender : ITelegramCommand
 
 	public Task<bool> IsResponsibleForUpdateAsync(Update update)
 	{
-		return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.Plisio));
+		return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Equals(PaymentMethodConstants.BankCard));
 	}
 }

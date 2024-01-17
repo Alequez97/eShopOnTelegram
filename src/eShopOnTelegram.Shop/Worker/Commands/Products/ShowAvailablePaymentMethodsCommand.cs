@@ -1,6 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
@@ -12,7 +11,7 @@ using eShopOnTelegram.Utils.Configuration;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Products;
 
-public class ShowPaymentMethodSelectorCommand : ITelegramCommand
+public class ShowAvailablePaymentMethodsCommand : ITelegramCommand
 {
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
@@ -20,18 +19,16 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly AppSettings _appSettings;
 	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
-	private readonly IEnumerable<INotificationSender> _notificationSenders;
-	private readonly ILogger<ShowPaymentMethodSelectorCommand> _logger;
+	private readonly ILogger<ShowAvailablePaymentMethodsCommand> _logger;
 
-	public ShowPaymentMethodSelectorCommand(
+	public ShowAvailablePaymentMethodsCommand(
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		AppSettings appSettings,
 		ChoosePaymentMethodSender choosePaymentMethodSender,
-		IEnumerable<INotificationSender> notificationSenders,
-		ILogger<ShowPaymentMethodSelectorCommand> logger)
+		ILogger<ShowAvailablePaymentMethodsCommand> logger)
 	{
 		_telegramBot = telegramBot;
 		_orderService = orderService;
@@ -39,7 +36,6 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 		_applicationContentStore = applicationContentStore;
 		_appSettings = appSettings;
 		_choosePaymentMethodSender = choosePaymentMethodSender;
-		_notificationSenders = notificationSenders;
 		_logger = logger;
 	}
 
@@ -94,6 +90,6 @@ public class ShowPaymentMethodSelectorCommand : ITelegramCommand
 
 	public Task<bool> IsResponsibleForUpdateAsync(Update update)
 	{
-		return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Contains(InlineButtonCallbackQueryData.ShowPaymentMethodSelector));
+		return Task.FromResult(update.Type == UpdateType.CallbackQuery && update.CallbackQuery.Data.Contains(InlineButtonCallbackQueryData.ShowAvailablePaymentMethods));
 	}
 }

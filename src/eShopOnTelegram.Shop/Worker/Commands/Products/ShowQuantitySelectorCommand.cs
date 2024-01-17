@@ -61,20 +61,20 @@ public class ShowQuantitySelectorCommand : ITelegramCommand
 				// first row
 				new []
 				{
-					InlineKeyboardButton.WithCallbackData("1", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}1"),
-					InlineKeyboardButton.WithCallbackData("2", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}2"),
-					InlineKeyboardButton.WithCallbackData("3", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}3"),
-					InlineKeyboardButton.WithCallbackData("4", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}4"),
-					InlineKeyboardButton.WithCallbackData("5", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}5"),
+					InlineKeyboardButton.WithCallbackData("1", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}1"),
+					InlineKeyboardButton.WithCallbackData("2", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}2"),
+					InlineKeyboardButton.WithCallbackData("3", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}3"),
+					InlineKeyboardButton.WithCallbackData("4", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}4"),
+					InlineKeyboardButton.WithCallbackData("5", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}5"),
 				},
 				// second row
 				new []
 				{
-					InlineKeyboardButton.WithCallbackData("6", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}6"),
-					InlineKeyboardButton.WithCallbackData("7", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}7"),
-					InlineKeyboardButton.WithCallbackData("8", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}8"),
-					InlineKeyboardButton.WithCallbackData("9", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}9"),
-					InlineKeyboardButton.WithCallbackData("10", $"{InlineButtonCallbackQueryData.ShowPaymentMethodSelector}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}10"),
+					InlineKeyboardButton.WithCallbackData("6", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}6"),
+					InlineKeyboardButton.WithCallbackData("7", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}7"),
+					InlineKeyboardButton.WithCallbackData("8", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}8"),
+					InlineKeyboardButton.WithCallbackData("9", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}9"),
+					InlineKeyboardButton.WithCallbackData("10", $"{InlineButtonCallbackQueryData.ShowAvailablePaymentMethods}{InlineButtonCallbackQueryData.DataSeparator}{selectedProductAttributeId}{InlineButtonCallbackQueryData.DataSeparator}10"),
 				},
 				new []
 				{

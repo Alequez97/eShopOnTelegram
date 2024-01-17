@@ -42,11 +42,11 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<ITelegramCommand, ShowProductsCommand>();
 		services.AddScoped<ITelegramCommand, ShowProductCategoriesCommand>();
 		services.AddScoped<ITelegramCommand, ShowQuantitySelectorCommand>();
-		services.AddScoped<ITelegramCommand, ShowPaymentMethodSelectorCommand>();
+		services.AddScoped<ITelegramCommand, ShowAvailablePaymentMethodsCommand>();
 
 		// Invoice generation commands
-		services.AddScoped<ITelegramCommand, BankCardInvoiceSender>();
-		services.AddScoped<ITelegramCommand, PlisioInvoiceSender>();
+		services.AddScoped<ITelegramCommand, BankCardInvoiceCommand>();
+		services.AddScoped<ITelegramCommand, PlisioInvoiceCommand>();
 		services.AddScoped<ITelegramCommand, PaymentThroughSellerCommand>();
 
 		// Payment telegram buttons generators
