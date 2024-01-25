@@ -77,7 +77,7 @@ public class PlisioInvoiceCommand : ITelegramCommand
 			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
 			if (response.Status != ResponseStatus.Success)
 			{
-				throw new Exception("Failed to update order payment method in Plisio Invoice Sender TG Command.");
+				throw new Exception($"[{nameof(PlisioInvoiceCommand)}]: Failed to update order payment method.");
 			}
 
 			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);

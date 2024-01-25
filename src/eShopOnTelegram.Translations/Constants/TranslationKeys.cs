@@ -23,6 +23,7 @@ public static class TranslationsKeys
 	public const string UnableToGetShippingAddress = nameof(UnableToGetShippingAddress);
 	public const string ChoosePaymentMethod = nameof(ChoosePaymentMethod);
 	public const string PayWithBankCard = nameof(PayWithBankCard);
+	public const string PayWithCrypto = nameof(PayWithCrypto);
 	public const string OrderAlreadyHasBeenPaid = nameof(OrderAlreadyHasBeenPaid);
 	public const string TimeToPayForOrderExpired = nameof(TimeToPayForOrderExpired);
 	public const string InvoiceGenerationFailedErrorMessage = nameof(InvoiceGenerationFailedErrorMessage);

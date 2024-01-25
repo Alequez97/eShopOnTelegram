@@ -1,4 +1,6 @@
-﻿using eShopOnTelegram.ExternalServices.Interfaces;
+﻿using System.Net;
+
+using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Shop.Api.Constants;
@@ -40,6 +42,6 @@ public class PlisioWebhook : EndpointBaseAsync
 			return Ok();
 		}
 
-		return BadRequest();
+		return StatusCode((int)HttpStatusCode.Forbidden);
 	}
 }

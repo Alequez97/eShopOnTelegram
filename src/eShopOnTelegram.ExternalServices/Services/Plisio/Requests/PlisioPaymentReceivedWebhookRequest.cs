@@ -1,18 +1,18 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 
 public class PlisioPaymentReceivedWebhookRequest
 {
-	[JsonProperty("txn_id")]
-	public string TransactionId { get; set; }
+	[JsonPropertyName("txn_id")]
+	public required string TransactionId { get; set; }
 
-	[JsonProperty("order_number")]
-	public string OrderNumber { get; set; }
+	[JsonPropertyName("order_number")]
+	public required string OrderNumber { get; set; }
 
-	[JsonProperty("status")]
-	public string Status { get; set; }
+	[JsonPropertyName("status")]
+	public required string Status { get; set; }
 
-	[JsonProperty("verify_hash")]
-	public string VerifyHash { get; set; }
+	[JsonPropertyName("verify_hash")]
+	public required string VerifyHash { get; set; }
 }
