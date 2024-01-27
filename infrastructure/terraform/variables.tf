@@ -105,6 +105,10 @@ variable "language" {
   type = string
 }
 
+variable "order_confirmation_time_limit_in_minutes" {
+  type = string
+}
+
 variable "currency" {
   type = string
 }

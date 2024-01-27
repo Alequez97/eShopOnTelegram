@@ -160,6 +160,7 @@ resource "azurerm_linux_web_app" "shop" {
     "AppSettings__TelegramBotSettings__WebAppUrl"                = "https://${var.shop_app_name}.azurewebsites.net"
     "AppSettings__TelegramBotSettings__ShopLayout"               = var.telegram_shop_layout
 		"AppSettings__Language"                                      = var.language
+		"AppSettings__OrderConfirmationTimeLimitInMinutes"           = var.order_confirmation_time_limit_in_minutes
     "AppSettings__AdminAppHostName"                              = "https://${azurerm_linux_web_app.admin.name}.azurewebsites.net"
     "AppSettings__ProductImagesHostName"                         = "https://${azurerm_storage_account.storageaccount.name}.blob.core.windows.net/${azurerm_storage_container.product_images_blob_storage.name}"
   }
