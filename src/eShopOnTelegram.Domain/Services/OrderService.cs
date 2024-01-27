@@ -132,6 +132,44 @@ public class OrderService : IOrderService
 		}
 	}
 
+	public async Task<Response<IEnumerable<OrderDto>>> GetUnpaidOrdersAsync(CancellationToken cancellationToken)
+	{
+		try
+		{
+			var unpaidOrders = await _dbContext.Orders
+				.Include(order => order.CartItems)
+				.ThenInclude(cartItem => cartItem.ProductAttribute)
+				.ThenInclude(productAttribute => productAttribute.Product)
+				.ThenInclude(product => product.Category)
+				.Include(order => order.Customer)
+				.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.AwaitingPayment)
+				.ToListAsync(cancellationToken);
+
+			if (!unpaidOrders.Any())
+			{
+				return new Response<IEnumerable<OrderDto>>()
+				{
+					Status = ResponseStatus.NotFound
+				};
+			}
+
+			return new Response<IEnumerable<OrderDto>>()
+			{
+				Status = ResponseStatus.Success,
+				Data = unpaidOrders.Select(order => order.ToOrderDto())
+			};
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, exception.Message);
+
+			return new Response<IEnumerable<OrderDto>>()
+			{
+				Status = ResponseStatus.Exception
+			};
+		}
+	}
+
 	public async Task<Response<OrderDto>> GetUnpaidOrderByTelegramIdAsync(long telegramId, CancellationToken cancellationToken)
 	{
 		try
@@ -144,7 +182,6 @@ public class OrderService : IOrderService
 				.Include(order => order.Customer)
 				.Where(order => order.Customer.TelegramUserUID == telegramId)
 				.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.AwaitingPayment)
-				//.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
 				.ToListAsync(cancellationToken);
 
 			if (!customerOrders.Any())
@@ -193,7 +230,6 @@ public class OrderService : IOrderService
 				.Include(order => order.Customer)
 				.Where(order => order.OrderNumber == orderNumber)
 				.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.AwaitingPayment)
-				//.Where(order => order.Status == OrderStatus.New || order.Status == OrderStatus.InvoiceSent)
 				.ToListAsync(cancellationToken);
 
 			if (!customerOrders.Any())

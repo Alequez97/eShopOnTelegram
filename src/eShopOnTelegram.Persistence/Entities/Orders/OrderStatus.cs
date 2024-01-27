@@ -2,7 +2,8 @@
 
 public enum OrderStatus
 {
-	Canceled = -1,
+	PaymentIsOverdue = -2,
+	CanceledByCustomer = -1,
 	New = 0,
 	AwaitingPayment = 1,
 	Paid = 2,

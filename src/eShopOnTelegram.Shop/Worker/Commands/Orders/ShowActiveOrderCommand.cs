@@ -51,16 +51,16 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 
+			if (getOrdersResponse.Status == ResponseStatus.NotFound)
+			{
+				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.UnpaidOrderNotFound, CancellationToken.None));
+				return;
+			}
+
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
 				_logger.LogError("[ShowActiveOrderCommand]: Can't get order by telegram id");
 				await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
-				return;
-			}
-
-			if (getOrdersResponse.Status == ResponseStatus.NotFound)
-			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.UnpaidOrderNotFound, CancellationToken.None));
 				return;
 			}
 

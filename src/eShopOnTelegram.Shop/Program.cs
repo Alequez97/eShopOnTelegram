@@ -17,6 +17,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Stores;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.BotOwnerData.Stores;
 using eShopOnTelegram.Shop.Api.Middlewares;
+using eShopOnTelegram.Shop.Batch;
 using eShopOnTelegram.Shop.Worker;
 using eShopOnTelegram.Shop.Worker.Extensions;
 using eShopOnTelegram.Translations.Interfaces;
@@ -35,6 +36,7 @@ var appSettings = ConfigureAppSettings(builder);
 
 ConfigureServices(builder, appSettings.AzureSettings);
 ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
+ConfigureBatchServices(builder);
 ConfigureHostOptions(builder);
 
 // External services
@@ -142,6 +144,11 @@ static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder, Te
 		return new TelegramBotClient(telegramBotSettings.Token);
 	});
 	builder.Services.AddHostedService<TelegramBot>();
+}
+
+static void ConfigureBatchServices(WebApplicationBuilder builder)
+{
+	builder.Services.AddHostedService<UnpaidOrdersCleaner>();
 }
 
 static void ConfigureHostOptions(WebApplicationBuilder builder)

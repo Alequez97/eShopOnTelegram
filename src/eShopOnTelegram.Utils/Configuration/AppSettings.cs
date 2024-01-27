@@ -9,6 +9,8 @@ public class AppSettings
 	public required string ProductImagesHostName { get; set; }
 	public required string AdminAppHostName { get; set; }
 	public required string Language { get; set; }
+
+	public required string OrderConfirmationTimeLimitInMinutes { get; set; }
 }
 
 public class AzureSettings

@@ -14,6 +14,8 @@ public interface IOrderService
 
 	public Task<Response<IEnumerable<OrderDto>>> GetByTelegramIdAsync(long telegramId, CancellationToken cancellationToken);
 
+	public Task<Response<IEnumerable<OrderDto>>> GetUnpaidOrdersAsync(CancellationToken cancellationToken);
+
 	public Task<Response<OrderDto>> GetUnpaidOrderByTelegramIdAsync(long telegramId, CancellationToken cancellationToken);
 
 	public Task<Response<OrderDto>> GetUnpaidOrderByOrderNumberAsync(string orderNumber, CancellationToken cancellationToken);
