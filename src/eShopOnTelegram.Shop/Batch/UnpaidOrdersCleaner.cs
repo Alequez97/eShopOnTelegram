@@ -40,7 +40,7 @@ public class UnpaidOrdersCleaner : BackgroundService
 					var orderConfirmationTimeLimit = TimeSpan.FromMinutes(Convert.ToInt32(appSettings.OrderConfirmationTimeLimitInMinutes));
 
 					var orderCreationTime = unpaidOrder.CreationDate;
-					var currentTime = DateTime.Now;
+					var currentTime = DateTime.UtcNow;
 
 					var timeElapsed = currentTime - orderCreationTime;
 
