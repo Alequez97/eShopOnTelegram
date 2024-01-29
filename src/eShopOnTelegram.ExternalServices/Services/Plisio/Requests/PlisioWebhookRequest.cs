@@ -2,7 +2,7 @@
 
 namespace eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 
-public class PlisioPaymentReceivedWebhookRequest
+public class PlisioWebhookRequest
 {
 	[JsonPropertyName("txn_id")]
 	public required string TransactionId { get; set; }

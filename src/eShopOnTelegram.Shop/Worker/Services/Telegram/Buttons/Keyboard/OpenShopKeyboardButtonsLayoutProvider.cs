@@ -33,7 +33,7 @@ public class OpenShopKeyboardButtonsLayoutProvider
 		{
 			var webAppInfo = new WebAppInfo()
 			{
-				Url = _appSettings.TelegramBotSettings.WebAppUrl
+				Url = _appSettings.TelegramBotSettings.ShopAppUrl
 			};
 
 			keyboardMarkupBuilder.AddButtonToCurrentRow(openShopButtonText, webAppInfo);

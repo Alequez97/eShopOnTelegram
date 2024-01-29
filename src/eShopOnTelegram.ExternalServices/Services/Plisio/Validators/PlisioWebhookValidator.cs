@@ -4,24 +4,25 @@ using System.Text;
 using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 
-using Newtonsoft.Json;
-
 namespace eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
 
-public class PlisioPaymentReceivedWebhookRequestValidator : IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>
+public class PlisioWebhookValidator : IWebhookValidator<PlisioWebhookRequest>
 {
 	private readonly string _plisioApiToken;
 
-	public PlisioPaymentReceivedWebhookRequestValidator(string plisioApiToken)
+	public PlisioWebhookValidator(string plisioApiToken)
 	{
 		_plisioApiToken = plisioApiToken;
 	}
 
-	public bool Validate(PlisioPaymentReceivedWebhookRequest request)
+	public bool Validate(PlisioWebhookRequest request, string requestBody)
 	{
-		var serializedRequest = JsonConvert.SerializeObject(request);
+		if (string.IsNullOrWhiteSpace(request.VerifyHash))
+		{
+			return false;
+		}
 
-		var calculatedHash = HMAC_SHA1(Encoding.UTF8.GetBytes(_plisioApiToken), Encoding.UTF8.GetBytes(serializedRequest));
+		var calculatedHash = HMAC_SHA1(Encoding.UTF8.GetBytes(_plisioApiToken), Encoding.UTF8.GetBytes(requestBody));
 		var calculatedHashHex = BitConverter.ToString(calculatedHash).Replace("-", string.Empty);
 		var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHashHex, StringComparison.OrdinalIgnoreCase);
 

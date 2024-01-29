@@ -83,7 +83,7 @@ public class TelegramBotSettings
 
 	public required string Token { get; init; }
 
-	public required string WebAppUrl { get; init; }
+	public required string ShopAppUrl { get; init; }
 
 	public required string ShopLayout { get; init; }
 
