@@ -4,6 +4,8 @@ using System.Text;
 using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
 
+using Newtonsoft.Json.Linq;
+
 namespace eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
 
 public class PlisioWebhookValidator : IWebhookValidator<PlisioWebhookRequest>
@@ -22,16 +24,27 @@ public class PlisioWebhookValidator : IWebhookValidator<PlisioWebhookRequest>
 			return false;
 		}
 
-		var calculatedHash = HMAC_SHA1(Encoding.UTF8.GetBytes(_plisioApiToken), Encoding.UTF8.GetBytes(requestBody));
-		var calculatedHashHex = BitConverter.ToString(calculatedHash).Replace("-", string.Empty);
-		var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHashHex, StringComparison.OrdinalIgnoreCase);
+		var requestBodyJsonObject = JObject.Parse(requestBody);
+		requestBodyJsonObject.Remove("verify_hash");
+		var sortedRequestBodyJsonObject = requestBodyJsonObject.Properties().OrderBy(p => p.Name);
+		var sortedJsonObject = new JObject(sortedRequestBodyJsonObject.Select(p => new JProperty(p.Name, p.Value)));
+
+		var modifiedRequestBodyToValidate = sortedJsonObject.ToString();
+
+		var calculatedHash = CalculateHMACSHA1(modifiedRequestBodyToValidate, _plisioApiToken);
+		var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHash, StringComparison.OrdinalIgnoreCase);
 
 		return requestReceivedFromPlisio;
 	}
 
-	private static byte[] HMAC_SHA1(byte[] key, byte[] data)
+	private  string CalculateHMACSHA1(string message, string secretKey)
 	{
-		using HMACSHA1 hmac = new HMACSHA1(key);
-		return hmac.ComputeHash(data);
+		byte[] keyBytes = Encoding.UTF8.GetBytes(secretKey);
+		byte[] messageBytes = Encoding.UTF8.GetBytes(message);
+
+		using var hmac = new HMACSHA1(keyBytes);
+		byte[] hashBytes = hmac.ComputeHash(messageBytes);
+
+		return BitConverter.ToString(hashBytes).Replace("-", "").ToLower();
 	}
 }
