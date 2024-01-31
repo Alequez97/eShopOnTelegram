@@ -8,12 +8,12 @@ using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment;
 
-public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvider
+public class CoinGatePaymentTelegramButtonProvider : IPaymentTelegramButtonProvider
 {
 	private readonly ITranslationsService _translationsService;
 	private readonly AppSettings _appSettings;
 
-	public PlisioPaymentTelegramButtonProvider(
+	public CoinGatePaymentTelegramButtonProvider(
 		ITranslationsService translationsService,
 		AppSettings appSettings)
 	{
@@ -24,13 +24,13 @@ public class PlisioPaymentTelegramButtonProvider : IPaymentTelegramButtonProvide
 	public async Task<InlineKeyboardButton> GetInvoiceGenerationButtonAsync(CancellationToken cancellationToken)
 	{
 		var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PayWithCrypto, cancellationToken);
-		var button = InlineKeyboardButton.WithCallbackData(text: $"{buttonText} ({PaymentMethodConstants.Plisio})", callbackData: PaymentMethodConstants.Plisio);
+		var button = InlineKeyboardButton.WithCallbackData(text: $"{buttonText} ({PaymentMethodConstants.CoinGate})", callbackData: PaymentMethodConstants.CoinGate);
 
 		return await Task.FromResult(button);
 	}
 
 	public bool PaymentMethodEnabled()
 	{
-		return _appSettings.PaymentSettings.Plisio.Enabled;
+		return _appSettings.PaymentSettings.CoinGate.Enabled;
 	}
 }

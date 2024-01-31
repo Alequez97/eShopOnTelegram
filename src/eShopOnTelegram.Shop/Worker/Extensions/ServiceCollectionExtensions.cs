@@ -51,11 +51,13 @@ public static class ServiceCollectionExtensions
 		// Invoice generation commands
 		services.AddScoped<ITelegramCommand, BankCardInvoiceCommand>();
 		services.AddScoped<ITelegramCommand, PlisioInvoiceCommand>();
+		services.AddScoped<ITelegramCommand, CoinGateInvoiceCommand>();
 		services.AddScoped<ITelegramCommand, PaymentThroughSellerCommand>();
 
 		// Payment telegram buttons generators
 		services.AddScoped<IPaymentTelegramButtonProvider, BankCardPaymentTelegramButtonProvider>();
 		services.AddScoped<IPaymentTelegramButtonProvider, PlisioPaymentTelegramButtonProvider>();
+		services.AddScoped<IPaymentTelegramButtonProvider, CoinGatePaymentTelegramButtonProvider>();
 		services.AddScoped<IPaymentTelegramButtonProvider, PaymentThroughSellerTelegramButtonProvider>();
 
 		// Open shop buttons layout provider
