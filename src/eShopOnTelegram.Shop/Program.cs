@@ -61,6 +61,12 @@ ConfigureApplicationInsights(builder, appSettings.AzureSettings);
 // App building
 var app = builder.Build();
 
+app.Use(async (context, next) =>
+{
+	context.Request.EnableBuffering();
+	await next();
+});
+
 using (var scope = app.Services.CreateScope())
 {
 	var db = scope.ServiceProvider.GetRequiredService<EShopOnTelegramDbContext>();
@@ -202,9 +208,9 @@ static void ConfigurePlisio(WebApplicationBuilder builder, PaymentSettings payme
 	});
 
 	// External services webhook validators
-	builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ =>
+	builder.Services.AddScoped<IWebhookValidator<PlisioWebhookRequest>>(_ =>
 	{
-		return new PlisioPaymentReceivedWebhookRequestValidator(paymentSettings.Plisio.ApiToken);
+		return new PlisioWebhookValidator(paymentSettings.Plisio.ApiToken);
 	});
 }
 

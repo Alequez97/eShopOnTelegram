@@ -71,8 +71,10 @@ public class PlisioInvoiceCommand : ITelegramCommand
 				_appSettings.PaymentSettings.Plisio.ApiToken,
 				_appSettings.PaymentSettings.MainCurrency,
 				(int)Math.Ceiling(activeOrder.TotalPrice),
-				activeOrder.OrderNumber,
-				_appSettings.PaymentSettings.Plisio.CryptoCurrency);
+				$"{activeOrder.OrderNumber}-{chatId}",
+				_appSettings.PaymentSettings.Plisio.CryptoCurrency,
+				$"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/plisio?json=true",
+				chatId.ToString());
 
 			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
 			if (response.Status != ResponseStatus.Success)
