@@ -2,6 +2,7 @@
 
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.ExternalServices.Interfaces;
+using eShopOnTelegram.ExternalServices.Services.CoinGate.Constants;
 using eShopOnTelegram.ExternalServices.Services.CoinGate.Requests;
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
@@ -47,36 +48,41 @@ public class CoinGateWebhook : EndpointBaseAsync
 			var requestBody = await GetRequestBodyAsync();
 			var requestIsFromCoinGate = _validator.Validate(request, requestBody);
 
-			if (requestIsFromCoinGate)
+			if (!requestIsFromCoinGate)
 			{
-				var orderNumber = request.OrderNumber.Split('-')[0];
-				var telegramChatId = request.OrderNumber.Split('-')[1];
+				return StatusCode((int)HttpStatusCode.Forbidden);
+			}
 
-				var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.CoinGate);
-
-				if (confirmPaymentResponse.Status != ResponseStatus.Success)
-				{
-					return StatusCode((int)HttpStatusCode.ServiceUnavailable);
-				}
-
-				await _telegramBot.SendTextMessageAsync(
-					Convert.ToInt64(telegramChatId),
-					await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.SuccessfullPayment, CancellationToken.None)
-				);
-
-				foreach (var notificationSender in _notificationSenders)
-				{
-					await notificationSender.SendOrderReceivedNotificationAsync(request.OrderNumber, cancellationToken);
-				}
-
+			if (!string.Equals(request.Status, CoinGatePaymentsStatus.Paid, StringComparison.CurrentCultureIgnoreCase))
+			{
+				// Currently ignoring any other status. Only process order when payment received
 				return Ok();
 			}
 
-			return StatusCode((int)HttpStatusCode.Forbidden);
+			var orderNumber = request.OrderNumber.Split('-')[0];
+			var telegramChatId = request.OrderNumber.Split('-')[1];
+
+			var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.CoinGate);
+
+			if (confirmPaymentResponse.Status != ResponseStatus.Success)
+			{
+				return StatusCode((int)HttpStatusCode.ServiceUnavailable);
+			}
+
+			await _telegramBot.SendTextMessageAsync(
+				Convert.ToInt64(telegramChatId),
+				await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.SuccessfullPayment, CancellationToken.None)
+			);
+
+			foreach (var notificationSender in _notificationSenders)
+			{
+				await notificationSender.SendOrderReceivedNotificationAsync(request.OrderNumber, cancellationToken);
+			}
+
+			return Ok();
 		}
 		catch (Exception ex)
 		{
-			return Ok();
 			_logger.LogError(ex, $"[{nameof(CoinGateWebhook)}]: {ex.Message}");
 
 			return StatusCode((int)HttpStatusCode.ServiceUnavailable);
