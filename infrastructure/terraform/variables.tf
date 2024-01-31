@@ -117,3 +117,8 @@ variable "crypto_currency" {
   type = string
   default = null
 }
+
+variable "coin_gate_api_url" {
+	type = string
+	default = null
+}

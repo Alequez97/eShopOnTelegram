@@ -157,6 +157,9 @@ resource "azurerm_linux_web_app" "shop" {
     "AppSettings__AzureSettings__ClientSecret"                   = var.azure_spn_client_secret
     "AppSettings__AzureSettings__ProductImagesBlobContainerName" = azurerm_storage_container.product_images_blob_storage.name
     "AppSettings__PaymentSettings__MainCurrency"                 = var.currency
+		"AppSettings__PaymentSettings__Plisio__CryptoCurrency"       = var.crypto_currency
+		"AppSettings__PaymentSettings__CoinGate__CryptoCurrency"     = var.crypto_currency
+		"AppSettings__PaymentSettings__CoinGate__ApiUrl"             = var.coin_gate_api_url
     "AppSettings__TelegramBotSettings__ShopAppUrl"               = "https://${var.shop_app_name}.azurewebsites.net"
     "AppSettings__TelegramBotSettings__ShopLayout"               = var.telegram_shop_layout
 		"AppSettings__Language"                                      = var.language
@@ -243,13 +246,6 @@ resource "azurerm_key_vault_secret" "storageaccountconnectionstring" {
 resource "azurerm_key_vault_secret" "appinsightsconnectionstring" {
   name         = "AppSettings--AzureSettings--AppInsightsConnectionString"
   value        = "InstrumentationKey=${azurerm_application_insights.app_insights.instrumentation_key}"
-  key_vault_id = azurerm_key_vault.keyvault.id
-}
-
-resource "azurerm_key_vault_secret" "pliciopaymentcryptocurrency" {
-  count        = var.crypto_currency == null ? 0 : 1
-  name         = "AppSettings--PaymentSettings--Plisio--CryptoCurrency"
-  value        = var.crypto_currency
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 

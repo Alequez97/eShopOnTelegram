@@ -31,6 +31,12 @@ public class SecretsMappingConfig
 				PublicSecretName = SecretPublicName.Payments_PlisioApiToken,
 				PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(Plisio)}--ApiToken"
 			},
+			new SecretsMappingPrivateConfigItem
+			{
+				DisplayName = "CoinGate payments api token",
+				PublicSecretName = SecretPublicName.Payments_CoinGateApiToken,
+				PrivateSecretName = $"{nameof(AppSettings)}--{nameof(PaymentSettings)}--{nameof(CoinGate)}--ApiToken"
+			},
 	};
 
 	public List<SecretsMappingConfigItem> PublicConfig =>
