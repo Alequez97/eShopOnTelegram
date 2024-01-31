@@ -13,4 +13,13 @@ public class CreateCoinGateInvoiceRequest
 
 	[JsonPropertyName("receive_currency")]
 	public required string ReceiveCurrency { get; set; }
+
+	[JsonPropertyName("order_id")]
+	public required string OrderNumber { get; set; }
+
+	[JsonPropertyName("callback_url")]
+	public required string CallbackUrl { get; set; }
+
+	[JsonPropertyName("token")]
+	public required string CustomValidationToken { get; set; }
 }

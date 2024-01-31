@@ -72,7 +72,9 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 			{
 				PriceAmount = (int)Math.Ceiling(activeOrder.TotalPrice),
 				PriceCurrency = _appSettings.PaymentSettings.MainCurrency,
-				ReceiveCurrency = "DO_NOT_CONVERT"
+				ReceiveCurrency = "DO_NOT_CONVERT",
+				OrderNumber = activeOrder.OrderNumber,
+				
 			};
 
 			var createCoinGateInvoiceResponse = await _coinGateClient.CreateInvoiceAsync(
