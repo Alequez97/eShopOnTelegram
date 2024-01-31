@@ -56,6 +56,8 @@ public class PaymentSettings
 
 	public required Plisio Plisio { get; init; }
 
+	public required CoinGate CoinGate { get; init; }
+
 	public required bool PaymentThroughSellerEnabled { get; init; }
 
 	public bool AllPaymentsDisabled => !Card.Enabled && !Plisio.Enabled && !PaymentThroughSellerEnabled;
@@ -71,6 +73,17 @@ public class Card
 public class Plisio
 {
 	public bool Enabled => !string.IsNullOrWhiteSpace(ApiToken);
+
+	public required string ApiToken { get; init; }
+
+	public required string CryptoCurrency { get; init; }
+}
+
+public class CoinGate
+{
+	public bool Enabled => !string.IsNullOrWhiteSpace(ApiToken);
+
+	public required string ApiUrl { get; init; }
 
 	public required string ApiToken { get; init; }
 

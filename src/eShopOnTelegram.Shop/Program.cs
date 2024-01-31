@@ -4,9 +4,9 @@ using Azure.Identity;
 using eShopOnTelegram.Domain.Services;
 using eShopOnTelegram.ExternalServices.Extensions;
 using eShopOnTelegram.ExternalServices.Interfaces;
-using eShopOnTelegram.ExternalServices.Services.Plisio;
-using eShopOnTelegram.ExternalServices.Services.Plisio.Requests;
-using eShopOnTelegram.ExternalServices.Services.Plisio.Validators;
+using eShopOnTelegram.ExternalServices.Services.CoinGate;
+using eShopOnTelegram.ExternalServices.Services.CoinGate.Requests;
+using eShopOnTelegram.ExternalServices.Services.CoinGate.Validators;
 using eShopOnTelegram.Notifications;
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Persistence.Context;
@@ -44,7 +44,7 @@ builder.Services
 	.AddPolicyRegistry()
 	.AddHttpRetryPolicy();
 
-ConfigurePlisio(builder, appSettings.PaymentSettings);
+ConfigureCoinGate(builder, appSettings.PaymentSettings);
 ConfigureNotificationSenders(builder);
 
 // Controllers and views
@@ -190,16 +190,15 @@ static void ConfigureNotificationSenders(WebApplicationBuilder builder)
 	});
 }
 
-static void ConfigurePlisio(WebApplicationBuilder builder, PaymentSettings paymentSettings)
+static void ConfigureCoinGate(WebApplicationBuilder builder, PaymentSettings paymentSettings)
 {
-	builder.Services.AddRefitServiceWithDefaultRetryPolicy<IPlisioClient>((_, httpClient) =>
+	builder.Services.AddRefitServiceWithDefaultRetryPolicy<ICoinGateClient>((_, httpClient) =>
 	{
-		httpClient.BaseAddress = new Uri("https://plisio.net/api/v1");
+		httpClient.BaseAddress = new Uri(paymentSettings.CoinGate.ApiUrl);
 	});
 
-	// External services webhook validators
-	builder.Services.AddScoped<IWebhookRequestValidator<PlisioPaymentReceivedWebhookRequest>>(_ =>
+	builder.Services.AddScoped<IWebhookRequestValidator<CoinGateWebhookRequest>>(_ =>
 	{
-		return new PlisioPaymentReceivedWebhookRequestValidator(paymentSettings.Plisio.ApiToken);
+		return new CoinGateWebhookValidator(paymentSettings.CoinGate.ApiToken);
 	});
 }

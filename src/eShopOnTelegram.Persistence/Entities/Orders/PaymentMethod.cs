@@ -6,4 +6,5 @@ public enum PaymentMethod
 	PaymentThroughSeller = 1,
 	Card = 2,
 	Plisio = 3,
+	CoinGate = 4,
 }
