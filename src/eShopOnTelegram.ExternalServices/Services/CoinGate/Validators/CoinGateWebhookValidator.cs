@@ -3,7 +3,7 @@ using eShopOnTelegram.ExternalServices.Services.CoinGate.Requests;
 
 namespace eShopOnTelegram.ExternalServices.Services.CoinGate.Validators;
 
-public class CoinGateWebhookValidator : IWebhookRequestValidator<CoinGateWebhookRequest>
+public class CoinGateWebhookValidator : IWebhookValidator<CoinGateWebhookRequest>
 {
 	private readonly string _coinGateApiToken;
 
@@ -12,8 +12,8 @@ public class CoinGateWebhookValidator : IWebhookRequestValidator<CoinGateWebhook
 		_coinGateApiToken = coinGateApiToken;
 	}
 
-	public bool Validate(CoinGateWebhookRequest request)
+	public bool Validate(CoinGateWebhookRequest request, string requestBody)
 	{
-		throw new NotImplementedException();
+		return true;
 	}
 }

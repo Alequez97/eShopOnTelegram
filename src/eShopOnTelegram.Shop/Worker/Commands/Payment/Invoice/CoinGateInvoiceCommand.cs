@@ -49,20 +49,20 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 
 	public async Task SendResponseAsync(Update update)
 	{
-		var chatId = update.CallbackQuery.From.Id;
+		var telegramId = update.CallbackQuery.From.Id;
 
 		try
 		{
-			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
+			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(telegramId, CancellationToken.None);
 
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
 			if (getOrdersResponse.Data.PaymentMethodSelected)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
 				return;
 			}
 
@@ -73,8 +73,9 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				PriceAmount = (int)Math.Ceiling(activeOrder.TotalPrice),
 				PriceCurrency = _appSettings.PaymentSettings.MainCurrency,
 				ReceiveCurrency = "DO_NOT_CONVERT",
-				OrderNumber = activeOrder.OrderNumber,
-				
+				OrderNumber = $"{activeOrder.OrderNumber}-{telegramId}",
+				CallbackUrl = $"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/coinGate",
+				CustomValidationToken = Guid.NewGuid().ToString(), // TODO: Add token hashing and database store
 			};
 
 			var createCoinGateInvoiceResponse = await _coinGateClient.CreateInvoiceAsync(
@@ -82,10 +83,10 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				createCoinGateInvoiceRequest
 			);
 
-			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
+			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.CoinGate);
 			if (response.Status != ResponseStatus.Success)
 			{
-				throw new Exception($"[{nameof(PlisioInvoiceCommand)}]: Failed to update order payment method.");
+				throw new Exception($"[{nameof(CoinGateInvoiceCommand)}]: Failed to update order payment method.");
 			}
 
 			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);
@@ -99,7 +100,7 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 			});
 
 			await _telegramBot.SendTextMessageAsync(
-				chatId: chatId,
+				chatId: telegramId,
 				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
 				replyMarkup: inlineKeyboard,
 				cancellationToken: CancellationToken.None);
@@ -107,12 +108,12 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 		catch (ApiException apiException)
 		{
 			_logger.LogError(apiException, $"{apiException.Message}\n{apiException.Content}");
-			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+			await _telegramBot.SendDefaultErrorMessageAsync(telegramId, _applicationContentStore, _logger, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{
 			_logger.LogError(exception, exception.Message);
-			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+			await _telegramBot.SendDefaultErrorMessageAsync(telegramId, _applicationContentStore, _logger, CancellationToken.None);
 		}
 	}
 

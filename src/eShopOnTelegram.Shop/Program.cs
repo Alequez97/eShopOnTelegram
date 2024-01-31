@@ -221,7 +221,7 @@ static void ConfigureCoinGate(WebApplicationBuilder builder, PaymentSettings pay
 		httpClient.BaseAddress = new Uri(paymentSettings.CoinGate.ApiUrl);
 	});
 
-	builder.Services.AddScoped<IWebhookRequestValidator<CoinGateWebhookRequest>>(_ =>
+	builder.Services.AddScoped<IWebhookValidator<CoinGateWebhookRequest>>(_ =>
 	{
 		return new CoinGateWebhookValidator(paymentSettings.CoinGate.ApiToken);
 	});
