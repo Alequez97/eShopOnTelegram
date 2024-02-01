@@ -3,6 +3,7 @@ using System.Reflection;
 
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Translations.Services;
+using FluentAssertions;
 
 namespace eShopOnTelegram.Translations.Tests;
 
@@ -35,7 +36,7 @@ public class InMemoryTranslationsTests
 			{
 				// Call the translation service with each language and translation key constant
 				var result = _translationsService.TranslateAsync(language, translationsKey, CancellationToken.None).Result;
-				Assert.IsFalse(string.IsNullOrWhiteSpace(result), $"Translation for {language} - {translationsKey} is empty or null");
+				string.IsNullOrWhiteSpace(result).Should().BeFalse($"Translation for {language} - {translationsKey} is empty or null");
 			}
 		}
 	}
