@@ -257,6 +257,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Property<int>("PaymentStatus")
                         .HasColumnType("int");
 
+                    b.Property<string>("PaymentValidationToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PostCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -461,13 +464,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "5606d2a4-4a36-499b-a358-5cc3ebd54488",
+                            ConcurrencyStamp = "a9c06db5-0874-4943-87f6-a09c55decdfa",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAELjIFz4lWJHksJ7Q1cIeb2eiPDn/bWlmIQtfRHKH7wE1Bs83ZC/0VttO7D9+mLaymQ==",
+                            PasswordHash = "AQAAAAIAAYagAAAAENmv3qvAPToQd6+Qwpos3SFzTMbMh82zfNemq2ff4ZX1IBuXUkWJeOKBOuSQiadrXg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "5b7bfa82-3d9e-4cfb-91c2-24253763a4b1",
+                            SecurityStamp = "ed175b76-da2a-475f-905b-c5d9afc92b3e",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

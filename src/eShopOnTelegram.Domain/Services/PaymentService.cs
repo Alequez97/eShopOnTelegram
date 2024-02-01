@@ -26,7 +26,7 @@ public class PaymentService : IPaymentService
 	{
 		try
 		{
-			var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
+			var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
 
 			if (order == null)
 			{
@@ -74,7 +74,7 @@ public class PaymentService : IPaymentService
 				.ThenInclude(productAttribute => productAttribute.Product)
 				.ThenInclude(product => product.Category)
 				.Include(order => order.Customer)
-				.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
+				.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
 
 			if (order == null)
 			{
@@ -118,9 +118,17 @@ public class PaymentService : IPaymentService
 		{
 			var encryptedToken = _symmetricEncryptionService.Encrypt(validationToken);
 
-			await _dbContext.Orders
+			var updatedRowsCount = await _dbContext.Orders
 				.Where(order => order.OrderNumber == orderNumber)
 				.ExecuteUpdateAsync(setters => setters.SetProperty(b => b.PaymentValidationToken, encryptedToken));
+
+			if (updatedRowsCount != 1)
+			{
+				return new ActionResponse()
+				{
+					Status = ResponseStatus.Exception
+				};
+			}
 
 			return new ActionResponse()
 			{
