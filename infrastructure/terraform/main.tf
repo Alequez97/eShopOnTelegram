@@ -236,7 +236,7 @@ data "azurerm_key_vault_secret" "common_kv_encryption_key" {
   key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
 }
 
-resource "azurerm_key_vault_secret" "jwt_key" {
+resource "azurerm_key_vault_secret" "encryption_key" {
   name         = "AppSettings--EncryptionKey"
   value        = data.azurerm_key_vault_secret.common_kv_encryption_key.value
   key_vault_id = azurerm_key_vault.keyvault.id
