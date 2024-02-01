@@ -71,7 +71,7 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 
 			var webhookValidationToken = Guid.NewGuid().ToString();
 
-			var updateValidationTokenResponse = await _paymentService.UpdateValidationTokenAsync(webhookValidationToken, activeOrder.OrderNumber, CancellationToken.None);
+			var updateValidationTokenResponse = await _paymentService.UpdateValidationTokenAsync(activeOrder.OrderNumber, webhookValidationToken, CancellationToken.None);
 			if (updateValidationTokenResponse.Status != ResponseStatus.Success)
 			{
 				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
