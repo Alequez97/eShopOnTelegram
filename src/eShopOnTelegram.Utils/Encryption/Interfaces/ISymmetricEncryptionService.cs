@@ -1,6 +1,6 @@
 ﻿namespace eShopOnTelegram.Utils.Encryption.Interfaces;
 
-public interface IEncryptionService
+public interface ISymmetricEncryptionService
 {
 	string Encrypt(string plainText);
 	string Decrypt(string cipherText);

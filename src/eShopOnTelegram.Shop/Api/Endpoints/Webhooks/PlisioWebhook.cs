@@ -45,11 +45,11 @@ public class PlisioWebhook : EndpointBaseAsync
 		try
 		{
 			var requestBody = await GetRequestBodyAsync();
-			var requestIsFromPlisio = _validator.Validate(request, requestBody);
+			var requestIsFromPlisio = await _validator.ValidateAsync(request, requestBody, cancellationToken);
 
 			if (requestIsFromPlisio)
 			{
-				var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(request.OrderNumber, PaymentMethod.Plisio);
+				var confirmPaymentResponse = await _paymentService.ConfirmOrderPaymentAsync(request.OrderNumber, PaymentMethod.Plisio, CancellationToken.None);
 
 				if (confirmPaymentResponse.Status != ResponseStatus.Success)
 				{

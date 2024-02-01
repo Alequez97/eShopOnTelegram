@@ -17,11 +17,11 @@ public class PlisioWebhookValidator : IWebhookValidator<PlisioWebhookRequest>
 		_plisioApiToken = plisioApiToken;
 	}
 
-	public bool Validate(PlisioWebhookRequest request, string requestBody)
+	public Task<bool> ValidateAsync(PlisioWebhookRequest request, string requestBody, CancellationToken cancellationToken = default)
 	{
 		if (string.IsNullOrWhiteSpace(request.VerifyHash))
 		{
-			return false;
+			return Task.FromResult(false);
 		}
 
 		var requestBodyJsonObject = JObject.Parse(requestBody);
@@ -34,7 +34,7 @@ public class PlisioWebhookValidator : IWebhookValidator<PlisioWebhookRequest>
 		var calculatedHash = CalculateHMACSHA1(modifiedRequestBodyToValidate, _plisioApiToken);
 		var requestReceivedFromPlisio = string.Equals(request.VerifyHash, calculatedHash, StringComparison.OrdinalIgnoreCase);
 
-		return requestReceivedFromPlisio;
+		return Task.FromResult(requestReceivedFromPlisio);
 	}
 
 	private  string CalculateHMACSHA1(string message, string secretKey)

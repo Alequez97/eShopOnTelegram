@@ -20,6 +20,8 @@ using eShopOnTelegram.Translations.Services;
 using eShopOnTelegram.Utils.AzureServiceManager;
 using eShopOnTelegram.Utils.AzureServiceManager.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
+using eShopOnTelegram.Utils.Encryption.Interfaces;
+using eShopOnTelegram.Utils.Encryption.Services;
 using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -32,7 +34,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 ConfigureAzureKeyVault(builder);
 var appSettings = ConfigureAppSettings(builder);
-ConfigureServices(builder);
+ConfigureServices(builder, appSettings);
 ConfigureDbContext(builder);
 ConfigureApplicationInsights(builder, appSettings.AzureSettings);
 ConfigureIdentity(builder);
@@ -95,7 +97,7 @@ static AppSettings ConfigureAppSettings(WebApplicationBuilder builder)
 	return appSettings;
 }
 
-static void ConfigureServices(WebApplicationBuilder builder)
+static void ConfigureServices(WebApplicationBuilder builder, AppSettings appSettings)
 {
 	builder.Services.AddScoped<IApplicationContentStore, AzureBlobStorageApplicationContentStore>();
 	builder.Services.AddScoped<IApplicationDefaultContentStore, FileSystemDefaultContentStore>();
@@ -116,6 +118,9 @@ static void ConfigureServices(WebApplicationBuilder builder)
 	builder.Services.AddSingleton<SecretsMappingConfig>();
 
 	builder.Services.AddScoped<IAzureAppServiceManager, AzureAppServiceManager>();
+
+	// Encryption
+	builder.Services.AddSingleton<ISymmetricEncryptionService>(new AESEncryptionService(appSettings.EncryptionKey));
 }
 
 static void ConfigureApplicationInsights(WebApplicationBuilder builder, AzureSettings azureAppSettings)

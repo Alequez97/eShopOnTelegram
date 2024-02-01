@@ -5,7 +5,7 @@ using eShopOnTelegram.Utils.Encryption.Interfaces;
 
 namespace eShopOnTelegram.Utils.Encryption.Services;
 
-public class AESEncryptionService : IEncryptionService
+public class AESEncryptionService : ISymmetricEncryptionService
 {
 	private readonly byte[] _encryptionKeyBytes;
 

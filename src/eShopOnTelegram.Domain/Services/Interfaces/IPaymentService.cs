@@ -5,6 +5,8 @@ namespace eShopOnTelegram.Domain.Services.Interfaces;
 
 public interface IPaymentService
 {
-	Task<ActionResponse> UpdateOrderPaymentMethod(string orderNumber, PaymentMethod paymentMethod);
-	Task<Response<OrderDto>> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod);
+	Task<ActionResponse> UpdateOrderPaymentMethodAsync(string orderNumber, PaymentMethod paymentMethod, CancellationToken cancellationToken);
+	Task<Response<OrderDto>> ConfirmOrderPaymentAsync(string orderNumber, PaymentMethod paymentMethod, CancellationToken cancellationToken);
+	Task<ActionResponse> UpdateValidationTokenAsync(string orderNumber, string validationToken, CancellationToken cancellationToken);
+	Task<Response<string>> GetValidationTokenAsync(string orderNumber, CancellationToken cancellationToken);
 }

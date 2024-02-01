@@ -76,7 +76,7 @@ public class PlisioInvoiceCommand : ITelegramCommand
 				$"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/plisio?json=true",
 				telegramId.ToString());
 
-			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
+			var response = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.Plisio, CancellationToken.None);
 			if (response.Status != ResponseStatus.Success)
 			{
 				throw new Exception($"[{nameof(PlisioInvoiceCommand)}]: Failed to update order payment method.");

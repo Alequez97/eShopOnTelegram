@@ -57,7 +57,7 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 		{
 			var orderNumber = update.Message.SuccessfulPayment.InvoicePayload;
 
-			var response = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.Card);
+			var response = await _paymentService.ConfirmOrderPaymentAsync(orderNumber, PaymentMethod.Card, CancellationToken.None);
 
 			if (response.Status != ResponseStatus.Success)
 			{

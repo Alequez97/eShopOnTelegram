@@ -7,7 +7,7 @@ namespace eShopOnTelegram.Utils.Tests;
 
 public class Tests
 {
-	private IEncryptionService _encryptionService;
+	private ISymmetricEncryptionService _encryptionService;
 
 	[SetUp]
 	public void Setup()

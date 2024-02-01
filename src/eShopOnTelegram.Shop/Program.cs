@@ -30,6 +30,8 @@ using eShopOnTelegram.Utils.Extensions;
 
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging.ApplicationInsights;
+using eShopOnTelegram.Utils.Encryption.Interfaces;
+using eShopOnTelegram.Utils.Encryption.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,7 +39,7 @@ ConfigureAzureKeyVault(builder);
 
 var appSettings = ConfigureAppSettings(builder);
 
-ConfigureServices(builder, appSettings.AzureSettings);
+ConfigureServices(builder, appSettings);
 ConfigureTelegramBotWorkerServices(builder, appSettings.TelegramBotSettings);
 ConfigureBatchServices(builder);
 ConfigureHostOptions(builder);
@@ -121,7 +123,7 @@ static void ConfigureAzureKeyVault(WebApplicationBuilder builder)
 	}
 }
 
-static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azureSettings)
+static void ConfigureServices(WebApplicationBuilder builder, AppSettings appSettings)
 {
 	// Persistence layer services
 	builder.Services.AddScoped<IProductImagesStore, AzureBlobStorageProductImagesStore>();
@@ -143,16 +145,16 @@ static void ConfigureServices(WebApplicationBuilder builder, AzureSettings azure
 
 	// Translations
 	builder.Services.AddScoped<ITranslationsService, InMemoryTranslationsService>();
+
+	// Encryption
+	builder.Services.AddSingleton<ISymmetricEncryptionService>(new AESEncryptionService(appSettings.EncryptionKey));
 }
 
 static void ConfigureTelegramBotWorkerServices(WebApplicationBuilder builder, TelegramBotSettings telegramBotSettings)
 {
 	// Telegram bot worker services
 	builder.Services.AddTelegramCommandServices();
-	builder.Services.AddSingleton<ITelegramBotClient>(_ =>
-	{
-		return new TelegramBotClient(telegramBotSettings.Token);
-	});
+	builder.Services.AddSingleton<ITelegramBotClient>(new TelegramBotClient(telegramBotSettings.Token));
 	builder.Services.AddHostedService<TelegramBot>();
 }
 
@@ -221,8 +223,5 @@ static void ConfigureCoinGate(WebApplicationBuilder builder, PaymentSettings pay
 		httpClient.BaseAddress = new Uri(paymentSettings.CoinGate.ApiUrl);
 	});
 
-	builder.Services.AddScoped<IWebhookValidator<CoinGateWebhookRequest>>(_ =>
-	{
-		return new CoinGateWebhookValidator(paymentSettings.CoinGate.ApiToken);
-	});
+	builder.Services.AddScoped<IWebhookValidator<CoinGateWebhookRequest>, CoinGateWebhookValidator>();
 }

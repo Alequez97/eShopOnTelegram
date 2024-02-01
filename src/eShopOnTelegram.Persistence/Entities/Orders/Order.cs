@@ -18,6 +18,8 @@ public class Order : EntityBase
 	public required PaymentStatus PaymentStatus { get; set; }
 	public required PaymentMethod PaymentMethod { get; set; }
 
+	public string? PaymentValidationToken { get; set; }
+
 
 	[StringLength(2, MinimumLength = 2)]
 	public string? CountryIso2Code { get; set; }

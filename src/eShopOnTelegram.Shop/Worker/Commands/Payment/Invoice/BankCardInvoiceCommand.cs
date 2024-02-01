@@ -63,7 +63,7 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				return;
 			}
 
-			var updatePaymentMethodResponse = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Card);
+			var updatePaymentMethodResponse = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.Card, CancellationToken.None);
 			
 			if (updatePaymentMethodResponse.Status != ResponseStatus.Success)
 			{

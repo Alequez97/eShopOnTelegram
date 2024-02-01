@@ -2,5 +2,5 @@
 
 public interface IWebhookValidator<T>
 {
-	bool Validate(T request, string requestBody);
+	Task<bool> ValidateAsync(T request, string requestBody = null, CancellationToken cancellationToken = default);
 }

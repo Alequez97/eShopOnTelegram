@@ -46,7 +46,7 @@ public class CoinGateWebhook : EndpointBaseAsync
 		try
 		{
 			var requestBody = await GetRequestBodyAsync();
-			var requestIsFromCoinGate = _validator.Validate(request, requestBody);
+			var requestIsFromCoinGate = await _validator.ValidateAsync(request);
 
 			if (!requestIsFromCoinGate)
 			{
@@ -59,7 +59,7 @@ public class CoinGateWebhook : EndpointBaseAsync
 				return Ok();
 			}
 
-			var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(request.OrderNumber, PaymentMethod.CoinGate);
+			var confirmPaymentResponse = await _paymentService.ConfirmOrderPaymentAsync(request.OrderNumber, PaymentMethod.CoinGate, CancellationToken.None);
 
 			if (confirmPaymentResponse.Status != ResponseStatus.Success)
 			{

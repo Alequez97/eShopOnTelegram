@@ -68,6 +68,16 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 
 			var activeOrder = getOrdersResponse.Data;
 
+
+			var webhookValidationToken = Guid.NewGuid().ToString();
+
+			var updateValidationTokenResponse = await _paymentService.UpdateValidationTokenAsync(webhookValidationToken, activeOrder.OrderNumber, CancellationToken.None);
+			if (updateValidationTokenResponse.Status != ResponseStatus.Success)
+			{
+				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				return;
+			}
+
 			var createCoinGateInvoiceRequest = new CreateCoinGateInvoiceRequest()
 			{
 				PriceAmount = (int)Math.Ceiling(activeOrder.TotalPrice),
@@ -75,7 +85,7 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				ReceiveCurrency = "DO_NOT_CONVERT",
 				OrderNumber = activeOrder.OrderNumber,
 				CallbackUrl = $"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/coinGate",
-				CustomValidationToken = Guid.NewGuid().ToString(), // TODO: Add token hashing and database store
+				CustomValidationToken = webhookValidationToken,
 			};
 
 			var createCoinGateInvoiceResponse = await _coinGateClient.CreateInvoiceAsync(
@@ -83,7 +93,7 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				createCoinGateInvoiceRequest
 			);
 
-			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.CoinGate);
+			var response = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.CoinGate, CancellationToken.None);
 			if (response.Status != ResponseStatus.Success)
 			{
 				throw new Exception($"[{nameof(CoinGateInvoiceCommand)}]: Failed to update order payment method.");

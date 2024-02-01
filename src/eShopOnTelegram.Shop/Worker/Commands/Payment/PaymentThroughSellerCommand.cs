@@ -57,7 +57,7 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 				return;
 			}
 
-			var response = await _paymentService.UpdateOrderPaymentMethod(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.PaymentMethod.PaymentThroughSeller);
+			var response = await _paymentService.UpdateOrderPaymentMethodAsync(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.PaymentMethod.PaymentThroughSeller, CancellationToken.None);
 			if (response.Status != ResponseStatus.Success)
 			{
 				throw new Exception("Failed to update order payment method in PaymentThroughSeller TG Command.");
