@@ -231,6 +231,17 @@ resource "azurerm_key_vault_secret" "jwt_key" {
   key_vault_id = azurerm_key_vault.keyvault.id
 }
 
+data "azurerm_key_vault_secret" "common_kv_encryption_key" {
+  name         = "encryption-key"
+  key_vault_id = data.azurerm_key_vault.kv_eshopontelegram_common.id
+}
+
+resource "azurerm_key_vault_secret" "jwt_key" {
+  name         = "AppSettings--EncryptionKey"
+  value        = data.azurerm_key_vault_secret.common_kv_encryption_key.value
+  key_vault_id = azurerm_key_vault.keyvault.id
+}
+
 resource "azurerm_key_vault_secret" "sqlconnectionstring" {
   name         = "ConnectionStrings--Sql"
   value        = "Server=tcp:${azurerm_mssql_server.mssqlserver.name}.database.windows.net,1433;Initial Catalog=${azurerm_mssql_database.mssqldatabase.name};Persist Security Info=False;User ID=${azurerm_mssql_server.mssqlserver.administrator_login};Password=${azurerm_mssql_server.mssqlserver.administrator_login_password};MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
