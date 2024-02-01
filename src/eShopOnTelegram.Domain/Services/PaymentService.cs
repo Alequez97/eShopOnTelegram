@@ -1,20 +1,22 @@
-﻿using eShopOnTelegram.Domain.Services.Interfaces;
+﻿using eShopOnTelegram.Domain.Dto.Orders;
+using eShopOnTelegram.Domain.Extensions;
+using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
 
 namespace eShopOnTelegram.Domain.Services;
 
 public class PaymentService : IPaymentService
 {
-	private readonly EShopOnTelegramDbContext _eShopOnTelegramDbContext;
+	private readonly EShopOnTelegramDbContext _dbContext;
 
-	public PaymentService(EShopOnTelegramDbContext eShopOnTelegramDbContext)
+	public PaymentService(EShopOnTelegramDbContext dbContext)
 	{
-		_eShopOnTelegramDbContext = eShopOnTelegramDbContext;
+		_dbContext = dbContext;
 	}
 
 	public async Task<ActionResponse> UpdateOrderPaymentMethod(string orderNumber, PaymentMethod paymentMethod)
 	{
-		var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber); /* ?? throw new Exception("Order not found.");*/
+		var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
 
 		if (order == null)
 		{
@@ -33,7 +35,7 @@ public class PaymentService : IPaymentService
 		}
 
 		order.SetPaymentMethod(paymentMethod);
-		await _eShopOnTelegramDbContext.SaveChangesAsync();
+		await _dbContext.SaveChangesAsync();
 
 		return new ActionResponse
 		{
@@ -41,13 +43,20 @@ public class PaymentService : IPaymentService
 		};
 	}
 
-	public async Task<ActionResponse> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod)
+	public async Task<Response<OrderDto>> ConfirmOrderPayment(string orderNumber, PaymentMethod paymentMethod)
 	{
 		// TODO: UPDLOCK ?
-		var order = await _eShopOnTelegramDbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+		var order = await _dbContext.Orders
+			.Include(order => order.CartItems)
+			.ThenInclude(cartItem => cartItem.ProductAttribute)
+			.ThenInclude(productAttribute => productAttribute.Product)
+			.ThenInclude(product => product.Category)
+			.Include(order => order.Customer)
+			.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+
 		if (order == null)
 		{
-			return new ActionResponse
+			return new Response<OrderDto>
 			{
 				Status = ResponseStatus.NotFound
 			};
@@ -55,18 +64,19 @@ public class PaymentService : IPaymentService
 
 		if (order.Status != OrderStatus.AwaitingPayment || order.PaymentMethod != paymentMethod)
 		{
-			return new ActionResponse()
+			return new Response<OrderDto>()
 			{
 				Status = ResponseStatus.ValidationFailed
 			};
 		}
 
 		order.ConfirmPayment();
-		await _eShopOnTelegramDbContext.SaveChangesAsync();
+		await _dbContext.SaveChangesAsync();
 
-		return new ActionResponse
+		return new Response<OrderDto>
 		{
-			Status = ResponseStatus.Success
+			Status = ResponseStatus.Success,
+			Data = order.ToOrderDto(),
 		};
 	}
 }

@@ -48,20 +48,20 @@ public class PlisioInvoiceCommand : ITelegramCommand
 
 	public async Task SendResponseAsync(Update update)
 	{
-		var chatId = update.CallbackQuery.From.Id;
+		var telegramId = update.CallbackQuery.From.Id;
 
 		try
 		{
-			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
+			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(telegramId, CancellationToken.None);
 
 			if (getOrdersResponse.Status != ResponseStatus.Success)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceGenerationFailedErrorMessage, CancellationToken.None));
 				return;
 			}
 			if (getOrdersResponse.Data.PaymentMethodSelected)
 			{
-				await _telegramBot.SendTextMessageAsync(chatId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
+				await _telegramBot.SendTextMessageAsync(telegramId, await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.PaymentMethodAlreadySelected, CancellationToken.None));
 				return;
 			}
 
@@ -71,10 +71,10 @@ public class PlisioInvoiceCommand : ITelegramCommand
 				_appSettings.PaymentSettings.Plisio.ApiToken,
 				_appSettings.PaymentSettings.MainCurrency,
 				(int)Math.Ceiling(activeOrder.TotalPrice),
-				$"{activeOrder.OrderNumber}-{chatId}",
+				activeOrder.OrderNumber,
 				_appSettings.PaymentSettings.Plisio.CryptoCurrency,
 				$"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/plisio?json=true",
-				chatId.ToString());
+				telegramId.ToString());
 
 			var response = await _paymentService.UpdateOrderPaymentMethod(activeOrder.OrderNumber, PaymentMethod.Plisio);
 			if (response.Status != ResponseStatus.Success)
@@ -93,7 +93,7 @@ public class PlisioInvoiceCommand : ITelegramCommand
 			});
 
 			await _telegramBot.SendTextMessageAsync(
-				chatId: chatId,
+				chatId: telegramId,
 				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
 				replyMarkup: inlineKeyboard,
 				cancellationToken: CancellationToken.None);
@@ -101,12 +101,12 @@ public class PlisioInvoiceCommand : ITelegramCommand
 		catch (ApiException apiException)
 		{
 			_logger.LogError(apiException, $"{apiException.Message}\n{apiException.Content}");
-			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+			await _telegramBot.SendDefaultErrorMessageAsync(telegramId, _applicationContentStore, _logger, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{
 			_logger.LogError(exception, exception.Message);
-			await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
+			await _telegramBot.SendDefaultErrorMessageAsync(telegramId, _applicationContentStore, _logger, CancellationToken.None);
 		}
 	}
 

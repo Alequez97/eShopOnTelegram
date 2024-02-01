@@ -73,7 +73,7 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				PriceAmount = (int)Math.Ceiling(activeOrder.TotalPrice),
 				PriceCurrency = _appSettings.PaymentSettings.MainCurrency,
 				ReceiveCurrency = "DO_NOT_CONVERT",
-				OrderNumber = $"{activeOrder.OrderNumber}-{telegramId}",
+				OrderNumber = activeOrder.OrderNumber,
 				CallbackUrl = $"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/coinGate",
 				CustomValidationToken = Guid.NewGuid().ToString(), // TODO: Add token hashing and database store
 			};

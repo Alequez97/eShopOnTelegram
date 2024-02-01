@@ -59,10 +59,7 @@ public class CoinGateWebhook : EndpointBaseAsync
 				return Ok();
 			}
 
-			var orderNumber = request.OrderNumber.Split('-')[0];
-			var telegramChatId = request.OrderNumber.Split('-')[1];
-
-			var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(orderNumber, PaymentMethod.CoinGate);
+			var confirmPaymentResponse = await _paymentService.ConfirmOrderPayment(request.OrderNumber, PaymentMethod.CoinGate);
 
 			if (confirmPaymentResponse.Status != ResponseStatus.Success)
 			{
@@ -70,7 +67,7 @@ public class CoinGateWebhook : EndpointBaseAsync
 			}
 
 			await _telegramBot.SendTextMessageAsync(
-				Convert.ToInt64(telegramChatId),
+				confirmPaymentResponse.Data.TelegramUserUID,
 				await _applicationContentStore.GetValueAsync(ApplicationContentKey.Payment.SuccessfullPayment, CancellationToken.None)
 			);
 
