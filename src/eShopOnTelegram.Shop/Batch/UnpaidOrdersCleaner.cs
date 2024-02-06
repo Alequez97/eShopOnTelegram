@@ -28,27 +28,30 @@ public class UnpaidOrdersCleaner : BackgroundService
 				var orderService = scope.ServiceProvider.GetRequiredService<IOrderService>();
 				var appSettings = scope.ServiceProvider.GetRequiredService<AppSettings>();
 
-				var getUnpaidOrdersResponse = await orderService.GetUnpaidOrdersAsync(cancellationToken);
+				var orderConfirmationTimeLimit = TimeSpan.FromMinutes(Convert.ToInt32(appSettings.OrderConfirmationTimeLimitInMinutes));
+				var result = await orderService.ProcessUnpaidOrders(orderConfirmationTimeLimit, cancellationToken);
 
-				if (getUnpaidOrdersResponse.Status != ResponseStatus.Success)
-				{
-					return;
-				}
+				//var getUnpaidOrdersResponse = await orderService.GetUnpaidOrdersAsync(cancellationToken);
 
-				foreach (var unpaidOrder in getUnpaidOrdersResponse.Data)
-				{
-					var orderConfirmationTimeLimit = TimeSpan.FromMinutes(Convert.ToInt32(appSettings.OrderConfirmationTimeLimitInMinutes));
+				//if (getUnpaidOrdersResponse.Status != ResponseStatus.Success)
+				//{
+				//	return;
+				//}
 
-					var orderCreationTime = unpaidOrder.CreationDate;
-					var currentTime = DateTime.UtcNow;
+				//foreach (var unpaidOrder in getUnpaidOrdersResponse.Data)
+				//{
+				//	var orderConfirmationTimeLimit = TimeSpan.FromMinutes(Convert.ToInt32(appSettings.OrderConfirmationTimeLimitInMinutes));
 
-					var timeElapsed = currentTime - orderCreationTime;
+				//	var orderCreationTime = unpaidOrder.CreationDate;
+				//	var currentTime = DateTime.UtcNow;
 
-					if (timeElapsed > orderConfirmationTimeLimit)
-					{
-						await orderService.UpdateStatusAsync(unpaidOrder.OrderNumber, OrderStatus.PaymentIsOverdue, cancellationToken);
-					}
-				}
+				//	var timeElapsed = currentTime - orderCreationTime;
+
+				//	if (timeElapsed > orderConfirmationTimeLimit)
+				//	{
+				//		await orderService.UpdateStatusAsync(unpaidOrder.OrderNumber, OrderStatus.PaymentIsOverdue, cancellationToken);
+				//	}
+				//}
 			}
 			catch (Exception ex)
 			{

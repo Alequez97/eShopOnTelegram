@@ -170,6 +170,49 @@ public class OrderService : IOrderService
 		}
 	}
 
+	public async Task<Response> ProcessUnpaidOrders(TimeSpan overduePeriod, CancellationToken cancellationToken)
+	{
+		using var transaction = await _dbContext.Database.BeginTransactionAsync(System.Data.IsolationLevel.RepeatableRead, cancellationToken);
+
+		try
+		{
+			var unpaidOrdersCartItems = 
+				await _dbContext.Orders
+					.Where(o => o.Status == OrderStatus.New || o.Status == OrderStatus.AwaitingPayment)
+					.Where(o => DateTime.UtcNow >= o.CreationDate.AddMinutes(overduePeriod.TotalMinutes))
+					.Select(o => new { OrderId = o.Id, o.CartItems })
+					.ToListAsync(cancellationToken);
+
+			var orderIds = unpaidOrdersCartItems.Select(x => x.OrderId);
+			var productAttrIdsWithQuantitiesToReturn = unpaidOrdersCartItems.SelectMany(x => x.CartItems).Select(x => new { x.ProductAttributeId, QuantityToReturn = x.Quantity }).ToList();
+
+			var updatedOrdersCount = await _dbContext.Orders.Where(o => orderIds.Contains(o.Id)).ExecuteUpdateAsync(o => o.SetProperty(p => p.Status, OrderStatus.PaymentIsOverdue), cancellationToken);
+			int updatedProductAttrCount = 0;
+
+			foreach(var productAttr in productAttrIdsWithQuantitiesToReturn)
+			{
+				updatedProductAttrCount += await _dbContext.ProductAttributes
+					.Where(pa => pa.Id == productAttr.ProductAttributeId)
+					.ExecuteUpdateAsync(pa => pa.SetProperty(p => p.QuantityLeft, p => p.QuantityLeft + productAttr.QuantityToReturn), cancellationToken);
+			}
+
+			if (updatedOrdersCount == orderIds.Count() && updatedProductAttrCount == productAttrIdsWithQuantitiesToReturn.Count)
+			{
+				await transaction.CommitAsync(cancellationToken);
+				return new ActionResponse { Status = ResponseStatus.Success };
+			}
+			else
+			{
+				return new ActionResponse { Status = ResponseStatus.Exception, Message = "Some items were not updated so transaction rollbacks." };
+			}
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, exception.Message);
+			return new ActionResponse { Status = ResponseStatus.Exception, Message = "Processing of unpaid orders went totally wrong." };
+		}
+	}
+
 	public async Task<Response<OrderDto>> GetUnpaidOrderByTelegramIdAsync(long telegramId, CancellationToken cancellationToken)
 	{
 		try
