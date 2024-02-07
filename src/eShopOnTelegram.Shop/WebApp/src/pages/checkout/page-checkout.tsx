@@ -1,69 +1,38 @@
 import { useCartItemsStore } from '../../contexts/cart-items-store.context';
-import { useTelegramWebApp } from '../../hooks/useTelegramWebApp';
-import { useEffect } from 'react';
-import { getCartItemsAsJsonString } from '../../utils/cart-items.utility';
 import { useNavigate } from 'react-router-dom';
 import { RouteLocation } from '../../enums/route-location.enum';
 import {
-	StyledCheckoutPageCartItemContainer,
-	StyledCheckoutPageContainer,
 	StyledCheckoutPageBoldText,
+	StyledCheckoutPageCartItemContainer,
 	StyledCheckoutPageCartItemInformation,
+	StyledCheckoutPageContainer,
 	StyledCheckoutPagePriceInformation,
 } from './checkout.styled';
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
 import { Counter } from '../../components/counter/Counter';
 import { observer } from 'mobx-react-lite';
 import { useTranslations } from '../../contexts/translations.context';
+import { useTelegramBackButton } from '../../hooks/telegram/useTelegramBackButton';
+import { useTelegramMainButton } from '../../hooks/telegram/useTelegramMainButton';
 
-export const Checkout = observer(() => {
+export const PageCheckout = observer(() => {
 	const navigate = useNavigate();
-	const telegramWebApp = useTelegramWebApp();
 	const translations = useTranslations();
 
-	telegramWebApp.MainButton.setText(
-		translations.proceedToPayment.toUpperCase(),
+	const cartItemsStore = useCartItemsStore();
+	const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
+		(cartItem) => cartItem.quantity > 0,
+	);
+	useTelegramMainButton(
+		notEmptyCartItems.length > 0,
+		() => navigate(RouteLocation.SHIPPING_INFO),
+		translations.continue.toUpperCase(),
 	);
 
-	const cartItemsStore = useCartItemsStore();
-
-	useEffect(() => {
-		telegramWebApp.BackButton?.show();
-
-		const navigateToProducts = () => {
-			cartItemsStore.removeEmptyCartItems();
-			navigate(RouteLocation.PRODUCTS);
-		};
-
-		telegramWebApp.BackButton?.onClick(navigateToProducts);
-
-		return () => {
-			telegramWebApp.BackButton?.hide();
-			telegramWebApp.BackButton?.offClick(navigateToProducts);
-		};
-	}, []);
-
-	useEffect(() => {
-		const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
-			(cartItem) => cartItem.quantity > 0,
-		);
-
-		const sendDataToTelegram = () => {
-			const json = getCartItemsAsJsonString(notEmptyCartItems);
-			telegramWebApp.sendData(json);
-		};
-
-		if (notEmptyCartItems.length === 0) {
-			telegramWebApp.MainButton.hide();
-		} else {
-			telegramWebApp.MainButton.onClick(sendDataToTelegram);
-			telegramWebApp.MainButton.show();
-		}
-
-		return () => {
-			telegramWebApp.MainButton.offClick(sendDataToTelegram);
-		};
-	}, [cartItemsStore.cartItemsState]);
+	useTelegramBackButton(() => {
+		cartItemsStore.removeEmptyCartItems();
+		navigate(RouteLocation.PRODUCTS);
+	});
 
 	return (
 		<StyledCheckoutPageContainer>
@@ -74,7 +43,7 @@ export const Checkout = observer(() => {
 					<StyledCheckoutPageCartItemContainer
 						key={productAttribute.id}
 						$justifyContent={'right'}
-						hasBorder={true}
+						$hasBorder={true}
 					>
 						<StyledCheckoutPageCartItemInformation>
 							<div>
@@ -116,7 +85,9 @@ export const Checkout = observer(() => {
 				);
 			})}
 			<StyledCheckoutPageCartItemContainer $justifyContent={'right'}>
-				{translations.totalPrice}: {cartItemsStore.cartItemsTotalPrice.toFixed(2)}{' '}{translations.currencySymbol}
+				{translations.totalPrice}:{' '}
+				{cartItemsStore.cartItemsTotalPrice.toFixed(2)}{' '}
+				{translations.currencySymbol}
 			</StyledCheckoutPageCartItemContainer>
 		</StyledCheckoutPageContainer>
 	);

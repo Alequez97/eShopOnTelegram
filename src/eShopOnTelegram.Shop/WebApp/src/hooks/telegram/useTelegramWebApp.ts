@@ -1,4 +1,4 @@
-import { WebApp } from '../telegram/types';
+import { WebApp } from '../../telegram/types';
 
 let isReadyCalled = false;
 

@@ -8,7 +8,7 @@ export const StyledCheckoutPageContainer = styled.div`
 
 interface StyledCheckoutPageCartItemContainerProps {
 	$justifyContent: CSSProperties['justifyContent'];
-	hasBorder?: boolean;
+	$hasBorder?: boolean;
 }
 
 export const StyledCheckoutPageCartItemContainer = styled.div<StyledCheckoutPageCartItemContainerProps>`
@@ -19,7 +19,7 @@ export const StyledCheckoutPageCartItemContainer = styled.div<StyledCheckoutPage
 	padding: 1vh 4vw;
 	height: 10vh;
 
-	${(props) => props.hasBorder && StyledBorderMixin};
+	${(props) => props.$hasBorder && StyledBorderMixin};
 `;
 
 export const StyledCheckoutPageCartItemInformation = styled.div`

@@ -1,8 +1,7 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useState } from 'react';
 import { Card } from '../../components/Card/Card';
 import { Loader } from '../../components/Loader/Loader';
 import { Error } from '../../components/Error/Error';
-import { useTelegramWebApp } from '../../hooks/useTelegramWebApp';
 import { Product } from '../../types/product.type';
 import { useProducts } from '../../hooks/useProducts';
 import {
@@ -16,12 +15,10 @@ import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { RouteLocation } from '../../enums/route-location.enum';
 import { useTranslations } from '../../contexts/translations.context';
+import { useTelegramMainButton } from '../../hooks/telegram/useTelegramMainButton';
 
-export const Products = observer(() => {
-	const telegramWebApp = useTelegramWebApp();
+export const PageProducts = observer(() => {
 	const translations = useTranslations();
-
-	telegramWebApp.MainButton.setText(translations.continue.toUpperCase());
 
 	const { products, productCategories, error, loading } = useProducts();
 	const [filteredProducts, setFilteredProducts] = useState<
@@ -29,29 +26,21 @@ export const Products = observer(() => {
 	>(undefined);
 
 	const cartItemsStore = useCartItemsStore();
-
 	const navigate = useNavigate();
 
-	useEffect(() => {
-		const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
-			(cartItem) => cartItem.quantity > 0,
-		);
-		const navigateToCheckout = () => {
-			cartItemsStore.removeEmptyCartItems();
-			navigate(RouteLocation.CHECKOUT);
-		};
+	const notEmptyCartItems = cartItemsStore.cartItemsState.filter(
+		(cartItem) => cartItem.quantity > 0,
+	);
+	const navigateToCheckout = () => {
+		cartItemsStore.removeEmptyCartItems();
+		navigate(RouteLocation.CHECKOUT);
+	};
 
-		if (notEmptyCartItems.length === 0) {
-			telegramWebApp.MainButton.hide();
-		} else {
-			telegramWebApp.MainButton.onClick(navigateToCheckout);
-			telegramWebApp.MainButton.show();
-		}
-
-		return () => {
-			telegramWebApp.MainButton.offClick(navigateToCheckout);
-		};
-	}, [cartItemsStore.cartItemsState]);
+	useTelegramMainButton(
+		notEmptyCartItems.length > 0,
+		navigateToCheckout,
+		translations.continue.toUpperCase(),
+	);
 
 	if (loading) {
 		return <Loader />;

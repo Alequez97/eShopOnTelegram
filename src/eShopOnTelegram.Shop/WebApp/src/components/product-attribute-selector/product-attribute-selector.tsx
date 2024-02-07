@@ -2,7 +2,7 @@ import { observer } from 'mobx-react-lite';
 import {
 	StyledProductAttributeOptions,
 	StyledProductAttributeSelectorWrapper,
-} from './productAttributeSelector.styled';
+} from './product-attribute-selector.styled';
 
 interface ProductAttributeSelectorProps {
 	productAttributeValues: string[] | null;

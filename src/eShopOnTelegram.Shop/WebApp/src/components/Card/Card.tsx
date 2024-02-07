@@ -5,7 +5,7 @@ import {
 	StyledCardPrice,
 	StyledImageContainer,
 } from './card.styled';
-import { ProductAttributeSelector } from '../productAttributeSelector/productAttributeSelector';
+import { ProductAttributeSelector } from '../product-attribute-selector/product-attribute-selector';
 import { observer } from 'mobx-react-lite';
 import { CardStore } from './card.store';
 import outOfStockImage from '../../assets/out_of_stock.jpg';

@@ -1,9 +1,11 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Products } from './pages/Products/Products';
+import { PageProducts } from './pages/products/page-products';
 import { CartItemsStoreProvider } from './contexts/cart-items-store.context';
-import { Checkout } from './pages/checkout/Checkout';
+import { PageCheckout } from './pages/checkout/page-checkout';
 import { RouteLocation } from './enums/route-location.enum';
 import { TranslationsProvider } from './contexts/translations.context';
+import { PageIndex } from './pages/index/page-index';
+import { PageShippingInfo } from './pages/shipping-info/page-shipping-info';
 
 function App() {
 	return (
@@ -11,14 +13,18 @@ function App() {
 			<CartItemsStoreProvider>
 				<BrowserRouter>
 					<Routes>
-						<Route index element={<Products />} />
+						<Route index element={<PageIndex />} />
 						<Route
 							path={RouteLocation.PRODUCTS}
-							element={<Products />}
+							element={<PageProducts />}
 						/>
 						<Route
 							path={RouteLocation.CHECKOUT}
-							element={<Checkout />}
+							element={<PageCheckout />}
+						/>
+						<Route
+							path={RouteLocation.SHIPPING_INFO}
+							element={<PageShippingInfo />}
 						/>
 					</Routes>
 				</BrowserRouter>
