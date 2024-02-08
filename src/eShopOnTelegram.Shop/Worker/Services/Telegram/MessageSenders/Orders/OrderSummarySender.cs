@@ -6,7 +6,7 @@ using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
-namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Orders;
 
 public class OrderSummarySender
 {

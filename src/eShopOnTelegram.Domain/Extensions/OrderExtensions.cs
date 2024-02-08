@@ -37,6 +37,7 @@ public static class OrderExtensions
 			Status = order.Status.ToString(),
 			PaymentStatus = order.PaymentDetails.PaymentStatus.ToString(),
 			PaymentMethod = order.PaymentDetails.PaymentMethod.ToString(),
+			InvoiceUrl = order.PaymentDetails.InvoiceUrl,
 			Country = order.Country,
 			City = order.City,
 			StreetLine1 = order.StreetLine1,

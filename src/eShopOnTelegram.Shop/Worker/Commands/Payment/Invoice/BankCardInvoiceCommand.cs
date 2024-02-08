@@ -4,6 +4,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -72,20 +73,8 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				return;
 			}
 
-			var bankCardInvoiceMessage = await _telegramBot.SendInvoiceAsync(
-				chatId,
-				await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.OrderNumber, CancellationToken.None) + " " + activeOrder.OrderNumber,
-				" ", // TODO: Add list of purchasing products
-				activeOrder.OrderNumber,
-				_appSettings.PaymentSettings.Card.ApiToken,
-				_appSettings.PaymentSettings.MainCurrency,
-				await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productAttributeService, CancellationToken.None),
-				needShippingAddress: false,
-				needPhoneNumber: true,
-				needName: true,
-				cancellationToken: CancellationToken.None
-			);
-			await _telegramBot.PinChatMessageAsync(chatId, bankCardInvoiceMessage.MessageId);
+			var bankCardInvoiceSender = new BankCardInvoiceSender(_telegramBot, _productAttributeService, _translationsService, _appSettings);
+			await bankCardInvoiceSender.SendInvoiceAsync(chatId, activeOrder, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{

@@ -158,6 +158,39 @@ public class PaymentService : IPaymentService
 		}
 	}
 
+	public async Task<ActionResponse> UpdateInvoiceUrlAsync(string orderNumber, string invoiceUrl, CancellationToken cancellationToken)
+	{
+		try
+		{
+			var updatedRowsCount = await _dbContext.Payments
+				.Include(payment => payment.Order)
+				.Where(payment => payment.Order.OrderNumber == orderNumber)
+				.ExecuteUpdateAsync(setters => setters.SetProperty(b => b.InvoiceUrl, invoiceUrl));
+
+			if (updatedRowsCount != 1)
+			{
+				return new ActionResponse()
+				{
+					Status = ResponseStatus.Exception
+				};
+			}
+
+			return new ActionResponse()
+			{
+				Status = ResponseStatus.Success
+			};
+		}
+		catch (Exception exception)
+		{
+			_logger.LogError(exception, exception.Message);
+
+			return new ActionResponse()
+			{
+				Status = ResponseStatus.Exception
+			};
+		}
+	}
+
 	public async Task<Response<string>> GetValidationTokenAsync(string orderNumber, CancellationToken cancellationToken)
 	{
 		try

@@ -4,7 +4,7 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
-using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;

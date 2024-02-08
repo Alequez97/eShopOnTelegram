@@ -1,8 +1,10 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
+using eShopOnTelegram.Shop.Worker.Exceptions;
 using eShopOnTelegram.Shop.Worker.Extensions;
-using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices.Interfaces;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -15,6 +17,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 	private readonly IOrderService _orderService;
 	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
+	private readonly IEnumerable<IInvoiceSender> _invoiceSenders;
 	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly AppSettings _appSettings;
 	private readonly ILogger<ShowActiveOrderCommand> _logger;
@@ -24,6 +27,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 		IOrderService orderService,
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
+		IEnumerable<IInvoiceSender> invoiceSenders,
 		ChoosePaymentMethodSender choosePaymentMethodSender,
 		AppSettings appSettings,
 		ILogger<ShowActiveOrderCommand> logger)
@@ -32,6 +36,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 		_orderService = orderService;
 		_translationsService = translationsService;
 		_applicationContentStore = applicationContentStore;
+		_invoiceSenders = invoiceSenders;
 		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_appSettings = appSettings;
 		_logger = logger;
@@ -43,12 +48,6 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 		try
 		{
-			// TODO:
-			// Refactor this command to send available payment methods only when it is not selected
-			// When payment method is selected send invoice (or message to pay for generated invoice
-			// if for some reason it's impossible to send invoice again)
-			// for selected payment method
-
 			var getOrdersResponse = await _orderService.GetUnpaidOrderByTelegramIdAsync(chatId, CancellationToken.None);
 
 			if (getOrdersResponse.Status == ResponseStatus.NotFound)
@@ -68,10 +67,14 @@ public class ShowActiveOrderCommand : ITelegramCommand
 
 			if (activeOrder.PaymentMethodSelected)
 			{
-				// TODO: Send invoice for selected payment method
-				// If for some reason it is impossible to send it again write message to pay for previous invoice
-				// or create new order
-				var message = await _telegramBot.SendTextMessageAsync(chatId, $"PLACEHOLDER: Pay for sent invoice or create new order");
+				var invoiceSender = _invoiceSenders.FirstOrDefault(invoiceSender => invoiceSender.PaymentMethod.ToString() == activeOrder.PaymentMethod);
+				
+				if (invoiceSender == null)
+				{
+					throw new InvoiceSenderNotFoundException(activeOrder.PaymentMethod);
+				}
+
+				await invoiceSender.SendInvoiceAsync(chatId, activeOrder, CancellationToken.None);
 			}
 			else
 			{

@@ -5,13 +5,12 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 using Refit;
-
-using Telegram.Bot.Types.ReplyMarkups;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment.Invoice;
 
@@ -76,27 +75,17 @@ public class PlisioInvoiceCommand : ITelegramCommand
 				$"{_appSettings.TelegramBotSettings.ShopAppUrl}/api/webhook/plisio?json=true",
 				telegramId.ToString());
 
-			var response = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.Plisio, CancellationToken.None);
-			if (response.Status != ResponseStatus.Success)
+			var updatePaymentResponse = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.Plisio, CancellationToken.None);
+			var updateInvoiceUrlResponse = await _paymentService.UpdateInvoiceUrlAsync(activeOrder.OrderNumber, createPlisioInvoiceResponse.Data.InvoiceUrl, CancellationToken.None);
+			if (updatePaymentResponse.Status != ResponseStatus.Success || updateInvoiceUrlResponse.Status != ResponseStatus.Success)
 			{
-				throw new Exception($"[{nameof(PlisioInvoiceCommand)}]: Failed to update order payment method.");
+				throw new Exception($"[{nameof(PlisioInvoiceCommand)}]: Failed to update order payment data.");
 			}
 
-			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);
-			InlineKeyboardMarkup inlineKeyboard = new(new[]
-			{
-                // first row
-                new []
-				{
-					InlineKeyboardButton.WithUrl(buttonText, createPlisioInvoiceResponse.Data.InvoiceUrl),
-				},
-			});
+			activeOrder.InvoiceUrl = createPlisioInvoiceResponse.Data.InvoiceUrl;
 
-			await _telegramBot.SendTextMessageAsync(
-				chatId: telegramId,
-				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
-				replyMarkup: inlineKeyboard,
-				cancellationToken: CancellationToken.None);
+			var plisioInvoiceSender = new PlisioInvoiceSender(_telegramBot, _translationsService, _appSettings);
+			await plisioInvoiceSender.SendInvoiceAsync(telegramId, activeOrder, CancellationToken.None);
 		}
 		catch (ApiException apiException)
 		{

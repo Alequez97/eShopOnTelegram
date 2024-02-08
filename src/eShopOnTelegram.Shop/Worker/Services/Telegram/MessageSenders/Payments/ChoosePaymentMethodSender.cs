@@ -1,12 +1,13 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Orders;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
 
 using Telegram.Bot.Types.ReplyMarkups;
 
-namespace eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
+namespace eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
 
 public class ChoosePaymentMethodSender
 {

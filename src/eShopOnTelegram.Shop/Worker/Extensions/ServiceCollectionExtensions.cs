@@ -12,7 +12,10 @@ using eShopOnTelegram.Shop.Worker.Services.Telegram;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Inline.Payment.Interfaces;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.Buttons.Keyboard;
-using eShopOnTelegram.Shop.Worker.Services.Telegram.Messages;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Orders;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices.Interfaces;
 
 namespace eShopOnTelegram.Shop.Worker.Extensions;
 
@@ -59,6 +62,12 @@ public static class ServiceCollectionExtensions
 		services.AddScoped<IPaymentTelegramButtonProvider, PlisioPaymentTelegramButtonProvider>();
 		services.AddScoped<IPaymentTelegramButtonProvider, CoinGatePaymentTelegramButtonProvider>();
 		services.AddScoped<IPaymentTelegramButtonProvider, PaymentThroughSellerTelegramButtonProvider>();
+
+		// Invoice senders
+		services.AddScoped<IInvoiceSender, BankCardInvoiceSender>();
+		services.AddScoped<IInvoiceSender, PaymentThroughSellerInvoiceSender>();
+		services.AddScoped<IInvoiceSender, PlisioInvoiceSender>();
+		services.AddScoped<IInvoiceSender, CoinGateInvoiceSender>();
 
 		// Open shop buttons layout provider
 		services.AddScoped<OpenShopKeyboardButtonsLayoutProvider>();

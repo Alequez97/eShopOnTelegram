@@ -25,7 +25,7 @@ public class OrderDto : DtoBase
 	public required string PaymentStatus { get; set; }
 	public required string PaymentMethod { get; set; }
 
-
+	public string? InvoiceUrl { get; set; }
 
 	public string? Country { get; set; }
 
