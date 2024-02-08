@@ -1,6 +1,5 @@
 ﻿using Ardalis.GuardClauses;
 
-using eShopOnTelegram.Domain.Requests.Orders;
 using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.Notifications.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
@@ -8,10 +7,8 @@ using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Extensions;
-using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
-using eShopOnTelegram.Utils.Extensions;
 
 namespace eShopOnTelegram.Shop.Worker.Commands.Payment;
 
