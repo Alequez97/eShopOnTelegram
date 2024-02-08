@@ -1,0 +1,10 @@
+{
+	"add": "Добавить",
+	"delivery_information": "Информация для доставки",
+	"country": "Страна",
+	"city": "Город",
+	"street_line_1": "Адресс 1",
+	"street_line_2": "Адресс 2",
+	"post_code": "Почтовый индекс",
+	"is_required": "необходимое поле"
+}

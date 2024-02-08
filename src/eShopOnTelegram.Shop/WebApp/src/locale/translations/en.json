@@ -1,0 +1,10 @@
+{
+	"add": "Add",
+	"delivery_information": "Delivery information",
+	"country": "Country",
+	"city": "City",
+	"streetLine1": "Street line 1",
+	"streetLine2": "Street line 2",
+	"postCode": "Post code",
+	"is_required": "is required"
+}

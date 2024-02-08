@@ -3,6 +3,7 @@ import {
 	StyledCounterContainer,
 	StyledCounterValueBadge,
 } from './counter.styled';
+import { useTranslation } from 'react-i18next';
 
 export interface CounterProps {
 	value: number | undefined;
@@ -35,11 +36,13 @@ export const Counter = ({
 		}
 	};
 
+	const { t } = useTranslation();
+
 	return (
 		<StyledCounterContainer>
 			{showAddButton && (
 				<CounterButton
-					title={'Add'}
+					title={t('add')}
 					type={'add'}
 					onClick={increaseValue}
 					disabled={addButtonDisabled}

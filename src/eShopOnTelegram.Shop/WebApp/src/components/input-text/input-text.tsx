@@ -5,6 +5,7 @@ import {
 	StyledInputTextContainer,
 	StyledInputTextLabel,
 } from './styled.input-text';
+import { useTranslation } from 'react-i18next';
 
 export interface InputTextProps {
 	register: UseFormRegister<FieldValues>;
@@ -21,12 +22,16 @@ export const InputText = ({
 	isRequired,
 	errorLabel,
 }: InputTextProps) => {
+	const { t } = useTranslation();
+
 	return (
 		<StyledInputTextContainer>
 			<StyledInputTextLabel>{label}</StyledInputTextLabel>
 			<StyledInputText
 				{...register(name, {
-					required: isRequired ? `${label} is required` : false,
+					required: isRequired
+						? `${label} ${t('is_required')}`
+						: false,
 				})}
 				$hasError={!!errorLabel}
 			/>

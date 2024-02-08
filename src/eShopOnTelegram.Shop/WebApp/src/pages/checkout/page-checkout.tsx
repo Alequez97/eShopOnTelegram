@@ -11,13 +11,13 @@ import {
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
 import { Counter } from '../../components/counter/Counter';
 import { observer } from 'mobx-react-lite';
-import { useTranslations } from '../../contexts/translations.context';
+import { useBackendTranslations } from '../../contexts/translations.context';
 import { useTelegramBackButton } from '../../hooks/telegram/useTelegramBackButton';
 import { useTelegramMainButton } from '../../hooks/telegram/useTelegramMainButton';
 
 export const PageCheckout = observer(() => {
 	const navigate = useNavigate();
-	const translations = useTranslations();
+	const translations = useBackendTranslations();
 
 	const cartItemsStore = useCartItemsStore();
 	const notEmptyCartItems = cartItemsStore.cartItemsState.filter(

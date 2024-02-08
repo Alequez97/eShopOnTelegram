@@ -44,6 +44,7 @@ public class GetTranslations : EndpointBaseAsync
 			ProceedToPayment = await _translationsService.TranslateAsync(language, TranslationsKeys.ProceedToPayment, cancellationToken),
 			TotalPrice = await _translationsService.TranslateAsync(language, TranslationsKeys.TotalPrice, cancellationToken),
 			CurrencySymbol = _currencyCodeToSymbolMapper.GetCurrencySymbol(_appSettings.PaymentSettings.MainCurrency).ToString(),
+			Language = _appSettings.Language.ToLower(),
 		};
 
 		return Ok(clientSideConfig);
@@ -58,4 +59,5 @@ public class GetTranslationsResponse
 	public required string ProceedToPayment { get; set; }
 	public required string TotalPrice { get; set; }
 	public required string CurrencySymbol { get; set; }
+	public required string Language { get; set; }
 }

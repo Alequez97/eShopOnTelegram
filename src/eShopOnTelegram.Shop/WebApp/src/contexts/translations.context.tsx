@@ -1,29 +1,33 @@
 import {
-	ReactNode,
 	createContext,
+	ReactNode,
 	useContext,
 	useEffect,
 	useState,
 } from 'react';
-import { Translations } from '../types/translations.type';
+import { BackendTranslations } from '../types/translations.type';
 import axios from 'axios';
+import { LanguageCode } from '../locale';
 
-const TranslationsContext = createContext<Translations | undefined>(undefined);
+const BackendTranslationsContext = createContext<
+	BackendTranslations | undefined
+>(undefined);
 
-interface TranslationsProviderProps {
+interface BackendTranslationsProviderProps {
 	children: ReactNode;
 }
 
-export const TranslationsProvider = ({
+export const BackendTranslationsProvider = ({
 	children,
-}: TranslationsProviderProps) => {
-	const [translations, setTranslations] = useState<Translations>({
+}: BackendTranslationsProviderProps) => {
+	const [translations, setTranslations] = useState<BackendTranslations>({
 		allCategories: 'All categories',
 		continue: 'Continue',
 		noAvailableProducts: 'No available products at this moment',
 		proceedToPayment: 'Proceed to payment',
 		totalPrice: 'Total price',
-		currencySymbol: '€'
+		currencySymbol: '€',
+		language: LanguageCode.EN,
 	});
 
 	useEffect(() => {
@@ -40,14 +44,14 @@ export const TranslationsProvider = ({
 	}, []);
 
 	return (
-		<TranslationsContext.Provider value={translations}>
+		<BackendTranslationsContext.Provider value={translations}>
 			{children}
-		</TranslationsContext.Provider>
+		</BackendTranslationsContext.Provider>
 	);
 };
 
-export const useTranslations = () => {
-	const context = useContext(TranslationsContext);
+export const useBackendTranslations = () => {
+	const context = useContext(BackendTranslationsContext);
 
 	if (!context) {
 		throw new Error(

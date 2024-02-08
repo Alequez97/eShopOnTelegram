@@ -13,7 +13,7 @@ import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { useEffect, useState } from 'react';
 import { Counter } from '../counter/Counter';
 import { CartItem } from '../../types/cart-item.type';
-import { useTranslations } from '../../contexts/translations.context';
+import { useBackendTranslations } from '../../contexts/translations.context';
 
 interface CardProps {
 	product: Product;
@@ -28,7 +28,7 @@ export const Card = observer(({ product }: CardProps) => {
 		setSelectedProductAttributeCartItem,
 	] = useState<CartItem | undefined>(undefined);
 
-	const translations = useTranslations();
+	const translations = useBackendTranslations();
 
 	useEffect(() => {
 		setSelectedProductAttributeCartItem(

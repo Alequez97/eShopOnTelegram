@@ -4,16 +4,17 @@ import { useNavigate } from 'react-router-dom';
 import { InputText } from '../../components/input-text/input-text';
 import { useForm } from 'react-hook-form';
 import { useTelegramMainButton } from '../../hooks/telegram/useTelegramMainButton';
-import { useTranslations } from '../../contexts/translations.context';
+import { useBackendTranslations } from '../../contexts/translations.context';
 import { StyledShippingInfoFormContainer } from './page-shipping-info.styled';
 import { getOrderCreationRequestBodyAsJsonString } from '../../utils/cart-items.utility';
 import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { useTelegramWebApp } from '../../hooks/telegram/useTelegramWebApp';
+import { useTranslation } from 'react-i18next';
 
 export const PageShippingInfo = () => {
 	const telegramWebApp = useTelegramWebApp();
 	const navigate = useNavigate();
-	const translations = useTranslations();
+	const backendTranslations = useBackendTranslations();
 	const cartItemsStore = useCartItemsStore();
 	const {
 		register,
@@ -48,44 +49,46 @@ export const PageShippingInfo = () => {
 			);
 			telegramWebApp.sendData(json);
 		},
-		translations.proceedToPayment.toUpperCase(),
+		backendTranslations.proceedToPayment.toUpperCase(),
 	);
+
+	const { t } = useTranslation();
 
 	return (
 		<div>
 			<StyledShippingInfoFormContainer>
-				<h2>Delivery information</h2>
+				<h2>{t('delivery_information')}</h2>
 				<InputText
 					register={register}
 					name="country"
-					label={'Country'}
+					label={t('country')}
 					isRequired={true}
 					errorLabel={errors?.country?.message as string}
 				/>
 				<InputText
 					register={register}
 					name="city"
-					label={'City'}
+					label={t('city')}
 					isRequired={true}
 					errorLabel={errors?.city?.message as string}
 				/>
 				<InputText
 					register={register}
 					name="streetLine1"
-					label={'Street line 1'}
+					label={t('street_line_1')}
 					isRequired={true}
 					errorLabel={errors?.streetLine1?.message as string}
 				/>
 				<InputText
 					register={register}
 					name="streetLine2"
-					label={'Street line 2'}
+					label={t('street_line_2')}
 					isRequired={false}
 				/>
 				<InputText
 					register={register}
 					name="postCode"
-					label={'Post code'}
+					label={t('post_code')}
 					isRequired={true}
 					errorLabel={errors?.postCode?.message as string}
 				/>

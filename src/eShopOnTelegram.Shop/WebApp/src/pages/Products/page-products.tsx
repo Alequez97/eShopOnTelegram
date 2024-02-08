@@ -14,11 +14,11 @@ import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
 import { RouteLocation } from '../../enums/route-location.enum';
-import { useTranslations } from '../../contexts/translations.context';
+import { useBackendTranslations } from '../../contexts/translations.context';
 import { useTelegramMainButton } from '../../hooks/telegram/useTelegramMainButton';
 
 export const PageProducts = observer(() => {
-	const translations = useTranslations();
+	const translations = useBackendTranslations();
 
 	const { products, productCategories, error, loading } = useProducts();
 	const [filteredProducts, setFilteredProducts] = useState<
