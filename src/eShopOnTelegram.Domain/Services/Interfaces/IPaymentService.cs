@@ -1,5 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Dto.Orders;
-using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 
 namespace eShopOnTelegram.Domain.Services.Interfaces;
 

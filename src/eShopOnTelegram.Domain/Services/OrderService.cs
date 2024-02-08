@@ -6,6 +6,7 @@ using eShopOnTelegram.Domain.Requests.Products;
 using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 
 namespace eShopOnTelegram.Domain.Services;
 
@@ -380,8 +381,11 @@ public class OrderService : IOrderService
 				CustomerId = customer.Id,
 				CartItems = orderCartItems,
 				Status = OrderStatus.New,
-				PaymentStatus = PaymentStatus.None,
-				PaymentMethod = PaymentMethod.None,
+				PaymentDetails = new Payment()
+				{
+					PaymentStatus = PaymentStatus.None,
+					PaymentMethod = PaymentMethod.None,
+				},
 				Country = request.Country,
 				City = request.City,
 				StreetLine1 = request.StreetLine1,
@@ -428,7 +432,9 @@ public class OrderService : IOrderService
 	{
 		try
 		{
-			var existingOrder = await _dbContext.Orders.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
+			var existingOrder = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
+				.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
 
 			if (existingOrder == null)
 			{
@@ -441,7 +447,7 @@ public class OrderService : IOrderService
 			existingOrder.Status = orderStatus;
 			if (orderStatus == OrderStatus.Paid)
 			{
-				existingOrder.PaymentDate = DateTime.UtcNow;
+				existingOrder.PaymentDetails.PaymentDate = DateTime.UtcNow;
 			}
 
 			await _dbContext.SaveChangesAsync(cancellationToken);

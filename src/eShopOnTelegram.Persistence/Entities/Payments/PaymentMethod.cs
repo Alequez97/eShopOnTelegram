@@ -1,4 +1,4 @@
-﻿namespace eShopOnTelegram.Persistence.Entities.Orders;
+﻿namespace eShopOnTelegram.Persistence.Entities.Payments;
 
 public enum PaymentMethod
 {

@@ -1,4 +1,5 @@
 ﻿using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.Persistence.Entities.Products;
 using eShopOnTelegram.Persistence.Entities.Users;
 
@@ -18,6 +19,8 @@ public class EShopOnTelegramDbContext : IdentityDbContext<User, IdentityRole<lon
 	public DbSet<ProductCategory> ProductCategories { get; set; }
 
 	public DbSet<Order> Orders { get; set; }
+
+	public DbSet<Payment> Payments { get; set; }
 
 	public DbSet<CartItem> CartItems { get; set; }
 

@@ -1,5 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Responses;
-using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;

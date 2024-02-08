@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20240208092932_Initial")]
+    [Migration("20240208124855_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -167,32 +167,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.CartItem", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("OrderId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("ProductAttributeId")
-                        .HasColumnType("bigint");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductAttributeId");
-
-                    b.ToTable("CartItems");
-                });
-
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Customer", b =>
                 {
                     b.Property<long>("Id")
@@ -225,6 +199,32 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.ToTable("Customers");
                 });
 
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.CartItem", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<long?>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<long>("ProductAttributeId")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductAttributeId");
+
+                    b.ToTable("CartItems");
+                });
+
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.Order", b =>
                 {
                     b.Property<long>("Id")
@@ -251,18 +251,6 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime?>("PaymentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("PaymentMethod")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PaymentStatus")
-                        .HasColumnType("int");
-
-                    b.Property<string>("PaymentValidationToken")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PostCode")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
@@ -286,6 +274,40 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .IsUnique();
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Payments.Payment", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("InvoiceUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("OrderId")
+                        .HasColumnType("bigint");
+
+                    b.Property<DateTime?>("PaymentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("PaymentMethod")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PaymentStatus")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PaymentValidationToken")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("OrderId")
+                        .IsUnique();
+
+                    b.ToTable("Payments");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Products.Product", b =>
@@ -467,13 +489,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "76b39b65-23eb-4d79-9760-16938b70b03f",
+                            ConcurrencyStamp = "01d7acd6-f909-45db-9626-0079cbb254bf",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAEKFBln4GGEBh2beJCfSl2yagnirF5mKMCr2sdYzpTd9j7nfkJiyOEIPN3lIPwHPbyw==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEP7nxpeXu2YBcR1w4n7h8mEHNEKWylDUa44JKljsRVSKa+4JYnylvKN6PVqe0aoaTg==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "976c0194-9001-46b3-a300-7f2f477e2e32",
+                            SecurityStamp = "e71ed97f-9fce-41eb-84a4-780a79c5c30f",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });
@@ -573,7 +595,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.CartItem", b =>
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.CartItem", b =>
                 {
                     b.HasOne("eShopOnTelegram.Persistence.Entities.Orders.Order", null)
                         .WithMany("CartItems")
@@ -597,6 +619,17 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Customer");
+                });
+
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Payments.Payment", b =>
+                {
+                    b.HasOne("eShopOnTelegram.Persistence.Entities.Orders.Order", "Order")
+                        .WithOne("PaymentDetails")
+                        .HasForeignKey("eShopOnTelegram.Persistence.Entities.Payments.Payment", "OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Order");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Products.Product", b =>
@@ -656,6 +689,9 @@ namespace eShopOnTelegram.Persistence.Migrations
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.Order", b =>
                 {
                     b.Navigation("CartItems");
+
+                    b.Navigation("PaymentDetails")
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Products.Product", b =>

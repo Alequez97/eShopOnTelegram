@@ -1,6 +1,6 @@
 ﻿using eShopOnTelegram.Persistence.Entities.Products;
 
-namespace eShopOnTelegram.Persistence.Entities;
+namespace eShopOnTelegram.Persistence.Entities.Orders;
 
 public class CartItem : EntityBase
 {

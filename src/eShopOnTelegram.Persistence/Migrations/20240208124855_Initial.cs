@@ -229,11 +229,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     OrderNumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     CustomerId = table.Column<long>(type: "bigint", nullable: false),
                     CreationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
-                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
-                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
-                    PaymentValidationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Country = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     City = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     StreetLine1 = table.Column<string>(type: "nvarchar(200)", maxLength: 200, nullable: true),
@@ -276,6 +272,30 @@ namespace eShopOnTelegram.Persistence.Migrations
                         column: x => x.PreviousVersionId,
                         principalTable: "Products",
                         principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Payments",
+                columns: table => new
+                {
+                    Id = table.Column<long>(type: "bigint", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    OrderId = table.Column<long>(type: "bigint", nullable: false),
+                    PaymentStatus = table.Column<int>(type: "int", nullable: false),
+                    PaymentMethod = table.Column<int>(type: "int", nullable: false),
+                    InvoiceUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentValidationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PaymentDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Payments", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Payments_Orders_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Orders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -339,7 +359,7 @@ namespace eShopOnTelegram.Persistence.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Email", "EmailConfirmed", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName" },
-                values: new object[] { 1L, 0, "76b39b65-23eb-4d79-9760-16938b70b03f", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEKFBln4GGEBh2beJCfSl2yagnirF5mKMCr2sdYzpTd9j7nfkJiyOEIPN3lIPwHPbyw==", null, false, "976c0194-9001-46b3-a300-7f2f477e2e32", false, "admin" });
+                values: new object[] { 1L, 0, "01d7acd6-f909-45db-9626-0079cbb254bf", null, false, false, null, null, "ADMIN", "AQAAAAIAAYagAAAAEP7nxpeXu2YBcR1w4n7h8mEHNEKWylDUa44JKljsRVSKa+4JYnylvKN6PVqe0aoaTg==", null, false, "e71ed97f-9fce-41eb-84a4-780a79c5c30f", false, "admin" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserClaims",
@@ -413,6 +433,12 @@ namespace eShopOnTelegram.Persistence.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_Payments_OrderId",
+                table: "Payments",
+                column: "OrderId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
                 name: "IX_ProductAttributes_PreviousVersionId",
                 table: "ProductAttributes",
                 column: "PreviousVersionId");
@@ -481,25 +507,28 @@ namespace eShopOnTelegram.Persistence.Migrations
                 name: "CartItems");
 
             migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
                 name: "UserRefreshTokens");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Orders");
+                name: "ProductAttributes");
 
             migrationBuilder.DropTable(
-                name: "ProductAttributes");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "Customers");
+                name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Products");
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "ProductCategories");

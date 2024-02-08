@@ -1,4 +1,6 @@
-﻿namespace eShopOnTelegram.Persistence.Entities.Orders;
+﻿using eShopOnTelegram.Persistence.Entities.Payments;
+
+namespace eShopOnTelegram.Persistence.Entities.Orders;
 
 [Index(nameof(OrderNumber), IsUnique = true)]
 public class Order : EntityBase
@@ -12,13 +14,9 @@ public class Order : EntityBase
 
 	public DateTime CreationDate { get; init; } = DateTime.UtcNow;
 
-	public DateTime? PaymentDate { get; set; }
-
 	public required OrderStatus Status { get; set; }
-	public required PaymentStatus PaymentStatus { get; set; }
-	public required PaymentMethod PaymentMethod { get; set; }
 
-	public string? PaymentValidationToken { get; set; }
+	public required Payment PaymentDetails { get; set; }
 
 	[MaxLength(100)]
 	public string? Country { get; set; }
@@ -38,15 +36,12 @@ public class Order : EntityBase
 	public void SetPaymentMethod(PaymentMethod paymentMethod)
 	{
 		Status = OrderStatus.AwaitingPayment;
-		PaymentStatus = PaymentStatus.InvoiceSent;
-
-		PaymentMethod = paymentMethod;
+		PaymentDetails.SetPaymentMethod(paymentMethod);
 	}
 
 	public void ConfirmPayment()
 	{
 		Status = OrderStatus.Paid;
-		PaymentStatus = PaymentStatus.PaymentSuccessful;
-		PaymentDate = DateTime.UtcNow;
+		PaymentDetails.ConfirmPayment();
 	}
 }

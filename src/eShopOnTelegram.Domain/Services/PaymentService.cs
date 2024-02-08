@@ -2,6 +2,7 @@
 using eShopOnTelegram.Domain.Extensions;
 using eShopOnTelegram.Domain.Services.Interfaces;
 using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.Utils.Encryption.Interfaces;
 
 namespace eShopOnTelegram.Domain.Services;
@@ -26,9 +27,11 @@ public class PaymentService : IPaymentService
 	{
 		try
 		{
-			var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+			var payment = await _dbContext.Payments
+				.Include(payment => payment.Order)
+				.FirstOrDefaultAsync(payment => payment.Order.OrderNumber == orderNumber);
 
-			if (order == null)
+			if (payment == null)
 			{
 				return new ActionResponse
 				{
@@ -36,15 +39,19 @@ public class PaymentService : IPaymentService
 				};
 			};
 
-			if (order.Status != OrderStatus.New || order.PaymentMethod != PaymentMethod.None)
+			if (payment.Order.Status != OrderStatus.New || payment.PaymentMethod != PaymentMethod.None)
 			{
 				return new ActionResponse
 				{
-					Status = ResponseStatus.ValidationFailed
+					Status = ResponseStatus.ValidationFailed,
+					ValidationErrors = new()
+					{
+						$"Payment method already setted up for payment with number {orderNumber}"
+					}
 				};
 			}
 
-			order.SetPaymentMethod(paymentMethod);
+			payment.SetPaymentMethod(paymentMethod);
 			await _dbContext.SaveChangesAsync();
 
 			return new ActionResponse
@@ -54,7 +61,7 @@ public class PaymentService : IPaymentService
 		}
 		catch (Exception exception)
 		{
-			_logger.LogError(exception, "Exception: Unable to update order payment method");
+			_logger.LogError(exception, exception.Message);
 
 			return new ActionResponse()
 			{
@@ -68,15 +75,17 @@ public class PaymentService : IPaymentService
 		try
 		{
 			// TODO: UPDLOCK ?
-			var order = await _dbContext.Orders
-				.Include(order => order.CartItems)
+			var payment = await _dbContext.Payments
+				.Include(payment => payment.Order)
+				.ThenInclude(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
 				.ThenInclude(product => product.Category)
-				.Include(order => order.Customer)
-				.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber);
+				.Include(payment => payment.Order)
+				.ThenInclude(order => order.Customer)
+				.FirstOrDefaultAsync(payment => payment.Order.OrderNumber == orderNumber);
 
-			if (order == null)
+			if (payment == null)
 			{
 				return new Response<OrderDto>
 				{
@@ -84,7 +93,7 @@ public class PaymentService : IPaymentService
 				};
 			}
 
-			if (order.Status != OrderStatus.AwaitingPayment || order.PaymentMethod != paymentMethod)
+			if (payment.Order.Status != OrderStatus.AwaitingPayment || payment.PaymentMethod != paymentMethod)
 			{
 				return new Response<OrderDto>()
 				{
@@ -92,18 +101,18 @@ public class PaymentService : IPaymentService
 				};
 			}
 
-			order.ConfirmPayment();
+			payment.ConfirmPayment();
 			await _dbContext.SaveChangesAsync();
 
 			return new Response<OrderDto>
 			{
 				Status = ResponseStatus.Success,
-				Data = order.ToOrderDto(),
+				Data = payment.Order.ToOrderDto(),
 			};
 		}
 		catch (Exception exception)
 		{
-			_logger.LogError(exception, "Exception: Unable to confirm order payment");
+			_logger.LogError(exception, exception.Message);
 
 			return new Response<OrderDto>
 			{
@@ -118,8 +127,9 @@ public class PaymentService : IPaymentService
 		{
 			var encryptedToken = _symmetricEncryptionService.Encrypt(validationToken);
 
-			var updatedRowsCount = await _dbContext.Orders
-				.Where(order => order.OrderNumber == orderNumber)
+			var updatedRowsCount = await _dbContext.Payments
+				.Include(payment => payment.Order)
+				.Where(payment => payment.Order.OrderNumber == orderNumber)
 				.ExecuteUpdateAsync(setters => setters.SetProperty(b => b.PaymentValidationToken, encryptedToken));
 
 			if (updatedRowsCount != 1)
@@ -137,7 +147,7 @@ public class PaymentService : IPaymentService
 		}
 		catch (Exception exception)
 		{
-			_logger.LogError(exception, "Exception: Unable to update order payment method");
+			_logger.LogError(exception, exception.Message);
 
 			return new ActionResponse()
 			{
@@ -150,9 +160,11 @@ public class PaymentService : IPaymentService
 	{
 		try
 		{
-			var order = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderNumber == orderNumber, cancellationToken);
+			var payment = await _dbContext.Payments
+				.Include(payment => payment.Order)
+				.FirstOrDefaultAsync(payment => payment.Order.OrderNumber == orderNumber, cancellationToken);
 
-			if (order == null)
+			if (payment == null)
 			{
 				return new Response<string>
 				{
@@ -160,7 +172,7 @@ public class PaymentService : IPaymentService
 				};
 			};
 
-			if (order.PaymentValidationToken == null)
+			if (payment.PaymentValidationToken == null)
 			{
 				return new Response<string>
 				{
@@ -171,12 +183,12 @@ public class PaymentService : IPaymentService
 			return new Response<string>()
 			{
 				Status = ResponseStatus.Success,
-				Data = _symmetricEncryptionService.Decrypt(order.PaymentValidationToken),
+				Data = _symmetricEncryptionService.Decrypt(payment.PaymentValidationToken),
 			};
 		}
 		catch (Exception exception)
 		{
-			_logger.LogError(exception, "Exception: Unable to update order payment method");
+			_logger.LogError(exception, exception.Message);
 
 			return new Response<string>()
 			{

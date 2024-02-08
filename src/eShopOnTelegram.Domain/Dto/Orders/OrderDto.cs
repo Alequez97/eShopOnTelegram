@@ -39,7 +39,7 @@ public class OrderDto : DtoBase
 
 	public decimal TotalPrice => CartItems.Sum(cartItem => cartItem.TotalPrice);
 
-	public bool PaymentMethodSelected => !PaymentMethod.Equals(Persistence.Entities.Orders.PaymentMethod.None.ToString());
+	public bool PaymentMethodSelected => !PaymentMethod.Equals(Persistence.Entities.Payments.PaymentMethod.None.ToString());
 
-	public bool HasBeenPaid => PaymentStatus.Equals(Persistence.Entities.Orders.PaymentStatus.PaymentSuccessful.ToString());
+	public bool HasBeenPaid => PaymentStatus.Equals(Persistence.Entities.Payments.PaymentStatus.PaymentSuccessful.ToString());
 }

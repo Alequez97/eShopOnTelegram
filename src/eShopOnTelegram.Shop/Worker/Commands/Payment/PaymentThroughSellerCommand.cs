@@ -1,4 +1,5 @@
 ﻿using eShopOnTelegram.Domain.Responses;
+using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
@@ -57,7 +58,7 @@ public class PaymentThroughSellerCommand : ITelegramCommand
 				return;
 			}
 
-			var response = await _paymentService.UpdateOrderPaymentMethodAsync(getOrdersResponse.Data.OrderNumber, Persistence.Entities.Orders.PaymentMethod.PaymentThroughSeller, CancellationToken.None);
+			var response = await _paymentService.UpdateOrderPaymentMethodAsync(getOrdersResponse.Data.OrderNumber, PaymentMethod.PaymentThroughSeller, CancellationToken.None);
 			if (response.Status != ResponseStatus.Success)
 			{
 				throw new Exception("Failed to update order payment method in PaymentThroughSeller TG Command.");

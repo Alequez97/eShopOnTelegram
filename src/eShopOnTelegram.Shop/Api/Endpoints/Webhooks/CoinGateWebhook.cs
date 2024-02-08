@@ -5,7 +5,7 @@ using eShopOnTelegram.ExternalServices.Interfaces;
 using eShopOnTelegram.ExternalServices.Services.CoinGate.Constants;
 using eShopOnTelegram.ExternalServices.Services.CoinGate.Requests;
 using eShopOnTelegram.Notifications.Interfaces;
-using eShopOnTelegram.Persistence.Entities.Orders;
+using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Keys;
 using eShopOnTelegram.Shop.Api.Constants;

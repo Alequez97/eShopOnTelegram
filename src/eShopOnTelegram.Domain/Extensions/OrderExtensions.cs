@@ -33,10 +33,10 @@ public static class OrderExtensions
 				Quantity = cartItem.Quantity
 			}).ToList(),
 			CreationDate = order.CreationDate,
-			PaymentDate = order.PaymentDate,
+			PaymentDate = order.PaymentDetails.PaymentDate,
 			Status = order.Status.ToString(),
-			PaymentStatus = order.PaymentStatus.ToString(),
-			PaymentMethod = order.PaymentMethod.ToString(),
+			PaymentStatus = order.PaymentDetails.PaymentStatus.ToString(),
+			PaymentMethod = order.PaymentDetails.PaymentMethod.ToString(),
 			Country = order.Country,
 			City = order.City,
 			StreetLine1 = order.StreetLine1,
