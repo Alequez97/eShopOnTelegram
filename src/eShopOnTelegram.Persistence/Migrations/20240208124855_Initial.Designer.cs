@@ -276,7 +276,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.ToTable("Orders");
                 });
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Payments.Payment", b =>
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.Payment", b =>
                 {
                     b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
@@ -307,7 +307,7 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.HasIndex("OrderId")
                         .IsUnique();
 
-                    b.ToTable("Payments");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Products.Product", b =>
@@ -621,11 +621,11 @@ namespace eShopOnTelegram.Persistence.Migrations
                     b.Navigation("Customer");
                 });
 
-            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Payments.Payment", b =>
+            modelBuilder.Entity("eShopOnTelegram.Persistence.Entities.Orders.Payment", b =>
                 {
                     b.HasOne("eShopOnTelegram.Persistence.Entities.Orders.Order", "Order")
                         .WithOne("PaymentDetails")
-                        .HasForeignKey("eShopOnTelegram.Persistence.Entities.Payments.Payment", "OrderId")
+                        .HasForeignKey("eShopOnTelegram.Persistence.Entities.Orders.Payment", "OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

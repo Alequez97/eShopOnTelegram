@@ -1,8 +1,10 @@
 ﻿using eShopOnTelegram.Domain.Responses;
+using eShopOnTelegram.Domain.Responses.Orders;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Exceptions;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Orders;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices.Interfaces;
 using eShopOnTelegram.Translations.Constants;
@@ -18,6 +20,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 	private readonly ITranslationsService _translationsService;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly IEnumerable<IInvoiceSender> _invoiceSenders;
+	private readonly OrderSummarySender _orderSummarySender;
 	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly AppSettings _appSettings;
 	private readonly ILogger<ShowActiveOrderCommand> _logger;
@@ -28,6 +31,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 		ITranslationsService translationsService,
 		IApplicationContentStore applicationContentStore,
 		IEnumerable<IInvoiceSender> invoiceSenders,
+		OrderSummarySender orderSummarySender,
 		ChoosePaymentMethodSender choosePaymentMethodSender,
 		AppSettings appSettings,
 		ILogger<ShowActiveOrderCommand> logger)
@@ -37,6 +41,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 		_translationsService = translationsService;
 		_applicationContentStore = applicationContentStore;
 		_invoiceSenders = invoiceSenders;
+		_orderSummarySender = orderSummarySender;
 		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_appSettings = appSettings;
 		_logger = logger;
@@ -62,8 +67,9 @@ public class ShowActiveOrderCommand : ITelegramCommand
 				await _telegramBot.SendDefaultErrorMessageAsync(chatId, _applicationContentStore, _logger, CancellationToken.None);
 				return;
 			}
-
 			var activeOrder = getOrdersResponse.Data;
+
+			await _orderSummarySender.SendOrderSummaryAsync(chatId, activeOrder, CancellationToken.None);
 
 			if (activeOrder.PaymentMethodSelected)
 			{
@@ -78,7 +84,7 @@ public class ShowActiveOrderCommand : ITelegramCommand
 			}
 			else
 			{
-				await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, activeOrder, CancellationToken.None);
+				await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, CancellationToken.None);
 			}
 		}
 		catch (Exception exception)

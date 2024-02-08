@@ -1,11 +1,13 @@
 ﻿using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.ExternalServices.Services.CoinGate;
 using eShopOnTelegram.ExternalServices.Services.CoinGate.Requests;
+using eShopOnTelegram.ExternalServices.Services.Plisio.Responses;
 using eShopOnTelegram.Persistence.Entities.Payments;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Constants;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments.Invoices;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
 using eShopOnTelegram.Utils.Configuration;
@@ -93,27 +95,17 @@ public class CoinGateInvoiceCommand : ITelegramCommand
 				createCoinGateInvoiceRequest
 			);
 
-			var response = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.CoinGate, CancellationToken.None);
-			if (response.Status != ResponseStatus.Success)
+			var updatePaymentMethodResponse = await _paymentService.UpdateOrderPaymentMethodAsync(activeOrder.OrderNumber, PaymentMethod.CoinGate, CancellationToken.None);
+			var updateInvoiceUrlResponse = await _paymentService.UpdateInvoiceUrlAsync(activeOrder.OrderNumber, createCoinGateInvoiceResponse.PaymentUrl, CancellationToken.None);
+			if (updatePaymentMethodResponse.Status != ResponseStatus.Success || updateInvoiceUrlResponse.Status != ResponseStatus.Success)
 			{
 				throw new Exception($"[{nameof(CoinGateInvoiceCommand)}]: Failed to update order payment method.");
 			}
 
-			var buttonText = await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.ProceedToPayment, CancellationToken.None);
-			InlineKeyboardMarkup inlineKeyboard = new(new[]
-			{
-                // first row
-                new []
-				{
-					InlineKeyboardButton.WithUrl(buttonText, createCoinGateInvoiceResponse.PaymentUrl),
-				},
-			});
+			activeOrder.InvoiceUrl = createCoinGateInvoiceResponse.PaymentUrl;
 
-			await _telegramBot.SendTextMessageAsync(
-				chatId: telegramId,
-				text: await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.InvoiceReceived, CancellationToken.None),
-				replyMarkup: inlineKeyboard,
-				cancellationToken: CancellationToken.None);
+			var plisioInvoiceSender = new CoinGateInvoiceSender(_telegramBot, _translationsService, _appSettings);
+			await plisioInvoiceSender.SendInvoiceAsync(telegramId, activeOrder, CancellationToken.None);
 		}
 		catch (ApiException apiException)
 		{

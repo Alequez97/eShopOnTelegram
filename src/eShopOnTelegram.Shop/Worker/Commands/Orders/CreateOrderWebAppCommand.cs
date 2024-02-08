@@ -5,6 +5,7 @@ using eShopOnTelegram.Domain.Responses;
 using eShopOnTelegram.RuntimeConfiguration.ApplicationContent.Interfaces;
 using eShopOnTelegram.Shop.Worker.Commands.Interfaces;
 using eShopOnTelegram.Shop.Worker.Extensions;
+using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Orders;
 using eShopOnTelegram.Shop.Worker.Services.Telegram.MessageSenders.Payments;
 using eShopOnTelegram.Translations.Constants;
 using eShopOnTelegram.Translations.Interfaces;
@@ -24,6 +25,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 	private readonly ILogger<CreateOrderWebAppCommand> _logger;
 	private readonly ITelegramBotClient _telegramBot;
 	private readonly IOrderService _orderService;
+	private readonly OrderSummarySender _orderSummarySender;
 	private readonly ChoosePaymentMethodSender _choosePaymentMethodSender;
 	private readonly IApplicationContentStore _applicationContentStore;
 	private readonly ITranslationsService _translationsService;
@@ -33,6 +35,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 		ILogger<CreateOrderWebAppCommand> logger,
 		ITelegramBotClient telegramBot,
 		IOrderService orderService,
+		OrderSummarySender orderSummarySender,
 		ChoosePaymentMethodSender choosePaymentMethodSender,
 		IApplicationContentStore applicationContentStore,
 		ITranslationsService translationsService,
@@ -41,6 +44,7 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 		_logger = logger;
 		_telegramBot = telegramBot;
 		_orderService = orderService;
+		_orderSummarySender = orderSummarySender;
 		_choosePaymentMethodSender = choosePaymentMethodSender;
 		_applicationContentStore = applicationContentStore;
 		_translationsService = translationsService;
@@ -76,7 +80,8 @@ public class CreateOrderWebAppCommand : ITelegramCommand
 				return;
 			}
 
-			await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
+			await _orderSummarySender.SendOrderSummaryAsync(chatId, createOrderResponse.CreatedOrder, CancellationToken.None);
+			await _choosePaymentMethodSender.SendAvailablePaymentMethods(chatId, CancellationToken.None);
 		}
 		catch (Exception exception)
 		{
