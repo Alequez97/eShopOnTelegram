@@ -20,9 +20,8 @@ public class Order : EntityBase
 
 	public string? PaymentValidationToken { get; set; }
 
-
-	[StringLength(2, MinimumLength = 2)]
-	public string? CountryIso2Code { get; set; }
+	[MaxLength(100)]
+	public string? Country { get; set; }
 
 	[MaxLength(100)]
 	public string? City { get; set; }

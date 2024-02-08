@@ -381,7 +381,12 @@ public class OrderService : IOrderService
 				CartItems = orderCartItems,
 				Status = OrderStatus.New,
 				PaymentStatus = PaymentStatus.None,
-				PaymentMethod = PaymentMethod.None
+				PaymentMethod = PaymentMethod.None,
+				Country = request.Country,
+				City = request.City,
+				StreetLine1 = request.StreetLine1,
+				StreetLine2 = request.StreetLine2,
+				PostCode = request.PostCode
 			};
 
 			try
@@ -409,7 +414,7 @@ public class OrderService : IOrderService
 		}
 		catch (Exception ex)
 		{
-			_logger.LogError(ex, "Unable to create order.");
+			_logger.LogError(ex, ex.Message);
 
 			return new CreateOrderResponse()
 			{
@@ -471,7 +476,7 @@ public class OrderService : IOrderService
 				};
 			}
 
-			existingOrder.CountryIso2Code = request.CountryIso2Code;
+			existingOrder.Country = request.Country;
 			existingOrder.City = request.City;
 			existingOrder.StreetLine1 = request.StreetLine1;
 			existingOrder.StreetLine2 = request.StreetLine2;

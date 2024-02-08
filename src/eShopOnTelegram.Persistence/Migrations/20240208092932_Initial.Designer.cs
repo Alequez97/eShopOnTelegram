@@ -12,7 +12,7 @@ using eShopOnTelegram.Persistence.Context;
 namespace eShopOnTelegram.Persistence.Migrations
 {
     [DbContext(typeof(EShopOnTelegramDbContext))]
-    [Migration("20240201172025_Initial")]
+    [Migration("20240208092932_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -237,9 +237,9 @@ namespace eShopOnTelegram.Persistence.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("CountryIso2Code")
-                        .HasMaxLength(2)
-                        .HasColumnType("nvarchar(2)");
+                    b.Property<string>("Country")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
@@ -467,13 +467,13 @@ namespace eShopOnTelegram.Persistence.Migrations
                         {
                             Id = 1L,
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "a9c06db5-0874-4943-87f6-a09c55decdfa",
+                            ConcurrencyStamp = "76b39b65-23eb-4d79-9760-16938b70b03f",
                             EmailConfirmed = false,
                             LockoutEnabled = false,
                             NormalizedUserName = "ADMIN",
-                            PasswordHash = "AQAAAAIAAYagAAAAENmv3qvAPToQd6+Qwpos3SFzTMbMh82zfNemq2ff4ZX1IBuXUkWJeOKBOuSQiadrXg==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEKFBln4GGEBh2beJCfSl2yagnirF5mKMCr2sdYzpTd9j7nfkJiyOEIPN3lIPwHPbyw==",
                             PhoneNumberConfirmed = false,
-                            SecurityStamp = "ed175b76-da2a-475f-905b-c5d9afc92b3e",
+                            SecurityStamp = "976c0194-9001-46b3-a300-7f2f477e2e32",
                             TwoFactorEnabled = false,
                             UserName = "admin"
                         });

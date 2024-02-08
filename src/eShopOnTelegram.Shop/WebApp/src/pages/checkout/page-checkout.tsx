@@ -7,7 +7,7 @@ import {
 	StyledCheckoutPageCartItemInformation,
 	StyledCheckoutPageContainer,
 	StyledCheckoutPagePriceInformation,
-} from './checkout.styled';
+} from './page-checkout.styled';
 import { getPropertiesLabel } from '../../utils/product-attribute.utility';
 import { Counter } from '../../components/counter/Counter';
 import { observer } from 'mobx-react-lite';

@@ -80,7 +80,7 @@ public class BankCardInvoiceCommand : ITelegramCommand
 				_appSettings.PaymentSettings.Card.ApiToken,
 				_appSettings.PaymentSettings.MainCurrency,
 				await activeOrder.CartItems.GetPaymentLabeledPricesAsync(_productAttributeService, CancellationToken.None),
-				needShippingAddress: true,
+				needShippingAddress: false,
 				needPhoneNumber: true,
 				needName: true,
 				cancellationToken: CancellationToken.None

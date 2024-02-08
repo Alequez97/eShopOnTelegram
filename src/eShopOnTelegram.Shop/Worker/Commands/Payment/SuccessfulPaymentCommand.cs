@@ -73,24 +73,6 @@ public class SuccessfulPaymentCommand : ITelegramCommand
 			{
 				await notificationSender.SendOrderReceivedNotificationAsync(orderNumber, CancellationToken.None);
 			}
-
-			var deliveryAddress = new UpdateDeliveryAddressRequest()
-			{
-				CountryIso2Code = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.CountryCode.ToNullIfEmptyOrWhiteSpace(),
-				City = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.City.ToNullIfEmptyOrWhiteSpace(),
-				StreetLine1 = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.StreetLine1.ToNullIfEmptyOrWhiteSpace(),
-				StreetLine2 = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.StreetLine2.ToNullIfEmptyOrWhiteSpace(),
-				PostCode = update.Message.SuccessfulPayment.OrderInfo.ShippingAddress.PostCode.ToNullIfEmptyOrWhiteSpace()
-			};
-			var updateAddressResponse = await _orderService.UpdateDeliveryAddressAsync(orderNumber, deliveryAddress, CancellationToken.None);
-
-			if (updateAddressResponse.Status != ResponseStatus.Success)
-			{
-				await _telegramBot.SendTextMessageAsync(
-					chatId,
-					await _translationsService.TranslateAsync(_appSettings.Language, TranslationsKeys.UnableToGetShippingAddress, CancellationToken.None)
-				);
-			}
 		}
 		catch (Exception exception)
 		{

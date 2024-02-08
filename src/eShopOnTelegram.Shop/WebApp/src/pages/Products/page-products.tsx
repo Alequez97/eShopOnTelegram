@@ -9,7 +9,7 @@ import {
 	StyledMissingProductsMessageWrapper,
 	StyledProductCategoriesSelect,
 	StyledProductCategoriesWrapper,
-} from './products.styled';
+} from './page-products.styled';
 import { useCartItemsStore } from '../../contexts/cart-items-store.context';
 import { observer } from 'mobx-react-lite';
 import { useNavigate } from 'react-router-dom';
