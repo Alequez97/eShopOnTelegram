@@ -83,6 +83,8 @@ public class PaymentService : IPaymentService
 				.ThenInclude(product => product.Category)
 				.Include(payment => payment.Order)
 				.ThenInclude(order => order.Customer)
+				.Include(payment => payment.Order)
+				.ThenInclude(order => order.PaymentDetails)
 				.FirstOrDefaultAsync(payment => payment.Order.OrderNumber == orderNumber);
 
 			if (payment == null)

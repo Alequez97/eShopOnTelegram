@@ -27,6 +27,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var existingOrder = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -64,6 +65,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var existingOrder = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -101,6 +103,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var customerOrders = _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -138,6 +141,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var unpaidOrders = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -176,6 +180,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var customerOrders = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -224,6 +229,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var customerOrders = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
@@ -272,6 +278,7 @@ public class OrderService : IOrderService
 		try
 		{
 			var orders = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
 				.Include(order => order.CartItems)
 				.ThenInclude(cartItem => cartItem.ProductAttribute)
 				.ThenInclude(productAttribute => productAttribute.Product)
