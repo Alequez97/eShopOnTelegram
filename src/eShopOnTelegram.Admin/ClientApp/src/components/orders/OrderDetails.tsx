@@ -20,7 +20,7 @@ export default function OrderDetails() {
 	const copyDeliveryInformationToClipboard = () => {
 		try {
 			const deliveryInformationArray = [
-				record?.countryIso2Code,
+				record?.country,
 				record?.city,
 				record?.postCode,
 				record?.streetLine1,
@@ -109,7 +109,7 @@ export default function OrderDetails() {
 						<span style={{fontSize: '16px'}}>Copy to clipboard</span>
 					</Button>
 				</h2>{' '}
-				<TextField source="countryIso2Code" label="Country" />
+				<TextField source="country" label="Country" />
 				<TextField source="city" />
 				<TextField source="postCode" />
 				<TextField source="streetLine1" />

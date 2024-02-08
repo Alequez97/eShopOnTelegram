@@ -43,7 +43,7 @@ export interface Order {
 	creationDate: Date;
 	paymentDate?: Date;
 	status: string;
-	countryIso2Code?: string;
+	country?: string;
 	city?: string;
 	streetLine1?: string;
 	streetLine2?: string;
