@@ -52,6 +52,7 @@ public class PaymentService : IPaymentService
 			}
 
 			payment.SetPaymentMethod(paymentMethod);
+			payment.Order.SetPaymentMethod(paymentMethod);
 			await _dbContext.SaveChangesAsync();
 
 			return new ActionResponse
@@ -77,14 +78,6 @@ public class PaymentService : IPaymentService
 			// TODO: UPDLOCK ?
 			var payment = await _dbContext.Payments
 				.Include(payment => payment.Order)
-				.ThenInclude(order => order.CartItems)
-				.ThenInclude(cartItem => cartItem.ProductAttribute)
-				.ThenInclude(productAttribute => productAttribute.Product)
-				.ThenInclude(product => product.Category)
-				.Include(payment => payment.Order)
-				.ThenInclude(order => order.Customer)
-				.Include(payment => payment.Order)
-				.ThenInclude(order => order.PaymentDetails)
 				.FirstOrDefaultAsync(payment => payment.Order.OrderNumber == orderNumber);
 
 			if (payment == null)
@@ -104,12 +97,22 @@ public class PaymentService : IPaymentService
 			}
 
 			payment.ConfirmPayment();
+			payment.Order.ConfirmPayment();
 			await _dbContext.SaveChangesAsync();
+
+			var order = await _dbContext.Orders
+				.Include(order => order.PaymentDetails)
+				.Include(order => order.CartItems)
+				.ThenInclude(cartItem => cartItem.ProductAttribute)
+				.ThenInclude(productAttribute => productAttribute.Product)
+				.ThenInclude(product => product.Category)
+				.Include(order => order.Customer)
+				.FirstOrDefaultAsync(order => order.OrderNumber == orderNumber, cancellationToken);
 
 			return new Response<OrderDto>
 			{
 				Status = ResponseStatus.Success,
-				Data = payment.Order.ToOrderDto(),
+				Data = order!.ToOrderDto(),
 			};
 		}
 		catch (Exception exception)
