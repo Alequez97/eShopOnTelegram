@@ -1,21 +1,22 @@
-import { useToast, Button } from '@chakra-ui/react';
+import { useState } from 'react';
+import { Container } from 'inversify';
+import { Provider } from 'inversify-react';
+import { Outlet } from 'react-router-dom';
+import { DIContainer } from './di-container.ts';
 
 function App() {
-	const toast = useToast();
+	const [diContainer] = useState(() => {
+		const _container = new Container();
+		_container.load(new DIContainer());
+		return _container;
+	});
+
 	return (
-		<Button
-			onClick={() =>
-				toast({
-					title: 'Account created.',
-					description: "We've created your account for you.",
-					status: 'success',
-					duration: 9000,
-					isClosable: true,
-				})
-			}
-		>
-			Show Toast
-		</Button>
+		<div>
+			<Provider container={diContainer}>
+				<Outlet />
+			</Provider>
+		</div>
 	);
 }
 
