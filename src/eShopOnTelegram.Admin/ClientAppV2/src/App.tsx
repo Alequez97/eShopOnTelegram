@@ -1,8 +1,21 @@
+import { useToast, Button } from '@chakra-ui/react';
+
 function App() {
+	const toast = useToast();
 	return (
-		<div>
-			<h1>Hello, world</h1>
-		</div>
+		<Button
+			onClick={() =>
+				toast({
+					title: 'Account created.',
+					description: "We've created your account for you.",
+					status: 'success',
+					duration: 9000,
+					isClosable: true,
+				})
+			}
+		>
+			Show Toast
+		</Button>
 	);
 }
 
