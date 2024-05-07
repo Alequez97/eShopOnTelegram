@@ -1,23 +1,22 @@
 import 'reflect-metadata';
 import { injectable } from 'inversify';
 import { makeAutoObservable, runInAction } from 'mobx';
-import {
-	ACCESS_TOKEN_LOCAL_STORAGE_KEY,
-	LoginResponse,
-	REFRESH_TOKEN_LOCAL_STORAGE_KEY,
-} from '../_common/types/auth.type.ts';
+import { LoginResponse } from '../_common/types/auth.type.ts';
 import { ajax } from 'rxjs/internal/ajax/ajax';
 import { AjaxResponse } from 'rxjs/internal/ajax/AjaxResponse';
 import { map, tap } from 'rxjs';
 
+const ACCESS_TOKEN_LOCAL_STORAGE_KEY = 'eShopOnTelegram.AccessToken';
+const REFRESH_TOKEN_LOCAL_STORAGE_KEY = 'eShopOnTelegram.RefreshToken';
+
 interface State {
-	isAuthenticated: boolean;
+	accessToken?: string;
 }
 
 @injectable()
 export class AuthDataStore {
 	private state: State = {
-		isAuthenticated: false,
+		accessToken: undefined,
 	};
 
 	constructor() {
@@ -28,13 +27,13 @@ export class AuthDataStore {
 		);
 		if (accessToken) {
 			runInAction(() => {
-				this.state.isAuthenticated = true;
+				this.state.accessToken = accessToken;
 			});
 		}
 	}
 
-	get isAuthenticated() {
-		return this.state.isAuthenticated;
+	get accessToken() {
+		return this.state.accessToken;
 	}
 
 	login$(username: string, password: string) {
@@ -81,7 +80,7 @@ export class AuthDataStore {
 
 	logout() {
 		runInAction(() => {
-			this.state.isAuthenticated = false;
+			this.state.accessToken = undefined;
 			localStorage.removeItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY);
 			localStorage.removeItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY);
 		});
@@ -93,7 +92,6 @@ export class AuthDataStore {
 		} = response;
 
 		runInAction(() => {
-			this.state.isAuthenticated = true;
 			localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, accessToken);
 			localStorage.setItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY, refreshToken);
 		});

@@ -4,7 +4,6 @@ import { catchError, EMPTY, map, switchMap } from 'rxjs';
 import { ajax } from 'rxjs/internal/ajax/ajax';
 import { AuthDataStore } from '../../stores/auth.data-store.ts';
 import { AjaxError } from 'rxjs/internal/ajax/errors';
-import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '../types/auth.type.ts';
 import { RouterLocationStore } from '../router/router-location.store.ts';
 import { RouterLocation } from '../router/router-location.type.ts';
 import { toJS } from 'mobx';
@@ -19,11 +18,7 @@ export class HttpClientService {
 
 	get$<TResponse>(path: string) {
 		return ajax<TResponse>(
-			this.getRequestConfig(
-				'GET',
-				path,
-				localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY)!,
-			),
+			this.getRequestConfig('GET', path, this.authDataStore.accessToken!),
 		).pipe(
 			catchError((error: AjaxError) => {
 				if (error.status === 401) {
