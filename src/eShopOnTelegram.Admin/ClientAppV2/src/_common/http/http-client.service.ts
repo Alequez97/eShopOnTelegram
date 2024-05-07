@@ -1,12 +1,13 @@
 import 'reflect-metadata';
 import { inject, injectable } from 'inversify';
-import { catchError, map, switchMap, tap } from 'rxjs';
+import { catchError, EMPTY, map, switchMap } from 'rxjs';
 import { ajax } from 'rxjs/internal/ajax/ajax';
 import { AuthDataStore } from '../../stores/auth.data-store.ts';
 import { AjaxError } from 'rxjs/internal/ajax/errors';
 import { ACCESS_TOKEN_LOCAL_STORAGE_KEY } from '../types/auth.type.ts';
 import { RouterLocationStore } from '../router/router-location.store.ts';
 import { RouterLocation } from '../router/router-location.type.ts';
+import { toJS } from 'mobx';
 
 @injectable()
 export class HttpClientService {
@@ -24,7 +25,7 @@ export class HttpClientService {
 				localStorage.getItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY)!,
 			),
 		).pipe(
-			catchError((error: AjaxError, _) => {
+			catchError((error: AjaxError) => {
 				if (error.status === 401) {
 					return this.authDataStore
 						.refresh$()
@@ -43,9 +44,11 @@ export class HttpClientService {
 					throw error;
 				}
 			}),
-			catchError((error: AjaxError, _) => {
+			catchError((error: AjaxError) => {
 				if (error.status === 400) {
+					console.log(toJS(this.routerLocation.search));
 					this.routerLocation.navigate('/login');
+					return EMPTY;
 				} else {
 					throw error;
 				}
