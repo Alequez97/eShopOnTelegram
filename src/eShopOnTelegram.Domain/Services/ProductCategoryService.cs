@@ -67,7 +67,7 @@ public class ProductCategoryService : IProductCategoryService
 		{
 			var productCategory = await _dbContext.ProductCategories
 				.Where(productCategory => productCategory.IsDeleted == false)
-				.WithPagination(request.PaginationModel)
+				.WithPagination(request.PaginationModelObsolete)
 				.ToListAsync(cancellationToken);
 
 			var getProductCategoriesDtoList = productCategory.Select(productCategory => new ProductCategoryDto

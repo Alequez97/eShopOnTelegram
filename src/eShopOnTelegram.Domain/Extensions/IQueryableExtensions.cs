@@ -14,7 +14,7 @@ public static class IQueryableExtensions
 			   .OrderBy($"{paginationModel.SortPropertyName} {sortingStrategy}");
 		}
 
-		if (paginationModel.To.HasValue && paginationModel.From.HasValue && paginationModel.To - paginationModel.From > 0)
+		if (paginationModel.To.HasValue && paginationModel.From.HasValue && paginationModel.To - paginationModel.From >= 0)
 		{
 			query = query
 			   .Skip(paginationModel.From.Value)

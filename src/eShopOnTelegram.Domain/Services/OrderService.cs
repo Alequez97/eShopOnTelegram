@@ -284,7 +284,7 @@ public class OrderService : IOrderService
 				.ThenInclude(productAttribute => productAttribute.Product)
 				.ThenInclude(product => product.Category)
 				.Include(order => order.Customer)
-				.WithPagination(request.PaginationModel)
+				.WithPagination(request.PaginationModelObsolete)
 				.ToListAsync(cancellationToken);
 
 			var getOrdersResponse = orders.Select(order => order.ToOrderDto());

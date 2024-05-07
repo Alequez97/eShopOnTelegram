@@ -25,7 +25,7 @@ public class GetCustomers : EndpointBaseAsync
 	{
 		var response = await _customerService.GetMultipleAsync(request, cancellationToken);
 
-		Response.AddPaginationHeaders(request.PaginationModel, response.TotalItemsInDatabase);
+		Response.AddPaginationHeaders(request.PaginationModelObsolete, response.TotalItemsInDatabase);
 
 		return response.AsActionResult();
 	}

@@ -9,9 +9,8 @@ import { LoadingState } from '../_common/types/store-state.type.ts';
 import { inject, injectable } from 'inversify';
 import {
 	combineLatest,
-	debounce,
+	debounceTime,
 	delay,
-	of,
 	Subscription,
 	switchMap,
 	tap,
@@ -20,6 +19,7 @@ import { Product } from '../_common/types/api/product.type.ts';
 import { HttpClientService } from '../_common/http/http-client.service.ts';
 import { AjaxError } from 'rxjs/internal/ajax/errors';
 import { toObservable } from '../_common/utilities/observable.utility.ts';
+import qs from 'qs';
 
 interface State {
 	isLoading: boolean;
@@ -70,35 +70,47 @@ export class ProductsDataStore implements LoadingState {
 		return this.state.products;
 	}
 
-	setPageNumber(number: number) {
-		this.state.pageNumber += number;
+	setPageNumber(pageNumber: number) {
+		this.state.pageNumber = pageNumber;
+	}
+
+	get itemsPerPage() {
+		return this.state.itemsPerPage;
+	}
+
+	setItemsPerPage(itemsPerPage: number) {
+		this.state.itemsPerPage = itemsPerPage;
 	}
 
 	private fetchProducts() {
-		// combineLatest([toObservable(() => this.state.pageNumber)])
-		// 	.pipe(
-		// 		switchMap((paginationAndFilteringData) =>
-		// 			this.httpClient.get$<Product[]>('/api/products').pipe(
-		// 				tap(() =>
-		// 					runInAction(() => {
-		// 						this.state.isLoading = true;
-		// 					}),
-		// 				),
-		// 				delay(1000),
-		// 			),
-		// 		),
-		// 	)
-		// 	.subscribe(); // TODO: Uncomment and replace with this code, when pagination is ready
-
-		return this.httpClient
-			.get$<Product[]>('/api/products')
+		return combineLatest([
+			toObservable(() => this.state.pageNumber),
+			toObservable(() => this.state.itemsPerPage),
+		])
 			.pipe(
+				debounceTime(500),
 				tap(() =>
 					runInAction(() => {
 						this.state.isLoading = true;
 					}),
 				),
-				delay(1000),
+				switchMap(([pageNumber, itemsPerPage]) => {
+					const queryParams = qs.stringify({
+						pageNumber,
+						itemsPerPage,
+					});
+
+					return this.httpClient
+						.get$<Product[]>(`/api/products?${queryParams}`)
+						.pipe(
+							tap(() =>
+								runInAction(() => {
+									this.state.isLoading = true;
+								}),
+							),
+							delay(1000),
+						);
+				}),
 			)
 			.subscribe({
 				next: (response) => {

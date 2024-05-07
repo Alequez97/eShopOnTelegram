@@ -25,7 +25,7 @@ public class GetProductCategories : EndpointBaseAsync
 	{
 		var response = await _productCategoryService.GetMultipleAsync(request, cancellationToken);
 
-		Response.AddPaginationHeaders(request.PaginationModel, response.TotalItemsInDatabase);
+		Response.AddPaginationHeaders(request.PaginationModelObsolete, response.TotalItemsInDatabase);
 
 		return response.AsActionResult();
 	}

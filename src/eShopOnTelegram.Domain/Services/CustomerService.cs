@@ -21,7 +21,7 @@ public class CustomerService : ICustomerService
 		try
 		{
 			var products = await _dbContext.Customers
-				.WithPagination(request.PaginationModel)
+				.WithPagination(request.PaginationModelObsolete)
 				.ToListAsync(cancellationToken);
 
 			var getCustomersResponse = products.Select(customer => new CustomerDto()
