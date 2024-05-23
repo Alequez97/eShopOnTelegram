@@ -65,6 +65,12 @@ public class ProductService : IProductService
             {
                 Status = ResponseStatus.Success,
                 Data = getProductsResponse,
+				Metadata = new ResponseMetadata()
+				{
+					PageNumber = request.PageNumber.HasValue ? request.PageNumber.Value : 0,
+					ItemsPerPage = request.ItemsPerPage.HasValue ? request.ItemsPerPage.Value : 0,
+					TotalItemsInDatabase = await _dbContext.Products.Where(product => product.IsDeleted == false).CountAsync(cancellationToken)
+				},
                 TotalItemsInDatabase = await _dbContext.Products.Where(product => product.IsDeleted == false).CountAsync(cancellationToken)
             };
         }

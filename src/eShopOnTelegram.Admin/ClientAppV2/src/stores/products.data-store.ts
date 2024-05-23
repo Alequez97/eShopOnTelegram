@@ -7,25 +7,20 @@ import {
 } from 'mobx';
 import { LoadingState } from '../_common/types/store-state.type.ts';
 import { inject, injectable } from 'inversify';
-import {
-	combineLatest,
-	debounceTime,
-	delay,
-	Subscription,
-	switchMap,
-	tap,
-} from 'rxjs';
+import { combineLatest, delay, Subscription, switchMap, tap } from 'rxjs';
 import { Product } from '../_common/types/api/product.type.ts';
 import { HttpClientService } from '../_common/http/http-client.service.ts';
 import { AjaxError } from 'rxjs/internal/ajax/errors';
 import { toObservable } from '../_common/utilities/observable.utility.ts';
 import qs from 'qs';
+import { ApiResponse } from '../_common/types/api/api-response.type.ts';
 
 interface State {
 	isLoading: boolean;
 	loadingError: Error | undefined;
 	pageNumber: number;
 	itemsPerPage: number;
+	totalPages: number | undefined;
 	products: Product[];
 }
 
@@ -35,7 +30,8 @@ export class ProductsDataStore implements LoadingState {
 		isLoading: false,
 		loadingError: undefined,
 		pageNumber: 1,
-		itemsPerPage: 5,
+		itemsPerPage: 10,
+		totalPages: undefined,
 		products: [],
 	};
 
@@ -70,6 +66,14 @@ export class ProductsDataStore implements LoadingState {
 		return this.state.products;
 	}
 
+	get pageNumber() {
+		return this.state.pageNumber;
+	}
+
+	get totalPages() {
+		return this.state.totalPages;
+	}
+
 	setPageNumber(pageNumber: number) {
 		this.state.pageNumber = pageNumber;
 	}
@@ -78,17 +82,12 @@ export class ProductsDataStore implements LoadingState {
 		return this.state.itemsPerPage;
 	}
 
-	setItemsPerPage(itemsPerPage: number) {
-		this.state.itemsPerPage = itemsPerPage;
-	}
-
 	private fetchProducts() {
 		return combineLatest([
 			toObservable(() => this.state.pageNumber),
 			toObservable(() => this.state.itemsPerPage),
 		])
 			.pipe(
-				debounceTime(500),
 				tap(() =>
 					runInAction(() => {
 						this.state.isLoading = true;
@@ -101,7 +100,9 @@ export class ProductsDataStore implements LoadingState {
 					});
 
 					return this.httpClient
-						.get$<Product[]>(`/api/products?${queryParams}`)
+						.get$<
+							ApiResponse<Product[]>
+						>(`/api/products?${queryParams}`)
 						.pipe(
 							tap(() =>
 								runInAction(() => {
@@ -116,7 +117,8 @@ export class ProductsDataStore implements LoadingState {
 				next: (response) => {
 					runInAction(() => {
 						this.state.isLoading = false;
-						this.state.products = response;
+						this.state.products = response.data;
+						this.state.totalPages = response.metadata.totalPages;
 					});
 				},
 				error: (error: Error | AjaxError) => {

@@ -18,5 +18,19 @@ public class Response<T> : Response where T : class
 {
 	public T Data { get; set; }
 
+	[Obsolete("Use metadata instead")]
 	public int TotalItemsInDatabase { get; set; }
+
+	public ResponseMetadata? Metadata { get; set; }
+}
+
+public class ResponseMetadata
+{
+	public int PageNumber { get; set; }
+
+	public required int ItemsPerPage { get; set; }
+
+	public int TotalPages => (TotalItemsInDatabase - 1) / ItemsPerPage + 1;
+
+	public required int TotalItemsInDatabase { get; set; }
 }

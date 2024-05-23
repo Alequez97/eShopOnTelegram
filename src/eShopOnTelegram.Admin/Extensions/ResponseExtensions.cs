@@ -41,6 +41,6 @@ public static class ResponseExtensions
 			return new StatusCodeResult(503);
 		}
 
-		return new OkObjectResult(response.Data);
+		return new OkObjectResult(response);
 	}
 }
