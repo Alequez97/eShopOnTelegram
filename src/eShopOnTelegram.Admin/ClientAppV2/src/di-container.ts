@@ -4,6 +4,7 @@ import { AuthDataStore } from './stores/auth.data-store.ts';
 import { HttpClientService } from './_common/http/http-client.service.ts';
 import { RouterLocationStore } from './_common/router/router-location.store.ts';
 import { RouterLocation } from './_common/router/router-location.type.ts';
+import { ProductCategoriesDataStore } from './stores/product-categories.data-store.ts';
 
 export class DIContainer extends ContainerModule {
 	constructor() {
@@ -11,6 +12,9 @@ export class DIContainer extends ContainerModule {
 			bind(HttpClientService).to(HttpClientService).inSingletonScope();
 			bind(AuthDataStore).to(AuthDataStore).inSingletonScope();
 			bind(ProductsDataStore).to(ProductsDataStore).inSingletonScope();
+			bind(ProductCategoriesDataStore)
+				.to(ProductCategoriesDataStore)
+				.inSingletonScope();
 
 			bind<RouterLocation>(RouterLocationStore)
 				.to(RouterLocationStore)

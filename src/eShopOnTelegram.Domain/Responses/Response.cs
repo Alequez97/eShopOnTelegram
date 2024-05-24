@@ -30,7 +30,18 @@ public class ResponseMetadata
 
 	public required int ItemsPerPage { get; set; }
 
-	public int TotalPages => (TotalItemsInDatabase - 1) / ItemsPerPage + 1;
+	public int TotalPages
+	{
+		get
+		{
+			if (ItemsPerPage <= 0)
+			{
+				return 1;
+			}
+
+			return (TotalItemsInDatabase - 1) / ItemsPerPage + 1;
+		}
+	}
 
 	public required int TotalItemsInDatabase { get; set; }
 }

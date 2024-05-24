@@ -1,19 +1,17 @@
-import 'reflect-metadata';
+import { ProductCategory } from '../_common/types/api/product-category.type.ts';
+import { inject, injectable } from 'inversify';
+import { HttpClientService } from '../_common/http/http-client.service.ts';
+import { Subscription, tap } from 'rxjs';
 import {
 	makeAutoObservable,
 	onBecomeObserved,
 	onBecomeUnobserved,
 	runInAction,
 } from 'mobx';
-import { LoadingState } from '../_common/types/store-state.type.ts';
-import { inject, injectable } from 'inversify';
-import { combineLatest, Subscription, switchMap, tap } from 'rxjs';
-import { Product } from '../_common/types/api/product.type.ts';
-import { HttpClientService } from '../_common/http/http-client.service.ts';
-import { AjaxError } from 'rxjs/internal/ajax/errors';
-import { toObservable } from '../_common/utilities/observable.utility.ts';
-import qs from 'qs';
 import { ApiResponse } from '../_common/types/api/api-response.type.ts';
+import { Product } from '../_common/types/api/product.type.ts';
+import { AjaxError } from 'rxjs/internal/ajax/errors';
+import qs from 'qs';
 
 interface State {
 	isLoading: boolean;
@@ -21,18 +19,18 @@ interface State {
 	pageNumber: number;
 	itemsPerPage: number;
 	totalPages: number | undefined;
-	products: Product[];
+	productCategories: ProductCategory[];
 }
 
 @injectable()
-export class ProductsDataStore implements LoadingState {
+export class ProductCategoriesDataStore {
 	private state: State = {
 		isLoading: false,
 		loadingError: undefined,
 		pageNumber: 1,
 		itemsPerPage: 10,
 		totalPages: undefined,
-		products: [],
+		productCategories: [],
 	};
 
 	@inject(HttpClientService)
@@ -46,7 +44,7 @@ export class ProductsDataStore implements LoadingState {
 		onBecomeObserved(
 			this,
 			'isLoading',
-			() => (this.fetchSubscription = this.fetchProducts()),
+			() => (this.fetchSubscription = this.fetchProductCategories()),
 		);
 
 		onBecomeUnobserved(this, 'isLoading', () =>
@@ -62,8 +60,8 @@ export class ProductsDataStore implements LoadingState {
 		return !!this.state.loadingError;
 	}
 
-	get products() {
-		return this.state.products;
+	get productCategories() {
+		return this.state.productCategories;
 	}
 
 	get pageNumber() {
@@ -82,41 +80,28 @@ export class ProductsDataStore implements LoadingState {
 		return this.state.itemsPerPage;
 	}
 
-	private fetchProducts() {
-		return combineLatest([
-			toObservable(() => this.state.pageNumber),
-			toObservable(() => this.state.itemsPerPage),
-		])
+	private fetchProductCategories() {
+		const queryParams = qs.stringify({
+			pageNumber: this.state.pageNumber,
+			itemsPerPage: this.state.itemsPerPage,
+		});
+
+		return this.httpClient
+			.get$<ApiResponse<Product[]>>(
+				`/api/productCategories?${queryParams}`,
+			)
 			.pipe(
 				tap(() =>
 					runInAction(() => {
 						this.state.isLoading = true;
 					}),
 				),
-				switchMap(([pageNumber, itemsPerPage]) => {
-					const queryParams = qs.stringify({
-						pageNumber,
-						itemsPerPage,
-					});
-
-					return this.httpClient
-						.get$<
-							ApiResponse<Product[]>
-						>(`/api/products?${queryParams}`)
-						.pipe(
-							tap(() =>
-								runInAction(() => {
-									this.state.isLoading = true;
-								}),
-							),
-						);
-				}),
 			)
 			.subscribe({
 				next: (response) => {
 					runInAction(() => {
 						this.state.isLoading = false;
-						this.state.products = response.data;
+						this.state.productCategories = response.data;
 						this.state.totalPages = response.metadata.totalPages;
 					});
 				},

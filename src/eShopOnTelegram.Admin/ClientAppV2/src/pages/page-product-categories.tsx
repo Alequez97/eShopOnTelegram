@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react-lite';
 import { useInjection } from 'inversify-react';
-import { ProductsDataStore } from '../stores/products.data-store.ts';
+import { ProductCategoriesDataStore } from '../stores/product-categories.data-store.ts';
 import {
 	HStack,
 	IconButton,
@@ -17,15 +17,15 @@ import { IconPencil, IconTrash } from '@tabler/icons-react';
 import { Pagination } from '../_common/components/pagination';
 import { Loader } from '../_common/components/loader';
 
-export const PageProducts = observer(() => {
+export const PageProductCategories = observer(() => {
 	const {
 		isLoading,
 		hasError,
-		pageNumber,
 		totalPages,
+		pageNumber,
 		setPageNumber,
-		products,
-	} = useInjection(ProductsDataStore);
+		productCategories,
+	} = useInjection(ProductCategoriesDataStore);
 
 	if (isLoading) {
 		return <Loader />;
@@ -42,20 +42,18 @@ export const PageProducts = observer(() => {
 					<Thead>
 						<Tr key={'table-header'}>
 							<Th key={'table-header-id'}>Id</Th>
-							<Th key={'table-header-name'}>Name</Th>
-							<Th key={'table-header-product-category-name'}>
-								Product category name
-							</Th>
+							<Th key={'table-header-name'}>Category name</Th>
 							<Th key={'table-header-actions'}>Actions</Th>
 						</Tr>
 					</Thead>
 					<Tbody>
-						{products.map((product) => (
+						{productCategories.map((productCategory) => (
 							<Tr>
-								<Td key={product.id}>{product.id}</Td>
-								<Td key={product.name}>{product.name}</Td>
-								<Td key={product.productCategoryName}>
-									{product.productCategoryName}
+								<Td key={productCategory.id}>
+									{productCategory.id}
+								</Td>
+								<Td key={productCategory.name}>
+									{productCategory.name}
 								</Td>
 								<Td>
 									<HStack>

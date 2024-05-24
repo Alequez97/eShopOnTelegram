@@ -92,6 +92,7 @@ export class AuthDataStore {
 		} = response;
 
 		runInAction(() => {
+			this.state.accessToken = accessToken;
 			localStorage.setItem(ACCESS_TOKEN_LOCAL_STORAGE_KEY, accessToken);
 			localStorage.setItem(REFRESH_TOKEN_LOCAL_STORAGE_KEY, refreshToken);
 		});
